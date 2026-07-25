@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Erea — Placez l'Histoire sur la frise du temps</title>
+<meta name="description" content="Erea : un jeu de culture historique. Devinez l'année des grands événements en les plaçant sur la frise chronologique. 10 manches, 10 000 points.">
+<meta name="theme-color" content="#0c111d">
+<meta property="og:title" content="Erea — Le jeu de la frise chronologique">
+<meta property="og:description" content="Devinez l'année des grands événements de l'Histoire. Plus vous êtes précis, plus vous marquez de points.">
+<meta property="og:url" content="https://teiki5320.github.io/erea/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8F%9B%EF%B8%8F%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c111d;
+    --bg2: #131a2b;
+    --panel: rgba(255, 255, 255, 0.045);
+    --line: rgba(224, 195, 122, 0.16);
+    --gold: #d9b45b;
+    --gold-bright: #f0d38a;
+    --gold-deep: #a8842f;
+    --ivory: #f4eedd;
+    --text: #e9e4d6;
+    --muted: #9aa0b4;
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; touch-action: manipulation; }
+
+  body {
+    font-family: var(--sans);
+    background: radial-gradient(120% 90% at 50% 0%, var(--bg2) 0%, var(--bg) 55%, #080c15 100%);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    overflow: hidden;
+  }
+
+  .app {
+    height: 100vh; /* repli pour les navigateurs sans dvh */
+    height: 100dvh;
+    max-width: 640px;
+    margin: 0 auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .screen { display: none; flex: 1; min-height: 0; flex-direction: column; }
+  .screen.active { display: flex; }
+  .hidden { display: none !important; }
+
+  button {
+    font-family: var(--sans);
+    border: none;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .btn {
+    border-radius: 14px;
+    padding: 15px 22px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: linear-gradient(160deg, var(--gold-bright) 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    color: #221a08;
+    box-shadow: 0 6px 24px rgba(217, 180, 91, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+  .btn-primary:disabled { opacity: 0.35; box-shadow: none; cursor: default; transform: none; }
+  .btn-ghost {
+    border: 1px solid rgba(217, 180, 91, 0.4);
+    color: var(--gold-bright);
+    background: rgba(217, 180, 91, 0.06);
+  }
+
+  /* ---------- Accueil ---------- */
+  #screen-home {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px 24px calc(24px + env(safe-area-inset-bottom));
+    overflow-y: auto;
+  }
+  .home-orn { color: var(--gold); font-size: 13px; letter-spacing: 0.6em; text-indent: 0.6em; opacity: 0.85; }
+  .logo {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(56px, 17vw, 84px);
+    letter-spacing: 0.28em;
+    text-indent: 0.28em;
+    line-height: 1.1;
+    margin-top: 6px;
+    background: linear-gradient(175deg, var(--gold-bright) 10%, var(--gold) 55%, var(--gold-deep) 95%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 14px rgba(217, 180, 91, 0.22));
+  }
+  .tagline { margin-top: 6px; font-size: 15px; color: var(--text); font-weight: 500; }
+  .home-sub { margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+
+  .cats {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    justify-content: center;
+    margin-top: 26px;
+    max-width: 420px;
+  }
+  .cat-pill {
+    padding: 9px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(217, 180, 91, 0.28);
+    color: var(--muted);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .cat-pill.sel {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    background: rgba(217, 180, 91, 0.13);
+    box-shadow: 0 0 14px rgba(217, 180, 91, 0.15);
+  }
+  .home-best { margin-top: 20px; font-size: 13.5px; color: var(--muted); min-height: 20px; }
+  .home-best b { color: var(--gold-bright); font-weight: 600; }
+  #btn-play { margin-top: 14px; width: min(100%, 320px); font-size: 17px; padding: 17px 22px; }
+  .home-stats { margin-top: 16px; font-size: 12px; color: var(--muted); opacity: 0.75; }
+
+  /* ---------- Jeu ---------- */
+  #screen-game { padding: 10px 0 calc(10px + env(safe-area-inset-bottom)); }
+
+  .game-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 18px 10px;
+  }
+  .gh-logo { font-family: var(--serif); font-weight: 800; font-size: 15px; letter-spacing: 0.22em; color: var(--gold); }
+  .gh-round { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .gh-score { font-size: 14px; color: var(--gold-bright); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  .progress { height: 2px; background: rgba(255, 255, 255, 0.07); margin: 0 18px; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright)); transition: width 0.5s ease; border-radius: 2px; }
+
+  .card {
+    margin: 14px 18px 0;
+    padding: 18px 18px 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  .card.in { animation: card-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+  @keyframes card-in { to { opacity: 1; transform: translateY(0); } }
+  .card-emoji { font-size: clamp(34px, 9vw, 44px); line-height: 1.15; }
+  .card-title {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(19px, 5.6vw, 24px);
+    color: var(--ivory);
+    margin-top: 8px;
+    line-height: 1.22;
+  }
+  .card-desc {
+    margin-top: 7px;
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card-cat {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(217, 180, 91, 0.3);
+    border-radius: 999px;
+    padding: 4px 10px;
+    opacity: 0.9;
+  }
+
+  .feedback {
+    flex: 1;
+    min-height: 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6px 18px;
+  }
+  .fb-hint { font-size: 13.5px; color: var(--muted); animation: hint-pulse 2s ease infinite; }
+  @keyframes hint-pulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+
+  .reveal { animation: card-in 0.4s ease forwards; }
+  .reveal-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+  .reveal-truth {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(30px, 9vw, 40px);
+    color: var(--gold-bright);
+    line-height: 1.15;
+    margin-top: 2px;
+  }
+  .reveal-truth small { font-size: 0.55em; font-weight: 700; }
+  .reveal-ecart { margin-top: 4px; font-size: 13.5px; color: var(--text); }
+  .reveal-points {
+    margin-top: 6px;
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--gold-bright);
+    font-variant-numeric: tabular-nums;
+    animation: pts-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.15s backwards;
+  }
+  @keyframes pts-pop { from { transform: scale(0.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* ---------- Zone année + frise ---------- */
+  .year-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 2px 18px 0;
+  }
+  .stepper {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 1px solid rgba(217, 180, 91, 0.35);
+    color: var(--gold-bright);
+    font-size: 22px;
+    font-weight: 500;
+    line-height: 1;
+    background: rgba(217, 180, 91, 0.07);
+    flex: none;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+  }
+  .stepper:active { transform: scale(0.92); }
+  .stepper:disabled { opacity: 0.25; }
+  .year-display {
+    min-width: 150px;
+    text-align: center;
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(30px, 9.5vw, 42px);
+    color: var(--ivory);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.2;
+    transition: color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+  }
+  .year-display small { font-size: 0.48em; font-weight: 700; color: var(--gold); letter-spacing: 0.02em; }
+  body.dragging .year-display { color: var(--gold-bright); transform: scale(1.04); }
+  #screen-game.revealed .year-display { opacity: 0.45; }
+  #screen-game.revealed .stepper { visibility: hidden; }
+
+  .timeline-wrap { padding: 0 22px; user-select: none; -webkit-user-select: none; }
+  .timeline-wrap.locked { pointer-events: none; }
+
+  #tl-track {
+    position: relative;
+    height: 96px;
+    touch-action: none;
+    cursor: pointer;
+  }
+  .tl-bands {
+    position: absolute; left: 0; right: 0; top: 22px; height: 30px;
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+      rgba(217, 180, 91, 0.055) 0%, rgba(217, 180, 91, 0.055) 20%,
+      rgba(255, 255, 255, 0.025) 20%, rgba(255, 255, 255, 0.025) 45%,
+      rgba(217, 180, 91, 0.055) 45%, rgba(217, 180, 91, 0.055) 70%,
+      rgba(255, 255, 255, 0.025) 70%, rgba(255, 255, 255, 0.025) 100%);
+  }
+  .tl-bar {
+    position: absolute; left: 0; right: 0; top: 36px; height: 3px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, rgba(217, 180, 91, 0.45), rgba(244, 238, 221, 0.5), rgba(217, 180, 91, 0.45));
+  }
+  .tick { position: absolute; width: 1px; background: rgba(244, 238, 221, 0.22); transform: translateX(-0.5px); }
+  .tick.min { top: 32px; height: 11px; }
+  .tick.maj { top: 28px; height: 19px; background: rgba(244, 238, 221, 0.34); }
+  .tick.edge { top: 25px; height: 25px; width: 2px; background: rgba(217, 180, 91, 0.55); transform: translateX(-1px); }
+  .tl-label {
+    position: absolute;
+    font-size: 10px;
+    color: var(--muted);
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+  }
+  .tl-label.r1 { top: 56px; }
+  .tl-label.r2 { top: 70px; }
+  .tl-label.a-left { transform: translateX(-2px); }
+  .tl-label.a-right { transform: translateX(calc(-100% + 2px)); }
+  @media (max-width: 559px) { .tl-label.lg { display: none; } }
+
+  .tl-link {
+    position: absolute;
+    top: 35px; height: 5px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(240, 211, 138, 0.95), rgba(244, 238, 221, 0.95));
+    box-shadow: 0 0 10px rgba(240, 211, 138, 0.5);
+    transform: scaleX(0);
+    z-index: 3;
+  }
+  .tl-link.show { transition: transform 0.55s cubic-bezier(0.3, 0.8, 0.3, 1); transform: scaleX(1); }
+
+  .tl-truth {
+    position: absolute; top: 12px; height: 52px; width: 0;
+    z-index: 4;
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  .tl-truth.show { transition: opacity 0.4s ease 0.25s, transform 0.4s cubic-bezier(0.2, 1.2, 0.4, 1) 0.25s; opacity: 1; transform: translateY(0); }
+  .tl-truth-line { position: absolute; left: -1px; width: 2px; height: 100%; background: var(--ivory); border-radius: 2px; box-shadow: 0 0 8px rgba(244, 238, 221, 0.6); }
+  .tl-truth-flag {
+    position: absolute; top: -17px; left: 0;
+    transform: translateX(-50%);
+    background: var(--ivory);
+    color: #221c0c;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  .tl-truth.edge-left .tl-truth-flag { transform: translateX(-10%); }
+  .tl-truth.edge-right .tl-truth-flag { transform: translateX(-90%); }
+
+  .tl-cursor { position: absolute; top: 0; height: 100%; width: 0; z-index: 5; }
+  .tlc-stem { position: absolute; left: -1px; top: 10px; height: 56px; width: 2px; background: linear-gradient(180deg, rgba(217, 180, 91, 0.1), rgba(217, 180, 91, 0.8), rgba(217, 180, 91, 0.1)); }
+  .tlc-knob {
+    position: absolute; left: -13px; top: 24.5px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, var(--gold-bright), var(--gold) 55%, var(--gold-deep));
+    border: 2px solid rgba(255, 246, 220, 0.9);
+    box-shadow: 0 2px 12px rgba(217, 180, 91, 0.55), 0 0 0 6px rgba(217, 180, 91, 0.12);
+    transition: transform 0.15s ease;
+  }
+  body.dragging .tlc-knob { transform: scale(1.18); box-shadow: 0 2px 16px rgba(217, 180, 91, 0.8), 0 0 0 9px rgba(217, 180, 91, 0.16); }
+  #screen-game.revealed .tlc-stem { opacity: 0.5; }
+
+  .actions { padding: 6px 18px 4px; }
+  .actions .btn { width: 100%; font-size: 16.5px; }
+
+  /* ---------- Fin ---------- */
+  #screen-end { padding: 22px 0 calc(14px + env(safe-area-inset-bottom)); overflow: hidden; }
+  .end-head { text-align: center; padding: 0 18px; }
+  .end-title { font-family: var(--serif); font-weight: 700; font-size: 21px; color: var(--ivory); }
+  .end-score {
+    margin-top: 8px;
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(44px, 13vw, 58px);
+    color: var(--gold-bright);
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    filter: drop-shadow(0 2px 14px rgba(217, 180, 91, 0.25));
+  }
+  .end-max { font-size: 0.35em; color: var(--muted); font-family: var(--sans); font-weight: 500; margin-left: 6px; }
+  .end-record {
+    margin-top: 8px;
+    display: inline-block;
+    color: var(--gold-bright);
+    font-weight: 600;
+    font-size: 13.5px;
+    border: 1px solid rgba(217, 180, 91, 0.45);
+    background: rgba(217, 180, 91, 0.1);
+    padding: 5px 14px;
+    border-radius: 999px;
+    animation: pts-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) 0.6s backwards;
+  }
+  .end-best { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+
+  .recap {
+    list-style: none;
+    margin: 16px 12px 12px;
+    padding: 4px 6px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  .recap li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .r-emoji { font-size: 22px; flex: none; width: 30px; text-align: center; }
+  .r-main { flex: 1; min-width: 0; }
+  .r-title { font-size: 13.5px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .r-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .r-sub b { color: var(--gold-bright); font-weight: 600; }
+  .r-right { text-align: right; flex: none; }
+  .r-pts { font-size: 14.5px; font-weight: 700; color: var(--gold-bright); font-variant-numeric: tabular-nums; }
+  .r-ecart { font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+  .r-ecart.perfect { color: #8fdcAE; font-weight: 600; }
+
+  .end-actions { display: flex; gap: 10px; padding: 0 18px; }
+  .end-actions .btn { flex: 1; }
+  .end-home { text-align: center; margin-top: 12px; }
+  .end-home button { color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- Toast / Perfect / Confetti ---------- */
+  .toast {
+    position: fixed;
+    left: 50%; bottom: calc(30px + env(safe-area-inset-bottom));
+    transform: translateX(-50%) translateY(16px);
+    background: #1d2334;
+    border: 1px solid rgba(217, 180, 91, 0.35);
+    color: var(--text);
+    font-size: 13.5px;
+    padding: 11px 18px;
+    border-radius: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 80;
+    max-width: 88vw;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  #perfect { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 70; }
+  #perfect .flash {
+    position: absolute; inset: 0;
+    background: radial-gradient(60% 50% at 50% 45%, rgba(240, 211, 138, 0.35), rgba(240, 211, 138, 0) 70%);
+    animation: flash-fade 1.3s ease forwards;
+  }
+  @keyframes flash-fade { 0% { opacity: 0; } 15% { opacity: 1; } 100% { opacity: 0; } }
+  #perfect .perfect-text {
+    font-family: var(--serif);
+    font-weight: 800;
+    font-size: clamp(44px, 15vw, 76px);
+    letter-spacing: 0.12em;
+    color: var(--gold-bright);
+    text-shadow: 0 0 30px rgba(240, 211, 138, 0.6);
+    animation: perfect-pop 1.3s ease forwards;
+  }
+  @keyframes perfect-pop {
+    0% { transform: scale(0.3) rotate(-4deg); opacity: 0; }
+    18% { transform: scale(1.08) rotate(1deg); opacity: 1; }
+    70% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1.12); opacity: 0; }
+  }
+
+  .confetti {
+    position: fixed;
+    top: -14px;
+    width: 8px; height: 13px;
+    border-radius: 2px;
+    z-index: 60;
+    pointer-events: none;
+    animation: cf-fall linear forwards;
+  }
+  @keyframes cf-fall {
+    to { transform: translateY(106vh) translateX(var(--dx)) rotate(var(--rot)); opacity: 0.85; }
+  }
+
+  @media (min-width: 640px) {
+    .app { border-left: 1px solid rgba(255, 255, 255, 0.05); border-right: 1px solid rgba(255, 255, 255, 0.05); }
+  }
+  @media (max-height: 640px) {
+    .card { margin-top: 8px; padding: 12px 16px 12px; }
+    .card-desc { -webkit-line-clamp: 1; }
+    .card-cat { display: none; }
+    .feedback { min-height: 72px; }
+  }
+</style>
+</head>
+<body>
+<noscript><p style="padding:2em;text-align:center;font-family:sans-serif;color:#e9e4d6">Erea nécessite JavaScript pour fonctionner.</p></noscript>
+<div class="app">
+
+  <!-- Écran d'accueil -->
+  <section id="screen-home" class="screen">
+    <div class="home-orn">✦ ✦ ✦</div>
+    <h1 class="logo">EREA</h1>
+    <p class="tagline">Placez l'Histoire sur la frise du temps</p>
+    <p class="home-sub">Devinez l'année de chaque événement. 10 manches, 10 000 points.</p>
+    <div class="cats" id="cat-list" role="group" aria-label="Choix de catégorie"></div>
+    <p class="home-best" id="home-best"></p>
+    <button class="btn btn-primary" id="btn-play" type="button">Jouer</button>
+    <p class="home-stats" id="home-stats"></p>
+  </section>
+
+  <!-- Écran de jeu -->
+  <section id="screen-game" class="screen">
+    <header class="game-header">
+      <div class="gh-logo">EREA</div>
+      <div class="gh-round" id="hud-round">Manche 1/10</div>
+      <div class="gh-score" id="hud-score">0 pt</div>
+    </header>
+    <div class="progress"><div class="progress-fill" id="progress-fill"></div></div>
+
+    <div class="card" id="event-card">
+      <div class="card-emoji" id="card-emoji"></div>
+      <h2 class="card-title" id="card-title"></h2>
+      <p class="card-desc" id="card-desc"></p>
+      <span class="card-cat" id="card-cat"></span>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="year-zone">
+      <button class="stepper" id="btn-minus" type="button" aria-label="Reculer d'un an">−</button>
+      <div class="year-display" id="year-display" aria-live="polite"></div>
+      <button class="stepper" id="btn-plus" type="button" aria-label="Avancer d'un an">+</button>
+    </div>
+
+    <div class="timeline-wrap" id="timeline-wrap">
+      <div id="tl-track">
+        <div class="tl-bands"></div>
+        <div class="tl-bar"></div>
+        <div class="tl-link" id="tl-link"></div>
+        <div class="tl-truth" id="tl-truth">
+          <div class="tl-truth-line"></div>
+          <div class="tl-truth-flag" id="tl-truth-flag"></div>
+        </div>
+        <div class="tl-cursor" id="tl-cursor">
+          <div class="tlc-stem"></div>
+          <div class="tlc-knob"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btn-validate" type="button" disabled>Valider</button>
+      <button class="btn btn-primary hidden" id="btn-next" type="button">Manche suivante</button>
+    </div>
+  </section>
+
+  <!-- Écran de fin -->
+  <section id="screen-end" class="screen">
+    <div class="end-head">
+      <h2 class="end-title">Partie terminée</h2>
+      <div class="end-score"><span id="end-total">0</span><span class="end-max">/ 10 000</span></div>
+      <div><span class="end-record hidden" id="end-record">🏆 Nouveau record !</span></div>
+      <p class="end-best" id="end-best"></p>
+    </div>
+    <ul class="recap" id="recap"></ul>
+    <div class="end-actions">
+      <button class="btn btn-primary" id="btn-replay" type="button">Rejouer</button>
+      <button class="btn btn-ghost" id="btn-share" type="button">Partager</button>
+    </div>
+    <div class="end-home"><button id="btn-home" type="button">Retour à l'accueil</button></div>
+  </section>
+
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<div id="perfect" class="hidden"><div class="flash"></div><div class="perfect-text">PERFECT</div></div>
+
+<script>
+'use strict';
+
+/* ================= Base d'événements ================= */
+const EVENTS = [
+  {"annee":-600,"titre":"Fondation de Marseille","desc":"Des colons grecs venus de Phocée fondent la cité","cat":"france","emoji":"⚓"},
+  {"annee":-52,"titre":"Bataille d'Alésia","desc":"Vercingétorix capitule face aux légions de César","cat":"france","emoji":"⚔️"},
+  {"annee":496,"titre":"Baptême de Clovis","desc":"Le roi des Francs est baptisé à Reims","cat":"france","emoji":"✝️"},
+  {"annee":732,"titre":"Bataille de Poitiers","desc":"Charles Martel arrête une expédition arabe venue d'Espagne","cat":"france","emoji":"🛡️"},
+  {"annee":800,"titre":"Sacre de Charlemagne","desc":"Le roi des Francs est couronné empereur à Rome","cat":"france","emoji":"👑"},
+  {"annee":843,"titre":"Traité de Verdun","desc":"L'empire de Charlemagne est partagé entre ses trois petits-fils","cat":"france","emoji":"📜"},
+  {"annee":987,"titre":"Hugues Capet devient roi","desc":"Une nouvelle dynastie s'installe sur le trône des Francs","cat":"france","emoji":"⚜️"},
+  {"annee":1066,"titre":"Bataille d'Hastings","desc":"Guillaume de Normandie conquiert l'Angleterre","cat":"france","emoji":"🏹"},
+  {"annee":1214,"titre":"Bataille de Bouvines","desc":"Philippe Auguste écrase une coalition européenne","cat":"france","emoji":"⚔️"},
+  {"annee":1337,"titre":"Début de la guerre de Cent Ans","desc":"Le roi d'Angleterre revendique la couronne de France","cat":"france","emoji":"🏴"},
+  {"annee":1431,"titre":"Jeanne d'Arc au bûcher","desc":"La Pucelle d'Orléans est brûlée vive à Rouen","cat":"france","emoji":"🔥"},
+  {"annee":1515,"titre":"Bataille de Marignan","desc":"François Ier l'emporte avec éclat dans le Milanais","cat":"france","emoji":"🐎"},
+  {"annee":1539,"titre":"Ordonnance de Villers-Cotterêts","desc":"Le français devient la langue des actes officiels","cat":"france","emoji":"🖋️"},
+  {"annee":1572,"titre":"Massacre de la Saint-Barthélemy","desc":"Des milliers de protestants sont tués à Paris","cat":"france","emoji":"🩸"},
+  {"annee":1598,"titre":"Édit de Nantes","desc":"Henri IV accorde la liberté de culte aux protestants","cat":"france","emoji":"🕊️"},
+  {"annee":1610,"titre":"Assassinat d'Henri IV","desc":"Ravaillac poignarde le roi dans son carrosse","cat":"france","emoji":"🗡️"},
+  {"annee":1661,"titre":"Début du règne personnel de Louis XIV","desc":"À la mort de Mazarin, le jeune roi décide de gouverner seul","cat":"france","emoji":"☀️"},
+  {"annee":1682,"titre":"La cour s'installe à Versailles","desc":"Le château devient la résidence officielle du Roi-Soleil","cat":"france","emoji":"🏰"},
+  {"annee":1685,"titre":"Révocation de l'édit de Nantes","desc":"Le culte protestant est interdit dans le royaume","cat":"france","emoji":"⛪"},
+  {"annee":1789,"titre":"Prise de la Bastille","desc":"Le peuple de Paris s'empare de la forteresse","cat":"france","emoji":"🔓"},
+  {"annee":1793,"titre":"Exécution de Louis XVI","desc":"Le roi est guillotiné devant la foule parisienne","cat":"france","emoji":"🪓"},
+  {"annee":1804,"titre":"Sacre de Napoléon","desc":"Bonaparte se couronne empereur à Notre-Dame","cat":"france","emoji":"🦅"},
+  {"annee":1815,"titre":"Bataille de Waterloo","desc":"La défaite finale de Napoléon face aux coalisés","cat":"france","emoji":"⚔️"},
+  {"annee":1830,"titre":"Les Trois Glorieuses","desc":"Trois journées de révolution chassent Charles X du trône","cat":"france","emoji":"🚩"},
+  {"annee":1848,"titre":"Abolition de l'esclavage","desc":"Le décret de Victor Schœlcher libère les esclaves des colonies","cat":"france","emoji":"⛓️"},
+  {"annee":1871,"titre":"La Commune de Paris","desc":"L'insurrection parisienne s'achève dans le sang","cat":"france","emoji":"🔥"},
+  {"annee":1889,"titre":"Inauguration de la tour Eiffel","desc":"La plus haute tour du monde ouvre pour l'Exposition universelle","cat":"france","emoji":"🗼"},
+  {"annee":1898,"titre":"« J'accuse… ! » de Zola","desc":"L'écrivain prend la défense du capitaine Dreyfus dans la presse","cat":"france","emoji":"📰"},
+  {"annee":1905,"titre":"Séparation des Églises et de l'État","desc":"La République proclame la laïcité par la loi","cat":"france","emoji":"🏛️"},
+  {"annee":1916,"titre":"Bataille de Verdun","desc":"« On ne passe pas » : des mois d'enfer dans les tranchées","cat":"france","emoji":"🪖"},
+  {"annee":1936,"titre":"Premiers congés payés","desc":"Le Front populaire accorde deux semaines de vacances aux salariés","cat":"france","emoji":"🏖️"},
+  {"annee":1940,"titre":"L'appel du 18 Juin","desc":"Depuis Londres, de Gaulle appelle à poursuivre le combat","cat":"france","emoji":"🎙️"},
+  {"annee":1944,"titre":"Droit de vote des femmes","desc":"Les Françaises obtiennent enfin le droit de voter","cat":"france","emoji":"🗳️"},
+  {"annee":1958,"titre":"Naissance de la Ve République","desc":"Une nouvelle constitution est adoptée par référendum","cat":"france","emoji":"🇫🇷"},
+  {"annee":1962,"titre":"Fin de la guerre d'Algérie","desc":"Les accords d'Évian instaurent le cessez-le-feu","cat":"france","emoji":"🤝"},
+  {"annee":1981,"titre":"Abolition de la peine de mort","desc":"La loi portée par Robert Badinter est votée","cat":"france","emoji":"⚖️"},
+  {"annee":1994,"titre":"Ouverture du tunnel sous la Manche","desc":"On passe de France en Angleterre sous la mer","cat":"france","emoji":"🚄"},
+  {"annee":1998,"titre":"Les Bleus champions du monde","desc":"La France bat le Brésil en finale à Saint-Denis","cat":"france","emoji":"⚽"},
+  {"annee":2015,"titre":"Attentats du Bataclan","desc":"Paris est frappée par une vague d'attaques terroristes","cat":"france","emoji":"🕯️"},
+  {"annee":2019,"titre":"Incendie de Notre-Dame","desc":"La flèche de la cathédrale s'effondre dans les flammes","cat":"france","emoji":"🚒"},
+  {"annee":-2560,"titre":"Grande pyramide de Gizeh","desc":"Le tombeau colossal du pharaon Khéops est achevé","cat":"monde","emoji":"🔺"},
+  {"annee":-1750,"titre":"Code de Hammurabi","desc":"Le roi de Babylone fait graver ses lois sur une stèle","cat":"monde","emoji":"⚖️"},
+  {"annee":-776,"titre":"Premiers Jeux olympiques","desc":"Des athlètes grecs s'affrontent à Olympie","cat":"monde","emoji":"🏅"},
+  {"annee":-753,"titre":"Fondation de Rome","desc":"Selon la légende, Romulus fonde la ville sur le Palatin","cat":"monde","emoji":"🐺"},
+  {"annee":-490,"titre":"Bataille de Marathon","desc":"Les Athéniens repoussent la première invasion perse","cat":"monde","emoji":"🏃"},
+  {"annee":-323,"titre":"Mort d'Alexandre le Grand","desc":"Le conquérant macédonien s'éteint à Babylone","cat":"monde","emoji":"⚱️"},
+  {"annee":-221,"titre":"Unification de la Chine","desc":"Qin Shi Huang devient le premier empereur chinois","cat":"monde","emoji":"🐉"},
+  {"annee":-44,"titre":"Assassinat de Jules César","desc":"Le dictateur est poignardé en plein Sénat","cat":"monde","emoji":"🗡️"},
+  {"annee":-30,"titre":"Mort de Cléopâtre","desc":"La dernière reine d'Égypte met fin à ses jours","cat":"monde","emoji":"🐍"},
+  {"annee":79,"titre":"Éruption du Vésuve","desc":"Pompéi disparaît sous les cendres du volcan","cat":"monde","emoji":"🌋"},
+  {"annee":330,"titre":"Fondation de Constantinople","desc":"Constantin fait de l'ancienne Byzance sa nouvelle capitale","cat":"monde","emoji":"🏛️"},
+  {"annee":476,"titre":"Chute de l'Empire romain d'Occident","desc":"Le dernier empereur de Rome est déposé","cat":"monde","emoji":"🏚️"},
+  {"annee":622,"titre":"L'Hégire","desc":"Mahomet et ses fidèles quittent La Mecque pour Médine","cat":"monde","emoji":"🕌"},
+  {"annee":1096,"titre":"Départ de la première croisade","desc":"Des chevaliers d'Occident se mettent en route vers Jérusalem","cat":"monde","emoji":"✝️"},
+  {"annee":1206,"titre":"Avènement de Gengis Khan","desc":"Les tribus mongoles s'unissent sous un chef unique","cat":"monde","emoji":"🏇"},
+  {"annee":1215,"titre":"La Grande Charte d'Angleterre","desc":"Les barons imposent des limites au pouvoir du roi Jean","cat":"monde","emoji":"📜"},
+  {"annee":1271,"titre":"Marco Polo part vers l'Orient","desc":"Le jeune Vénitien entame son long voyage vers la Chine","cat":"monde","emoji":"🐫"},
+  {"annee":1347,"titre":"La Peste noire en Europe","desc":"Une épidémie dévastatrice débarque dans les ports européens","cat":"monde","emoji":"💀"},
+  {"annee":1453,"titre":"Chute de Constantinople","desc":"Les Ottomans s'emparent de la capitale byzantine","cat":"monde","emoji":"🏰"},
+  {"annee":1492,"titre":"Colomb atteint l'Amérique","desc":"Les caravelles espagnoles touchent terre aux Antilles","cat":"monde","emoji":"⛵"},
+  {"annee":1522,"titre":"Premier tour du monde","desc":"L'expédition partie avec Magellan boucle sa circumnavigation","cat":"monde","emoji":"🌍"},
+  {"annee":1620,"titre":"La traversée du Mayflower","desc":"Des colons anglais fondent Plymouth en Amérique","cat":"monde","emoji":"🚢"},
+  {"annee":1776,"titre":"Indépendance des États-Unis","desc":"Treize colonies américaines rompent avec Londres","cat":"monde","emoji":"🗽"},
+  {"annee":1804,"titre":"Indépendance d'Haïti","desc":"L'ancienne colonie devient la première république noire","cat":"monde","emoji":"🇭🇹"},
+  {"annee":1833,"titre":"Abolition de l'esclavage britannique","desc":"Le Parlement de Londres vote l'émancipation dans l'Empire","cat":"monde","emoji":"⛓️"},
+  {"annee":1861,"titre":"Début de la guerre de Sécession","desc":"Le Nord et le Sud des États-Unis entrent en guerre","cat":"monde","emoji":"💥"},
+  {"annee":1865,"titre":"Assassinat de Lincoln","desc":"Le président américain est abattu au théâtre","cat":"monde","emoji":"🎩"},
+  {"annee":1868,"titre":"Début de l'ère Meiji","desc":"L'empereur du Japon reprend le pouvoir et modernise le pays","cat":"monde","emoji":"🎌"},
+  {"annee":1869,"titre":"Ouverture du canal de Suez","desc":"La Méditerranée est enfin reliée à la mer Rouge","cat":"monde","emoji":"⛴️"},
+  {"annee":1912,"titre":"Naufrage du Titanic","desc":"Le paquebot réputé insubmersible heurte un iceberg","cat":"monde","emoji":"🧊"},
+  {"annee":1914,"titre":"Attentat de Sarajevo","desc":"L'archiduc héritier d'Autriche est assassiné","cat":"monde","emoji":"💣"},
+  {"annee":1917,"titre":"Révolution d'Octobre","desc":"Les bolcheviks de Lénine s'emparent du pouvoir en Russie","cat":"monde","emoji":"🚩"},
+  {"annee":1929,"titre":"Krach de Wall Street","desc":"La Bourse de New York s'effondre en quelques jours","cat":"monde","emoji":"📉"},
+  {"annee":1945,"titre":"Bombardement d'Hiroshima","desc":"Une bombe atomique rase la ville japonaise","cat":"monde","emoji":"☢️"},
+  {"annee":1947,"titre":"Indépendance de l'Inde","desc":"Gandhi et Nehru voient la fin de la domination britannique","cat":"monde","emoji":"🇮🇳"},
+  {"annee":1948,"titre":"Déclaration universelle des droits de l'homme","desc":"L'ONU adopte le texte au palais de Chaillot à Paris","cat":"monde","emoji":"🕊️"},
+  {"annee":1955,"titre":"Rosa Parks refuse de céder sa place","desc":"Son geste lance le boycott des bus de Montgomery","cat":"monde","emoji":"🚌"},
+  {"annee":1963,"titre":"« I have a dream »","desc":"Martin Luther King harangue la foule à Washington","cat":"monde","emoji":"🎤"},
+  {"annee":1963,"titre":"Assassinat de Kennedy","desc":"Le président américain est abattu à Dallas","cat":"monde","emoji":"🇺🇸"},
+  {"annee":1989,"titre":"Chute du mur de Berlin","desc":"Les Berlinois franchissent librement le Mur et le démantèlent","cat":"monde","emoji":"🧱"},
+  {"annee":1990,"titre":"Libération de Nelson Mandela","desc":"Après vingt-sept ans de détention, il sort libre","cat":"monde","emoji":"✊"},
+  {"annee":1991,"titre":"Dissolution de l'URSS","desc":"Le drapeau soviétique est abaissé au Kremlin","cat":"monde","emoji":"🪆"},
+  {"annee":2001,"titre":"Attentats du World Trade Center","desc":"Des avions détournés frappent les tours jumelles à New York","cat":"monde","emoji":"🏙️"},
+  {"annee":2008,"titre":"Crise financière mondiale","desc":"La faillite de la banque Lehman Brothers panique les marchés","cat":"monde","emoji":"💸"},
+  {"annee":2016,"titre":"Vote du Brexit","desc":"Les Britanniques choisissent de quitter l'Union européenne","cat":"monde","emoji":"🇬🇧"},
+  {"annee":2020,"titre":"Pandémie de Covid-19","desc":"Un virus met le monde entier à l'arrêt","cat":"monde","emoji":"😷"},
+  {"annee":-300,"titre":"Les Éléments d'Euclide","desc":"Le mathématicien grec rassemble tout le savoir géométrique","cat":"sciences","emoji":"📐"},
+  {"annee":-240,"titre":"Ératosthène mesure la Terre","desc":"Il calcule la circonférence du globe grâce aux ombres","cat":"sciences","emoji":"📏"},
+  {"annee":-212,"titre":"Mort d'Archimède","desc":"Le génie de Syracuse est tué par un soldat romain","cat":"sciences","emoji":"⚙️"},
+  {"annee":105,"titre":"Invention du papier","desc":"Cai Lun présente sa fabrication à la cour de Chine","cat":"sciences","emoji":"📜"},
+  {"annee":820,"titre":"Naissance de l'algèbre","desc":"Al-Khwarizmi publie son grand traité à Bagdad","cat":"sciences","emoji":"🔢"},
+  {"annee":1088,"titre":"Première université d'Europe","desc":"Des écoles de droit s'organisent à Bologne","cat":"sciences","emoji":"🎓"},
+  {"annee":1455,"titre":"La Bible de Gutenberg","desc":"Le premier grand livre imprimé à caractères mobiles en Europe","cat":"sciences","emoji":"🖨️"},
+  {"annee":1543,"titre":"Copernic publie son système","desc":"Le Soleil remplace la Terre au centre du monde","cat":"sciences","emoji":"☀️"},
+  {"annee":1610,"titre":"Galilée observe les lunes de Jupiter","desc":"Sa lunette révèle quatre satellites autour de la planète","cat":"sciences","emoji":"🔭"},
+  {"annee":1628,"titre":"La circulation sanguine expliquée","desc":"William Harvey décrit le cœur comme une pompe","cat":"sciences","emoji":"🫀"},
+  {"annee":1687,"titre":"Les Principia de Newton","desc":"La gravitation universelle est mise en équations","cat":"sciences","emoji":"🍎"},
+  {"annee":1752,"titre":"Franklin dompte la foudre","desc":"L'expérience du cerf-volant prouve que l'éclair est électrique","cat":"sciences","emoji":"🪁"},
+  {"annee":1783,"titre":"Premier vol en montgolfière","desc":"Un ballon des frères Montgolfier emporte des hommes dans le ciel","cat":"sciences","emoji":"🎈"},
+  {"annee":1796,"titre":"Première vaccination","desc":"Edward Jenner inocule la vaccine contre la variole","cat":"sciences","emoji":"💉"},
+  {"annee":1800,"titre":"La pile de Volta","desc":"Un empilement de disques métalliques produit du courant","cat":"sciences","emoji":"🔋"},
+  {"annee":1825,"titre":"Premier chemin de fer public","desc":"Une locomotive à vapeur transporte des voyageurs en Angleterre","cat":"sciences","emoji":"🚂"},
+  {"annee":1839,"titre":"Naissance de la photographie","desc":"Le procédé de Daguerre est révélé au monde","cat":"sciences","emoji":"📷"},
+  {"annee":1859,"titre":"L'Origine des espèces","desc":"Darwin expose sa théorie de l'évolution","cat":"sciences","emoji":"🐢"},
+  {"annee":1869,"titre":"Le tableau périodique","desc":"Mendeleïev classe les éléments et prédit les manquants","cat":"sciences","emoji":"🧪"},
+  {"annee":1876,"titre":"Invention du téléphone","desc":"Graham Bell fait breveter son appareil parlant","cat":"sciences","emoji":"☎️"},
+  {"annee":1879,"titre":"L'ampoule d'Edison","desc":"Une lampe à incandescence brille durablement","cat":"sciences","emoji":"💡"},
+  {"annee":1885,"titre":"Pasteur vainc la rage","desc":"Un jeune garçon mordu est sauvé par son vaccin","cat":"sciences","emoji":"🐕"},
+  {"annee":1895,"titre":"Découverte des rayons X","desc":"Röntgen photographie les os d'une main à travers la chair","cat":"sciences","emoji":"🦴"},
+  {"annee":1898,"titre":"Découverte du radium","desc":"Pierre et Marie Curie annoncent un nouvel élément qui rayonne","cat":"sciences","emoji":"⚛️"},
+  {"annee":1903,"titre":"Premier vol des frères Wright","desc":"Un engin motorisé plus lourd que l'air s'élève","cat":"sciences","emoji":"✈️"},
+  {"annee":1905,"titre":"La relativité d'Einstein","desc":"Un employé du bureau des brevets révolutionne la physique","cat":"sciences","emoji":"🧠"},
+  {"annee":1928,"titre":"Découverte de la pénicilline","desc":"Fleming remarque une moisissure qui tue les microbes","cat":"sciences","emoji":"🧫"},
+  {"annee":1938,"titre":"La fission nucléaire","desc":"Des chimistes berlinois parviennent à casser le noyau d'uranium","cat":"sciences","emoji":"⚡"},
+  {"annee":1953,"titre":"La double hélice de l'ADN","desc":"Watson et Crick percent la structure de la molécule de la vie","cat":"sciences","emoji":"🧬"},
+  {"annee":1957,"titre":"Spoutnik en orbite","desc":"Le premier satellite artificiel bipe autour de la Terre","cat":"sciences","emoji":"🛰️"},
+  {"annee":1961,"titre":"Gagarine dans l'espace","desc":"Un homme boucle pour la première fois une orbite terrestre","cat":"sciences","emoji":"🚀"},
+  {"annee":1967,"titre":"Première greffe du cœur","desc":"Christiaan Barnard réussit l'opération au Cap","cat":"sciences","emoji":"🩺"},
+  {"annee":1969,"titre":"Premiers pas sur la Lune","desc":"Armstrong et Aldrin foulent la mer de la Tranquillité","cat":"sciences","emoji":"🌕"},
+  {"annee":1989,"titre":"Naissance du World Wide Web","desc":"Tim Berners-Lee propose un système de pages reliées entre elles","cat":"sciences","emoji":"🌐"},
+  {"annee":1996,"titre":"Dolly, premier mammifère cloné","desc":"Une brebis naît d'une cellule adulte en Écosse","cat":"sciences","emoji":"🐑"},
+  {"annee":2007,"titre":"Présentation de l'iPhone","desc":"Steve Jobs dévoile un téléphone tout tactile","cat":"sciences","emoji":"📱"},
+  {"annee":2012,"titre":"Découverte du boson de Higgs","desc":"Le CERN confirme l'existence de la particule manquante","cat":"sciences","emoji":"💫"},
+  {"annee":2021,"titre":"Un hélicoptère vole sur Mars","desc":"Le petit Ingenuity s'élève dans l'air martien","cat":"sciences","emoji":"🚁"},
+  {"annee":2022,"titre":"Lancement de ChatGPT","desc":"Une IA conversationnelle conquiert le grand public","cat":"sciences","emoji":"🤖"},
+  {"annee":-447,"titre":"Début du Parthénon","desc":"Le chantier du grand temple s'ouvre sur l'Acropole","cat":"arts","emoji":"🏛️"},
+  {"annee":80,"titre":"Inauguration du Colisée","desc":"Cent jours de jeux ouvrent l'amphithéâtre de Rome","cat":"arts","emoji":"🦁"},
+  {"annee":537,"titre":"Consécration de Sainte-Sophie","desc":"Justinien inaugure son immense basilique à coupole","cat":"arts","emoji":"⛪"},
+  {"annee":1163,"titre":"Première pierre de Notre-Dame","desc":"Le chantier de la cathédrale de Paris commence","cat":"arts","emoji":"⛪"},
+  {"annee":1434,"titre":"Les Époux Arnolfini","desc":"Van Eyck signe un portrait d'une précision inouïe","cat":"arts","emoji":"🪞"},
+  {"annee":1503,"titre":"Léonard commence la Joconde","desc":"Un marchand florentin commande le portrait de son épouse","cat":"arts","emoji":"🖼️"},
+  {"annee":1508,"titre":"Michel-Ange à la Sixtine","desc":"L'artiste entame la fresque du plafond de la chapelle","cat":"arts","emoji":"🎨"},
+  {"annee":1605,"titre":"Publication de Don Quichotte","desc":"Cervantès lance son chevalier à l'assaut des moulins","cat":"arts","emoji":"🐴"},
+  {"annee":1616,"titre":"Mort de Shakespeare","desc":"Le dramaturge s'éteint dans sa ville natale de Stratford","cat":"arts","emoji":"🎭"},
+  {"annee":1637,"titre":"Le Cid triomphe","desc":"La pièce de Corneille enflamme et divise Paris","cat":"arts","emoji":"🤺"},
+  {"annee":1642,"titre":"La Ronde de nuit","desc":"Rembrandt peint sa gigantesque milice en mouvement","cat":"arts","emoji":"🖼️"},
+  {"annee":1673,"titre":"Mort de Molière","desc":"Le comédien s'effondre après avoir joué le Malade imaginaire","cat":"arts","emoji":"🎭"},
+  {"annee":1742,"titre":"Création du Messie de Haendel","desc":"L'oratorio et son Alléluia résonnent pour la première fois à Dublin","cat":"arts","emoji":"🎼"},
+  {"annee":1759,"titre":"Publication de Candide","desc":"Voltaire moque l'optimisme dans un conte féroce","cat":"arts","emoji":"📖"},
+  {"annee":1786,"titre":"Les Noces de Figaro","desc":"L'opéra de Mozart est créé à Vienne","cat":"arts","emoji":"🎻"},
+  {"annee":1824,"titre":"La Neuvième de Beethoven","desc":"L'Ode à la joie retentit pour la première fois à Vienne","cat":"arts","emoji":"🎶"},
+  {"annee":1857,"titre":"Procès des Fleurs du mal","desc":"Baudelaire est condamné pour outrage aux bonnes mœurs","cat":"arts","emoji":"🥀"},
+  {"annee":1862,"titre":"Publication des Misérables","desc":"Victor Hugo donne vie à Jean Valjean et Cosette","cat":"arts","emoji":"📚"},
+  {"annee":1874,"titre":"Première exposition impressionniste","desc":"Monet et ses amis exposent chez le photographe Nadar","cat":"arts","emoji":"🌅"},
+  {"annee":1875,"titre":"Création de Carmen","desc":"L'opéra de Bizet fait scandale à Paris","cat":"arts","emoji":"💃"},
+  {"annee":1889,"titre":"La Nuit étoilée","desc":"Van Gogh peint un ciel tourbillonnant depuis l'asile","cat":"arts","emoji":"🌌"},
+  {"annee":1895,"titre":"Première séance du cinématographe","desc":"Les frères Lumière projettent leurs films devant un public payant","cat":"arts","emoji":"🎬"},
+  {"annee":1907,"titre":"Les Demoiselles d'Avignon","desc":"Picasso fracture les formes et scandalise ses amis","cat":"arts","emoji":"🎨"},
+  {"annee":1913,"titre":"Scandale du Sacre du printemps","desc":"Le ballet de Stravinsky déclenche un tumulte à Paris","cat":"arts","emoji":"🩰"},
+  {"annee":1927,"titre":"Le premier film parlant","desc":"Le Chanteur de jazz fait entendre la voix d'Al Jolson","cat":"arts","emoji":"📽️"},
+  {"annee":1928,"titre":"Naissance de Mickey","desc":"La souris de Walt Disney débute dans Steamboat Willie","cat":"arts","emoji":"🐭"},
+  {"annee":1937,"titre":"Picasso peint Guernica","desc":"Une toile monumentale dénonce le bombardement d'une ville basque","cat":"arts","emoji":"🕊️"},
+  {"annee":1943,"titre":"Le Petit Prince","desc":"Saint-Exupéry publie son conte poétique à New York","cat":"arts","emoji":"🌹"},
+  {"annee":1959,"titre":"Première aventure d'Astérix","desc":"Le petit Gaulois apparaît dans le journal Pilote","cat":"arts","emoji":"🐗"},
+  {"annee":1962,"titre":"Premier disque des Beatles","desc":"Love Me Do sort dans les bacs britanniques","cat":"arts","emoji":"🎸"},
+  {"annee":1969,"titre":"Festival de Woodstock","desc":"Un demi-million de personnes réunies pour trois jours de musique","cat":"arts","emoji":"✌️"},
+  {"annee":1977,"titre":"Sortie de La Guerre des étoiles","desc":"Le premier Star Wars envahit les salles de cinéma","cat":"arts","emoji":"🌟"},
+  {"annee":1997,"titre":"Premier Harry Potter","desc":"J.K. Rowling publie L'École des sorciers","cat":"arts","emoji":"🧙"},
+  {"annee":2001,"titre":"Amélie Poulain au cinéma","desc":"La serveuse de Montmartre conquiert le monde entier","cat":"arts","emoji":"🥄"},
+  {"annee":2019,"titre":"Palme d'or pour Parasite","desc":"Le film de Bong Joon-ho triomphe à Cannes","cat":"arts","emoji":"🏆"}
+];
+
+/* ================= Constantes ================= */
+const MIN_YEAR = -3000;
+const MAX_YEAR = 2025;
+const ROUNDS = 10;
+const MAX_SCORE = 1000;
+const STORE_KEY = 'erea-store-v1';
+
+/* Échelle non linéaire : chaque segment occupe une part différente de la largeur */
+const SEGMENTS = [
+  { from: -3000, to: 0,    w: 0.20 },
+  { from: 0,     to: 1500, w: 0.25 },
+  { from: 1500,  to: 1900, w: 0.25 },
+  { from: 1900,  to: 2025, w: 0.30 },
+];
+
+const CATS = [
+  { key: 'tout',     label: 'Tout',                  emoji: '🌍' },
+  { key: 'france',   label: 'Histoire de France',    emoji: '🇫🇷' },
+  { key: 'monde',    label: 'Monde',                 emoji: '🗺️' },
+  { key: 'sciences', label: 'Sciences & inventions', emoji: '🔬' },
+  { key: 'arts',     label: 'Arts & culture',        emoji: '🎨' },
+];
+
+const AXIS_TICKS = [
+  { y: -3000, k: 'edge' }, { y: -2500, k: 'min' }, { y: -2000, k: 'maj' }, { y: -1500, k: 'min' }, { y: -1000, k: 'maj' }, { y: -500, k: 'min' },
+  { y: 0, k: 'edge' }, { y: 250, k: 'min' }, { y: 500, k: 'maj' }, { y: 750, k: 'min' }, { y: 1000, k: 'maj' }, { y: 1250, k: 'min' },
+  { y: 1500, k: 'edge' }, { y: 1550, k: 'min' }, { y: 1600, k: 'maj' }, { y: 1650, k: 'min' }, { y: 1700, k: 'maj' }, { y: 1750, k: 'min' }, { y: 1800, k: 'maj' }, { y: 1850, k: 'min' },
+  { y: 1900, k: 'edge' }, { y: 1925, k: 'min' }, { y: 1950, k: 'maj' }, { y: 1975, k: 'min' }, { y: 2000, k: 'maj' }, { y: 2025, k: 'edge' },
+];
+const AXIS_LABELS = [
+  { y: -3000, row: 1, align: 'left' }, { y: -2000, row: 2, lg: true }, { y: -1000, row: 1 }, { y: 0, row: 2 },
+  { y: 500, row: 1, lg: true }, { y: 1000, row: 2 }, { y: 1500, row: 1 }, { y: 1700, row: 2 },
+  { y: 1900, row: 1 }, { y: 1950, row: 2 }, { y: 2000, row: 1, lg: true }, { y: 2025, row: 2, align: 'right' },
+];
+
+/* ================= État central ================= */
+const state = {
+  screen: 'home',     // 'home' | 'game' | 'end'
+  cat: 'tout',
+  events: [],         // les 10 événements de la partie
+  round: 0,           // 0..9
+  phase: 'guess',     // 'guess' | 'reveal'
+  guessYear: 1000,
+  touched: false,     // le joueur a interagi avec la frise
+  results: [],
+  total: 0,
+  isRecord: false,
+};
+
+/* ================= Utilitaires ================= */
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const fmtNum = (n) => n.toLocaleString('fr-FR');
+
+function formatYear(y) {
+  if (y < 0) return fmtNum(-y) + ' av. J.-C.';
+  return String(y);
+}
+function formatYearHTML(y) {
+  if (y < 0) return fmtNum(-y) + ' <small>av. J.-C.</small>';
+  return String(y);
+}
+function formatEcart(e) {
+  if (e === 0) return 'Année exacte !';
+  return e === 1 ? '1 an' : fmtNum(e) + ' ans';
+}
+
+function yearToFrac(y) {
+  y = clamp(y, MIN_YEAR, MAX_YEAR);
+  let acc = 0;
+  for (const s of SEGMENTS) {
+    if (y <= s.to) return acc + s.w * (y - s.from) / (s.to - s.from);
+    acc += s.w;
+  }
+  return 1;
+}
+function fracToYear(f) {
+  f = clamp(f, 0, 1);
+  let acc = 0;
+  for (let i = 0; i < SEGMENTS.length; i++) {
+    const s = SEGMENTS[i];
+    if (f <= acc + s.w || i === SEGMENTS.length - 1) {
+      return clamp(Math.round(s.from + (f - acc) / s.w * (s.to - s.from)), MIN_YEAR, MAX_YEAR);
+    }
+    acc += s.w;
+  }
+  return MAX_YEAR;
+}
+
+/* Tolérance : 5 % de l'ancienneté de l'événement, minimum 5 ans */
+function tolerance(annee) {
+  return Math.max(5, (MAX_YEAR - annee) * 0.05);
+}
+function scoreFor(annee, guess) {
+  const ecart = Math.abs(guess - annee);
+  return Math.min(MAX_SCORE, Math.round(MAX_SCORE * Math.exp(-ecart / tolerance(annee))));
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function pickEvents(cat) {
+  const pool = EVENTS.filter((e) => cat === 'tout' || e.cat === cat);
+  return shuffle(pool).slice(0, ROUNDS);
+}
+
+function catLabel(key) {
+  const c = CATS.find((c) => c.key === key);
+  return c ? c.label : key;
+}
+
+/* ================= Persistance ================= */
+function loadStore() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (raw && typeof raw === 'object' && raw.best && typeof raw.best === 'object') {
+      return { best: raw.best, games: Number(raw.games) || 0 };
+    }
+  } catch (e) { /* stockage indisponible */ }
+  return { best: {}, games: 0 };
+}
+function saveStore(s) {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) { /* ignore */ }
+}
+
+/* ================= Navigation entre écrans ================= */
+function showScreen(name) {
+  state.screen = name;
+  for (const s of document.querySelectorAll('.screen')) {
+    s.classList.toggle('active', s.id === 'screen-' + name);
+  }
+}
+
+/* ================= Écran d'accueil ================= */
+function renderHome() {
+  const store = loadStore();
+  const list = $('cat-list');
+  list.innerHTML = '';
+  for (const c of CATS) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'cat-pill' + (state.cat === c.key ? ' sel' : '');
+    b.textContent = c.emoji + ' ' + c.label;
+    b.addEventListener('click', () => { state.cat = c.key; renderHome(); });
+    list.appendChild(b);
+  }
+  const best = store.best[state.cat];
+  $('home-best').innerHTML = best
+    ? 'Meilleur score (' + catLabel(state.cat) + ') : <b>' + fmtNum(best) + ' / 10 000</b>'
+    : 'Aucun score enregistré dans « ' + catLabel(state.cat) + ' » — à toi de jouer !';
+  $('home-stats').textContent = store.games === 0
+    ? EVENTS.length + ' événements à dater'
+    : store.games + (store.games > 1 ? ' parties jouées · ' : ' partie jouée · ') + EVENTS.length + ' événements';
+}
+
+/* ================= Frise : construction ================= */
+function buildTimeline() {
+  const track = $('tl-track');
+  for (const t of AXIS_TICKS) {
+    const d = document.createElement('div');
+    d.className = 'tick ' + t.k;
+    d.style.left = (yearToFrac(t.y) * 100) + '%';
+    track.appendChild(d);
+  }
+  for (const l of AXIS_LABELS) {
+    const d = document.createElement('div');
+    d.className = 'tl-label r' + l.row + (l.lg ? ' lg' : '') +
+      (l.align === 'left' ? ' a-left' : l.align === 'right' ? ' a-right' : '');
+    d.textContent = l.y < 0 ? '-' + (-l.y) : String(l.y);
+    d.style.left = (yearToFrac(l.y) * 100) + '%';
+    track.appendChild(d);
+  }
+}
+
+/* ================= Frise : interaction ================= */
+function setGuess(year, opts) {
+  state.guessYear = clamp(Math.round(year), MIN_YEAR, MAX_YEAR);
+  $('tl-cursor').style.left = (yearToFrac(state.guessYear) * 100) + '%';
+  $('year-display').innerHTML = formatYearHTML(state.guessYear);
+  if (!opts || !opts.silent) markTouched();
+}
+function markTouched() {
+  if (state.phase !== 'guess' || state.touched) return;
+  state.touched = true;
+  $('btn-validate').disabled = false;
+  const fb = $('feedback');
+  const hint = fb.querySelector('.fb-hint');
+  if (hint) { hint.style.animation = 'none'; hint.style.transition = 'opacity 0.3s ease'; hint.style.opacity = '0.25'; }
+}
+
+function bindTimeline() {
+  const track = $('tl-track');
+  let dragging = false;
+
+  const yearFromEvent = (e) => {
+    const r = track.getBoundingClientRect();
+    return fracToYear((e.clientX - r.left) / r.width);
+  };
+
+  track.addEventListener('pointerdown', (e) => {
+    if (state.phase !== 'guess') return;
+    dragging = true;
+    try { track.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+    document.body.classList.add('dragging');
+    setGuess(yearFromEvent(e));
+    e.preventDefault();
+  });
+  track.addEventListener('pointermove', (e) => {
+    if (!dragging || state.phase !== 'guess') return;
+    setGuess(yearFromEvent(e));
+  });
+  const stop = () => { dragging = false; document.body.classList.remove('dragging'); };
+  track.addEventListener('pointerup', stop);
+  track.addEventListener('pointercancel', stop);
+
+  bindStepper($('btn-minus'), -1);
+  bindStepper($('btn-plus'), 1);
+
+  document.addEventListener('keydown', (e) => {
+    if (state.screen !== 'game' || state.phase !== 'guess') return;
+    const step = e.shiftKey ? 10 : 1;
+    if (e.key === 'ArrowLeft') { setGuess(state.guessYear - step); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { setGuess(state.guessYear + step); e.preventDefault(); }
+    else if (e.key === 'Enter' && state.touched) { validate(); }
+  });
+}
+
+function bindStepper(btn, delta) {
+  let holdTimer = null, holdInterval = null;
+  const doStep = () => {
+    if (state.phase !== 'guess') return;
+    setGuess(state.guessYear + delta);
+  };
+  const stopHold = () => { clearTimeout(holdTimer); clearInterval(holdInterval); holdTimer = holdInterval = null; };
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    doStep();
+    stopHold();
+    holdTimer = setTimeout(() => { holdInterval = setInterval(doStep, 70); }, 420);
+  });
+  for (const evt of ['pointerup', 'pointercancel', 'pointerleave']) {
+    btn.addEventListener(evt, stopHold);
+  }
+  /* filets de sécurité : la répétition ne doit jamais survivre à la fin du geste */
+  document.addEventListener('pointerup', stopHold);
+  window.addEventListener('blur', stopHold);
+}
+
+/* ================= Partie ================= */
+function startGame(cat) {
+  state.cat = cat;
+  state.events = pickEvents(cat);
+  state.round = 0;
+  state.results = [];
+  state.total = 0;
+  state.isRecord = false;
+  $('hud-score').textContent = '0 pt';
+  showScreen('game');
+  setupRound();
+}
+
+function setupRound() {
+  state.phase = 'guess';
+  state.touched = false;
+  const ev = state.events[state.round];
+
+  $('hud-round').textContent = 'Manche ' + (state.round + 1) + '/' + ROUNDS;
+  $('progress-fill').style.width = (state.round / ROUNDS * 100) + '%';
+
+  const card = $('event-card');
+  card.classList.remove('in');
+  void card.offsetWidth; /* relance l'animation */
+  $('card-emoji').textContent = ev.emoji;
+  $('card-title').textContent = ev.titre;
+  $('card-desc').textContent = ev.desc;
+  $('card-cat').textContent = catLabel(ev.cat);
+  card.classList.add('in');
+
+  $('feedback').innerHTML = '<p class="fb-hint">👆 Glisse le curseur doré sur la frise</p>';
+
+  $('screen-game').classList.remove('revealed');
+  $('timeline-wrap').classList.remove('locked');
+  $('tl-link').classList.remove('show');
+  $('tl-link').style.width = '0%';
+  $('tl-truth').classList.remove('show', 'edge-left', 'edge-right');
+
+  $('btn-validate').classList.remove('hidden');
+  $('btn-validate').disabled = true;
+  $('btn-next').classList.add('hidden');
+  $('btn-minus').disabled = false;
+  $('btn-plus').disabled = false;
+
+  setGuess(fracToYear(0.5), { silent: true });
+}
+
+function validate() {
+  if (state.phase !== 'guess' || !state.touched) return;
+  state.phase = 'reveal';
+
+  const ev = state.events[state.round];
+  const guess = state.guessYear;
+  const ecart = Math.abs(guess - ev.annee);
+  const pts = scoreFor(ev.annee, guess);
+  const prevTotal = state.total;
+  state.total += pts;
+  state.results.push({ ev, guess, ecart, pts });
+
+  /* verrouille la frise */
+  $('screen-game').classList.add('revealed');
+  $('timeline-wrap').classList.add('locked');
+  $('btn-minus').disabled = true;
+  $('btn-plus').disabled = true;
+
+  /* marqueur de la vraie date */
+  const fT = yearToFrac(ev.annee);
+  const fG = yearToFrac(guess);
+  const truth = $('tl-truth');
+  truth.style.left = (fT * 100) + '%';
+  $('tl-truth-flag').textContent = formatYear(ev.annee);
+  truth.classList.toggle('edge-left', fT < 0.07);
+  truth.classList.toggle('edge-right', fT > 0.93);
+  void truth.offsetWidth;
+  truth.classList.add('show');
+
+  /* trait reliant réponse et vraie date */
+  const link = $('tl-link');
+  const left = Math.min(fT, fG) * 100;
+  const width = Math.abs(fT - fG) * 100;
+  link.style.left = left + '%';
+  link.style.width = width + '%';
+  link.style.transformOrigin = fG <= fT ? 'left center' : 'right center';
+  void link.offsetWidth;
+  link.classList.add('show');
+
+  /* panneau de résultat */
+  const fb = $('feedback');
+  const perfect = ecart === 0;
+  fb.innerHTML =
+    '<div class="reveal">' +
+      '<div class="reveal-label">Vraie date</div>' +
+      '<div class="reveal-truth">' + formatYearHTML(ev.annee) + '</div>' +
+      '<div class="reveal-ecart">' + (perfect ? '🎯 Année exacte !' : 'Écart : ' + formatEcart(ecart)) + '</div>' +
+      '<div class="reveal-points" id="reveal-points">+ 0 pt</div>' +
+    '</div>';
+  countUp($('reveal-points'), 0, pts, 700, (v) => '+ ' + fmtNum(v) + (v > 1 ? ' pts' : ' pt'));
+  countUp($('hud-score'), prevTotal, state.total, 700, (v) => fmtNum(v) + (v > 1 ? ' pts' : ' pt'));
+  $('progress-fill').style.width = ((state.round + 1) / ROUNDS * 100) + '%';
+
+  if (perfect) showPerfect();
+
+  const last = state.round === ROUNDS - 1;
+  const next = $('btn-next');
+  next.textContent = last ? 'Voir les résultats' : 'Manche suivante';
+  $('btn-validate').classList.add('hidden');
+  next.classList.remove('hidden');
+}
+
+function nextRound() {
+  if (state.phase !== 'reveal') return; /* évite le double-clic */
+  if (state.round < ROUNDS - 1) {
+    state.round++;
+    setupRound();
+  } else {
+    endGame();
+  }
+}
+
+/* ================= Écran de fin ================= */
+function endGame() {
+  const store = loadStore();
+  const prevBest = store.best[state.cat] || 0;
+  state.isRecord = state.total > prevBest;
+  if (state.isRecord) store.best[state.cat] = state.total;
+  store.games++;
+  saveStore(store);
+
+  showScreen('end');
+  countUp($('end-total'), 0, state.total, 1200, fmtNum);
+  $('end-record').classList.toggle('hidden', !state.isRecord);
+  $('end-best').textContent = 'Meilleur score (' + catLabel(state.cat) + ') : ' +
+    fmtNum(Math.max(prevBest, state.total)) + ' / 10 000';
+
+  const recap = $('recap');
+  recap.innerHTML = '';
+  for (const r of state.results) {
+    const li = document.createElement('li');
+    const perfect = r.ecart === 0;
+    li.innerHTML =
+      '<span class="r-emoji">' + r.ev.emoji + '</span>' +
+      '<div class="r-main">' +
+        '<div class="r-title"></div>' +
+        '<div class="r-sub">Ta réponse : <b>' + formatYear(r.guess) + '</b> · Vraie date : <b>' + formatYear(r.ev.annee) + '</b></div>' +
+      '</div>' +
+      '<div class="r-right">' +
+        '<div class="r-pts">' + fmtNum(r.pts) + '</div>' +
+        '<div class="r-ecart' + (perfect ? ' perfect' : '') + '">' + (perfect ? 'Exact 🎯' : '± ' + formatEcart(r.ecart)) + '</div>' +
+      '</div>';
+    li.querySelector('.r-title').textContent = r.ev.titre;
+    recap.appendChild(li);
+  }
+  recap.scrollTop = 0;
+}
+
+function shareScore() {
+  const url = 'https://teiki5320.github.io/erea/';
+  const text = "J'ai fait " + fmtNum(state.total) + ' / 10 000 sur Erea 🏛️ Tu peux faire mieux ? ' + url;
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => { /* partage annulé */ });
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text)
+      .then(() => showToast('Score copié, colle-le où tu veux ! 📋'))
+      .catch(() => showToast(text));
+  } else {
+    showToast(text);
+  }
+}
+
+/* ================= Effets ================= */
+function countUp(el, from, to, ms, fmtFn) {
+  if (!el) return;
+  const t0 = performance.now();
+  function step(t) {
+    const k = Math.min(1, (t - t0) / ms);
+    const eased = 1 - Math.pow(1 - k, 3);
+    const v = Math.round(from + (to - from) * eased);
+    el.textContent = fmtFn ? fmtFn(v) : String(v);
+    if (k < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+let toastTimer = null;
+function showToast(msg) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function showPerfect() {
+  const p = $('perfect');
+  p.classList.remove('hidden');
+  const flash = p.querySelector('.flash');
+  const txt = p.querySelector('.perfect-text');
+  flash.style.animation = 'none';
+  txt.style.animation = 'none';
+  void p.offsetWidth;
+  flash.style.animation = '';
+  txt.style.animation = '';
+  setTimeout(() => p.classList.add('hidden'), 1350);
+  spawnConfetti();
+}
+
+function spawnConfetti() {
+  const colors = ['#f0d38a', '#d9b45b', '#f4eedd', '#a8842f', '#ffffff'];
+  const n = 56;
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = (Math.random() * 100) + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.setProperty('--dx', ((Math.random() - 0.5) * 30).toFixed(1) + 'vw');
+    c.style.setProperty('--rot', Math.floor(360 + Math.random() * 540) + 'deg');
+    c.style.animationDuration = (1.1 + Math.random() * 1.2).toFixed(2) + 's';
+    c.style.animationDelay = (Math.random() * 0.25).toFixed(2) + 's';
+    c.addEventListener('animationend', () => c.remove());
+    document.body.appendChild(c);
+  }
+}
+
+/* ================= Initialisation ================= */
+function init() {
+  buildTimeline();
+  bindTimeline();
+  renderHome();
+  showScreen('home');
+
+  $('btn-play').addEventListener('click', () => startGame(state.cat));
+  $('btn-validate').addEventListener('click', validate);
+  $('btn-next').addEventListener('click', nextRound);
+  $('btn-replay').addEventListener('click', () => startGame(state.cat));
+  $('btn-share').addEventListener('click', shareScore);
+  $('btn-home').addEventListener('click', () => { renderHome(); showScreen('home'); });
+}
+
+init();
+</script>
+</body>
+</html>
