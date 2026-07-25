@@ -7,14 +7,16 @@
 ## Règles
 
 - Une partie = **10 manches**, maximum **1 000 points** par manche (10 000 au total).
-- La frise utilise une **échelle non linéaire** : les époques récentes sont dilatées pour rester précises (le XXᵉ siècle occupe 30 % de la frise, l'Antiquité 20 %).
-- La tolérance dépend de l'ancienneté : se tromper de 30 ans sur un événement antique est excusable, pas sur un événement du XXᵉ siècle (`tolérance = max(5 ans, 5 % de l'ancienneté)`).
+- On choisit l'année en **faisant défiler la frise** comme un ruban (avec inertie), aiguille fixe au centre ; boutons − / + pour l'ajustement fin.
+- La frise utilise une **échelle non linéaire** : les époques récentes sont dilatées pour rester précises (le XXᵉ siècle occupe 30 % de la frise, l'Antiquité 20 %). Bandes de couleur par époque (Antiquité, Moyen Âge, moderne, contemporaine) et **événements-repères** (🔺 pyramides, ⛵ 1492, 🗼 1889…) pour se situer.
+- La tolérance dépend de l'ancienneté (`tolérance = max(5 ans, 5 % de l'ancienneté)`) et de la **difficulté** : Facile 😌 (tolérance ×2,2), Normal 🙂, Difficile 🔥 (tolérance réduite, pas de repères).
 - Réponse exacte = 1 000 points + **PERFECT** 🎯
+- **Niveaux** : chaque partie rapporte de l'XP (bonus en Difficile) ; on grimpe d'Apprenti du temps 🐣 à Maître du temps 👑.
 - 4 catégories : Histoire de France, Monde, Sciences & inventions, Arts & culture — ou tout mélangé.
-- 160 événements vérifiés, meilleur score sauvegardé par catégorie (localStorage).
+- 160 événements vérifiés, records par catégorie × difficulté (localStorage).
 
 ## Technique
 
 - 100 % statique : un seul fichier `index.html` (HTML + CSS + JS vanilla), aucune dépendance hors Google Fonts.
-- Mobile-first : drag tactile sur la frise (Pointer Events), boutons − / + pour l'ajustement fin, clavier (← → et Entrée) sur ordinateur.
-- `index-v1.html` est le fichier de travail versionné ; `index.html` en est la copie déployée sur GitHub Pages. Les évolutions futures incrémenteront la version (`index-v2.html`, etc.).
+- Mobile-first : ruban tactile (Pointer Events + inertie), molette sur ordinateur, clavier (← → et Entrée), bouton ✕ avec confirmation pour quitter une partie.
+- `index-v2.html` est la version courante ; `index.html` en est la copie déployée sur GitHub Pages. `index-v1.html` (design sombre « musée », curseur sur frise fixe) est conservé comme archive. Les évolutions futures incrémenteront la version (`index-v3.html`, etc.).
