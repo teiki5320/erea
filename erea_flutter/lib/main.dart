@@ -31,11 +31,23 @@ class EreaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Palette explicite : fromSeed recalculait les teintes et rendait le
+    // bouton principal marron au lieu du corail du design system.
     final base = ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: EreaColors.coral,
-        surface: EreaColors.bg1,
+      colorScheme: const ColorScheme.light(
+        primary: EreaColors.coral,
+        onPrimary: Colors.white,
+        secondary: EreaColors.sky,
+        onSecondary: Colors.white,
+        secondaryContainer: Color(0xFFE0EEFF),
+        onSecondaryContainer: EreaColors.ink,
+        tertiary: EreaColors.mint,
+        onTertiary: Colors.white,
+        surface: Colors.white,
+        onSurface: EreaColors.ink,
+        onSurfaceVariant: EreaColors.inkSoft,
+        outline: Color(0xFFD8DDEF),
       ),
       scaffoldBackgroundColor: EreaColors.bg1,
     );
