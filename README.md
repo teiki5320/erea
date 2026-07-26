@@ -28,10 +28,14 @@
 
 ## Contenu
 
-471 événements vérifiés (dates contrôlées par relecture croisée) répartis en 5 catégories : Histoire de France, Monde, Sciences & inventions, Arts & culture, **Sport & vie quotidienne** (la catégorie où les enfants battent leurs parents), équilibrés sur les époques et ouverts au-delà de l'Occident.
+613 événements vérifiés (dates contrôlées par relecture croisée) répartis en 5 catégories — Histoire de France, Monde, Sciences & inventions, Arts & culture, **Sport & vie quotidienne** — et 5 **packs à thèmes** jouables : 🏺 Égypte & Orient ancien, 🏯 Asie, 🌎 Les Amériques, 🚀 Conquête de l'espace, 🌍 Afrique & Moyen-Orient.
+
+## Application Flutter
+
+Le dossier [`erea_flutter/`](erea_flutter/) contient le portage Flutter en cours : la même base d'événements, les règles du jeu portées à l'identique (`SPEC.md`) et les premiers écrans. Le prototype web reste la référence jouable.
 
 ## Technique
 
 - 100 % statique : un seul fichier `index.html` (HTML + CSS + JS vanilla), aucune dépendance hors Google Fonts. Sons en WebAudio (aucun fichier audio), lecture des cartes à voix haute (API Web Speech).
 - Mobile-first : Pointer Events avec inertie et réglage fin, `prefers-reduced-motion` respecté, ARIA (curseur d'année pilotable au lecteur d'écran), zoom autorisé.
-- `index-v7.html` est la version courante ; `index.html` en est la copie déployée sur GitHub Pages. Les fichiers `index-v1` à `index-v6` sont les versions précédentes, conservées en archive. Les évolutions futures incrémenteront la version (`index-v8.html`, etc.).
+- `index-v8.html` est la version courante ; `index.html` en est la copie déployée sur GitHub Pages. Les fichiers `index-v1` à `index-v7` sont les versions précédentes, conservées en archive. Les évolutions futures incrémenteront la version (`index-v9.html`, etc.).
