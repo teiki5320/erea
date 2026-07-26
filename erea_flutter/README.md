@@ -5,16 +5,38 @@ web à la racine du dépôt reste la référence jouable).
 
 ## Démarrer
 
-Ce dossier contient le code Dart et les assets, mais pas les dossiers de
-plateformes (générés par Flutter). Sur ta machine :
+Les dossiers de plateformes (`ios/`, `android/`, `web/`) sont versionnés :
+ils portent la configuration de publication (bundle id, team, orientations,
+icônes). Rien à générer.
 
 ```bash
 cd erea_flutter
-flutter create . --org com.teiki.erea --platforms=android,ios,web
 flutter pub get
-flutter analyze   # le code a été écrit hors SDK : corriger ce qu'il signale
+flutter analyze
+flutter test
 flutter run
 ```
+
+## Publier sur iOS
+
+```bash
+flutter build ipa --release   # -> build/ios/ipa/erea.ipa
+```
+
+L'archive est signée pour l'App Store avec la team `K597U7X3FZ`.
+L'upload se fait ensuite via Transporter ou l'Organizer de Xcode.
+
+| Réglage | Valeur |
+|---|---|
+| Bundle identifier | `com.teiki.erea` |
+| Nom affiché | Erea |
+| Version / build | `0.1.0` / `1` (depuis `pubspec.yaml`) |
+| Langue | français (`CFBundleDevelopmentRegion` + `CFBundleLocalizations`) |
+| Orientations | portrait sur iPhone, portrait + paysage sur iPad |
+| Chiffrement | `ITSAppUsesNonExemptEncryption = false` |
+
+Pour monter le numéro de build, incrémenter le suffixe de `version:` dans
+`pubspec.yaml` (`0.1.0+2`, etc.) : le projet Xcode le suit automatiquement.
 
 ## Ce qui est déjà implémenté
 
@@ -30,6 +52,10 @@ flutter run
 - **`lib/game/game_controller.dart`** — la machine à états d'une partie.
 - **`lib/ui/`** — accueil « Focus », écran de jeu avec le **ruban défilant**
   (CustomPainter + inertie), révélation animée, écran de fin.
+- **`assets/fonts/`** — Baloo 2 et Nunito embarquées : aucun accès réseau
+  dans l'app, elle fonctionne entièrement hors ligne.
+- **`test/`** — 49 tests (règles du jeu, intégrité des 613 événements,
+  interface jusqu'à une partie complète).
 
 ## À porter ensuite (décrit dans SPEC.md)
 
