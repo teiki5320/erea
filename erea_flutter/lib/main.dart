@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'data/events_repository.dart';
 import 'data/store.dart';
@@ -43,13 +42,41 @@ class EreaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Erea',
       debugShowCheckedModeBanner: false,
-      theme: base.copyWith(
-        textTheme: GoogleFonts.nunitoTextTheme(base.textTheme).apply(
-          bodyColor: EreaColors.ink,
-          displayColor: EreaColors.ink,
-        ),
-      ),
+      theme: base.copyWith(textTheme: _textTheme(base.textTheme)),
       home: HomeScreen(repo: repo, store: store),
     );
   }
+}
+
+/// Typographie du design system : Baloo 2 pour les titres (display /
+/// headline / title), Nunito pour tout le reste. Les polices sont
+/// embarquées dans `assets/fonts` — aucun téléchargement au lancement.
+TextTheme _textTheme(TextTheme base) {
+  TextStyle? titre(TextStyle? s) => s?.copyWith(
+        fontFamily: 'Baloo2',
+        fontWeight: FontWeight.w700,
+        color: EreaColors.ink,
+      );
+  TextStyle? corps(TextStyle? s) => s?.copyWith(
+        fontFamily: 'Nunito',
+        color: EreaColors.ink,
+      );
+
+  return base.copyWith(
+    displayLarge: titre(base.displayLarge),
+    displayMedium: titre(base.displayMedium),
+    displaySmall: titre(base.displaySmall),
+    headlineLarge: titre(base.headlineLarge),
+    headlineMedium: titre(base.headlineMedium),
+    headlineSmall: titre(base.headlineSmall),
+    titleLarge: titre(base.titleLarge),
+    titleMedium: titre(base.titleMedium),
+    titleSmall: titre(base.titleSmall),
+    bodyLarge: corps(base.bodyLarge),
+    bodyMedium: corps(base.bodyMedium),
+    bodySmall: corps(base.bodySmall),
+    labelLarge: corps(base.labelLarge),
+    labelMedium: corps(base.labelMedium),
+    labelSmall: corps(base.labelSmall),
+  );
 }
