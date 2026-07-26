@@ -88,9 +88,8 @@ class _TapeWidgetState extends State<TapeWidget>
       _ticker?.stop();
       return;
     }
-    final next = (widget.frac - _velocity * frames / tapeW)
-        .clamp(0.0, 1.0)
-        .toDouble();
+    final next =
+        (widget.frac - _velocity * frames / tapeW).clamp(0.0, 1.0).toDouble();
     widget.onFracChanged(next);
     if (next <= 0.0 || next >= 1.0) _ticker?.stop();
   }
@@ -106,16 +105,16 @@ class _TapeWidgetState extends State<TapeWidget>
     // Réglage fin : quand le doigt ralentit, le ruban défile moins vite.
     final speed = dx.abs(); // px par événement
     final factor = (0.4 + speed * 0.12).clamp(0.4, 1.0).toDouble();
-    final next =
-        (widget.frac - dx * factor / tapeW).clamp(0.0, 1.0).toDouble();
+    final next = (widget.frac - dx * factor / tapeW).clamp(0.0, 1.0).toDouble();
     widget.onFracChanged(next);
   }
 
   void _onDragEnd(DragEndDetails details) {
     if (widget.locked) return;
     // Vitesse en px/s -> px/frame (60 fps), bornée comme sur le web.
-    _velocity =
-        (details.velocity.pixelsPerSecond.dx / 60).clamp(-48.0, 48.0).toDouble();
+    _velocity = (details.velocity.pixelsPerSecond.dx / 60)
+        .clamp(-48.0, 48.0)
+        .toDouble();
     if (_velocity.abs() > 0.8 && !(_ticker?.isActive ?? true)) {
       _lastTick = Duration.zero;
       _ticker?.start();
@@ -260,12 +259,42 @@ class _TapePainter extends CustomPainter {
 
     // Années écrites sous la ligne
     const bigLabels = [
-      -3000, -2000, -1000, 0, 500, 1000, 1500, 1600, 1700, 1800,
-      1900, 1950, 2000, 2025,
+      -3000,
+      -2000,
+      -1000,
+      0,
+      500,
+      1000,
+      1500,
+      1600,
+      1700,
+      1800,
+      1900,
+      1950,
+      2000,
+      2025,
     ];
     const smallLabels = [
-      -2500, -1500, -500, 250, 750, 1250, 1550, 1650, 1750, 1850,
-      1910, 1920, 1930, 1940, 1960, 1970, 1980, 1990, 2010, 2020,
+      -2500,
+      -1500,
+      -500,
+      250,
+      750,
+      1250,
+      1550,
+      1650,
+      1750,
+      1850,
+      1910,
+      1920,
+      1930,
+      1940,
+      1960,
+      1970,
+      1980,
+      1990,
+      2010,
+      2020,
     ];
     void drawLabel(int year, double fontSize, Color color) {
       final tp = TextPainter(

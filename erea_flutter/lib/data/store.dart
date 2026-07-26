@@ -51,8 +51,7 @@ class Store {
   int get dailyStreak => _prefs.getInt('daily.streak') ?? 0;
   int get dailyLastScore => _prefs.getInt('daily.lastScore') ?? 0;
 
-  static String dayKey(DateTime d) =>
-      '${d.year.toString().padLeft(4, '0')}-'
+  static String dayKey(DateTime d) => '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
