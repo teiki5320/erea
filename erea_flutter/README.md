@@ -38,6 +38,13 @@ L'upload se fait ensuite via Transporter ou l'Organizer de Xcode.
 Pour monter le numéro de build, incrémenter le suffixe de `version:` dans
 `pubspec.yaml` (`0.1.0+2`, etc.) : le projet Xcode le suit automatiquement.
 
+### Xcode Cloud
+
+Le dépôt est prêt pour Xcode Cloud : `ios/ci_scripts/ci_post_clone.sh`
+installe Flutter, génère `Generated.xcconfig` et fait le `pod install`
+avant l'archive. Un workflow qui surveille `main` peut donc builder et
+livrer sur TestFlight sans Mac.
+
 ## Ce qui est déjà implémenté
 
 - **`assets/events.json`** — toute la base d'événements vérifiée (dates,
