@@ -34,4 +34,4 @@
 
 - 100 % statique : un seul fichier `index.html` (HTML + CSS + JS vanilla), aucune dépendance hors Google Fonts. Sons en WebAudio (aucun fichier audio), lecture des cartes à voix haute (API Web Speech).
 - Mobile-first : Pointer Events avec inertie et réglage fin, `prefers-reduced-motion` respecté, ARIA (curseur d'année pilotable au lecteur d'écran), zoom autorisé.
-- `index-v5.html` est la version courante ; `index.html` en est la copie déployée sur GitHub Pages. Les fichiers `index-v1` à `index-v4` sont les versions précédentes, conservées en archive. Les évolutions futures incrémenteront la version (`index-v6.html`, etc.).
+- `index-v6.html` est la version courante ; `index.html` en est la copie déployée sur GitHub Pages. Les fichiers `index-v1` à `index-v5` sont les versions précédentes, conservées en archive. Les évolutions futures incrémenteront la version (`index-v7.html`, etc.).
