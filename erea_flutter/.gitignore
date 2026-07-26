@@ -7,13 +7,32 @@ build/
 .metadata
 pubspec.lock
 
-# Plateformes générées par `flutter create .` (regénérables)
-android/
-ios/
-web/
+# Plateformes non utilisées (regénérables par `flutter create .`)
 macos/
 linux/
 windows/
+
+# iOS — le projet Xcode est versionné (bundle id, team, orientations,
+# icônes) ; seuls les artefacts locaux sont ignorés.
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/ephemeral/
+ios/Pods/
+ios/.symlinks/
+ios/Podfile.lock
+**/xcuserdata/
+*.mobileprovision
+
+# Android — idem : la config Gradle est versionnée, pas les artefacts
+# ni les secrets de signature.
+android/.gradle/
+android/local.properties
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/key.properties
+*.jks
+*.keystore
 
 # IDE
 .idea/
