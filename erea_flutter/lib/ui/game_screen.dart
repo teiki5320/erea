@@ -31,6 +31,7 @@ class _GameScreenState extends State<GameScreen>
   double _travelEnd = 0;
   RoundResult? _lastResult;
   bool _showEnd = false;
+  bool _finishing = false;
 
   GameController get game => widget.controller;
 
@@ -72,8 +73,11 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Future<void> _next() async {
+    if (_finishing) return; // évite le double-tap (XP doublée sinon)
     final continues = game.next();
     if (!continues) {
+      _finishing = true;
+      setState(() => _showEnd = true);
       // Fin de partie : XP, records, anti-répétition.
       await widget.store.incGames();
       await widget.store.markSeen(game.results.map((r) => r.event.id));
@@ -84,7 +88,7 @@ class _GameScreenState extends State<GameScreen>
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
       }
       await widget.store.addXp(xpGain(game.total, game.diff.xpMult));
-      setState(() => _showEnd = true);
+      if (mounted) setState(() {});
     }
   }
 
@@ -108,14 +112,26 @@ class _GameScreenState extends State<GameScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListenableBuilder(
-          listenable: game,
-          builder: (context, _) {
-            if (_showEnd) return _buildEnd(context);
-            return _buildGame(context);
-          },
+    return PopScope(
+      // Le retour système passe par la confirmation, comme le bouton ✕.
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_showEnd) {
+          Navigator.of(context).pop(false);
+        } else {
+          _confirmQuit(context);
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: ListenableBuilder(
+            listenable: game,
+            builder: (context, _) {
+              if (_showEnd) return _buildEnd(context);
+              return _buildGame(context);
+            },
+          ),
         ),
       ),
     );
@@ -206,6 +222,8 @@ class _GameScreenState extends State<GameScreen>
         TapeWidget(
           frac: game.frac,
           locked: !guessing,
+          showAnchors: game.diff.anchors,
+          maskYear: game.current.annee,
           onFracChanged: (f) => game.setFrac(f),
         ),
         // Explications sous la frise
@@ -311,13 +329,15 @@ class _GameScreenState extends State<GameScreen>
           padding: const EdgeInsets.all(16),
           child: Row(
             children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Rejouer'),
+              if (game.mode != GameMode.daily) ...[
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('Rejouer'),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
+                const SizedBox(width: 10),
+              ],
               Expanded(
                 child: OutlinedButton(
                   onPressed: () => Navigator.of(context).pop(false),

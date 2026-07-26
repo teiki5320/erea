@@ -22,30 +22,37 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   String catKey = 'tout';
   Difficulty diff = Difficulty.normal;
+  bool _navigating = false;
 
   Future<void> _play(GameMode mode) async {
-    final controller = GameController(widget.repo);
-    controller.catKey = catKey;
-    controller.diff = diff;
-    final ok = controller.start(mode, seenIds: widget.store.seen);
-    if (!ok) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Pas assez d’événements dans cette sélection !')),
+    if (_navigating) return; // évite le double-tap qui empile deux écrans
+    _navigating = true;
+    try {
+      var again = true;
+      while (again && mounted) {
+        final controller = GameController(widget.repo);
+        controller.catKey = catKey;
+        controller.diff = diff;
+        final ok = controller.start(mode, seenIds: widget.store.seen);
+        if (!ok) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content:
+                    Text('Pas assez d’événements dans cette sélection !')),
+          );
+          return;
+        }
+        final replay = await Navigator.of(context).push<bool>(
+          MaterialPageRoute(
+            builder: (_) =>
+                GameScreen(controller: controller, store: widget.store),
+          ),
         );
+        again = replay == true;
       }
-      return;
-    }
-    if (!mounted) return;
-    final replay = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => GameScreen(controller: controller, store: widget.store),
-      ),
-    );
-    if (mounted) setState(() {});
-    if (replay == true) {
-      await _play(mode);
+    } finally {
+      _navigating = false;
+      if (mounted) setState(() {});
     }
   }
 

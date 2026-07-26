@@ -1,7 +1,31 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../core/timeline_scale.dart';
+
+/// Événements-repères affichés sur le ruban pour aider à se situer
+/// (masqués en Difficile, et jamais celui qui donnerait la réponse).
+class TapeAnchor {
+  final int year;
+  final String emoji;
+  const TapeAnchor(this.year, this.emoji);
+}
+
+const List<TapeAnchor> tapeAnchors = [
+  TapeAnchor(-2560, '🔺'),
+  TapeAnchor(-776, '🏅'),
+  TapeAnchor(-52, '⚔️'),
+  TapeAnchor(476, '🏚️'),
+  TapeAnchor(800, '👑'),
+  TapeAnchor(1431, '🔥'),
+  TapeAnchor(1492, '⛵'),
+  TapeAnchor(1789, '🇫🇷'),
+  TapeAnchor(1889, '🗼'),
+  TapeAnchor(1914, '🪖'),
+  TapeAnchor(1969, '🌕'),
+];
 
 /// Le ruban chronologique défilant : bandes d'époques, graduations,
 /// années, aiguille fixe au centre. Se pilote par glissement avec inertie.
@@ -12,6 +36,8 @@ class TapeWidget extends StatefulWidget {
     required this.onFracChanged,
     this.locked = false,
     this.height = 150,
+    this.showAnchors = true,
+    this.maskYear,
   });
 
   /// Position [0, 1] du ruban (l'année sous l'aiguille).
@@ -19,6 +45,12 @@ class TapeWidget extends StatefulWidget {
   final ValueChanged<double> onFracChanged;
   final bool locked;
   final double height;
+
+  /// Affiche les événements-repères (désactivé en Difficile).
+  final bool showAnchors;
+
+  /// Année dont le repère doit être caché (la réponse de la manche).
+  final int? maskYear;
 
   @override
   State<TapeWidget> createState() => _TapeWidgetState();
@@ -29,7 +61,8 @@ class _TapeWidgetState extends State<TapeWidget>
   static const double tapeW = 3200;
 
   Ticker? _ticker;
-  double _velocity = 0; // px par frame (~16 ms)
+  double _velocity = 0; // px par frame de référence (16,7 ms)
+  Duration _lastTick = Duration.zero;
 
   @override
   void initState() {
@@ -44,12 +77,20 @@ class _TapeWidgetState extends State<TapeWidget>
   }
 
   void _onTick(Duration elapsed) {
-    _velocity *= 0.94;
+    // Amortissement basé sur le temps réel : même glisse à 60 ou 120 Hz.
+    final dtMs = _lastTick == Duration.zero
+        ? 16.7
+        : (elapsed - _lastTick).inMicroseconds / 1000.0;
+    _lastTick = elapsed;
+    final frames = dtMs / 16.7;
+    _velocity *= math.pow(0.94, frames).toDouble();
     if (_velocity.abs() < 0.3 || widget.locked) {
       _ticker?.stop();
       return;
     }
-    final next = (widget.frac - _velocity / tapeW).clamp(0.0, 1.0).toDouble();
+    final next = (widget.frac - _velocity * frames / tapeW)
+        .clamp(0.0, 1.0)
+        .toDouble();
     widget.onFracChanged(next);
     if (next <= 0.0 || next >= 1.0) _ticker?.stop();
   }
@@ -76,6 +117,7 @@ class _TapeWidgetState extends State<TapeWidget>
     _velocity =
         (details.velocity.pixelsPerSecond.dx / 60).clamp(-48.0, 48.0).toDouble();
     if (_velocity.abs() > 0.8 && !(_ticker?.isActive ?? true)) {
+      _lastTick = Duration.zero;
       _ticker?.start();
     }
   }
@@ -93,7 +135,12 @@ class _TapeWidgetState extends State<TapeWidget>
             Positioned.fill(
               child: ClipRect(
                 child: CustomPaint(
-                  painter: _TapePainter(frac: widget.frac, tapeW: tapeW),
+                  painter: _TapePainter(
+                    frac: widget.frac,
+                    tapeW: tapeW,
+                    showAnchors: widget.showAnchors,
+                    maskYear: widget.maskYear,
+                  ),
                 ),
               ),
             ),
@@ -120,10 +167,17 @@ class _TapeWidgetState extends State<TapeWidget>
 }
 
 class _TapePainter extends CustomPainter {
-  _TapePainter({required this.frac, required this.tapeW});
+  _TapePainter({
+    required this.frac,
+    required this.tapeW,
+    required this.showAnchors,
+    required this.maskYear,
+  });
 
   final double frac;
   final double tapeW;
+  final bool showAnchors;
+  final int? maskYear;
 
   static const _eraColors = [
     Color(0xFFDCF7F0), // Antiquité
@@ -235,10 +289,36 @@ class _TapePainter extends CustomPainter {
       drawLabel(y, 10.5, const Color(0xFF5F6890));
     }
 
+    // Événements-repères en quinconce au-dessus de la ligne
+    if (showAnchors) {
+      for (var i = 0; i < tapeAnchors.length; i++) {
+        final a = tapeAnchors[i];
+        if (a.year == maskYear) continue; // ne pas révéler la réponse
+        final top = i.isEven ? size.height * 0.06 : size.height * 0.26;
+        final tp = TextPainter(
+          text: TextSpan(
+            text: '${a.emoji}\n${a.year < 0 ? '-${-a.year}' : a.year}',
+            style: const TextStyle(
+              fontSize: 12,
+              height: 1.2,
+              color: Color(0xFF5F6890),
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          textAlign: TextAlign.center,
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(canvas, Offset(_px(a.year) - tp.width / 2, top));
+      }
+    }
+
     canvas.restore();
   }
 
   @override
   bool shouldRepaint(_TapePainter oldDelegate) =>
-      oldDelegate.frac != frac || oldDelegate.tapeW != tapeW;
+      oldDelegate.frac != frac ||
+      oldDelegate.tapeW != tapeW ||
+      oldDelegate.showAnchors != showAnchors ||
+      oldDelegate.maskYear != maskYear;
 }

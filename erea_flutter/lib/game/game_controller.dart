@@ -96,13 +96,13 @@ class GameController extends ChangeNotifier {
     final pts = base * multiplier;
     final result = RoundResult(ev, guessYear, ecart, base, pts);
     results.add(result);
-    total += pts;
     notifyListeners();
     return result;
   }
 
   void finishReveal() {
     phase = GamePhase.reveal;
+    if (results.isNotEmpty) total += results.last.pts;
     notifyListeners();
   }
 

@@ -59,6 +59,7 @@ class Store {
   bool get dailyPlayedToday => dailyLast == dayKey(DateTime.now());
 
   Future<void> recordDaily(int total) async {
+    if (dailyPlayedToday) return; // déjà enregistré aujourd'hui
     final now = DateTime.now();
     final yesterday = dayKey(now.subtract(const Duration(days: 1)));
     final streak = dailyLast == yesterday ? dailyStreak + 1 : 1;
