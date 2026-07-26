@@ -138,12 +138,11 @@ class _GameScreenState extends State<GameScreen>
   }
 
   Widget _buildGame(BuildContext context) {
-    final ev = game.current;
     final guessing = game.phase == GamePhase.guess;
     final revealed = game.phase == GamePhase.reveal;
     return Column(
       children: [
-        // En-tête : quitter, manche, score
+        // En-tête : quitter, manche, score (toujours en haut)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           child: Row(
@@ -163,6 +162,46 @@ class _GameScreenState extends State<GameScreen>
             ],
           ),
         ),
+        // Corps : centré s'il y a de la place, défilant sur petit écran.
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: _gameBody(context, guessing, revealed),
+              ),
+            ),
+          ),
+        ),
+        // Bouton principal (toujours en bas)
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: guessing
+                  ? (game.touched ? _validate : null)
+                  : (revealed ? _next : null),
+              child: Text(
+                guessing
+                    ? 'Valider ✓'
+                    : game.isLastRound
+                        ? 'Voir mes résultats 🏁'
+                        : 'Manche suivante →',
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _gameBody(BuildContext context, bool guessing, bool revealed) {
+    final ev = game.current;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
         // Carte événement
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -189,7 +228,7 @@ class _GameScreenState extends State<GameScreen>
             ),
           ),
         ),
-        const Spacer(),
+        const SizedBox(height: 12),
         // Bulle de l'année + ajustement fin
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -237,25 +276,6 @@ class _GameScreenState extends State<GameScreen>
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
-        ),
-        // Bouton principal
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: guessing
-                  ? (game.touched ? _validate : null)
-                  : (revealed ? _next : null),
-              child: Text(
-                guessing
-                    ? 'Valider ✓'
-                    : game.isLastRound
-                        ? 'Voir mes résultats 🏁'
-                        : 'Manche suivante →',
-              ),
-            ),
-          ),
         ),
       ],
     );
@@ -356,7 +376,8 @@ class _GameScreenState extends State<GameScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Quitter la partie ?'),
-        content: const Text('Ton score de cette partie ne sera pas enregistré.'),
+        content:
+            const Text('Ton score de cette partie ne sera pas enregistré.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),

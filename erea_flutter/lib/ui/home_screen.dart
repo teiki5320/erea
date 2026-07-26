@@ -27,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _play(GameMode mode) async {
     if (_navigating) return; // évite le double-tap qui empile deux écrans
     _navigating = true;
+    // Capturés avant le premier `await` : les rejouer via `context` après un
+    // gap asynchrone déclencherait use_build_context_synchronously.
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     try {
       var again = true;
       while (again && mounted) {
@@ -35,14 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
         controller.diff = diff;
         final ok = controller.start(mode, seenIds: widget.store.seen);
         if (!ok) {
-          ScaffoldMessenger.of(context).showSnackBar(
+          messenger.showSnackBar(
             const SnackBar(
-                content:
-                    Text('Pas assez d’événements dans cette sélection !')),
+                content: Text('Pas assez d’événements dans cette sélection !')),
           );
           return;
         }
-        final replay = await Navigator.of(context).push<bool>(
+        final replay = await navigator.push<bool>(
           MaterialPageRoute(
             builder: (_) =>
                 GameScreen(controller: controller, store: widget.store),
@@ -135,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Barre haute : marque + niveau
+              // Barre haute : marque + niveau (toujours en haut)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -144,68 +147,90 @@ class _HomeScreenState extends State<HomeScreen> {
                   Chip(label: Text('${title.emoji} Niv. ${level.level}')),
                 ],
               ),
-              const Spacer(),
-              // Héros
-              const Center(child: Text('🦉', style: TextStyle(fontSize: 64))),
-              const SizedBox(height: 10),
-              Center(
-                child: Text(
-                  'Prêt à voyager dans le temps ?',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: () => _play(GameMode.classique),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Jouer !'),
-              ),
-              const SizedBox(height: 12),
-              // Réglages
-              Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: Text(playable.emoji,
-                          style: const TextStyle(fontSize: 20)),
-                      title: const Text('Catégorie'),
-                      trailing: Text(playable.label),
-                      onTap: _pickCategory,
+              // Le corps est centré quand il y a de la place et défile
+              // quand l'écran est petit (iPhone SE) — jamais de débordement.
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints:
+                          BoxConstraints(minHeight: constraints.maxHeight),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Héros
+                          const Center(
+                              child:
+                                  Text('🦉', style: TextStyle(fontSize: 64))),
+                          const SizedBox(height: 10),
+                          Center(
+                            child: Text(
+                              'Prêt à voyager dans le temps ?',
+                              style: Theme.of(context).textTheme.headlineSmall,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: () => _play(GameMode.classique),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            child: const Text('Jouer !'),
+                          ),
+                          const SizedBox(height: 12),
+                          // Réglages
+                          Card(
+                            child: Column(
+                              children: [
+                                ListTile(
+                                  leading: Text(playable.emoji,
+                                      style: const TextStyle(fontSize: 20)),
+                                  title: const Text('Catégorie'),
+                                  trailing: Text(playable.label),
+                                  onTap: _pickCategory,
+                                ),
+                                const Divider(height: 1),
+                                ListTile(
+                                  leading: Text(diff.emoji,
+                                      style: const TextStyle(fontSize: 20)),
+                                  title: const Text('Difficulté'),
+                                  trailing: Text(diff.label),
+                                  onTap: _pickDifficulty,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          // Défi du jour
+                          Card(
+                            child: ListTile(
+                              leading: const Text('🗓️',
+                                  style: TextStyle(fontSize: 22)),
+                              title: const Text('Défi du jour'),
+                              subtitle: Text(
+                                dailyDone
+                                    ? 'Déjà joué : ${widget.store.dailyLastScore} pts'
+                                        '${widget.store.dailyStreak > 0 ? ' · 🔥 ${widget.store.dailyStreak} j' : ''}'
+                                    : 'Les 10 mêmes événements pour tout le monde',
+                              ),
+                              trailing: FilledButton.tonal(
+                                onPressed: dailyDone
+                                    ? null
+                                    : () => _play(GameMode.daily),
+                                child: Text(dailyDone ? 'Demain !' : 'Jouer'),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: Text(diff.emoji,
-                          style: const TextStyle(fontSize: 20)),
-                      title: const Text('Difficulté'),
-                      trailing: Text(diff.label),
-                      onTap: _pickDifficulty,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Défi du jour
-              Card(
-                child: ListTile(
-                  leading: const Text('🗓️', style: TextStyle(fontSize: 22)),
-                  title: const Text('Défi du jour'),
-                  subtitle: Text(
-                    dailyDone
-                        ? 'Déjà joué : ${widget.store.dailyLastScore} pts'
-                            '${widget.store.dailyStreak > 0 ? ' · 🔥 ${widget.store.dailyStreak} j' : ''}'
-                        : 'Les 10 mêmes événements pour tout le monde',
-                  ),
-                  trailing: FilledButton.tonal(
-                    onPressed:
-                        dailyDone ? null : () => _play(GameMode.daily),
-                    child: Text(dailyDone ? 'Demain !' : 'Jouer'),
                   ),
                 ),
               ),
-              const Spacer(),
+              // Pied de page : taille de la base + record (toujours en bas)
               Center(
                 child: Text(
                   '${widget.repo.events.length} événements'
