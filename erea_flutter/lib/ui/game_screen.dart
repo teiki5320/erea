@@ -238,17 +238,29 @@ class _GameScreenState extends State<GameScreen>
                   guessing ? () => game.setYear(game.guessYear - 1) : null,
               icon: const Icon(Icons.remove_circle_outline),
             ),
-            Column(
-              children: [
-                Text(
-                  formatYear(game.guessYear),
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                Text(
-                  eraFor(game.guessYear).name.toUpperCase(),
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
+            // Les libellés longs (« 3000 av. J.-C. », « ÉPOQUE
+            // CONTEMPORAINE ») débordaient la ligne sur un iPhone standard :
+            // ils se réduisent maintenant au lieu d'être rognés.
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      formatYear(game.guessYear),
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      eraFor(game.guessYear).name.toUpperCase(),
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ],
+              ),
             ),
             IconButton(
               onPressed:

@@ -101,14 +101,34 @@ void main() {
     expect(enabled.onPressed, isNotNull);
   });
 
-  testWidgets('l’écran de jeu ne déborde pas sur un iPhone SE',
-      (tester) async {
+  testWidgets('l’écran de jeu ne déborde pas sur un iPhone SE', (tester) async {
     await pumpApp(tester, size: _iphoneSE);
     await tester.tap(find.text('Jouer !'));
     await tester.pumpAndSettle();
     // pumpAndSettle relance le rendu : un débordement lèverait ici.
     expect(tester.takeException(), isNull);
     expect(find.text('Valider ✓'), findsOneWidget);
+  });
+
+  testWidgets('les années les plus longues ne débordent pas de la ligne',
+      (tester) async {
+    // « 3000 av. J.-C. » + « ÉPOQUE CONTEMPORAINE » sont les libellés les
+    // plus larges ; ils apparaissent notamment pendant l'animation de
+    // révélation, quand le ruban voyage vers la vraie date.
+    await pumpApp(tester, size: _iphoneSE);
+    await tester.tap(find.text('Jouer !'));
+    await tester.pumpAndSettle();
+    final tape = tester.widget<TapeWidget>(find.byType(TapeWidget));
+
+    tape.onFracChanged(0.0); // -3000
+    await tester.pumpAndSettle();
+    expect(find.text('3000 av. J.-C.'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    tape.onFracChanged(1.0); // 2025, époque contemporaine
+    await tester.pumpAndSettle();
+    expect(find.text('2025'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('la police embarquée Nunito est bien appliquée au thème',
