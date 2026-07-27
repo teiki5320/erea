@@ -347,9 +347,9 @@ class _TapePainter extends CustomPainter {
           final n = math.max(1, bandW ~/ 640);
           final spacing = bandW / n;
           // Les personnages avancent réellement : ils traversent leur
-          // époque au fil du défilement (22 % de la vitesse du ruban)
+          // époque au fil du défilement (50 % de la vitesse du ruban)
           // et reviennent par l'autre bord.
-          final drift = frac * tapeW * 0.22;
+          final drift = frac * tapeW * 0.50;
           final sprTop = bandBottom - sprH - 2 + sprH * spec.dyFrac;
           for (var k = 0; k < n; k++) {
             final off = (spacing * (k + 0.5) - drift) % bandW;
