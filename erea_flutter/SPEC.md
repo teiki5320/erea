@@ -11,7 +11,7 @@ Tableau d'objets :
 | Champ | Type | Description |
 |---|---|---|
 | `id` | int | Identifiant stable (ne jamais renuméroter). |
-| `annee` | int | Année de l'événement, négatif = av. J.-C. Bornes : −3000 à 2025. |
+| `annee` | int | Année de l'événement, négatif = av. J.-C. Bornes : −3000 à 2025 (la frise, elle, va jusqu'à 2026 = maxYear). |
 | `titre` | string | Court, sans l'année ni indice de date. |
 | `desc` | string | Une ligne, SANS indice chronologique (affichée pendant la manche). |
 | `cat` | string | `france` \| `monde` \| `sciences` \| `arts` \| `quotidien`. |
@@ -30,7 +30,7 @@ Position ∈ [0, 1] sur le ruban, par segments (part de largeur) :
 - −3000 → 0 : 20 %
 - 0 → 1500 : 25 %
 - 1500 → 1900 : 25 %
-- 1900 → 2025 : 30 %
+- 1900 → 2026 : 30 %
 
 Interpolation linéaire à l'intérieur d'un segment (`lib/core/timeline_scale.dart`).
 Ruban virtuel de 3 200 px, aiguille fixe au centre, inertie au relâcher
@@ -44,7 +44,7 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 
 ## 3. Barème
 
-- `tolérance = clamp(5 % × (2025 − année), 5, 45) × multiplicateur de difficulté`
+- `tolérance = clamp(5 % × (maxYear − année), 5, 45)  — maxYear = 2026 × multiplicateur de difficulté`
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
 - **0 point si `écart ≥ 200 × multiplicateur de difficulté`**
 - Difficultés : Facile ×2,2 (repères affichés, événements niveau ≤ 2, XP ×0,8) ·

@@ -125,9 +125,9 @@ void main() {
     expect(find.text('3000 av. J.-C.'), findsOneWidget);
     expect(tester.takeException(), isNull);
 
-    tape.onFracChanged(1.0); // 2025, époque contemporaine
+    tape.onFracChanged(1.0); // 2026, époque contemporaine
     await tester.pumpAndSettle();
-    expect(find.text('2025'), findsOneWidget);
+    expect(find.text('2026'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

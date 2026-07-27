@@ -98,6 +98,11 @@ class _TapeWidgetState extends State<TapeWidget>
   double _velocity = 0; // px par frame de référence (16,7 ms)
   Duration _lastTick = Duration.zero;
 
+  // Sens de marche des personnages : on avance dans le temps → ils vont
+  // vers la gauche avec le paysage ; on recule → ils font demi-tour.
+  double _lastFrac = -1;
+  bool _facingLeft = false;
+
   @override
   void initState() {
     super.initState();
@@ -160,6 +165,10 @@ class _TapeWidgetState extends State<TapeWidget>
 
   @override
   Widget build(BuildContext context) {
+    if (_lastFrac >= 0 && (widget.frac - _lastFrac).abs() > 1e-7) {
+      _facingLeft = widget.frac > _lastFrac;
+    }
+    _lastFrac = widget.frac;
     return GestureDetector(
       onHorizontalDragStart: _onDragStart,
       onHorizontalDragUpdate: _onDragUpdate,
@@ -176,6 +185,7 @@ class _TapeWidgetState extends State<TapeWidget>
                     tapeW: tapeW,
                     frise: _friseImage,
                     artVersion: _artVersion,
+                    facingLeft: _facingLeft,
                   ),
                 ),
               ),
@@ -208,10 +218,15 @@ class _TapePainter extends CustomPainter {
     required this.tapeW,
     this.frise,
     this.artVersion = 0,
+    this.facingLeft = false,
   });
 
   final double frac;
   final double tapeW;
+
+  /// Sens de marche des personnages (dessinés vers la droite dans les
+  /// planches ; miroir quand on avance dans le temps).
+  final bool facingLeft;
 
   /// Planche des panneaux d'époques (6 cellules côte à côte), ou null
   /// tant qu'elle n'est pas décodée.
@@ -330,15 +345,22 @@ class _TapePainter extends CustomPainter {
             final x = left + spacing * (k + 0.5) - sprW / 2;
             var fi = 0;
             if (frames > 1) {
-              fi = ((frac * tapeW / 12).floor() + k) % frames;
+              fi = ((frac * tapeW / 24).floor() + k) % frames;
               if (fi < 0) fi += frames;
             }
-            canvas.drawImageRect(
-              trav,
-              Rect.fromLTWH(fi * fw, 0, fw, fh),
-              Rect.fromLTWH(x, bandBottom - sprH - 2, sprW, sprH),
-              imgPaint,
-            );
+            final srcR = Rect.fromLTWH(fi * fw, 0, fw, fh);
+            final dstR =
+                Rect.fromLTWH(x, bandBottom - sprH - 2, sprW, sprH);
+            if (facingLeft) {
+              canvas.save();
+              canvas.translate(x + sprW / 2, 0);
+              canvas.scale(-1, 1);
+              canvas.translate(-(x + sprW / 2), 0);
+              canvas.drawImageRect(trav, srcR, dstR, imgPaint);
+              canvas.restore();
+            } else {
+              canvas.drawImageRect(trav, srcR, dstR, imgPaint);
+            }
           }
         }
         canvas.restore();
@@ -450,7 +472,7 @@ class _TapePainter extends CustomPainter {
       1900,
       1950,
       2000,
-      2025,
+      2026,
     ];
     const smallLabels = [
       -2500,
@@ -506,5 +528,6 @@ class _TapePainter extends CustomPainter {
       oldDelegate.frac != frac ||
       oldDelegate.tapeW != tapeW ||
       oldDelegate.frise != frise ||
-      oldDelegate.artVersion != artVersion;
+      oldDelegate.artVersion != artVersion ||
+      oldDelegate.facingLeft != facingLeft;
 }

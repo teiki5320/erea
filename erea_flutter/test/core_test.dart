@@ -18,7 +18,7 @@ void main() {
     });
 
     test('yearToFrac et fracToYear sont réciproques', () {
-      for (final y in [-3000, -480, 0, 800, 1492, 1789, 1900, 1969, 2025]) {
+      for (final y in [-3000, -480, 0, 800, 1492, 1789, 1900, 1969, 2026]) {
         expect(fracToYear(yearToFrac(y)), y, reason: 'année $y');
       }
     });
@@ -31,7 +31,7 @@ void main() {
     });
 
     test('le XXe siècle occupe 30 % de la frise (précision voulue)', () {
-      expect(yearToFrac(2025) - yearToFrac(1900), closeTo(0.30, 1e-9));
+      expect(yearToFrac(2026) - yearToFrac(1900), closeTo(0.30, 1e-9));
     });
 
     test('formatYear ajoute « av. J.-C. » pour les années négatives', () {
@@ -68,8 +68,8 @@ void main() {
     test('la tolérance vaut 5 % de l’ancienneté, bornée à [5, 45]', () {
       expect(tolerance(2025, Difficulty.normal), 5.0); // plancher
       expect(tolerance(1000, Difficulty.normal), 45.0); // plafond
-      expect(tolerance(1800, Difficulty.normal), closeTo(11.25, 1e-9));
-      expect(tolerance(1800, Difficulty.facile), closeTo(11.25 * 2.2, 1e-9));
+      expect(tolerance(1800, Difficulty.normal), closeTo(11.3, 1e-9));
+      expect(tolerance(1800, Difficulty.facile), closeTo(11.3 * 2.2, 1e-9));
     });
 
     test('le score décroît avec l’écart et jamais en négatif', () {

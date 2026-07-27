@@ -3,7 +3,7 @@
 library;
 
 const int minYear = -3000;
-const int maxYear = 2025;
+const int maxYear = 2026;
 
 class Segment {
   final int from;
@@ -16,7 +16,7 @@ const List<Segment> segments = [
   Segment(-3000, 0, 0.20),
   Segment(0, 1500, 0.25),
   Segment(1500, 1900, 0.25),
-  Segment(1900, 2025, 0.30),
+  Segment(1900, 2026, 0.30),
 ];
 
 /// Année → position [0, 1] sur la frise.
@@ -67,7 +67,7 @@ const List<Era> eras = [
   Era(-500, 476, 'Antiquité'),
   Era(476, 1492, 'Moyen Âge'),
   Era(1492, 1789, 'Époque moderne'),
-  Era(1789, 2025, 'Époque contemporaine'),
+  Era(1789, 2026, 'Époque contemporaine'),
 ];
 
 Era eraFor(int y) {
