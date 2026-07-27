@@ -27,28 +27,6 @@ Future<ui.Image?> _loadFrise() {
   }();
 }
 
-/// Événements-repères affichés sur le ruban pour aider à se situer
-/// (masqués en Difficile, et jamais celui qui donnerait la réponse).
-class TapeAnchor {
-  final int year;
-  final String emoji;
-  const TapeAnchor(this.year, this.emoji);
-}
-
-const List<TapeAnchor> tapeAnchors = [
-  TapeAnchor(-2560, '🔺'),
-  TapeAnchor(-776, '🏅'),
-  TapeAnchor(-52, '⚔️'),
-  TapeAnchor(476, '🏚️'),
-  TapeAnchor(800, '👑'),
-  TapeAnchor(1431, '🔥'),
-  TapeAnchor(1492, '⛵'),
-  TapeAnchor(1789, '🇫🇷'),
-  TapeAnchor(1889, '🗼'),
-  TapeAnchor(1914, '🪖'),
-  TapeAnchor(1969, '🌕'),
-];
-
 /// Le ruban chronologique défilant : bandes d'époques, graduations,
 /// années, aiguille fixe au centre. Se pilote par glissement avec inertie.
 class TapeWidget extends StatefulWidget {
@@ -58,8 +36,6 @@ class TapeWidget extends StatefulWidget {
     required this.onFracChanged,
     this.locked = false,
     this.height = 150,
-    this.showAnchors = true,
-    this.maskYear,
   });
 
   /// Position [0, 1] du ruban (l'année sous l'aiguille).
@@ -67,12 +43,6 @@ class TapeWidget extends StatefulWidget {
   final ValueChanged<double> onFracChanged;
   final bool locked;
   final double height;
-
-  /// Affiche les événements-repères (désactivé en Difficile).
-  final bool showAnchors;
-
-  /// Année dont le repère doit être caché (la réponse de la manche).
-  final int? maskYear;
 
   @override
   State<TapeWidget> createState() => _TapeWidgetState();
@@ -164,8 +134,6 @@ class _TapeWidgetState extends State<TapeWidget>
                   painter: _TapePainter(
                     frac: widget.frac,
                     tapeW: tapeW,
-                    showAnchors: widget.showAnchors,
-                    maskYear: widget.maskYear,
                     frise: _friseImage,
                   ),
                 ),
@@ -197,15 +165,11 @@ class _TapePainter extends CustomPainter {
   _TapePainter({
     required this.frac,
     required this.tapeW,
-    required this.showAnchors,
-    required this.maskYear,
     this.frise,
   });
 
   final double frac;
   final double tapeW;
-  final bool showAnchors;
-  final int? maskYear;
 
   /// Planche des panneaux d'époques (6 cellules côte à côte), ou null
   /// tant qu'elle n'est pas décodée.
@@ -428,43 +392,6 @@ class _TapePainter extends CustomPainter {
       drawLabel(y, smallFont, const Color(0xFF5F6890));
     }
 
-    // Événements-repères en quinconce au-dessus de la ligne
-    if (showAnchors) {
-      for (var i = 0; i < tapeAnchors.length; i++) {
-        final a = tapeAnchors[i];
-        if (a.year == maskYear) continue; // ne pas révéler la réponse
-        final top = i.isEven ? size.height * 0.06 : size.height * 0.26;
-        final tp = TextPainter(
-          text: TextSpan(
-            text: '${a.emoji}\n${a.year < 0 ? '-${-a.year}' : a.year}',
-            style: const TextStyle(
-              fontSize: 12,
-              height: 1.2,
-              color: Color(0xFF5F6890),
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          textAlign: TextAlign.center,
-          textDirection: TextDirection.ltr,
-        )..layout();
-        final at = Offset(_px(a.year) - tp.width / 2, top);
-        // Pastille claire pour rester lisible sur les panneaux illustrés.
-        canvas.drawRRect(
-          RRect.fromRectAndRadius(
-            Rect.fromLTWH(
-              at.dx - 4,
-              at.dy - 2,
-              tp.width + 8,
-              tp.height + 4,
-            ),
-            const Radius.circular(8),
-          ),
-          Paint()..color = const Color(0xCCFFFFFF),
-        );
-        tp.paint(canvas, at);
-      }
-    }
-
     canvas.restore();
   }
 
@@ -472,7 +399,5 @@ class _TapePainter extends CustomPainter {
   bool shouldRepaint(_TapePainter oldDelegate) =>
       oldDelegate.frac != frac ||
       oldDelegate.tapeW != tapeW ||
-      oldDelegate.showAnchors != showAnchors ||
-      oldDelegate.maskYear != maskYear ||
       oldDelegate.frise != frise;
 }
