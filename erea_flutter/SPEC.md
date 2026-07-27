@@ -19,6 +19,8 @@ Tableau d'objets :
 | `niveau` | int | 1 = connu des enfants · 2 = culture générale · 3 = pointu. |
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
 | `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. |
+| `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. ~50 faits vérifiés par continent (ids 617+), réservés aux futures catégories géographiques. |
+| `pays` | string? | Pays en français, renseigné avec `continent` (sauf faits transnationaux). Alimentera la future « roue des pays ». |
 
 Toutes les dates ont été vérifiées par relecture croisée (génération puis
 vérification adversariale). Ne pas modifier une date sans re-vérification.

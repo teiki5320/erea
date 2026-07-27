@@ -41,6 +41,27 @@ void main() {
     }
   });
 
+  test('les continents sont connus et chaque continent porte 45+ faits', () {
+    const knownContinents = {
+      'afrique', 'ameriques', 'asie', 'europe', 'oceanie',
+    };
+    final parContinent = <String, int>{};
+    for (final e in repo.events) {
+      if (e.continent == null) continue;
+      expect(knownContinents, contains(e.continent), reason: '#${e.id}');
+      // `pays` absent = fait transnational (câble atlantique, schisme…) ;
+      // s'il est présent il n'est jamais vide (roue des pays).
+      if (e.pays != null) {
+        expect(e.pays!.trim(), isNotEmpty, reason: '#${e.id} « ${e.titre} »');
+      }
+      parContinent[e.continent!] = (parContinent[e.continent!] ?? 0) + 1;
+    }
+    expect(parContinent.keys, containsAll(knownContinents));
+    for (final entry in parContinent.entries) {
+      expect(entry.value, greaterThanOrEqualTo(45), reason: entry.key);
+    }
+  });
+
   test('les niveaux valent 1, 2 ou 3', () {
     for (final e in repo.events) {
       expect(e.niveau, inInclusiveRange(1, 3), reason: '#${e.id}');

@@ -330,11 +330,20 @@ class _HomeScreenState extends State<HomeScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Barre du haut : profil + série
+                        // Barre du haut : profil + série. Le profil peut
+                        // se réduire (texte agrandi par accessibilité) sans
+                        // jamais déborder ; à taille normale, rendu identique.
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _profilePill(level, title),
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: _profilePill(level, title),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
                             _streakPill(),
                           ],
                         ),
@@ -528,15 +537,22 @@ class _HomeScreenState extends State<HomeScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text(
-                '🗓️ Défi du jour',
-                style: TextStyle(
-                  fontFamily: 'Baloo2',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 18,
-                  color: Colors.white,
+              const Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '🗓️ Défi du jour',
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 '${now.day} ${_mois[now.month - 1]}',
                 style: const TextStyle(

@@ -22,6 +22,13 @@ class HistEvent {
   /// Pack à thème optionnel : egypte | asie | ameriques | espace | afrique.
   final String? pack;
 
+  /// Continent optionnel : afrique | ameriques | asie | europe | oceanie.
+  /// Réservé aux futures catégories géographiques (roue des pays).
+  final String? continent;
+
+  /// Pays de l'événement (libellé français), renseigné avec [continent].
+  final String? pays;
+
   const HistEvent({
     required this.id,
     required this.annee,
@@ -32,6 +39,8 @@ class HistEvent {
     required this.niveau,
     required this.fun,
     this.pack,
+    this.continent,
+    this.pays,
   });
 
   factory HistEvent.fromJson(Map<String, dynamic> json) {
@@ -45,6 +54,8 @@ class HistEvent {
       niveau: (json['niveau'] as int?) ?? 2,
       fun: (json['fun'] as String?) ?? '',
       pack: json['pack'] as String?,
+      continent: json['continent'] as String?,
+      pays: json['pays'] as String?,
     );
   }
 }
