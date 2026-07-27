@@ -255,10 +255,15 @@ class _TapePainter extends CustomPainter {
         final paint = Paint()..filterQuality = FilterQuality.medium;
         canvas.save();
         canvas.clipRRect(rrect);
-        var flip = false;
-        for (var x = left; x < right; x += tileW, flip = !flip) {
+        // Parallaxe : le décor glisse à 55 % de la vitesse des
+        // graduations (il « recule » de 45 % du défilement), la période
+        // de deux tuiles (endroit + miroir) garde le motif continu.
+        final period = tileW * 2;
+        final phase = (frac * tapeW * 0.45) % period;
+        var j = 0;
+        for (var x = left + phase - period; x < right; x += tileW, j++) {
           final dst = Rect.fromLTWH(x, 0, tileW, bandBottom);
-          if (flip) {
+          if (j.isOdd) {
             canvas.save();
             canvas.translate(x + tileW / 2, 0);
             canvas.scale(-1, 1);
@@ -350,11 +355,11 @@ class _TapePainter extends CustomPainter {
         final x = _px(y);
         double h;
         if (y % p.major == 0) {
-          h = 20;
+          h = size.height * 0.133;
         } else if (y % p.medium == 0) {
-          h = 14;
+          h = size.height * 0.093;
         } else {
-          h = 8;
+          h = size.height * 0.053;
         }
         canvas.drawLine(Offset(x, baseY - h), Offset(x, baseY), tickPaint);
       }
@@ -414,11 +419,13 @@ class _TapePainter extends CustomPainter {
       tp.paint(canvas, Offset(_px(year) - tp.width / 2, baseY + 6));
     }
 
+    final bigFont = (size.height * 0.087).clamp(13.0, 18.0).toDouble();
+    final smallFont = (size.height * 0.07).clamp(10.5, 14.5).toDouble();
     for (final y in bigLabels) {
-      drawLabel(y, 13, const Color(0xFF35406B));
+      drawLabel(y, bigFont, const Color(0xFF35406B));
     }
     for (final y in smallLabels) {
-      drawLabel(y, 10.5, const Color(0xFF5F6890));
+      drawLabel(y, smallFont, const Color(0xFF5F6890));
     }
 
     // Événements-repères en quinconce au-dessus de la ligne

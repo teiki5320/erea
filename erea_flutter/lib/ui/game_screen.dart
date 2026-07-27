@@ -269,12 +269,15 @@ class _GameScreenState extends State<GameScreen>
             ),
           ],
         ),
-        // La frise-ruban
+        // La frise-ruban, la plus grande possible : ~30 % de l'écran
         TapeWidget(
           frac: game.frac,
           locked: !guessing,
           showAnchors: game.diff.anchors,
           maskYear: game.current.annee,
+          height: (MediaQuery.of(context).size.height * 0.30)
+              .clamp(190.0, 360.0)
+              .toDouble(),
           onFracChanged: (f) => game.setFrac(f),
         ),
         // Explications sous la frise
