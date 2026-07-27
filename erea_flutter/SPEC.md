@@ -44,7 +44,7 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 
 ## 3. Barème
 
-- `tolérance = clamp(5 % × (maxYear − année), 5, 45)  — maxYear = 2026 × multiplicateur de difficulté`
+- `tolérance = clamp(5 % × (maxYear − année), 5, 45) × multiplicateur de difficulté` — avec `maxYear = 2026`
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
 - **0 point si `écart ≥ 200 × multiplicateur de difficulté`**
 - Difficultés : Facile ×2,2 (repères affichés, événements niveau ≤ 2, XP ×0,8) ·
