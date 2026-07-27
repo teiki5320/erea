@@ -51,13 +51,17 @@ class Store {
   int get dailyStreak => _prefs.getInt('daily.streak') ?? 0;
   int get dailyLastScore => _prefs.getInt('daily.lastScore') ?? 0;
 
+  /// Qualité des 10 manches du dernier défi joué : 'g' ≥ 700 points de
+  /// base, 'y' ≥ 350, 'r' sinon (les barres du panneau d'accueil).
+  String get dailyGrid => _prefs.getString('daily.grid') ?? '';
+
   static String dayKey(DateTime d) => '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
   bool get dailyPlayedToday => dailyLast == dayKey(DateTime.now());
 
-  Future<void> recordDaily(int total) async {
+  Future<void> recordDaily(int total, {String grid = ''}) async {
     if (dailyPlayedToday) return; // déjà enregistré aujourd'hui
     final now = DateTime.now();
     final yesterday = dayKey(now.subtract(const Duration(days: 1)));
@@ -65,5 +69,6 @@ class Store {
     await _prefs.setString('daily.last', dayKey(now));
     await _prefs.setInt('daily.streak', streak);
     await _prefs.setInt('daily.lastScore', total);
+    await _prefs.setString('daily.grid', grid);
   }
 }

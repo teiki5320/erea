@@ -39,6 +39,15 @@ class GameController extends ChangeNotifier {
   final List<RoundResult> results = [];
   int total = 0;
 
+  /// Combo : réponses consécutives ≥ 700 points de base. À partir de 3,
+  /// la manche suivante rapporte 1,5× d'XP. Le multiplicateur ne touche
+  /// JAMAIS les points (barème et records intacts, cf. SPEC §10) : il
+  /// s'accumule dans [comboBonusXp], crédité en fin de partie.
+  int combo = 0;
+  bool boostNext = false;
+  bool lastBoosted = false;
+  int comboBonusXp = 0;
+
   HistEvent get current => events[round % events.length];
   bool get isLastRound => round == rounds - 1;
   int get multiplier => roundMultiplier(round, chrono: mode == GameMode.chrono);
@@ -50,6 +59,10 @@ class GameController extends ChangeNotifier {
     round = 0;
     results.clear();
     total = 0;
+    combo = 0;
+    boostNext = false;
+    lastBoosted = false;
+    comboBonusXp = 0;
     if (m == GameMode.daily) {
       final rng = mulberry32(dailySeed(DateTime.now()));
       events = repo.pick('tout', Difficulty.normal, rng: rng);
@@ -96,6 +109,12 @@ class GameController extends ChangeNotifier {
     final pts = base * multiplier;
     final result = RoundResult(ev, guessYear, ecart, base, pts);
     results.add(result);
+    lastBoosted = boostNext;
+    if (lastBoosted) {
+      comboBonusXp += (pts / 10 * diff.xpMult * 0.5).round();
+    }
+    combo = base >= 700 ? combo + 1 : 0;
+    boostNext = combo >= 3;
     notifyListeners();
     return result;
   }

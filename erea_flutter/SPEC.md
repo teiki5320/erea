@@ -109,3 +109,29 @@ Grille emoji par manche sur les points de base : 🎯 =1000 · 🟩 ≥700 ·
 Les packs (`pack` dans les données) sont l'unité de vente naturelle en
 achats intégrés. Le socle (catégories) reste gratuit ; les packs à thèmes
 peuvent être payants ou débloqués par le niveau.
+
+## 10. Fondu d'époque & habillage « Sticker Arcade »
+
+Handoff de référence : `../design_handoff_erea/` (écrans 4a accueil, 3a
+manche, 2a/2b révélation).
+
+- **Le fond de l'écran suit l'époque visée** : fonction PURE de `frac`
+  (`lib/ui/era_theme.dart` — `eraBlendAt`, demi-fenêtre `kBlendW` = 0,02
+  soit 64 px du ruban virtuel, adoucie par smoothstep). Jamais d'animation
+  implicite pendant le geste ; seul le lancement d'une manche fait un
+  fondu temporel de 320 ms `easeOut`.
+- **Texture de décor du haut d'écran** : `bg-<époque>.webp`, opacité
+  0,30 maximum, flou 2 px, masquée avant le haut de la première carte
+  (dégradé 0 / 23 % / 75-76 %). Rien ne doit se voir derrière la carte.
+- **Ce qui ne fond jamais** : carte blanche, année, aiguille corail,
+  boutons, contours et ombres.
+- **Dérive de l'accueil** : `homeFrac` avance de +0,0183/s en boucle,
+  arrêtée définitivement au premier contact sur la mini-frise ; jamais
+  démarrée si « réduire les animations ».
+- **Combo** : 3 réponses consécutives ≥ 700 points de base → la manche
+  suivante rapporte ×1,5 d'**XP** (`comboBonusXp`, crédité en fin de
+  partie). Le multiplicateur ne touche JAMAIS les points : le barème §3,
+  les records et la comparabilité du défi du jour restent intacts.
+- Le rendu du ruban (`tape_widget.dart`) est inchangé ; ses teintes
+  d'époque vivent désormais dans `era_theme.dart` (source unique) et ses
+  images dans le cache partagé `era_art.dart` (réutilisé par le fond).

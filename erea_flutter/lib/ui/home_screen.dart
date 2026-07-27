@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../core/progression.dart';
 import '../core/scoring.dart';
@@ -6,9 +7,17 @@ import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
 import 'game_screen.dart';
+import 'sticker_widgets.dart';
+import 'tape_widget.dart';
 
-/// Accueil « Focus » : héros + Jouer, réglages en deux lignes qui ouvrent
-/// un panneau de choix, défi du jour, tuiles de modes.
+const _mois = [
+  'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
+  'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE',
+];
+
+/// Accueil « Sticker Arcade » (handoff 4a) : dérive d'époque automatique,
+/// pastilles à contour d'encre, panneau du défi, grille de 4 modes et
+/// mini-frise en pied d'écran — le tutoriel implicite du geste.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, required this.repo, required this.store});
 
@@ -19,16 +28,54 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   String catKey = 'tout';
   Difficulty diff = Difficulty.normal;
   bool _navigating = false;
 
+  // Dérive d'époque : ~3,5 px/s sur le ruban virtuel, les 6 époques en
+  // ~15 min. Arrêtée définitivement au premier contact sur la mini-frise.
+  double homeFrac = 0.03;
+  bool _driftStopped = false;
+  Ticker? _drift;
+  Duration _lastTick = Duration.zero;
+  bool _driftInit = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_driftInit) return;
+    _driftInit = true;
+    if (!MediaQuery.of(context).disableAnimations) {
+      _drift = createTicker(_onDrift)..start();
+    }
+  }
+
+  void _onDrift(Duration elapsed) {
+    final dt = _lastTick == Duration.zero
+        ? 0.0
+        : (elapsed - _lastTick).inMicroseconds / 1e6;
+    _lastTick = elapsed;
+    setState(() => homeFrac = (homeFrac + 0.0183 * dt) % 1.0);
+  }
+
+  void _stopDrift() {
+    if (_driftStopped) return;
+    _driftStopped = true;
+    _drift?.stop();
+  }
+
+  @override
+  void dispose() {
+    _drift?.dispose();
+    super.dispose();
+  }
+
   Future<void> _play(GameMode mode) async {
     if (_navigating) return; // évite le double-tap qui empile deux écrans
     _navigating = true;
-    // Capturés avant le premier `await` : les rejouer via `context` après un
-    // gap asynchrone déclencherait use_build_context_synchronously.
+    _drift?.stop(); // pas de dérive derrière l'écran de jeu
     final messenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
     try {
@@ -55,12 +102,18 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } finally {
       _navigating = false;
-      if (mounted) setState(() {});
+      if (mounted) {
+        setState(() {});
+        if (!_driftStopped) {
+          _lastTick = Duration.zero;
+          _drift?.start();
+        }
+      }
     }
   }
 
-  void _pickCategory() {
-    showModalBottomSheet<void>(
+  Future<void> _pickCategory() async {
+    await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       builder: (context) {
@@ -70,11 +123,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const _SheetTitle('Choisis une catégorie'),
             for (final c in categories)
               _pickTile(c, widget.repo.pool(c.key).length),
-            if (packs.any((p) => widget.repo.pool(p.key).length >= rounds))
-              const _SheetTitle('Packs à thèmes'),
-            for (final p in packs)
-              if (widget.repo.pool(p.key).length >= rounds)
-                _pickTile(p, widget.repo.pool(p.key).length),
           ],
         );
       },
@@ -96,8 +144,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _pickDifficulty() {
-    showModalBottomSheet<void>(
+  Future<void> _pickDifficulty() async {
+    await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
       builder: (context) {
@@ -123,127 +171,462 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final level = levelFromXp(widget.store.xp);
-    final title = titleFor(level.level);
-    final playable = playableFor(catKey);
-    final best = widget.store.bestFor('$catKey|${diff.name}');
-    final dailyDone = widget.store.dailyPlayedToday;
-
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Barre haute : marque + niveau (toujours en haut)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('⏳ EREA',
-                      style: Theme.of(context).textTheme.titleMedium),
-                  Chip(label: Text('${title.emoji} Niv. ${level.level}')),
-                ],
-              ),
-              // Le corps est centré quand il y a de la place et défile
-              // quand l'écran est petit (iPhone SE) — jamais de débordement.
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) => SingleChildScrollView(
-                    child: ConstrainedBox(
-                      constraints:
-                          BoxConstraints(minHeight: constraints.maxHeight),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Héros
-                          const Center(
-                              child:
-                                  Text('🦉', style: TextStyle(fontSize: 64))),
-                          const SizedBox(height: 10),
-                          Center(
-                            child: Text(
-                              'Prêt à voyager dans le temps ?',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          FilledButton(
-                            onPressed: () => _play(GameMode.classique),
-                            style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: const Text('Jouer !'),
-                          ),
-                          const SizedBox(height: 12),
-                          // Réglages
-                          Card(
-                            child: Column(
-                              children: [
-                                ListTile(
-                                  leading: Text(playable.emoji,
-                                      style: const TextStyle(fontSize: 20)),
-                                  title: const Text('Catégorie'),
-                                  trailing: Text(playable.label),
-                                  onTap: _pickCategory,
-                                ),
-                                const Divider(height: 1),
-                                ListTile(
-                                  leading: Text(diff.emoji,
-                                      style: const TextStyle(fontSize: 20)),
-                                  title: const Text('Difficulté'),
-                                  trailing: Text(diff.label),
-                                  onTap: _pickDifficulty,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          // Défi du jour
-                          Card(
-                            child: ListTile(
-                              leading: const Text('🗓️',
-                                  style: TextStyle(fontSize: 22)),
-                              title: const Text('Défi du jour'),
-                              subtitle: Text(
-                                dailyDone
-                                    ? 'Déjà joué : ${widget.store.dailyLastScore} pts'
-                                        '${widget.store.dailyStreak > 0 ? ' · 🔥 ${widget.store.dailyStreak} j' : ''}'
-                                    : 'Les 10 mêmes événements pour tout le monde',
-                              ),
-                              trailing: FilledButton.tonal(
-                                onPressed: dailyDone
-                                    ? null
-                                    : () => _play(GameMode.daily),
-                                child: Text(dailyDone ? 'Demain !' : 'Jouer'),
-                              ),
-                            ),
-                          ),
-                        ],
+  /// Tuile Classique : catégorie + difficulté + départ.
+  Future<void> _openClassique() async {
+    if (!categories.any((c) => c.key == catKey)) catKey = 'tout';
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (sheetContext, setSheet) {
+            final playable = playableFor(catKey);
+            return ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(bottom: 20),
+              children: [
+                const _SheetTitle('Partie classique'),
+                ListTile(
+                  leading: Text(playable.emoji,
+                      style: const TextStyle(fontSize: 20)),
+                  title: const Text('Catégorie'),
+                  trailing: Text(playable.label),
+                  onTap: () async {
+                    await _pickCategory();
+                    setSheet(() {});
+                  },
+                ),
+                ListTile(
+                  leading:
+                      Text(diff.emoji, style: const TextStyle(fontSize: 20)),
+                  title: const Text('Difficulté'),
+                  trailing: Text(diff.label),
+                  onTap: () async {
+                    await _pickDifficulty();
+                    setSheet(() {});
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                  child: PushButton(
+                    onPressed: () {
+                      Navigator.of(sheetContext).pop();
+                      _play(GameMode.classique);
+                    },
+                    color: coralColor,
+                    shadowColor: const Color(0xFFB93A2F),
+                    radius: 16,
+                    child: const Center(
+                      child: Text(
+                        'C’est parti !',
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 21,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              // Pied de page : taille de la base + record (toujours en bas)
-              Center(
-                child: Text(
-                  '${widget.repo.events.length} événements'
-                  '${best > 0 ? ' · record ${playable.label} · ${diff.label} : $best' : ''}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                  textAlign: TextAlign.center,
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  /// Tuile Packs : un thème → départ immédiat.
+  Future<void> _openPacks() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            const _SheetTitle('Packs à thèmes'),
+            for (final p in packs)
+              if (widget.repo.pool(p.key).length >= rounds)
+                ListTile(
+                  leading: Text(p.emoji, style: const TextStyle(fontSize: 22)),
+                  title: Text(p.label),
+                  subtitle: Text('${widget.repo.pool(p.key).length} événements'),
+                  onTap: () {
+                    setState(() => catKey = p.key);
+                    Navigator.of(sheetContext).pop();
+                    _play(GameMode.classique);
+                  },
+                ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final level = levelFromXp(widget.store.xp);
+    final title = titleFor(level.level);
+    final dailyDone = widget.store.dailyPlayedToday;
+    final best = widget.store.bestFor('$catKey|${diff.name}');
+    final now = DateTime.now();
+
+    return Scaffold(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          EraBackdrop(
+            frac: homeFrac,
+            textureHeight: 250,
+            maskStops: const [0.0, 0.23, 0.76],
+            textureAlignment: const Alignment(0, -0.28),
+          ),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Barre du haut : profil + série
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _profilePill(level, title),
+                            _streakPill(),
+                          ],
+                        ),
+                        const SizedBox(height: 15),
+                        // Bloc logo
+                        const Center(
+                            child:
+                                Text('🦉', style: TextStyle(fontSize: 42))),
+                        const SizedBox(height: 2),
+                        const Center(child: _Logo()),
+                        const SizedBox(height: 6),
+                        EraPillPair(frac: homeFrac),
+                        const SizedBox(height: 15),
+                        _dailyPanel(dailyDone, now),
+                        const SizedBox(height: 15),
+                        // Grille des 4 modes
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: _modeTile(
+                                emoji: '🎯',
+                                titre: 'Classique',
+                                sousTitre: best > 0
+                                    ? 'record $best'
+                                    : 'catégories & niveaux',
+                                onTap: _openClassique,
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _modeTile(
+                                emoji: '⏱️',
+                                titre: 'Chrono',
+                                sousTitre: 'Bientôt !',
+                                onTap: null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 11),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: _modeTile(
+                                emoji: '👥',
+                                titre: 'Duel',
+                                sousTitre: 'Bientôt !',
+                                onTap: null,
+                              ),
+                            ),
+                            const SizedBox(width: 11),
+                            Expanded(
+                              child: _modeTile(
+                                emoji: '🚀',
+                                titre: 'Packs',
+                                sousTitre: '5 thèmes',
+                                onTap: _openPacks,
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment(0.7, 1),
+                                  colors: [violetColor, skyColor],
+                                ),
+                                light: true,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Center(
+                          child: Text(
+                            '${widget.repo.events.length} événements',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Mini-frise pied d'écran : le tutoriel implicite du geste
+                Listener(
+                  onPointerDown: (_) => _stopDrift(),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      border:
+                          Border(top: BorderSide(color: inkColor, width: 3)),
+                    ),
+                    child: TapeWidget(
+                      frac: homeFrac,
+                      height: 92,
+                      onFracChanged: (f) {
+                        _stopDrift();
+                        setState(() => homeFrac = f);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profilePill(LevelInfo level, LevelTitle title) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 5, 12, 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: inkColor, width: 2.5),
+        boxShadow: const [
+          BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(title.emoji, style: const TextStyle(fontSize: 20)),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title.titre,
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                  height: 1.1,
+                  color: inkColor,
                 ),
               ),
-              const SizedBox(height: 8),
+              Text(
+                'NIV. ${level.level} · ${level.into}/${level.need} XP',
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 10,
+                  color: inkPaleColor,
+                ),
+              ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _streakPill() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: yellowColor,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: inkColor, width: 2.5),
+        boxShadow: const [
+          BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
+        ],
+      ),
+      child: Text(
+        '🔥 ${widget.store.dailyStreak}',
+        style: const TextStyle(
+          fontFamily: 'Baloo2',
+          fontWeight: FontWeight.w800,
+          fontSize: 14,
+          color: inkColor,
         ),
       ),
+    );
+  }
+
+  Widget _dailyPanel(bool dailyDone, DateTime now) {
+    final grid = widget.store.dailyGrid;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: inkColor,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+              offset: Offset(0, 6), blurRadius: 0, color: navyShadowColor),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              const Text(
+                '🗓️ Défi du jour',
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                '${now.day} ${_mois[now.month - 1]}',
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 11,
+                  letterSpacing: 0.66,
+                  color: yellowColor,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (var i = 0; i < rounds; i++)
+                Expanded(
+                  child: Container(
+                    height: 9,
+                    margin: EdgeInsets.only(right: i < rounds - 1 ? 5 : 0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(999),
+                      color: dailyDone && i < grid.length
+                          ? (grid[i] == 'g'
+                              ? mintColor
+                              : grid[i] == 'y'
+                                  ? yellowColor
+                                  : coralColor)
+                          : Colors.white.withValues(alpha: 0.22),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          PushButton(
+            onPressed: dailyDone ? null : () => _play(GameMode.daily),
+            color: coralColor,
+            shadowColor: const Color(0xFFB93A2F),
+            radius: 16,
+            child: Center(
+              child: Text(
+                dailyDone
+                    ? 'Déjà joué · ${widget.store.dailyLastScore} pts'
+                    : 'Jouer !',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 21,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _modeTile({
+    required String emoji,
+    required String titre,
+    required String sousTitre,
+    required VoidCallback? onTap,
+    Gradient? gradient,
+    bool light = false,
+  }) {
+    return PushButton(
+      onPressed: onTap,
+      color: gradient == null ? Colors.white : null,
+      gradient: gradient,
+      border: Border.all(color: inkColor, width: 2.5),
+      shadowColor: inkColor,
+      radius: 20,
+      padding: const EdgeInsets.all(13),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 24)),
+          const SizedBox(height: 3),
+          Text(
+            titre,
+            style: TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 17,
+              color: light ? Colors.white : inkColor,
+            ),
+          ),
+          Text(
+            sousTitre,
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontWeight: FontWeight.w700,
+              fontSize: 11,
+              color: light
+                  ? Colors.white.withValues(alpha: 0.85)
+                  : inkPaleColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// « EREA » en Baloo 2, une couleur par lettre.
+class _Logo extends StatelessWidget {
+  const _Logo();
+
+  @override
+  Widget build(BuildContext context) {
+    const style = TextStyle(
+      fontFamily: 'Baloo2',
+      fontWeight: FontWeight.w800,
+      fontSize: 60,
+      height: 1.0,
+      letterSpacing: 2.4,
+    );
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text('E', style: style.copyWith(color: coralColor)),
+        Text('R', style: style.copyWith(color: yellowColor)),
+        Text('E', style: style.copyWith(color: mintColor)),
+        Text('A', style: style.copyWith(color: skyColor)),
+      ],
     );
   }
 }

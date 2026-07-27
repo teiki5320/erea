@@ -3,80 +3,10 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import '../core/timeline_scale.dart';
-
-/// Illustrations du ruban, chargées une seule fois pour toute la vie de
-/// l'app. Trois couches par époque quand les assets existent :
-/// fond lointain (lent) → décor (moyen) → voyageurs (rapides, devant).
-/// Toute image absente est simplement ignorée (repli automatique).
-ui.Image? _friseImage;
-final Map<int, ui.Image> _eraBg = {};
-final Map<int, ui.Image> _eraTraveler = {};
-int _artVersion = 0;
-Future<void>? _artLoading;
-
-const Map<int, String> _eraBgAssets = {
-  0: 'assets/img/bg-bronze.webp',
-  1: 'assets/img/bg-fer.webp',
-  2: 'assets/img/bg-antiquite.webp',
-  3: 'assets/img/bg-moyenage.webp',
-  4: 'assets/img/bg-moderne.webp',
-  5: 'assets/img/bg-contemporaine.webp',
-};
-
-/// Un personnage par époque. `frames > 1` = spritesheet horizontal :
-/// l'animation avance avec le défilement du ruban (pattes et pédales
-/// bougent quand on glisse, se figent à l'arrêt).
-class _TravelerSpec {
-  final String asset;
-  final int frames;
-
-  /// Décalage vertical (fraction de la hauteur du sprite) : positif =
-  /// descendu. Le drakkar pose ainsi sa coque sur la ligne, ses rames
-  /// plongeant dessous.
-  final double dyFrac;
-  const _TravelerSpec(this.asset, [this.frames = 1, this.dyFrac = 0]);
-}
-
-const Map<int, _TravelerSpec> _eraTravelerSpecs = {
-  // dyFrac mesuré sur les planches pour que le point de contact au sol
-  // (pattes, sabots, roues, coque, vagues) soit sur la même ligne pour
-  // tous : seule la coque du drakkar a 26 % de rames qui dépassent
-  // dessous, et la caravelle 3 % de marge sous ses vagues.
-  0: _TravelerSpec('assets/img/anim-bronze.webp', 6),
-  1: _TravelerSpec('assets/img/anim-fer.webp', 6),
-  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7),
-  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5, 0.26),
-  4: _TravelerSpec('assets/img/anim-moderne.webp', 10, 0.03),
-  5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
-};
-
-Future<ui.Image?> _decode(String asset) async {
-  try {
-    final data = await rootBundle.load(asset);
-    final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-    return (await codec.getNextFrame()).image;
-  } catch (_) {
-    return null;
-  }
-}
-
-Future<void> _loadArt() {
-  return _artLoading ??= () async {
-    _friseImage = await _decode('assets/img/frise.webp');
-    for (final e in _eraBgAssets.entries) {
-      final img = await _decode(e.value);
-      if (img != null) _eraBg[e.key] = img;
-    }
-    for (final e in _eraTravelerSpecs.entries) {
-      final img = await _decode(e.value.asset);
-      if (img != null) _eraTraveler[e.key] = img;
-    }
-    _artVersion++;
-  }();
-}
+import 'era_art.dart';
+import 'era_theme.dart';
 
 /// Le ruban chronologique défilant : bandes d'époques, graduations,
 /// années, aiguille fixe au centre. Se pilote par glissement avec inertie.
@@ -116,7 +46,7 @@ class _TapeWidgetState extends State<TapeWidget>
   void initState() {
     super.initState();
     _ticker = createTicker(_onTick);
-    _loadArt().then((_) {
+    EraArt.load().then((_) {
       if (mounted) setState(() {});
     });
   }
@@ -192,8 +122,8 @@ class _TapeWidgetState extends State<TapeWidget>
                   painter: _TapePainter(
                     frac: widget.frac,
                     tapeW: tapeW,
-                    frise: _friseImage,
-                    artVersion: _artVersion,
+                    frise: EraArt.frise,
+                    artVersion: EraArt.version,
                     facingLeft: _facingLeft,
                   ),
                 ),
@@ -244,16 +174,6 @@ class _TapePainter extends CustomPainter {
   /// Incrémenté quand les images finissent de charger (force le repaint).
   final int artVersion;
 
-  /// Teintes de repli, échantillonnées sur les panneaux illustrés.
-  static const _eraColors = [
-    Color(0xFFF9EAC9), // Âge du bronze
-    Color(0xFFF2EDCF), // Âge du fer
-    Color(0xFFE6DFF0), // Antiquité
-    Color(0xFFD8E6F5), // Moyen Âge
-    Color(0xFFFBE3C0), // Époque moderne
-    Color(0xFFF9D9D4), // Époque contemporaine
-  ];
-
   double _px(num year) => yearToFrac(year) * tapeW;
 
   @override
@@ -273,7 +193,7 @@ class _TapePainter extends CustomPainter {
         Rect.fromLTRB(left, 0, right, size.height),
         const Radius.circular(16),
       );
-      canvas.drawRRect(rrect, Paint()..color = _eraColors[i]);
+      canvas.drawRRect(rrect, Paint()..color = eraThemes[i].tint);
       final imgPaint = Paint()..filterQuality = FilterQuality.medium;
 
       // Tuiles miroir alternées avec parallaxe : `shift` est la part du
@@ -299,9 +219,9 @@ class _TapePainter extends CustomPainter {
         }
       }
 
-      final bg = _eraBg[i];
-      final trav = _eraTraveler[i];
-      final spec = _eraTravelerSpecs[i];
+      final bg = EraArt.bg[i];
+      final trav = EraArt.travelers[i];
+      final spec = travelerSpecs[i];
       final img = frise;
       if (bg != null || img != null) {
         canvas.save();

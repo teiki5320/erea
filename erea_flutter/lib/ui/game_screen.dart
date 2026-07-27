@@ -6,10 +6,21 @@ import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
+import 'sticker_widgets.dart';
 import 'tape_widget.dart';
 
-/// Écran de jeu : carte événement en haut, frise centrale, explications
-/// sous la frise, bouton en bas — l'agencement validé par le prototype web.
+/// Couleur d'étiquette par catégorie (carte de l'événement).
+const Map<String, Color> _catColors = {
+  'france': coralColor,
+  'monde': skyColor,
+  'sciences': mintColor,
+  'arts': violetColor,
+  'quotidien': orangeColor,
+};
+
+/// Écran de jeu « Sticker Arcade » (handoff 3a) : fond fondu d'époque,
+/// carte de l'événement, année sans bulle, frise plein-bord, minimap,
+/// révélation à épingles sur la frise.
 class GameScreen extends StatefulWidget {
   const GameScreen({
     super.key,
@@ -67,7 +78,8 @@ class _GameScreenState extends State<GameScreen>
     _travelBegin = game.frac;
     _travelEnd = yearToFrac(result.event.annee);
     final dist = (_travelEnd - _travelBegin).abs();
-    final ms = (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
+    var ms = (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
+    if (MediaQuery.of(context).disableAnimations) ms = 80;
     _travel.duration = Duration(milliseconds: ms);
     _travel.forward(from: 0);
   }
@@ -78,28 +90,37 @@ class _GameScreenState extends State<GameScreen>
     if (!continues) {
       _finishing = true;
       setState(() => _showEnd = true);
-      // Fin de partie : XP, records, anti-répétition.
+      // Fin de partie : XP (+ bonus de combo), records, anti-répétition.
       await widget.store.incGames();
       await widget.store.markSeen(game.results.map((r) => r.event.id));
       if (game.mode == GameMode.daily) {
-        await widget.store.recordDaily(game.total);
+        await widget.store.recordDaily(game.total, grid: _grid());
       } else {
         await widget.store
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
       }
-      await widget.store.addXp(xpGain(game.total, game.diff.xpMult));
+      await widget.store
+          .addXp(xpGain(game.total, game.diff.xpMult) + game.comboBonusXp);
       if (mounted) setState(() {});
     }
   }
 
+  String _grid() => game.results
+      .map((r) => r.base >= 700
+          ? 'g'
+          : r.base >= 350
+              ? 'y'
+              : 'r')
+      .join();
+
   String _reaction(RoundResult r) {
-    if (r.base == maxScore) return '🤩 PERFECT !';
-    if (r.base >= 900) return '🤩 Incroyable !';
-    if (r.base >= 700) return '🎉 Excellent !';
-    if (r.base >= 500) return '😄 Bien joué !';
-    if (r.base >= 250) return '🙂 Pas mal !';
-    if (r.base >= 80) return '😅 Pas loin…';
-    return '😵 Trop loin !';
+    if (r.base == maxScore) return 'PILE DESSUS !';
+    if (r.base >= 900) return 'Incroyable !';
+    if (r.base >= 700) return 'Excellent !';
+    if (r.base >= 500) return 'Bien joué !';
+    if (r.base >= 250) return 'Pas mal !';
+    if (r.base >= 80) return 'Pas loin…';
+    return 'Trop loin !';
   }
 
   String _direction(RoundResult r) {
@@ -124,14 +145,30 @@ class _GameScreenState extends State<GameScreen>
         }
       },
       child: Scaffold(
-        body: SafeArea(
-          child: ListenableBuilder(
-            listenable: game,
-            builder: (context, _) {
-              if (_showEnd) return _buildEnd(context);
-              return _buildGame(context);
-            },
-          ),
+        body: ListenableBuilder(
+          listenable: game,
+          builder: (context, _) {
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                // Fond fondu : fonction pure de frac (aucune animation
+                // pendant le geste). Seul le lancement d'une manche fait
+                // un vrai fondu temporel de 320 ms.
+                TweenAnimationBuilder<double>(
+                  key: ValueKey('round-${game.round}-${_showEnd}'),
+                  tween: Tween(begin: 0.0, end: 1.0),
+                  duration: const Duration(milliseconds: 320),
+                  curve: Curves.easeOut,
+                  builder: (context, v, child) =>
+                      Opacity(opacity: v, child: child),
+                  child: EraBackdrop(frac: game.frac),
+                ),
+                SafeArea(
+                  child: _showEnd ? _buildEnd(context) : _buildGame(context),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );
@@ -142,238 +179,572 @@ class _GameScreenState extends State<GameScreen>
     final revealed = game.phase == GamePhase.reveal;
     return Column(
       children: [
-        // En-tête : quitter, manche, score (toujours en haut)
+        // Barre de manche : ✕, MANCHE n/10, 10 pastilles, score
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          padding: const EdgeInsets.fromLTRB(6, 6, 18, 0),
           child: Row(
             children: [
               IconButton(
                 onPressed: () => _confirmQuit(context),
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close, color: inkColor),
               ),
-              Expanded(
-                child: Text(
-                  'Manche ${game.round + 1}/$rounds',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+              Text(
+                'MANCHE ${game.round + 1}/$rounds',
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 13,
+                  letterSpacing: 0.78,
+                  color: inkColor.withValues(alpha: 0.6),
                 ),
               ),
-              const SizedBox(width: 48), // équilibre le bouton ✕
-            ],
-          ),
-        ),
-        // Corps : centré s'il y a de la place, défilant sur petit écran.
-        // Le Stack porte la « comète » des points par-dessus.
-        Expanded(
-          child: Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
-                    child: _gameBody(context, guessing, revealed),
+              const SizedBox(width: 10),
+              Expanded(child: _roundPills()),
+              const SizedBox(width: 10),
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(end: game.total.toDouble()),
+                duration: const Duration(milliseconds: 700),
+                builder: (context, v, _) => Text(
+                  '${v.round()}',
+                  style: const TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 17,
+                    color: inkColor,
+                    fontFeatures: [FontFeature.tabularFigures()],
                   ),
                 ),
               ),
-              if (revealed && _lastResult != null)
-                _buildComet(context, _lastResult!),
             ],
           ),
         ),
-        // Bouton principal (toujours en bas)
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: guessing
-                  ? (game.touched ? _validate : null)
-                  : (revealed ? _next : null),
-              child: Text(
-                guessing
-                    ? 'Valider ✓'
-                    : game.isLastRound
-                        ? 'Voir mes résultats 🏁'
-                        : 'Manche suivante →',
+        Expanded(
+          child: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: revealed && _lastResult != null
+                    ? _revealBody(context, _lastResult!)
+                    : _guessBody(context, guessing),
               ),
             ),
           ),
+        ),
+        // Bouton principal
+        Padding(
+          padding: const EdgeInsets.fromLTRB(18, 8, 18, 16),
+          child: guessing
+              ? PushButton(
+                  onPressed: game.touched ? _validate : null,
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment(0.94, 0.34),
+                    colors: [coralColor, orangeColor],
+                  ),
+                  softShadowColor: coralColor,
+                  padding: const EdgeInsets.all(17),
+                  child: const Center(
+                    child: Text(
+                      'Je place ici !',
+                      style: TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 23,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              : PushButton(
+                  onPressed: revealed ? _next : null,
+                  color: inkColor,
+                  shadowColor: navyShadowColor,
+                  shadowHeight: 6,
+                  padding: const EdgeInsets.all(15),
+                  child: Center(
+                    child: Text(
+                      game.isLastRound
+                          ? 'Voir mes résultats 🏁'
+                          : 'Manche suivante →',
+                      style: const TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 22,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
         ),
       ],
     );
   }
 
-  Widget _gameBody(BuildContext context, bool guessing, bool revealed) {
+  /// Les 10 pastilles de progression, colorées sur les points de base.
+  Widget _roundPills() {
+    return Row(
+      children: [
+        for (var i = 0; i < rounds; i++)
+          Expanded(
+            child: Container(
+              height: 7,
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                color: i < game.results.length
+                    ? (game.results[i].base >= 700
+                        ? mintColor
+                        : game.results[i].base >= 350
+                            ? yellowColor
+                            : coralColor)
+                    : inkColor.withValues(alpha: 0.16),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// Phase de choix (et voyage du ruban) : carte, année, frise, réglage fin.
+  Widget _guessBody(BuildContext context, bool guessing) {
     final ev = game.current;
-    final reveal = revealed ? _lastResult : null;
+    final cat = playableFor(ev.cat);
     return Column(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Carte événement : pendant la manche elle pose la question,
-        // après validation elle porte aussi les explications.
-        Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              children: [
-                if (game.multiplier == 2)
-                  const Text('🌟 Manche finale : points × 2 !'),
-                Text(ev.emoji, style: const TextStyle(fontSize: 40)),
-                const SizedBox(height: 6),
-                Text(
-                  ev.titre,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge,
+        const SizedBox(height: 14),
+        // Carte de l'événement, étiquette de catégorie en débord
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(18, 20, 18, 16),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: const [softShadow],
                 ),
-                const SizedBox(height: 4),
-                if (reveal == null)
-                  Text(
-                    ev.desc,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  )
-                else ...[
-                  Text(
-                    _reaction(reveal),
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  Text(
-                    'C’était en ${formatYear(reveal.event.annee)} — '
-                    '${_direction(reveal)}',
-                    textAlign: TextAlign.center,
-                  ),
-                  if (reveal.event.fun.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        '💡 ${reveal.event.fun}',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (game.multiplier == 2)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 6),
+                        child: Text('🌟 Manche finale : points × 2 !'),
+                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(ev.emoji, style: const TextStyle(fontSize: 44)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            ev.titre,
+                            style: const TextStyle(
+                              fontFamily: 'Baloo2',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 24,
+                              height: 1.14,
+                              color: inkColor,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      ev.desc,
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        height: 1.45,
+                        color: inkSoftColor,
                       ),
                     ),
-                ],
-              ],
+                  ],
+                ),
+              ),
+              Positioned(
+                top: -10,
+                left: 18,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: _catColors[ev.cat] ?? violetColor,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    cat.label.toUpperCase(),
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10.5,
+                      letterSpacing: 0.84,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 14),
+        // Année : pastille d'époque + nombre, sans bulle
+        EraPillPair(frac: game.frac, bordered: false),
+        const SizedBox(height: 2),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              formatYear(game.guessYear),
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 56,
+                height: 1.05,
+                color: inkColor,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 10),
-        // Bulle de l'année + ajustement fin
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed:
-                  guessing ? () => game.setYear(game.guessYear - 1) : null,
-              icon: const Icon(Icons.remove_circle_outline),
-            ),
-            // Les libellés longs (« 3000 av. J.-C. », « ÉPOQUE
-            // CONTEMPORAINE ») débordaient la ligne sur un iPhone standard :
-            // ils se réduisent maintenant au lieu d'être rognés.
-            Flexible(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      formatYear(game.guessYear),
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                  ),
-                  FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      eraFor(game.guessYear).name.toUpperCase(),
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              onPressed:
-                  guessing ? () => game.setYear(game.guessYear + 1) : null,
-              icon: const Icon(Icons.add_circle_outline),
-            ),
-          ],
-        ),
-        // La frise-ruban, la plus grande possible : ~36 % de l'écran
+        const SizedBox(height: 8),
+        // La frise, plein-bord
         TapeWidget(
           frac: game.frac,
           locked: !guessing,
-          height: (MediaQuery.of(context).size.height * 0.36)
-              .clamp(220.0, 430.0)
-              .toDouble(),
+          height: 150,
           onFracChanged: (f) => game.setFrac(f),
         ),
-        const SizedBox(height: 8),
-        // Le score vit sous la frise et grimpe en douceur quand les
-        // points arrivent (la comète vient s'y écraser).
-        TweenAnimationBuilder<double>(
-          tween: Tween<double>(end: game.total.toDouble()),
-          duration: const Duration(milliseconds: 700),
-          builder: (context, v, _) => Chip(
-            label: Text(
-              '⭐ ${v.round()}',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
+        const SizedBox(height: 12),
+        // Réglage fin : − minimap +
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: Row(
+            children: [
+              _fineButton(Icons.remove_circle_outline,
+                  guessing ? () => game.setYear(game.guessYear - 1) : null),
+              const SizedBox(width: 12),
+              Expanded(
+                child: MiniMap(
+                  frac: game.frac,
+                  onChanged: (f) {
+                    if (guessing) game.setFrac(f);
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+              _fineButton(Icons.add_circle_outline,
+                  guessing ? () => game.setYear(game.guessYear + 1) : null),
+            ],
           ),
         ),
-        SizedBox(
-          height: 32,
-          child: guessing
-              ? Center(
-                  child: Text(
-                    '👈 Fais glisser la frise pour choisir l’année 👉',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                )
-              : null,
-        ),
+        const SizedBox(height: 8),
       ],
     );
   }
 
-  /// « + N pts » : gros popup qui rebondit au centre puis file en
-  /// comète vers le score sous la frise, en s'estompant.
-  Widget _buildComet(BuildContext context, RoundResult r) {
-    return TweenAnimationBuilder<double>(
-      key: ValueKey('comet-${game.round}'),
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 1300),
-      builder: (context, t, _) {
-        final pop =
-            Curves.elasticOut.transform((t / 0.4).clamp(0.0, 1.0).toDouble());
-        final fly =
-            Curves.easeInCubic.transform(((t - 0.55) / 0.45).clamp(0.0, 1.0).toDouble());
-        return Align(
-          alignment: Alignment(0, -0.25 + 0.85 * fly),
-          child: IgnorePointer(
-            child: Opacity(
-              opacity: (1 - fly).clamp(0.0, 1.0).toDouble(),
-              child: Transform.scale(
-                scale: pop * (1 - 0.55 * fly),
-                child: Text(
-                  '+ ${r.pts}${game.multiplier == 2 ? ' ×2' : ''}',
-                  style: const TextStyle(
-                    fontFamily: 'Baloo2',
-                    fontSize: 44,
-                    fontWeight: FontWeight.w700,
-                    color: Color(0xFFF25B4D),
-                    shadows: [
-                      Shadow(color: Colors.white, blurRadius: 12),
-                      Shadow(color: Color(0x66F25B4D), blurRadius: 24),
+  Widget _fineButton(IconData icon, VoidCallback? onTap) {
+    return PushButton(
+      onPressed: onTap,
+      color: Colors.white,
+      softShadowColor: inkColor,
+      radius: 15,
+      padding: const EdgeInsets.all(10),
+      child: Icon(icon, size: 24, color: inkColor),
+    );
+  }
+
+  /// Révélation : verdict, frise figée à deux épingles, « Le savais-tu ? »,
+  /// bandeau de combo.
+  Widget _revealBody(BuildContext context, RoundResult r) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const SizedBox(height: 10),
+        Text(
+          _reaction(r),
+          style: const TextStyle(
+            fontFamily: 'Baloo2',
+            fontWeight: FontWeight.w800,
+            fontSize: 26,
+            color: verdictMintColor,
+          ),
+        ),
+        Text(
+          '+ ${r.pts}',
+          style: const TextStyle(
+            fontFamily: 'Baloo2',
+            fontWeight: FontWeight.w800,
+            fontSize: 56,
+            height: 1.0,
+            color: coralColor,
+            fontFeatures: [FontFeature.tabularFigures()],
+          ),
+        ),
+        Text(
+          '${_direction(r)} · tolérance '
+          '${tolerance(r.event.annee, game.diff).round()} ans',
+          style: const TextStyle(
+            fontFamily: 'Nunito',
+            fontWeight: FontWeight.w800,
+            fontSize: 13.5,
+            color: inkSoftColor,
+          ),
+        ),
+        // La frise figée porte les deux épingles (marges pour les pastilles)
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final w = constraints.maxWidth;
+            double xOf(int year) =>
+                w / 2 + (yearToFrac(year) - game.frac) * 3200;
+            final gx = xOf(r.guess).clamp(46.0, w - 46.0);
+            Widget pinScale(Widget child) => reduce
+                ? child
+                : TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.8, end: 1.0),
+                    duration: const Duration(milliseconds: 260),
+                    curve: Curves.elasticOut,
+                    builder: (context, s, c) =>
+                        Transform.scale(scale: s, child: c),
+                    child: child,
+                  );
+            return SizedBox(
+              height: 44.0 + 150 + 46,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Positioned(
+                    top: 44,
+                    left: 0,
+                    right: 0,
+                    child: TapeWidget(
+                      frac: game.frac,
+                      locked: true,
+                      height: 150,
+                      onFracChanged: (_) {},
+                    ),
+                  ),
+                  // Épingle « Toi »
+                  Positioned(
+                    top: 2,
+                    left: gx,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, 0),
+                      child: pinScale(
+                        Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(999),
+                                boxShadow: const [softShadow],
+                              ),
+                              child: Text(
+                                'Toi · ${formatYear(r.guess)}',
+                                style: const TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: inkColor,
+                                ),
+                              ),
+                            ),
+                            Container(
+                                width: 3, height: 18, color: inkPaleColor),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Épingle de la vraie date (le ruban est centré dessus)
+                  Positioned(
+                    top: 44.0 + 150 - 14,
+                    left: w / 2,
+                    child: FractionalTranslation(
+                      translation: const Offset(-0.5, 0),
+                      child: pinScale(
+                        Column(
+                          children: [
+                            Container(
+                              width: 4,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                color: mintColor,
+                                border:
+                                    Border.all(color: Colors.white, width: 1),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: mintColor,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                '${formatYear(r.event.annee)} 🎯',
+                                style: const TextStyle(
+                                  fontFamily: 'Nunito',
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        // Le savais-tu ? + jetons
+        if (r.event.fun.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 4, 18, 0),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: const [softShadow],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Le savais-tu ? 💡',
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 18,
+                      color: inkColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    r.event.fun,
+                    style: const TextStyle(
+                      fontFamily: 'Nunito',
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14.5,
+                      height: 1.5,
+                      color: inkSoftColor,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      _token('＋ Album', const Color(0xFFEEF3FF),
+                          const Color(0xFF5F6890)),
+                      const SizedBox(width: 8),
+                      _token(
+                        '+${(r.pts / 10 * game.diff.xpMult * (game.lastBoosted ? 1.5 : 1)).round()} XP',
+                        const Color(0xFFFFF3D9),
+                        const Color(0xFFA9761C),
+                      ),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
-        );
-      },
+        // Bandeau de combo
+        if (game.combo > 0)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF3D9),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  const Text('🔥', style: TextStyle(fontSize: 18)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          game.combo == 1
+                              ? '1 bonne réponse'
+                              : '${game.combo} bonnes réponses d’affilée',
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            color: inkColor,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(999),
+                          child: LinearProgressIndicator(
+                            value: (game.combo / 3).clamp(0.0, 1.0).toDouble(),
+                            minHeight: 6,
+                            backgroundColor:
+                                inkColor.withValues(alpha: 0.10),
+                            valueColor: const AlwaysStoppedAnimation(
+                                Color(0xFFF25B4D)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (game.boostNext) ...[
+                    const SizedBox(width: 10),
+                    const Text(
+                      '×1,5',
+                      style: TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        color: coralColor,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        const SizedBox(height: 8),
+      ],
+    );
+  }
+
+  Widget _token(String text, Color bg, Color fg) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Nunito',
+          fontWeight: FontWeight.w800,
+          fontSize: 12,
+          color: fg,
+        ),
+      ),
     );
   }
 
