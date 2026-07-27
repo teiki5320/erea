@@ -30,6 +30,14 @@ fi
 export PATH="$FLUTTER_DIR/bin:$PATH"
 flutter --version
 
+# Le projet Xcode committé est intégré via CocoaPods. Sur les stables
+# récentes, Flutter active Swift Package Manager par défaut : podhelper
+# saute alors les plugins compatibles SwiftPM (shared_preferences_foundation
+# n'est plus installé par pod install) et l'archive échoue avec
+# « Module 'shared_preferences_foundation' not found ». On force le mode
+# CocoaPods, celui du projet.
+flutter config --no-enable-swift-package-manager || true
+
 echo "📦 flutter precache --ios"
 flutter precache --ios
 
