@@ -313,15 +313,15 @@ class _TapePainter extends CustomPainter {
             Rect.fromLTWH(0, 0, bg.width.toDouble(), bg.height.toDouble()),
             0.60,
           );
-          // Voile clair en bas de bande : graduations lisibles même sur
-          // les fonds sombres (forêt du Moyen Âge, océan du soir).
+          // Voile clair en bas de bande : les graduations doivent rester
+          // bien lisibles sur les décors, même sombres.
           canvas.drawRect(
-            Rect.fromLTRB(left, bandBottom - 46, right, bandBottom),
+            Rect.fromLTRB(left, bandBottom - 56, right, bandBottom),
             Paint()
               ..shader = ui.Gradient.linear(
-                Offset(0, bandBottom - 46),
+                Offset(0, bandBottom - 56),
                 Offset(0, bandBottom),
-                [const Color(0x00FFFFFF), const Color(0x80FFFFFF)],
+                [const Color(0x00FFFFFF), const Color(0xBFFFFFFF)],
               ),
           );
         } else if (img != null) {
@@ -441,7 +441,7 @@ class _TapePainter extends CustomPainter {
       Offset(0, baseY),
       Offset(tapeW, baseY),
       Paint()
-        ..color = const Color(0x4735406B)
+        ..color = const Color(0x8C35406B)
         ..strokeWidth = 3,
     );
 
@@ -452,22 +452,33 @@ class _TapePainter extends CustomPainter {
       (seg: 2, minor: 10, medium: 50, major: 100),
       (seg: 3, minor: 1, medium: 5, major: 10),
     ];
-    final tickPaint = Paint()
-      ..color = const Color(0x4D35406B)
-      ..strokeWidth = 1.5;
+    // Trois poids de trait bien contrastés : c'est avec eux qu'on vise.
+    final tickMinor = Paint()
+      ..color = const Color(0x7335406B)
+      ..strokeWidth = 1.6;
+    final tickMedium = Paint()
+      ..color = const Color(0xA635406B)
+      ..strokeWidth = 2.2;
+    final tickMajor = Paint()
+      ..color = const Color(0xE635406B)
+      ..strokeWidth = 2.8;
     for (final p in plans) {
       final s = segments[p.seg];
       for (var y = s.from; y <= s.to; y += p.minor) {
         final x = _px(y);
         double h;
+        Paint pt;
         if (y % p.major == 0) {
-          h = size.height * 0.133;
+          h = size.height * 0.15;
+          pt = tickMajor;
         } else if (y % p.medium == 0) {
-          h = size.height * 0.093;
+          h = size.height * 0.10;
+          pt = tickMedium;
         } else {
-          h = size.height * 0.053;
+          h = size.height * 0.055;
+          pt = tickMinor;
         }
-        canvas.drawLine(Offset(x, baseY - h), Offset(x, baseY), tickPaint);
+        canvas.drawLine(Offset(x, baseY - h), Offset(x, baseY), pt);
       }
     }
 
