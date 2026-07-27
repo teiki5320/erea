@@ -13,7 +13,7 @@ import '../core/timeline_scale.dart';
 /// Toute image absente est simplement ignorée (repli automatique).
 ui.Image? _friseImage;
 final Map<int, ui.Image> _eraBg = {};
-final Map<int, List<ui.Image>> _eraTravelers = {};
+final Map<int, ui.Image> _eraTraveler = {};
 int _artVersion = 0;
 Future<void>? _artLoading;
 
@@ -26,16 +26,22 @@ const Map<int, String> _eraBgAssets = {
   5: 'assets/img/bg-contemporaine.webp',
 };
 
-/// Un seul personnage par époque (les spritesheets animés les
-/// remplaceront un à un) : bédouin à chameau, guerrier gaulois, char
-/// romain, chevalier, caravelle (fond océan), cycliste.
-const Map<int, List<String>> _eraTravelerAssets = {
-  0: ['assets/img/spr-bronze-0.webp'],
-  1: ['assets/img/spr-fer-0.webp'],
-  2: ['assets/img/spr-antiquite-0.webp'],
-  3: ['assets/img/spr-moyenage-0.webp'],
-  4: ['assets/img/spr-moderne-0.webp'],
-  5: ['assets/img/spr-contemporaine-1.webp'],
+/// Un personnage par époque. `frames > 1` = spritesheet horizontal :
+/// l'animation avance avec le défilement du ruban (pattes et pédales
+/// bougent quand on glisse, se figent à l'arrêt).
+class _TravelerSpec {
+  final String asset;
+  final int frames;
+  const _TravelerSpec(this.asset, [this.frames = 1]);
+}
+
+const Map<int, _TravelerSpec> _eraTravelerSpecs = {
+  0: _TravelerSpec('assets/img/anim-bronze.webp', 5),
+  1: _TravelerSpec('assets/img/spr-fer-0.webp'),
+  2: _TravelerSpec('assets/img/spr-antiquite-0.webp'),
+  3: _TravelerSpec('assets/img/spr-moyenage-0.webp'),
+  4: _TravelerSpec('assets/img/spr-moderne-0.webp'),
+  5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
 };
 
 Future<ui.Image?> _decode(String asset) async {
@@ -55,13 +61,9 @@ Future<void> _loadArt() {
       final img = await _decode(e.value);
       if (img != null) _eraBg[e.key] = img;
     }
-    for (final e in _eraTravelerAssets.entries) {
-      final list = <ui.Image>[];
-      for (final a in e.value) {
-        final img = await _decode(a);
-        if (img != null) list.add(img);
-      }
-      if (list.isNotEmpty) _eraTravelers[e.key] = list;
+    for (final e in _eraTravelerSpecs.entries) {
+      final img = await _decode(e.value.asset);
+      if (img != null) _eraTraveler[e.key] = img;
     }
     _artVersion++;
   }();
@@ -274,7 +276,8 @@ class _TapePainter extends CustomPainter {
       }
 
       final bg = _eraBg[i];
-      final travelers = _eraTravelers[i];
+      final trav = _eraTraveler[i];
+      final spec = _eraTravelerSpecs[i];
       final img = frise;
       if (bg != null || img != null) {
         canvas.save();
@@ -309,25 +312,31 @@ class _TapePainter extends CustomPainter {
             0.45,
           );
         }
-        // Voyageurs au premier plan, plus rapides que les graduations :
-        // ils « passent » devant le décor.
-        if (travelers != null) {
+        // Le personnage de l'époque, au premier plan, plus rapide que
+        // les graduations : il « passe » devant le décor. Les frames du
+        // spritesheet avancent avec le défilement — il marche quand le
+        // ruban glisse, se fige à l'arrêt.
+        if (trav != null && spec != null) {
           const period = 560.0;
+          final frames = spec.frames;
+          final fw = trav.width / frames;
+          final fh = trav.height.toDouble();
           final sprH = bandBottom * 0.36;
+          final sprW = sprH * fw / fh;
           final o = -frac * tapeW * 0.30;
           final jFirst = ((left - o) / period).floor() - 1;
           final jLast = ((right - o) / period).ceil();
           for (var j = jFirst; j <= jLast; j++) {
-            final spr = travelers[((j % travelers.length) +
-                    travelers.length) %
-                travelers.length];
-            final sprW = sprH * spr.width / spr.height;
             final x = o + j * period;
             if (x + sprW < left || x > right) continue;
+            var fi = 0;
+            if (frames > 1) {
+              fi = (((frac * tapeW * 1.3) / 15).floor() + j) % frames;
+              if (fi < 0) fi += frames;
+            }
             canvas.drawImageRect(
-              spr,
-              Rect.fromLTWH(
-                  0, 0, spr.width.toDouble(), spr.height.toDouble()),
+              trav,
+              Rect.fromLTWH(fi * fw, 0, fw, fh),
               Rect.fromLTWH(x, bandBottom - sprH - 2, sprW, sprH),
               imgPaint,
             );
