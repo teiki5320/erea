@@ -21,6 +21,9 @@ const Map<int, String> _eraBgAssets = {
   0: 'assets/img/bg-bronze.webp',
   1: 'assets/img/bg-fer.webp',
   2: 'assets/img/bg-antiquite.webp',
+  3: 'assets/img/bg-moyenage.webp',
+  4: 'assets/img/bg-moderne.webp',
+  5: 'assets/img/bg-contemporaine.webp',
 };
 
 const Map<int, List<String>> _eraTravelerAssets = {
@@ -32,7 +35,6 @@ const Map<int, List<String>> _eraTravelerAssets = {
   1: [
     'assets/img/spr-fer-0.webp',
     'assets/img/spr-fer-1.webp',
-    'assets/img/spr-fer-2.webp',
   ],
   2: [
     'assets/img/spr-antiquite-0.webp',
@@ -44,10 +46,10 @@ const Map<int, List<String>> _eraTravelerAssets = {
     'assets/img/spr-moyenage-1.webp',
     'assets/img/spr-moyenage-2.webp',
   ],
+  // Le fond de l'Époque moderne est un océan : seule la caravelle
+  // navigue au premier plan (pas de carrosse sur l'eau).
   4: [
     'assets/img/spr-moderne-0.webp',
-    'assets/img/spr-moderne-1.webp',
-    'assets/img/spr-moderne-2.webp',
   ],
   5: [
     'assets/img/spr-contemporaine-0.webp',
@@ -303,6 +305,17 @@ class _TapePainter extends CustomPainter {
             bg,
             Rect.fromLTWH(0, 0, bg.width.toDouble(), bg.height.toDouble()),
             0.60,
+          );
+          // Voile clair en bas de bande : graduations lisibles même sur
+          // les fonds sombres (forêt du Moyen Âge, océan du soir).
+          canvas.drawRect(
+            Rect.fromLTRB(left, bandBottom - 46, right, bandBottom),
+            Paint()
+              ..shader = ui.Gradient.linear(
+                Offset(0, bandBottom - 46),
+                Offset(0, bandBottom),
+                [const Color(0x00FFFFFF), const Color(0x80FFFFFF)],
+              ),
           );
         } else if (img != null) {
           // Décor en panneaux (bandeau de titre coupé) en attendant le
