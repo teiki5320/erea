@@ -62,7 +62,9 @@ class Era {
 }
 
 const List<Era> eras = [
-  Era(-3000, 476, 'Antiquité'),
+  Era(-3000, -1200, 'Âge du bronze'),
+  Era(-1200, -500, 'Âge du fer'),
+  Era(-500, 476, 'Antiquité'),
   Era(476, 1492, 'Moyen Âge'),
   Era(1492, 1789, 'Époque moderne'),
   Era(1789, 2025, 'Époque contemporaine'),

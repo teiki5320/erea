@@ -1,9 +1,31 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import '../core/timeline_scale.dart';
+
+/// Planche des 6 panneaux d'époques (illustrations), chargée une seule
+/// fois pour toute la vie de l'app. Tant qu'elle n'est pas prête — ou si
+/// l'asset manque — le ruban dessine ses bandes de couleur unies.
+ui.Image? _friseImage;
+Future<ui.Image?>? _friseLoading;
+
+Future<ui.Image?> _loadFrise() {
+  return _friseLoading ??= () async {
+    try {
+      final data = await rootBundle.load('assets/img/frise.webp');
+      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      final frame = await codec.getNextFrame();
+      _friseImage = frame.image;
+    } catch (_) {
+      // Pas d'image : le ruban reste sur ses bandes unies.
+    }
+    return _friseImage;
+  }();
+}
 
 /// Événements-repères affichés sur le ruban pour aider à se situer
 /// (masqués en Difficile, et jamais celui qui donnerait la réponse).
@@ -68,6 +90,11 @@ class _TapeWidgetState extends State<TapeWidget>
   void initState() {
     super.initState();
     _ticker = createTicker(_onTick);
+    if (_friseImage == null) {
+      _loadFrise().then((_) {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   @override
@@ -139,6 +166,7 @@ class _TapeWidgetState extends State<TapeWidget>
                     tapeW: tapeW,
                     showAnchors: widget.showAnchors,
                     maskYear: widget.maskYear,
+                    frise: _friseImage,
                   ),
                 ),
               ),
@@ -171,6 +199,7 @@ class _TapePainter extends CustomPainter {
     required this.tapeW,
     required this.showAnchors,
     required this.maskYear,
+    this.frise,
   });
 
   final double frac;
@@ -178,11 +207,18 @@ class _TapePainter extends CustomPainter {
   final bool showAnchors;
   final int? maskYear;
 
+  /// Planche des panneaux d'époques (6 cellules côte à côte), ou null
+  /// tant qu'elle n'est pas décodée.
+  final ui.Image? frise;
+
+  /// Teintes de repli, échantillonnées sur les panneaux illustrés.
   static const _eraColors = [
-    Color(0xFFDCF7F0), // Antiquité
-    Color(0xFFE0EEFF), // Moyen Âge
-    Color(0xFFFFF1CC), // Moderne
-    Color(0xFFFFE4DE), // Contemporaine
+    Color(0xFFF9EAC9), // Âge du bronze
+    Color(0xFFF2EDCF), // Âge du fer
+    Color(0xFFE6DFF0), // Antiquité
+    Color(0xFFD8E6F5), // Moyen Âge
+    Color(0xFFFBE3C0), // Époque moderne
+    Color(0xFFF9D9D4), // Époque contemporaine
   ];
 
   double _px(num year) => yearToFrac(year) * tapeW;
@@ -193,32 +229,54 @@ class _TapePainter extends CustomPainter {
     canvas.save();
     canvas.translate(dx, 0);
 
-    // Bandes d'époques + nom en filigrane
+    // Bandes d'époques : panneaux illustrés en tuiles (nom d'époque
+    // compris dans l'image), ou bandes unies + filigrane en repli.
+    final bandBottom = size.height * 0.66;
     for (var i = 0; i < eras.length; i++) {
       final e = eras[i];
       final left = _px(e.from);
       final right = _px(e.to);
-      final rect = Rect.fromLTRB(left, 0, right, size.height);
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(rect, const Radius.circular(16)),
-        Paint()..color = _eraColors[i],
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTRB(left, 0, right, size.height),
+        const Radius.circular(16),
       );
-      final tp = TextPainter(
-        text: TextSpan(
-          text: e.name.toUpperCase(),
-          style: const TextStyle(
-            color: Color(0x1A35406B),
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 3,
+      canvas.drawRRect(rrect, Paint()..color = _eraColors[i]);
+      final img = frise;
+      if (img != null) {
+        final cellW = img.width / 6;
+        final cellH = img.height.toDouble();
+        final tileW = bandBottom * cellW / cellH;
+        final src = Rect.fromLTWH(i * cellW, 0, cellW, cellH);
+        final paint = Paint()..filterQuality = FilterQuality.medium;
+        canvas.save();
+        canvas.clipRRect(rrect);
+        for (var x = left; x < right; x += tileW) {
+          canvas.drawImageRect(
+            img,
+            src,
+            Rect.fromLTWH(x, 0, tileW, bandBottom),
+            paint,
+          );
+        }
+        canvas.restore();
+      } else {
+        final tp = TextPainter(
+          text: TextSpan(
+            text: e.name.toUpperCase(),
+            style: const TextStyle(
+              color: Color(0x1A35406B),
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 3,
+            ),
           ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      tp.paint(
-        canvas,
-        Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
-      );
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(
+          canvas,
+          Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
+        );
+      }
     }
 
     // Ligne de base
@@ -337,7 +395,21 @@ class _TapePainter extends CustomPainter {
           textAlign: TextAlign.center,
           textDirection: TextDirection.ltr,
         )..layout();
-        tp.paint(canvas, Offset(_px(a.year) - tp.width / 2, top));
+        final at = Offset(_px(a.year) - tp.width / 2, top);
+        // Pastille claire pour rester lisible sur les panneaux illustrés.
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromLTWH(
+              at.dx - 4,
+              at.dy - 2,
+              tp.width + 8,
+              tp.height + 4,
+            ),
+            const Radius.circular(8),
+          ),
+          Paint()..color = const Color(0xCCFFFFFF),
+        );
+        tp.paint(canvas, at);
       }
     }
 
@@ -349,5 +421,6 @@ class _TapePainter extends CustomPainter {
       oldDelegate.frac != frac ||
       oldDelegate.tapeW != tapeW ||
       oldDelegate.showAnchors != showAnchors ||
-      oldDelegate.maskYear != maskYear;
+      oldDelegate.maskYear != maskYear ||
+      oldDelegate.frise != frise;
 }

@@ -40,6 +40,8 @@ void main() {
     });
 
     test('eraFor découpe les grandes époques scolaires', () {
+      expect(eraFor(-2000).name, 'Âge du bronze');
+      expect(eraFor(-800).name, 'Âge du fer');
       expect(eraFor(-52).name, 'Antiquité');
       expect(eraFor(476).name, 'Antiquité');
       expect(eraFor(800).name, 'Moyen Âge');

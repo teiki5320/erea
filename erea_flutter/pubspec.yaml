@@ -21,6 +21,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/events.json
+    - assets/img/
   # Polices embarquées (Baloo 2 pour les titres, Nunito pour l'interface).
   # Volontairement en local plutôt que via google_fonts : l'app doit
   # fonctionner hors ligne, sans rien télécharger au premier lancement.

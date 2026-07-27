@@ -36,8 +36,11 @@ Interpolation linéaire à l'intérieur d'un segment (`lib/core/timeline_scale.d
 Ruban virtuel de 3 200 px, aiguille fixe au centre, inertie au relâcher
 (décroissance ×0,94 par frame), réglage fin quand le doigt ralentit
 (facteur 0,4 → 1 selon la vitesse). Minimap tapable sous le ruban.
-Grandes époques (bandes de couleur) : Antiquité ≤ 476, Moyen Âge ≤ 1492,
-Époque moderne ≤ 1789, Époque contemporaine ensuite.
+Grandes époques (panneaux illustrés `assets/img/frise.webp`, 6 cellules) :
+Âge du bronze ≤ −1200, Âge du fer ≤ −500, Antiquité ≤ 476,
+Moyen Âge ≤ 1492, Époque moderne ≤ 1789, Époque contemporaine ensuite.
+Les panneaux sont dessinés en tuiles dans la bande de chaque époque ;
+repli sur des bandes de couleur unies si l'image n'est pas chargée.
 
 ## 3. Barème
 
