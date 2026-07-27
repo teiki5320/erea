@@ -40,7 +40,7 @@ const Map<int, _TravelerSpec> _eraTravelerSpecs = {
   1: _TravelerSpec('assets/img/anim-fer.webp', 6),
   2: _TravelerSpec('assets/img/anim-antiquite.webp', 7),
   3: _TravelerSpec('assets/img/anim-moyenage.webp', 5),
-  4: _TravelerSpec('assets/img/spr-moderne-0.webp'),
+  4: _TravelerSpec('assets/img/anim-moderne.webp', 10),
   5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
 };
 
