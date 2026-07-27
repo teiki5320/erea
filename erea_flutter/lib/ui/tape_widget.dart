@@ -7,23 +7,60 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../core/timeline_scale.dart';
 
-/// Planche des 6 panneaux d'époques (illustrations), chargée une seule
-/// fois pour toute la vie de l'app. Tant qu'elle n'est pas prête — ou si
-/// l'asset manque — le ruban dessine ses bandes de couleur unies.
+/// Illustrations du ruban, chargées une seule fois pour toute la vie de
+/// l'app. Trois couches par époque quand les assets existent :
+/// fond lointain (lent) → décor (moyen) → voyageurs (rapides, devant).
+/// Toute image absente est simplement ignorée (repli automatique).
 ui.Image? _friseImage;
-Future<ui.Image?>? _friseLoading;
+final Map<int, ui.Image> _eraBg = {};
+final Map<int, List<ui.Image>> _eraTravelers = {};
+int _artVersion = 0;
+Future<void>? _artLoading;
 
-Future<ui.Image?> _loadFrise() {
-  return _friseLoading ??= () async {
-    try {
-      final data = await rootBundle.load('assets/img/frise.webp');
-      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-      final frame = await codec.getNextFrame();
-      _friseImage = frame.image;
-    } catch (_) {
-      // Pas d'image : le ruban reste sur ses bandes unies.
+const Map<int, String> _eraBgAssets = {
+  0: 'assets/img/bg-bronze.webp',
+  1: 'assets/img/bg-fer.webp',
+};
+
+const Map<int, List<String>> _eraTravelerAssets = {
+  0: [
+    'assets/img/spr-bronze-0.webp',
+    'assets/img/spr-bronze-1.webp',
+    'assets/img/spr-bronze-2.webp',
+  ],
+  1: [
+    'assets/img/spr-fer-0.webp',
+    'assets/img/spr-fer-1.webp',
+    'assets/img/spr-fer-2.webp',
+  ],
+};
+
+Future<ui.Image?> _decode(String asset) async {
+  try {
+    final data = await rootBundle.load(asset);
+    final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+    return (await codec.getNextFrame()).image;
+  } catch (_) {
+    return null;
+  }
+}
+
+Future<void> _loadArt() {
+  return _artLoading ??= () async {
+    _friseImage = await _decode('assets/img/frise.webp');
+    for (final e in _eraBgAssets.entries) {
+      final img = await _decode(e.value);
+      if (img != null) _eraBg[e.key] = img;
     }
-    return _friseImage;
+    for (final e in _eraTravelerAssets.entries) {
+      final list = <ui.Image>[];
+      for (final a in e.value) {
+        final img = await _decode(a);
+        if (img != null) list.add(img);
+      }
+      if (list.isNotEmpty) _eraTravelers[e.key] = list;
+    }
+    _artVersion++;
   }();
 }
 
@@ -60,11 +97,9 @@ class _TapeWidgetState extends State<TapeWidget>
   void initState() {
     super.initState();
     _ticker = createTicker(_onTick);
-    if (_friseImage == null) {
-      _loadFrise().then((_) {
-        if (mounted) setState(() {});
-      });
-    }
+    _loadArt().then((_) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -135,6 +170,7 @@ class _TapeWidgetState extends State<TapeWidget>
                     frac: widget.frac,
                     tapeW: tapeW,
                     frise: _friseImage,
+                    artVersion: _artVersion,
                   ),
                 ),
               ),
@@ -166,6 +202,7 @@ class _TapePainter extends CustomPainter {
     required this.frac,
     required this.tapeW,
     this.frise,
+    this.artVersion = 0,
   });
 
   final double frac;
@@ -174,6 +211,9 @@ class _TapePainter extends CustomPainter {
   /// Planche des panneaux d'époques (6 cellules côte à côte), ou null
   /// tant qu'elle n'est pas décodée.
   final ui.Image? frise;
+
+  /// Incrémenté quand les images finissent de charger (force le repaint).
+  final int artVersion;
 
   /// Teintes de repli, échantillonnées sur les panneaux illustrés.
   static const _eraColors = [
@@ -205,25 +245,15 @@ class _TapePainter extends CustomPainter {
         const Radius.circular(16),
       );
       canvas.drawRRect(rrect, Paint()..color = _eraColors[i]);
-      final img = frise;
-      if (img != null) {
-        // Décor seul (le bandeau de titre des panneaux est coupé), en
-        // tuiles miroir alternées : le paysage remplit la bande sans
-        // raccord visible ni texte répété.
-        final cellW = img.width / 6;
-        final cellH = img.height.toDouble();
-        final srcTop = cellH * 0.30;
-        final srcH = cellH - srcTop;
-        final tileW = bandBottom * cellW / srcH;
-        final src = Rect.fromLTWH(i * cellW, srcTop, cellW, srcH);
-        final paint = Paint()..filterQuality = FilterQuality.medium;
-        canvas.save();
-        canvas.clipRRect(rrect);
-        // Parallaxe : le décor glisse à 55 % de la vitesse des
-        // graduations (il « recule » de 45 % du défilement), la période
-        // de deux tuiles (endroit + miroir) garde le motif continu.
+      final imgPaint = Paint()..filterQuality = FilterQuality.medium;
+
+      // Tuiles miroir alternées avec parallaxe : `shift` est la part du
+      // défilement que la couche « rend » (0 = collée aux graduations,
+      // plus c'est grand, plus la couche paraît lointaine et lente).
+      void drawTiled(ui.Image im, Rect src, double shift) {
+        final tileW = bandBottom * src.width / src.height;
         final period = tileW * 2;
-        final phase = (frac * tapeW * 0.45) % period;
+        final phase = (frac * tapeW * shift) % period;
         var j = 0;
         for (var x = left + phase - period; x < right; x += tileW, j++) {
           final dst = Rect.fromLTWH(x, 0, tileW, bandBottom);
@@ -232,15 +262,87 @@ class _TapePainter extends CustomPainter {
             canvas.translate(x + tileW / 2, 0);
             canvas.scale(-1, 1);
             canvas.translate(-(x + tileW / 2), 0);
-            canvas.drawImageRect(img, src, dst, paint);
+            canvas.drawImageRect(im, src, dst, imgPaint);
             canvas.restore();
           } else {
-            canvas.drawImageRect(img, src, dst, paint);
+            canvas.drawImageRect(im, src, dst, imgPaint);
+          }
+        }
+      }
+
+      final bg = _eraBg[i];
+      final travelers = _eraTravelers[i];
+      final img = frise;
+      if (bg != null) {
+        // Couches dédiées : fond lointain très lent + voyageurs devant,
+        // plus rapides que les graduations (ils « passent » au premier
+        // plan). Le décor en panneaux n'est plus nécessaire ici.
+        canvas.save();
+        canvas.clipRRect(rrect);
+        drawTiled(
+          bg,
+          Rect.fromLTWH(0, 0, bg.width.toDouble(), bg.height.toDouble()),
+          0.60,
+        );
+        if (travelers != null) {
+          const period = 300.0;
+          final sprH = bandBottom * 0.36;
+          final o = -frac * tapeW * 0.30;
+          final jFirst = ((left - o) / period).floor() - 1;
+          final jLast = ((right - o) / period).ceil();
+          for (var j = jFirst; j <= jLast; j++) {
+            final spr = travelers[((j % travelers.length) +
+                    travelers.length) %
+                travelers.length];
+            final sprW = sprH * spr.width / spr.height;
+            final x = o + j * period;
+            if (x + sprW < left || x > right) continue;
+            canvas.drawImageRect(
+              spr,
+              Rect.fromLTWH(
+                  0, 0, spr.width.toDouble(), spr.height.toDouble()),
+              Rect.fromLTWH(x, bandBottom - sprH - 2, sprW, sprH),
+              imgPaint,
+            );
           }
         }
         canvas.restore();
-        // Nom de l'époque : une pastille par ~560 px de bande, pour
-        // qu'il soit visible où qu'on soit sans tapisser le ruban.
+      } else if (img != null) {
+        // Décor seul (le bandeau de titre des panneaux est coupé) : le
+        // paysage remplit la bande sans raccord visible ni texte répété.
+        final cellW = img.width / 6;
+        final cellH = img.height.toDouble();
+        final srcTop = cellH * 0.30;
+        canvas.save();
+        canvas.clipRRect(rrect);
+        drawTiled(
+          img,
+          Rect.fromLTWH(i * cellW, srcTop, cellW, cellH - srcTop),
+          0.45,
+        );
+        canvas.restore();
+      } else {
+        final tp = TextPainter(
+          text: TextSpan(
+            text: e.name.toUpperCase(),
+            style: const TextStyle(
+              color: Color(0x1A35406B),
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 3,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        tp.paint(
+          canvas,
+          Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
+        );
+      }
+
+      // Nom de l'époque sur les bandes illustrées : une pastille par
+      // ~560 px de bande, visible où qu'on soit sans tapisser le ruban.
+      if (bg != null || img != null) {
         final label = TextPainter(
           text: TextSpan(
             text: e.name.toUpperCase(),
@@ -273,23 +375,6 @@ class _TapePainter extends CustomPainter {
           );
           label.paint(canvas, at);
         }
-      } else {
-        final tp = TextPainter(
-          text: TextSpan(
-            text: e.name.toUpperCase(),
-            style: const TextStyle(
-              color: Color(0x1A35406B),
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 3,
-            ),
-          ),
-          textDirection: TextDirection.ltr,
-        )..layout();
-        tp.paint(
-          canvas,
-          Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
-        );
       }
     }
 
@@ -399,5 +484,6 @@ class _TapePainter extends CustomPainter {
   bool shouldRepaint(_TapePainter oldDelegate) =>
       oldDelegate.frac != frac ||
       oldDelegate.tapeW != tapeW ||
-      oldDelegate.frise != frise;
+      oldDelegate.frise != frise ||
+      oldDelegate.artVersion != artVersion;
 }
