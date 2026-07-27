@@ -36,10 +36,10 @@ class _TravelerSpec {
 }
 
 const Map<int, _TravelerSpec> _eraTravelerSpecs = {
-  0: _TravelerSpec('assets/img/anim-bronze.webp', 5),
-  1: _TravelerSpec('assets/img/spr-fer-0.webp'),
-  2: _TravelerSpec('assets/img/spr-antiquite-0.webp'),
-  3: _TravelerSpec('assets/img/spr-moyenage-0.webp'),
+  0: _TravelerSpec('assets/img/anim-bronze.webp', 6),
+  1: _TravelerSpec('assets/img/anim-fer.webp', 6),
+  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7),
+  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5),
   4: _TravelerSpec('assets/img/spr-moderne-0.webp'),
   5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
 };
