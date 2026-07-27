@@ -243,22 +243,67 @@ class _TapePainter extends CustomPainter {
       canvas.drawRRect(rrect, Paint()..color = _eraColors[i]);
       final img = frise;
       if (img != null) {
+        // Décor seul (le bandeau de titre des panneaux est coupé), en
+        // tuiles miroir alternées : le paysage remplit la bande sans
+        // raccord visible ni texte répété.
         final cellW = img.width / 6;
         final cellH = img.height.toDouble();
-        final tileW = bandBottom * cellW / cellH;
-        final src = Rect.fromLTWH(i * cellW, 0, cellW, cellH);
+        final srcTop = cellH * 0.30;
+        final srcH = cellH - srcTop;
+        final tileW = bandBottom * cellW / srcH;
+        final src = Rect.fromLTWH(i * cellW, srcTop, cellW, srcH);
         final paint = Paint()..filterQuality = FilterQuality.medium;
         canvas.save();
         canvas.clipRRect(rrect);
-        for (var x = left; x < right; x += tileW) {
-          canvas.drawImageRect(
-            img,
-            src,
-            Rect.fromLTWH(x, 0, tileW, bandBottom),
-            paint,
-          );
+        var flip = false;
+        for (var x = left; x < right; x += tileW, flip = !flip) {
+          final dst = Rect.fromLTWH(x, 0, tileW, bandBottom);
+          if (flip) {
+            canvas.save();
+            canvas.translate(x + tileW / 2, 0);
+            canvas.scale(-1, 1);
+            canvas.translate(-(x + tileW / 2), 0);
+            canvas.drawImageRect(img, src, dst, paint);
+            canvas.restore();
+          } else {
+            canvas.drawImageRect(img, src, dst, paint);
+          }
         }
         canvas.restore();
+        // Nom de l'époque : une pastille par ~560 px de bande, pour
+        // qu'il soit visible où qu'on soit sans tapisser le ruban.
+        final label = TextPainter(
+          text: TextSpan(
+            text: e.name.toUpperCase(),
+            style: const TextStyle(
+              color: Color(0xFF5F6890),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        final bandW = right - left;
+        final n = math.max(1, bandW ~/ 560);
+        final spacing = bandW / n;
+        for (var k = 0; k < n; k++) {
+          final cx = left + spacing * (k + 0.5);
+          final at = Offset(cx - label.width / 2, 8);
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+              Rect.fromLTWH(
+                at.dx - 7,
+                at.dy - 3,
+                label.width + 14,
+                label.height + 6,
+              ),
+              const Radius.circular(10),
+            ),
+            Paint()..color = const Color(0xD9FFFFFF),
+          );
+          label.paint(canvas, at);
+        }
       } else {
         final tp = TextPainter(
           text: TextSpan(
