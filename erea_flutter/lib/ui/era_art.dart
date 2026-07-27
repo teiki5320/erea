@@ -31,6 +31,10 @@ class EraArt {
 
   static ui.Image? frise;
   static final Map<int, ui.Image> bg = {};
+
+  /// Versions pré-floutées (2 px) des fonds : le flou est payé UNE fois
+  /// au chargement, pas à chaque frame de glissement dans EraBackdrop.
+  static final Map<int, ui.Image> bgBlur = {};
   static final Map<int, ui.Image> travelers = {};
 
   /// Incrémenté quand le chargement se termine (force les repaints).
@@ -40,11 +44,28 @@ class EraArt {
 
   static ui.Image? bgFor(int era) => bg[era];
 
-  static Future<ui.Image?> _decode(String asset) async {
+  static Future<ui.Image?> _decode(String asset, {int? targetWidth}) async {
     try {
       final data = await rootBundle.load(asset);
-      final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+      final codec = await ui.instantiateImageCodec(
+        data.buffer.asUint8List(),
+        targetWidth: targetWidth,
+      );
       return (await codec.getNextFrame()).image;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<ui.Image?> _blurred(ui.Image src) async {
+    try {
+      final rec = ui.PictureRecorder();
+      final canvas = ui.Canvas(rec);
+      final paint = ui.Paint()
+        ..imageFilter = ui.ImageFilter.blur(
+            sigmaX: 2, sigmaY: 2, tileMode: ui.TileMode.clamp);
+      canvas.drawImage(src, ui.Offset.zero, paint);
+      return await rec.endRecording().toImage(src.width, src.height);
     } catch (_) {
       return null;
     }
@@ -52,10 +73,16 @@ class EraArt {
 
   static Future<void> load() {
     return _loading ??= () async {
-      frise = await _decode('assets/img/frise.webp');
+      // Les décors sont affichés au plus à ~1,2x la largeur d'écran :
+      // décoder à 1200 px divise la mémoire par ~1,5 sans perte visible.
+      frise = await _decode('assets/img/frise.webp', targetWidth: 1200);
       for (var i = 0; i < eraThemes.length; i++) {
-        final img = await _decode(eraThemes[i].bgAsset);
-        if (img != null) bg[i] = img;
+        final img = await _decode(eraThemes[i].bgAsset, targetWidth: 1200);
+        if (img != null) {
+          bg[i] = img;
+          final blur = await _blurred(img);
+          if (blur != null) bgBlur[i] = blur;
+        }
       }
       for (final e in travelerSpecs.entries) {
         final img = await _decode(e.value.asset);

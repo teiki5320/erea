@@ -109,7 +109,7 @@ void main() {
       find.widgetWithText(PushButton, 'Je place ici !'),
     );
     expect(button.onPressed, isNull);
-    await tester.tap(find.byIcon(Icons.add_circle_outline));
+    await tester.tap(find.text('+'));
     await tester.pumpAndSettle();
     final enabled = tester.widget<PushButton>(
       find.widgetWithText(PushButton, 'Je place ici !'),
@@ -160,7 +160,7 @@ void main() {
     for (var i = 1; i <= 10; i++) {
       expect(find.text('MANCHE $i/10'), findsOneWidget);
       // Le +1 « touche » la frise : sans ça la validation reste désactivée.
-      await tester.tap(find.byIcon(Icons.add_circle_outline));
+      await tester.tap(find.text('+'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Je place ici !'));
       await tester.pumpAndSettle();

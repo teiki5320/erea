@@ -36,8 +36,10 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _travel;
+  late final AnimationController _roundFade;
+  int _fadedRound = -1;
   double _travelBegin = 0;
   double _travelEnd = 0;
   RoundResult? _lastResult;
@@ -49,6 +51,13 @@ class _GameScreenState extends State<GameScreen>
   @override
   void initState() {
     super.initState();
+    // Fondu temporel de 320 ms au lancement de chaque manche — la seule
+    // animation autorisée sur le fond (le reste suit frac, sans délai).
+    _roundFade = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+      value: 1,
+    );
     _travel = AnimationController(vsync: this);
     _travel.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -67,6 +76,7 @@ class _GameScreenState extends State<GameScreen>
   @override
   void dispose() {
     _travel.dispose();
+    _roundFade.dispose();
     super.dispose();
   }
 
@@ -94,7 +104,8 @@ class _GameScreenState extends State<GameScreen>
       await widget.store.incGames();
       await widget.store.markSeen(game.results.map((r) => r.event.id));
       if (game.mode == GameMode.daily) {
-        await widget.store.recordDaily(game.total, grid: _grid());
+        await widget.store
+            .finishDaily(game.total, grid: _grid(), day: game.dailyKey);
       } else {
         await widget.store
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
@@ -148,19 +159,19 @@ class _GameScreenState extends State<GameScreen>
         body: ListenableBuilder(
           listenable: game,
           builder: (context, _) {
+            if (game.round != _fadedRound && !_showEnd) {
+              _fadedRound = game.round;
+              _roundFade.forward(from: 0);
+            }
             return Stack(
               fit: StackFit.expand,
               children: [
                 // Fond fondu : fonction pure de frac (aucune animation
                 // pendant le geste). Seul le lancement d'une manche fait
                 // un vrai fondu temporel de 320 ms.
-                TweenAnimationBuilder<double>(
-                  key: ValueKey('round-${game.round}-${_showEnd}'),
-                  tween: Tween(begin: 0.0, end: 1.0),
-                  duration: const Duration(milliseconds: 320),
-                  curve: Curves.easeOut,
-                  builder: (context, v, child) =>
-                      Opacity(opacity: v, child: child),
+                FadeTransition(
+                  opacity: _roundFade
+                      .drive(CurveTween(curve: Curves.easeOut)),
                   child: EraBackdrop(frac: game.frac),
                 ),
                 SafeArea(
@@ -428,7 +439,7 @@ class _GameScreenState extends State<GameScreen>
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Row(
             children: [
-              _fineButton(Icons.remove_circle_outline,
+              _fineButton('−',
                   guessing ? () => game.setYear(game.guessYear - 1) : null),
               const SizedBox(width: 12),
               Expanded(
@@ -440,7 +451,7 @@ class _GameScreenState extends State<GameScreen>
                 ),
               ),
               const SizedBox(width: 12),
-              _fineButton(Icons.add_circle_outline,
+              _fineButton('+',
                   guessing ? () => game.setYear(game.guessYear + 1) : null),
             ],
           ),
@@ -450,14 +461,40 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  Widget _fineButton(IconData icon, VoidCallback? onTap) {
-    return PushButton(
-      onPressed: onTap,
-      color: Colors.white,
-      softShadowColor: inkColor,
-      radius: 15,
-      padding: const EdgeInsets.all(10),
-      child: Icon(icon, size: 24, color: inkColor),
+  /// Bouton de réglage fin 46 × 46 : glyphe « − » / « + » en Baloo,
+  /// blanc, ombre douce (0, 6, 14).
+  Widget _fineButton(String glyph, VoidCallback? onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Opacity(
+        opacity: onTap != null ? 1 : 0.45,
+        child: Container(
+          width: 46,
+          height: 46,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: const [
+              BoxShadow(
+                offset: Offset(0, 6),
+                blurRadius: 14,
+                color: Color(0x1F35406B),
+              ),
+            ],
+          ),
+          child: Text(
+            glyph,
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 23,
+              height: 1.0,
+              color: inkColor,
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -505,7 +542,8 @@ class _GameScreenState extends State<GameScreen>
             final w = constraints.maxWidth;
             double xOf(int year) =>
                 w / 2 + (yearToFrac(year) - game.frac) * 3200;
-            final gx = xOf(r.guess).clamp(46.0, w - 46.0);
+            // Marge assez large pour « Toi · 3000 av. J.-C. »
+            final gx = xOf(r.guess).clamp(78.0, w - 78.0);
             Widget pinScale(Widget child) => reduce
                 ? child
                 : TweenAnimationBuilder<double>(
@@ -696,19 +734,42 @@ class _GameScreenState extends State<GameScreen>
                         const SizedBox(height: 4),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(999),
-                          child: LinearProgressIndicator(
-                            value: (game.combo / 3).clamp(0.0, 1.0).toDouble(),
-                            minHeight: 6,
-                            backgroundColor:
-                                inkColor.withValues(alpha: 0.10),
-                            valueColor: const AlwaysStoppedAnimation(
-                                Color(0xFFF25B4D)),
+                          child: SizedBox(
+                            height: 6,
+                            width: double.infinity,
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: ColoredBox(
+                                      color:
+                                          inkColor.withValues(alpha: 0.10)),
+                                ),
+                                Positioned.fill(
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: FractionallySizedBox(
+                                      widthFactor: (game.combo / 3)
+                                          .clamp(0.0, 1.0)
+                                          .toDouble(),
+                                      heightFactor: 1,
+                                      child: const DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [yellowColor, coralColor],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  if (game.boostNext) ...[
+                  if (game.boostNext && !game.isLastRound) ...[
                     const SizedBox(width: 10),
                     const Text(
                       '×1,5',

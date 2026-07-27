@@ -31,10 +31,15 @@ class Store {
   }
 
   /// Anti-répétition : ids des ~80 derniers événements joués.
+  /// Une préférence corrompue ne doit jamais bloquer le jeu.
   Set<int> get seen {
-    final raw = _prefs.getString('seen');
-    if (raw == null) return {};
-    return (jsonDecode(raw) as List<dynamic>).cast<int>().toSet();
+    try {
+      final raw = _prefs.getString('seen');
+      if (raw == null) return {};
+      return (jsonDecode(raw) as List<dynamic>).cast<int>().toSet();
+    } catch (_) {
+      return {};
+    }
   }
 
   Future<void> markSeen(Iterable<int> ids) async {
@@ -61,13 +66,26 @@ class Store {
 
   bool get dailyPlayedToday => dailyLast == dayKey(DateTime.now());
 
-  Future<void> recordDaily(int total, {String grid = ''}) async {
-    if (dailyPlayedToday) return; // déjà enregistré aujourd'hui
-    final now = DateTime.now();
-    final yesterday = dayKey(now.subtract(const Duration(days: 1)));
+  /// Verrouille la tentative du jour DÈS LE LANCEMENT du défi : abandonner
+  /// en cours de route ne permet plus de rejouer en connaissant les
+  /// réponses. La série est créditée ici.
+  Future<void> lockDaily({DateTime? now}) async {
+    final d = now ?? DateTime.now();
+    final key = dayKey(d);
+    if (dailyLast == key) return; // déjà verrouillé pour ce jour
+    final yesterday = dayKey(d.subtract(const Duration(days: 1)));
     final streak = dailyLast == yesterday ? dailyStreak + 1 : 1;
-    await _prefs.setString('daily.last', dayKey(now));
+    await _prefs.setString('daily.last', key);
     await _prefs.setInt('daily.streak', streak);
+    await _prefs.setInt('daily.lastScore', 0);
+    await _prefs.setString('daily.grid', '');
+  }
+
+  /// Enregistre le résultat du défi verrouillé par [lockDaily]. [day] est
+  /// le jour du LANCEMENT : un défi commencé avant minuit et fini après
+  /// reste crédité au bon jour, sans verrouiller le lendemain.
+  Future<void> finishDaily(int total, {String grid = '', String? day}) async {
+    if (day != null && dailyLast != day) return;
     await _prefs.setInt('daily.lastScore', total);
     await _prefs.setString('daily.grid', grid);
   }

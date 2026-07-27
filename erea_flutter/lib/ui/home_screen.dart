@@ -6,6 +6,7 @@ import '../core/scoring.dart';
 import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
+import 'era_art.dart';
 import 'game_screen.dart';
 import 'sticker_widgets.dart';
 import 'tape_widget.dart';
@@ -33,14 +34,30 @@ class _HomeScreenState extends State<HomeScreen>
   String catKey = 'tout';
   Difficulty diff = Difficulty.normal;
   bool _navigating = false;
+  DateTime? _dailyNow;
 
-  // Dérive d'époque : ~3,5 px/s sur le ruban virtuel, les 6 époques en
-  // ~15 min. Arrêtée définitivement au premier contact sur la mini-frise.
+  // Dérive d'époque : 0,0011/s (≈ 3,5 px/s sur le ruban virtuel, la
+  // frise entière en ~15 min), en aller-retour — le modulo ferait
+  // claquer le fondu au passage 1 → 0. Arrêtée définitivement au
+  // premier contact sur la mini-frise.
   double homeFrac = 0.03;
+  double _driftDir = 1;
+  double _driftPending = 0;
   bool _driftStopped = false;
   Ticker? _drift;
   Duration _lastTick = Duration.zero;
   bool _driftInit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Les textures de fond peuvent finir de se décoder après le premier
+    // build : on force alors une reconstruction (sinon, avec « réduire
+    // les animations », elles n'apparaîtraient jamais).
+    EraArt.load().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -53,11 +70,27 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   void _onDrift(Duration elapsed) {
-    final dt = _lastTick == Duration.zero
+    var dt = _lastTick == Duration.zero
         ? 0.0
         : (elapsed - _lastTick).inMicroseconds / 1e6;
     _lastTick = elapsed;
-    setState(() => homeFrac = (homeFrac + 0.0183 * dt) % 1.0);
+    if (dt > 0.5) dt = 0.0; // retour d'arrière-plan : pas de saut
+    // La dérive est lente : reconstruire ~10 fois par seconde suffit
+    // largement et ménage la batterie.
+    _driftPending += dt;
+    if (_driftPending < 0.1) return;
+    final step = 0.0011 * _driftPending * _driftDir;
+    _driftPending = 0;
+    setState(() {
+      homeFrac += step;
+      if (homeFrac >= 1.0) {
+        homeFrac = 1.0;
+        _driftDir = -1;
+      } else if (homeFrac <= 0.0) {
+        homeFrac = 0.0;
+        _driftDir = 1;
+      }
+    });
   }
 
   void _stopDrift() {
@@ -84,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen>
         final controller = GameController(widget.repo);
         controller.catKey = catKey;
         controller.diff = diff;
+        controller.dailyNow = _dailyNow;
         final ok = controller.start(mode, seenIds: widget.store.seen);
         if (!ok) {
           messenger.showSnackBar(
@@ -270,7 +304,10 @@ class _HomeScreenState extends State<HomeScreen>
     final level = levelFromXp(widget.store.xp);
     final title = titleFor(level.level);
     final dailyDone = widget.store.dailyPlayedToday;
-    final best = widget.store.bestFor('$catKey|${diff.name}');
+    // Le record de la tuile Classique : jamais celui d'un pack.
+    final classiqueKey =
+        categories.any((c) => c.key == catKey) ? catKey : 'tout';
+    final best = widget.store.bestFor('$classiqueKey|${diff.name}');
     final now = DateTime.now();
 
     return Scaffold(
@@ -281,7 +318,7 @@ class _HomeScreenState extends State<HomeScreen>
             frac: homeFrac,
             textureHeight: 250,
             maskStops: const [0.0, 0.23, 0.76],
-            textureAlignment: const Alignment(0, -0.28),
+            textureAlignment: const Alignment(0, -0.24), // "center 38%"
           ),
           SafeArea(
             child: Column(
@@ -536,7 +573,16 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           const SizedBox(height: 12),
           PushButton(
-            onPressed: dailyDone ? null : () => _play(GameMode.daily),
+            onPressed: dailyDone
+                ? null
+                : () async {
+                    // Verrou immédiat : une seule tentative, même en
+                    // abandonnant en cours de partie.
+                    final now = DateTime.now();
+                    await widget.store.lockDaily(now: now);
+                    _dailyNow = now;
+                    await _play(GameMode.daily);
+                  },
             color: coralColor,
             shadowColor: const Color(0xFFB93A2F),
             radius: 16,

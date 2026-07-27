@@ -1,5 +1,3 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 
 import '../core/timeline_scale.dart';
@@ -23,6 +21,11 @@ const softShadow = BoxShadow(
   blurRadius: 26,
   color: Color(0x1F35406B),
 );
+const pillShadow = BoxShadow(
+  offset: Offset(0, 6),
+  blurRadius: 16,
+  color: Color(0x1F35406B),
+);
 
 /// Fond d'écran fondu : teinte A → teinte B (poids t) + texture de décor
 /// en haut d'écran, presque invisible (0,30 max, floutée, masquée avant la
@@ -44,7 +47,9 @@ class EraBackdrop extends StatelessWidget {
 
   Widget _texture(int era, double weight) {
     if (weight <= 0.001) return const SizedBox.shrink();
-    final img = EraArt.bgFor(era);
+    // Version pré-floutée (calculée une fois au chargement) : aucun flou
+    // GPU à payer pendant le glissement.
+    final img = EraArt.bgBlur[era] ?? EraArt.bgFor(era);
     if (img == null) return const SizedBox.shrink();
     return Positioned(
       top: 0,
@@ -62,13 +67,10 @@ class EraBackdrop extends StatelessWidget {
               colors: const [Colors.black, Colors.black, Colors.transparent],
               stops: maskStops,
             ).createShader(r),
-            child: ImageFiltered(
-              imageFilter: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-              child: RawImage(
-                image: img,
-                fit: BoxFit.cover,
-                alignment: textureAlignment,
-              ),
+            child: RawImage(
+              image: img,
+              fit: BoxFit.cover,
+              alignment: textureAlignment,
             ),
           ),
         ),
@@ -115,7 +117,7 @@ class EraPillPair extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(999),
           border: bordered ? Border.all(color: inkColor, width: 2) : null,
-          boxShadow: bordered ? null : const [softShadow],
+          boxShadow: bordered ? null : const [pillShadow],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -278,7 +280,8 @@ class MiniMap extends StatelessWidget {
           onTapDown: (d) => jump(d.localPosition),
           onHorizontalDragUpdate: (d) => jump(d.localPosition),
           child: SizedBox(
-            height: 24,
+            // Zone tactile ≥ 44 px (la barre visible reste fine).
+            height: 44,
             child: Stack(
               alignment: Alignment.centerLeft,
               children: [

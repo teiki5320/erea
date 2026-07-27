@@ -4,6 +4,7 @@ import '../core/rng.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
+import '../data/store.dart';
 import '../models/hist_event.dart';
 
 enum GameMode { classique, daily, chrono, duel }
@@ -48,6 +49,12 @@ class GameController extends ChangeNotifier {
   bool lastBoosted = false;
   int comboBonusXp = 0;
 
+  /// Instant de lancement du défi du jour (fourni par l'écran d'accueil,
+  /// le même que celui du verrou) et sa clé AAAA-MM-JJ : un défi à cheval
+  /// sur minuit reste crédité au jour de son lancement.
+  DateTime? dailyNow;
+  String dailyKey = '';
+
   HistEvent get current => events[round % events.length];
   bool get isLastRound => round == rounds - 1;
   int get multiplier => roundMultiplier(round, chrono: mode == GameMode.chrono);
@@ -64,7 +71,9 @@ class GameController extends ChangeNotifier {
     lastBoosted = false;
     comboBonusXp = 0;
     if (m == GameMode.daily) {
-      final rng = mulberry32(dailySeed(DateTime.now()));
+      final now = dailyNow ?? DateTime.now();
+      dailyKey = Store.dayKey(now);
+      final rng = mulberry32(dailySeed(now));
       events = repo.pick('tout', Difficulty.normal, rng: rng);
       catKey = 'tout';
       diff = Difficulty.normal;
