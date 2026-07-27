@@ -26,36 +26,16 @@ const Map<int, String> _eraBgAssets = {
   5: 'assets/img/bg-contemporaine.webp',
 };
 
+/// Un seul personnage par époque (les spritesheets animés les
+/// remplaceront un à un) : bédouin à chameau, guerrier gaulois, char
+/// romain, chevalier, caravelle (fond océan), cycliste.
 const Map<int, List<String>> _eraTravelerAssets = {
-  0: [
-    'assets/img/spr-bronze-0.webp',
-    'assets/img/spr-bronze-1.webp',
-    'assets/img/spr-bronze-2.webp',
-  ],
-  1: [
-    'assets/img/spr-fer-0.webp',
-    'assets/img/spr-fer-1.webp',
-  ],
-  2: [
-    'assets/img/spr-antiquite-0.webp',
-    'assets/img/spr-antiquite-1.webp',
-    'assets/img/spr-antiquite-2.webp',
-  ],
-  3: [
-    'assets/img/spr-moyenage-0.webp',
-    'assets/img/spr-moyenage-1.webp',
-    'assets/img/spr-moyenage-2.webp',
-  ],
-  // Le fond de l'Époque moderne est un océan : seule la caravelle
-  // navigue au premier plan (pas de carrosse sur l'eau).
-  4: [
-    'assets/img/spr-moderne-0.webp',
-  ],
-  5: [
-    'assets/img/spr-contemporaine-0.webp',
-    'assets/img/spr-contemporaine-1.webp',
-    'assets/img/spr-contemporaine-2.webp',
-  ],
+  0: ['assets/img/spr-bronze-0.webp'],
+  1: ['assets/img/spr-fer-0.webp'],
+  2: ['assets/img/spr-antiquite-0.webp'],
+  3: ['assets/img/spr-moyenage-0.webp'],
+  4: ['assets/img/spr-moderne-0.webp'],
+  5: ['assets/img/spr-contemporaine-1.webp'],
 };
 
 Future<ui.Image?> _decode(String asset) async {
@@ -332,7 +312,7 @@ class _TapePainter extends CustomPainter {
         // Voyageurs au premier plan, plus rapides que les graduations :
         // ils « passent » devant le décor.
         if (travelers != null) {
-          const period = 300.0;
+          const period = 560.0;
           final sprH = bandBottom * 0.36;
           final o = -frac * tapeW * 0.30;
           final jFirst = ((left - o) / period).floor() - 1;
