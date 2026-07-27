@@ -74,24 +74,45 @@ class EventsRepository {
     Set<int> seen = const {},
     int count = rounds,
   }) {
-    var p = pool(catKey);
-    List<HistEvent> byNiveau;
-    if (diff == Difficulty.facile) {
-      byNiveau = p.where((e) => e.niveau <= 2).toList();
-    } else if (diff == Difficulty.difficile) {
-      byNiveau = p.where((e) => e.niveau >= 2).toList();
-    } else {
-      byNiveau = p;
-    }
-    if (byNiveau.length >= count) p = byNiveau;
-
+    final p = pool(catKey);
     final random = rng ?? _defaultRng();
-    if (seen.isEmpty) {
-      return shuffled(p, random).take(count).toList();
+
+    // Tranches par priorité selon la difficulté : on épuise la première
+    // avant de piocher dans la suivante. Facile ne touche jamais au
+    // niveau 3 ; Normal n'y recourt qu'en dernier ressort ; Difficile
+    // pioche d'abord le pointu.
+    final List<List<HistEvent>> tiers;
+    if (diff == Difficulty.facile) {
+      tiers = [
+        p.where((e) => e.niveau == 1).toList(),
+        p.where((e) => e.niveau == 2).toList(),
+      ];
+    } else if (diff == Difficulty.difficile) {
+      tiers = [
+        p.where((e) => e.niveau == 3).toList(),
+        p.where((e) => e.niveau == 2).toList(),
+      ];
+    } else {
+      tiers = [
+        p.where((e) => e.niveau <= 2).toList(),
+        p.where((e) => e.niveau == 3).toList(),
+      ];
     }
-    final fresh = p.where((e) => !seen.contains(e.id)).toList();
-    final stale = p.where((e) => seen.contains(e.id)).toList();
-    final ordered = [...shuffled(fresh, random), ...shuffled(stale, random)];
+
+    // Filet de sécurité : si les tranches ne suffisent pas (petit pack),
+    // le reste du pool complète en dernier plutôt que d'écourter la partie.
+    final inTiers = {for (final t in tiers) for (final e in t) e.id};
+    final rest = p.where((e) => !inTiers.contains(e.id)).toList();
+    if (rest.isNotEmpty) tiers.add(rest);
+
+    // Anti-répétition d'abord : tout le jamais-vu (dans l'ordre des
+    // tranches), puis le déjà-vu.
+    final ordered = <HistEvent>[
+      for (final tier in tiers)
+        ...shuffled(tier.where((e) => !seen.contains(e.id)).toList(), random),
+      for (final tier in tiers)
+        ...shuffled(tier.where((e) => seen.contains(e.id)).toList(), random),
+    ];
     return ordered.take(count).toList();
   }
 
