@@ -13,6 +13,11 @@ flutter precache --ios
 cd "$CI_PRIMARY_REPOSITORY_PATH/erea_flutter"
 flutter pub get
 
+# Écrit toute la configuration Xcode du mode Release (Generated.xcconfig
+# complet, flutter_export_environment.sh) sans compiler : l'archive de
+# Xcode Cloud échoue en quelques secondes si cette étape manque.
+flutter build ios --release --config-only --no-codesign
+
 if ! command -v pod >/dev/null 2>&1; then
   HOMEBREW_NO_AUTO_UPDATE=1 brew install cocoapods
 fi
