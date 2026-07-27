@@ -20,6 +20,7 @@ Future<void>? _artLoading;
 const Map<int, String> _eraBgAssets = {
   0: 'assets/img/bg-bronze.webp',
   1: 'assets/img/bg-fer.webp',
+  2: 'assets/img/bg-antiquite.webp',
 };
 
 const Map<int, List<String>> _eraTravelerAssets = {
@@ -32,6 +33,26 @@ const Map<int, List<String>> _eraTravelerAssets = {
     'assets/img/spr-fer-0.webp',
     'assets/img/spr-fer-1.webp',
     'assets/img/spr-fer-2.webp',
+  ],
+  2: [
+    'assets/img/spr-antiquite-0.webp',
+    'assets/img/spr-antiquite-1.webp',
+    'assets/img/spr-antiquite-2.webp',
+  ],
+  3: [
+    'assets/img/spr-moyenage-0.webp',
+    'assets/img/spr-moyenage-1.webp',
+    'assets/img/spr-moyenage-2.webp',
+  ],
+  4: [
+    'assets/img/spr-moderne-0.webp',
+    'assets/img/spr-moderne-1.webp',
+    'assets/img/spr-moderne-2.webp',
+  ],
+  5: [
+    'assets/img/spr-contemporaine-0.webp',
+    'assets/img/spr-contemporaine-1.webp',
+    'assets/img/spr-contemporaine-2.webp',
   ],
 };
 
@@ -273,17 +294,30 @@ class _TapePainter extends CustomPainter {
       final bg = _eraBg[i];
       final travelers = _eraTravelers[i];
       final img = frise;
-      if (bg != null) {
-        // Couches dédiées : fond lointain très lent + voyageurs devant,
-        // plus rapides que les graduations (ils « passent » au premier
-        // plan). Le décor en panneaux n'est plus nécessaire ici.
+      if (bg != null || img != null) {
         canvas.save();
         canvas.clipRRect(rrect);
-        drawTiled(
-          bg,
-          Rect.fromLTWH(0, 0, bg.width.toDouble(), bg.height.toDouble()),
-          0.60,
-        );
+        if (bg != null) {
+          // Fond lointain dédié, très lent : l'horizon recule.
+          drawTiled(
+            bg,
+            Rect.fromLTWH(0, 0, bg.width.toDouble(), bg.height.toDouble()),
+            0.60,
+          );
+        } else if (img != null) {
+          // Décor en panneaux (bandeau de titre coupé) en attendant le
+          // fond dédié de cette époque.
+          final cellW = img.width / 6;
+          final cellH = img.height.toDouble();
+          final srcTop = cellH * 0.30;
+          drawTiled(
+            img,
+            Rect.fromLTWH(i * cellW, srcTop, cellW, cellH - srcTop),
+            0.45,
+          );
+        }
+        // Voyageurs au premier plan, plus rapides que les graduations :
+        // ils « passent » devant le décor.
         if (travelers != null) {
           const period = 300.0;
           final sprH = bandBottom * 0.36;
@@ -306,20 +340,6 @@ class _TapePainter extends CustomPainter {
             );
           }
         }
-        canvas.restore();
-      } else if (img != null) {
-        // Décor seul (le bandeau de titre des panneaux est coupé) : le
-        // paysage remplit la bande sans raccord visible ni texte répété.
-        final cellW = img.width / 6;
-        final cellH = img.height.toDouble();
-        final srcTop = cellH * 0.30;
-        canvas.save();
-        canvas.clipRRect(rrect);
-        drawTiled(
-          img,
-          Rect.fromLTWH(i * cellW, srcTop, cellW, cellH - srcTop),
-          0.45,
-        );
         canvas.restore();
       } else {
         final tp = TextPainter(
