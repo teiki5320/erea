@@ -312,26 +312,25 @@ class _TapePainter extends CustomPainter {
             0.45,
           );
         }
-        // Le personnage de l'époque, au premier plan, plus rapide que
-        // les graduations : il « passe » devant le décor. Les frames du
-        // spritesheet avancent avec le défilement — il marche quand le
-        // ruban glisse, se fige à l'arrêt.
+        // Le personnage de l'époque, ancré dans sa bande : il ne peut
+        // pas en sortir, donc toujours visible quand son époque est à
+        // l'écran. Les frames du spritesheet avancent avec le
+        // défilement — il marche sur place pendant que le paysage
+        // glisse sous ses pas, et se fige à l'arrêt.
         if (trav != null && spec != null) {
-          const period = 560.0;
           final frames = spec.frames;
           final fw = trav.width / frames;
           final fh = trav.height.toDouble();
-          final sprH = bandBottom * 0.36;
+          final sprH = bandBottom * 0.40;
           final sprW = sprH * fw / fh;
-          final o = -frac * tapeW * 0.30;
-          final jFirst = ((left - o) / period).floor() - 1;
-          final jLast = ((right - o) / period).ceil();
-          for (var j = jFirst; j <= jLast; j++) {
-            final x = o + j * period;
-            if (x + sprW < left || x > right) continue;
+          final bandW = right - left;
+          final n = math.max(1, bandW ~/ 640);
+          final spacing = bandW / n;
+          for (var k = 0; k < n; k++) {
+            final x = left + spacing * (k + 0.5) - sprW / 2;
             var fi = 0;
             if (frames > 1) {
-              fi = (((frac * tapeW * 1.3) / 15).floor() + j) % frames;
+              fi = ((frac * tapeW / 12).floor() + k) % frames;
               if (fi < 0) fi += frames;
             }
             canvas.drawImageRect(
