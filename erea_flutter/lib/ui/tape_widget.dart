@@ -32,14 +32,19 @@ const Map<int, String> _eraBgAssets = {
 class _TravelerSpec {
   final String asset;
   final int frames;
-  const _TravelerSpec(this.asset, [this.frames = 1]);
+
+  /// Décalage vertical (fraction de la hauteur du sprite) : positif =
+  /// descendu. Le drakkar pose ainsi sa coque sur la ligne, ses rames
+  /// plongeant dessous.
+  final double dyFrac;
+  const _TravelerSpec(this.asset, [this.frames = 1, this.dyFrac = 0]);
 }
 
 const Map<int, _TravelerSpec> _eraTravelerSpecs = {
   0: _TravelerSpec('assets/img/anim-bronze.webp', 6),
   1: _TravelerSpec('assets/img/anim-fer.webp', 6),
-  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7),
-  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5),
+  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7, 0.05),
+  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5, 0.20),
   4: _TravelerSpec('assets/img/anim-moderne.webp', 10),
   5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
 };
@@ -341,16 +346,21 @@ class _TapePainter extends CustomPainter {
           final bandW = right - left;
           final n = math.max(1, bandW ~/ 640);
           final spacing = bandW / n;
+          // Les personnages avancent réellement : ils traversent leur
+          // époque au fil du défilement (22 % de la vitesse du ruban)
+          // et reviennent par l'autre bord.
+          final drift = frac * tapeW * 0.22;
+          final sprTop = bandBottom - sprH - 2 + sprH * spec.dyFrac;
           for (var k = 0; k < n; k++) {
-            final x = left + spacing * (k + 0.5) - sprW / 2;
+            final off = (spacing * (k + 0.5) - drift) % bandW;
+            final x = left + off - sprW / 2;
             var fi = 0;
             if (frames > 1) {
               fi = ((frac * tapeW / 24).floor() + k) % frames;
               if (fi < 0) fi += frames;
             }
             final srcR = Rect.fromLTWH(fi * fw, 0, fw, fh);
-            final dstR =
-                Rect.fromLTWH(x, bandBottom - sprH - 2, sprW, sprH);
+            final dstR = Rect.fromLTWH(x, sprTop, sprW, sprH);
             if (facingLeft) {
               canvas.save();
               canvas.translate(x + sprW / 2, 0);
