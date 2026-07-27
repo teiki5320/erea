@@ -12,6 +12,22 @@ set -e
 FLUTTER_DIR="$HOME/flutter"
 PROJECT_DIR="$CI_PRIMARY_REPOSITORY_PATH/erea_flutter"
 
+# Le réseau des runners lâche parfois en plein téléchargement
+# (curl 35 « Connection reset by peer » sur le SDK Dart, etc.) :
+# on retente chaque étape gourmande jusqu'à 3 fois.
+retry() {
+  n=0
+  until "$@"; do
+    n=$((n + 1))
+    if [ "$n" -ge 3 ]; then
+      echo "❌ Échec après 3 tentatives : $*" >&2
+      return 1
+    fi
+    echo "⚠️  Nouvelle tentative ($n/3) dans 5 s : $*"
+    sleep 5
+  done
+}
+
 echo "🦋 Xcode Cloud — préparation Flutter"
 echo "ℹ️  HOME                       = $HOME"
 echo "ℹ️  CI_PRIMARY_REPOSITORY_PATH = $CI_PRIMARY_REPOSITORY_PATH"
@@ -21,7 +37,7 @@ xcodebuild -version
 # Clone du SDK, idempotent : les runners Xcode Cloud peuvent être réutilisés.
 if [ ! -d "$FLUTTER_DIR" ]; then
   echo "📥 Installation de Flutter stable dans $FLUTTER_DIR"
-  git clone https://github.com/flutter/flutter.git --depth 1 -b stable "$FLUTTER_DIR"
+  retry sh -c "rm -rf '$FLUTTER_DIR' && git clone --depth 1 -b stable https://github.com/flutter/flutter.git '$FLUTTER_DIR'"
 else
   echo "♻️  Flutter déjà présent dans $FLUTTER_DIR"
 fi
@@ -39,12 +55,12 @@ flutter --version
 flutter config --no-enable-swift-package-manager || true
 
 echo "📦 flutter precache --ios"
-flutter precache --ios
+retry flutter precache --ios
 
 cd "$PROJECT_DIR"
 
 echo "📦 flutter pub get"
-flutter pub get
+retry flutter pub get
 
 # Écrit toute la configuration Xcode du mode Release (Generated.xcconfig
 # complet, flutter_export_environment.sh) sans compiler : l'archive de
@@ -69,6 +85,6 @@ if ! command -v pod >/dev/null 2>&1; then
 fi
 cd ios
 pod --version
-pod install --repo-update
+retry pod install --repo-update
 
 echo "✅ Préparation terminée"
