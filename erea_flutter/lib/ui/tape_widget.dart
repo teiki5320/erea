@@ -41,11 +41,15 @@ class _TravelerSpec {
 }
 
 const Map<int, _TravelerSpec> _eraTravelerSpecs = {
+  // dyFrac mesuré sur les planches pour que le point de contact au sol
+  // (pattes, sabots, roues, coque, vagues) soit sur la même ligne pour
+  // tous : seule la coque du drakkar a 26 % de rames qui dépassent
+  // dessous, et la caravelle 3 % de marge sous ses vagues.
   0: _TravelerSpec('assets/img/anim-bronze.webp', 6),
-  1: _TravelerSpec('assets/img/anim-fer.webp', 6, 0.12),
-  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7, 0.05),
-  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5, 0.36),
-  4: _TravelerSpec('assets/img/anim-moderne.webp', 10, 0.12),
+  1: _TravelerSpec('assets/img/anim-fer.webp', 6),
+  2: _TravelerSpec('assets/img/anim-antiquite.webp', 7),
+  3: _TravelerSpec('assets/img/anim-moyenage.webp', 5, 0.26),
+  4: _TravelerSpec('assets/img/anim-moderne.webp', 10, 0.03),
   5: _TravelerSpec('assets/img/anim-contemporaine.webp', 5),
 };
 
