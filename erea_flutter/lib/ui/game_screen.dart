@@ -273,8 +273,6 @@ class _GameScreenState extends State<GameScreen>
         TapeWidget(
           frac: game.frac,
           locked: !guessing,
-          showAnchors: game.diff.anchors,
-          maskYear: game.current.annee,
           height: (MediaQuery.of(context).size.height * 0.30)
               .clamp(190.0, 360.0)
               .toDouble(),
