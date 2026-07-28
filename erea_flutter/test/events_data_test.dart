@@ -62,6 +62,21 @@ void main() {
     }
   });
 
+  test('la roue des pays a de quoi tourner : 40+ pays bien fournis', () {
+    final parPays = <String, int>{};
+    for (final e in repo.events) {
+      if (e.pays == null) continue;
+      // Un pays nommé implique toujours son continent.
+      expect(e.continent, isNotNull, reason: '#${e.id} « ${e.titre} »');
+      parPays[e.pays!] = (parPays[e.pays!] ?? 0) + 1;
+    }
+    // La future roue tire un pays puis 10 questions : sous 10 faits, une
+    // partie devrait piocher ailleurs.
+    final jouables = parPays.entries.where((e) => e.value >= 10);
+    expect(jouables.length, greaterThanOrEqualTo(40),
+        reason: 'pays avec au moins 10 faits');
+  });
+
   test('les niveaux valent 1, 2 ou 3', () {
     for (final e in repo.events) {
       expect(e.niveau, inInclusiveRange(1, 3), reason: '#${e.id}');
