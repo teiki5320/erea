@@ -10,6 +10,7 @@ import '../game/game_controller.dart';
 import 'era_art.dart';
 import 'game_screen.dart';
 import 'reglages_screen.dart';
+import 'roulette_screen.dart';
 import 'sticker_widgets.dart';
 import 'tape_widget.dart';
 
@@ -157,6 +158,34 @@ class _HomeScreenState extends State<HomeScreen>
     super.dispose();
   }
 
+  /// La roulette d'abord, la partie ensuite. L'écran rend le pays choisi
+  /// (ou `null` si le joueur revient en arrière), et c'est seulement à ce
+  /// moment que la partie démarre.
+  Future<void> _lancerRoulette() async {
+    if (_navigating) return;
+    _navigating = true;
+    _drift?.stop();
+    try {
+      final pays = await Navigator.of(context).push<String>(
+        MaterialPageRoute(
+          builder: (_) => RouletteScreen(
+            repo: widget.repo,
+            seen: widget.store.seen,
+          ),
+        ),
+      );
+      if (pays == null || !mounted) return;
+      _paysRoulette = pays;
+    } finally {
+      _navigating = false;
+      _reprendreDerive();
+    }
+    if (mounted) await _play(GameMode.roulette);
+  }
+
+  /// Le pays retenu par la roulette, transmis au contrôleur au démarrage.
+  String? _paysRoulette;
+
   Future<void> _play(GameMode mode) async {
     if (_navigating) return; // évite le double-tap qui empile deux écrans
     _navigating = true;
@@ -170,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen>
         controller.catKey = catKey;
         controller.diff = diff;
         controller.dailyNow = _dailyNow;
+        controller.pays = _paysRoulette;
         final ok = controller.start(mode, seenIds: widget.store.seen);
         if (!ok) {
           messenger.showSnackBar(
@@ -456,11 +486,11 @@ class _HomeScreenState extends State<HomeScreen>
                           children: [
                             Expanded(
                               child: _modeTile(
-                                emoji: '🌍',
-                                titre: 'Tour du monde',
+                                emoji: '🎡',
+                                titre: 'Roulette',
                                 sousTitre:
-                                    '${widget.repo.paysParContinent.values.fold<int>(0, (s, l) => s + l.length)} pays',
-                                onTap: () => _play(GameMode.tourDuMonde),
+                                    '${widget.repo.paysJouables.length} drapeaux',
+                                onTap: _lancerRoulette,
                                 gradient: const LinearGradient(
                                   begin: Alignment.topLeft,
                                   end: Alignment(0.7, 1),

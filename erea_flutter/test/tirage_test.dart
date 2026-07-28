@@ -120,17 +120,33 @@ void main() {
     expect(difficile, greaterThan(normal), reason: '$difficile vs $normal');
   });
 
-  test('Tour du monde : dix pays différents, plusieurs continents', () {
-    for (var partie = 0; partie < 30; partie++) {
-      final picked = repo.tourDuMonde();
-      expect(picked.length, rounds);
-      final pays = picked.map((e) => e.pays).toSet();
-      expect(pays.length, rounds, reason: 'un pays par manche');
-      final continents = picked.map((e) => e.continent).toSet();
-      expect(continents.length, greaterThanOrEqualTo(4),
-          reason: 'le tour du monde doit voyager');
-      expect(picked.map((e) => e.id).toSet().length, picked.length);
+  test('Roulette : un seul drapeau, dix manches sur ce pays', () {
+    // Le mode a changé de nature. La roue tournait à chaque manche et une
+    // partie visitait dix pays ; elle s'arrête maintenant sur un drapeau
+    // et toute la partie porte dessus. D'où le seuil relevé à dix faits
+    // par pays : à six, le tirage ne pouvait plus se remplir.
+    for (var partie = 0; partie < 40; partie++) {
+      final pays = repo.tirerPays();
+      expect(pays, isNotNull);
+      final picked = repo.partiePays(pays!);
+      expect(picked.length, rounds, reason: 'une partie entière sur $pays');
+      expect(picked.map((e) => e.pays).toSet(), {pays},
+          reason: 'aucun intrus venu d’un autre pays');
+      expect(picked.map((e) => e.id).toSet().length, picked.length,
+          reason: 'jamais deux fois le même fait');
     }
+  });
+
+  test('la roulette ne s’arrête que sur des pays jouables', () {
+    // Un pays sous le seuil ferait échouer le démarrage de la partie,
+    // après l’animation : le joueur verrait la roue s’arrêter sur un
+    // drapeau, puis un message d’erreur.
+    for (final pays in repo.paysJouables) {
+      expect(repo.pool('pays:$pays').length, greaterThanOrEqualTo(rounds),
+          reason: pays);
+    }
+    expect(repo.paysJouables.length, greaterThanOrEqualTo(15),
+        reason: 'trop peu de drapeaux pour que la roulette ait du sens');
   });
 
   test('Tour du monde : la roue ne tombe que sur des pays bien fournis', () {

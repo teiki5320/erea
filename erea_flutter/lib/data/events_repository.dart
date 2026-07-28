@@ -33,9 +33,14 @@ const List<Playable> packs = [
   Playable('pack:afrique', 'Afrique & Moyen-Orient', '🌍'),
 ];
 
-/// Pays assez fournis pour une manche de « Tour du monde » : la roue ne
-/// doit jamais tomber sur un pays dont on a déjà tout vu.
-const int minFaitsParPays = 6;
+/// Pays assez fournis pour une partie entière.
+///
+/// Le seuil valait 6 tant que la roue tournait à chaque manche : il
+/// suffisait qu'un pays puisse fournir UN événement. Depuis que la
+/// roulette s'arrête sur un seul drapeau pour toute la partie, il lui en
+/// faut dix, sinon le tirage ne peut pas se remplir et la partie refuse
+/// de démarrer.
+const int minFaitsParPays = rounds;
 
 Playable playableFor(String key) {
   for (final p in categories) {
@@ -108,45 +113,61 @@ class EventsRepository {
     return parContinent;
   }
 
-  /// Une manche de Tour du monde par pays : la roue tourne à CHAQUE
-  /// manche, jamais une fois par partie — seuls deux pays ont assez de
-  /// faits pour tenir dix manches à eux seuls.
-  List<HistEvent> tourDuMonde({
+  /// Tous les pays sur lesquels la roulette peut s'arrêter, triés.
+  ///
+  /// Un pays n'y figure que s'il peut tenir une partie entière à lui
+  /// seul : c'est [minFaitsParPays] qui pose la barre.
+  List<String> get paysJouables {
+    final compte = <String, int>{};
+    for (final e in events) {
+      final p = e.pays;
+      if (p == null || p.isEmpty) continue;
+      compte[p] = (compte[p] ?? 0) + 1;
+    }
+    final liste = [
+      for (final entry in compte.entries)
+        if (entry.value >= minFaitsParPays) entry.key,
+    ]..sort();
+    return liste;
+  }
+
+  /// Le pays sur lequel la roulette s'arrête.
+  ///
+  /// Les pays déjà épuisés passent en dernier plutôt que d'être exclus :
+  /// mieux vaut rejouer un pays connu que refuser de lancer une partie.
+  String? tirerPays({double Function()? rng, Set<int> seen = const {}}) {
+    final random = rng ?? _defaultRng();
+    final jouables = paysJouables;
+    if (jouables.isEmpty) return null;
+    final frais = <String>[];
+    final epuises = <String>[];
+    for (final p in jouables) {
+      final restants =
+          pool('pays:$p').where((e) => !seen.contains(e.id)).length;
+      (restants >= rounds ? frais : epuises).add(p);
+    }
+    final source = frais.isNotEmpty ? frais : epuises;
+    return shuffled(source, random).first;
+  }
+
+  /// Une partie entière sur un seul pays : dix manches, un drapeau.
+  ///
+  /// Le jamais-vu passe avant le déjà-vu, comme dans [pick] ; sans ça un
+  /// pays tout juste au-dessus du seuil resservirait indéfiniment les
+  /// mêmes dix faits.
+  List<HistEvent> partiePays(
+    String pays, {
     double Function()? rng,
     Set<int> seen = const {},
     int count = rounds,
   }) {
     final random = rng ?? _defaultRng();
-    final parContinent = paysParContinent;
-    // Deux pays par continent quand c'est possible, puis on complète.
-    final choisis = <String>[];
-    for (final liste in parContinent.values) {
-      choisis.addAll(shuffled(liste, random).take(2));
-    }
-    final tousPays = [
-      for (final l in parContinent.values) ...l,
-    ];
-    final tirage = shuffled(choisis, random).toList();
-    for (final p in shuffled(tousPays, random)) {
-      if (tirage.length >= count) break;
-      if (!tirage.contains(p)) tirage.add(p);
-    }
-
-    final picked = <HistEvent>[];
-    final pris = <int>{};
-    for (final pays in tirage) {
-      if (picked.length >= count) break;
-      final dispo = pool('pays:$pays').where((e) => !pris.contains(e.id));
-      final frais = shuffled(
-          dispo.where((e) => !seen.contains(e.id)).toList(), random);
-      final vus =
-          shuffled(dispo.where((e) => seen.contains(e.id)).toList(), random);
-      final choix = frais.isNotEmpty ? frais.first : (vus.isNotEmpty ? vus.first : null);
-      if (choix == null) continue;
-      picked.add(choix);
-      pris.add(choix.id);
-    }
-    return picked;
+    final dispo = pool('pays:$pays');
+    final frais =
+        shuffled(dispo.where((e) => !seen.contains(e.id)).toList(), random);
+    final vus =
+        shuffled(dispo.where((e) => seen.contains(e.id)).toList(), random);
+    return [...frais, ...vus].take(count).toList();
   }
 
   /// Composition d'une partie par difficulté : combien de manches de

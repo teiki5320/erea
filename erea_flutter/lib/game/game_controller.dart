@@ -8,7 +8,7 @@ import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../models/hist_event.dart';
 
-enum GameMode { classique, daily, chrono, duel, tourDuMonde }
+enum GameMode { classique, daily, chrono, duel, roulette }
 
 enum GamePhase { guess, anim, reveal }
 
@@ -37,6 +37,10 @@ class GameController extends ChangeNotifier {
 
   GameMode mode = GameMode.classique;
   String catKey = 'tout';
+
+  /// Le pays sur lequel la roulette s'est arrêtée. Posé par l'écran de
+  /// roulette avant `start`, ignoré dans tous les autres modes.
+  String? pays;
   Difficulty diff = Difficulty.normal;
 
   List<HistEvent> events = [];
@@ -98,11 +102,14 @@ class GameController extends ChangeNotifier {
       events = repo.pick('tout', Difficulty.normal, rng: rng);
       catKey = 'tout';
       diff = Difficulty.normal;
-    } else if (m == GameMode.tourDuMonde) {
-      // La roue tourne à CHAQUE manche : dix pays différents, deux par
-      // continent quand la base le permet.
-      events = repo.tourDuMonde(seen: seenIds);
-      catKey = 'tout';
+    } else if (m == GameMode.roulette) {
+      // La roulette s'est arrêtée sur UN drapeau : les dix manches
+      // portent toutes sur ce pays. `pays` doit avoir été posé par
+      // l'écran de roulette ; sans lui on ne devine pas, on refuse.
+      final choisi = pays;
+      if (choisi == null || choisi.isEmpty) return false;
+      events = repo.partiePays(choisi, seen: seenIds);
+      catKey = 'pays:$choisi';
     } else {
       events = repo.pick(catKey, diff, seen: seenIds);
     }
