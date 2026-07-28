@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'dart:async';
+
 import 'core/retour.dart';
+import 'core/sons.dart';
 import 'data/events_repository.dart';
 import 'data/store.dart';
 import 'ui/home_screen.dart';
@@ -20,6 +23,8 @@ Future<void> main() async {
       return;
     }
     Retour.actif = store.hapticsOn;
+    Sons.actif = store.soundOn;
+    unawaited(Sons.preparer());
     runApp(EreaApp(repo: repo, store: store));
   } catch (e) {
     // Sans ce filet, la moindre défaillance laissait l'écran de lancement

@@ -71,6 +71,18 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
+  void didHaveMemoryPressure() {
+    // iOS tue d'abord les apps qui retiennent le plus : mieux vaut rendre
+    // le décor (redécodé à la demande) que de perdre la partie en cours.
+    EraArt.libererDecor();
+    if (mounted) {
+      EraArt.load().then((_) {
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
+  @override
   void didChangeAccessibilityFeatures() {
     if (!mounted) return;
     final reduire =

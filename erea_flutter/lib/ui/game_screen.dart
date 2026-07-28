@@ -4,7 +4,10 @@ import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
 import '../core/progression.dart';
+import '../core/classement.dart';
+import '../core/rappels.dart';
 import '../core/retour.dart';
+import '../core/sons.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
@@ -186,8 +189,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _lastResult = result;
     if (result.base == maxScore) {
       Retour.parfait();
+      Sons.parfait();
     } else {
       Retour.validation();
+      switch (verdictFor(result.base)) {
+        case Verdict.reussi:
+          Sons.reussi();
+        case Verdict.moyen:
+          Sons.moyen();
+        case Verdict.rate:
+          Sons.rate();
+      }
     }
     // Le ruban voyage de la réponse vers la vraie date.
     _travelBegin = game.frac;
@@ -245,7 +257,36 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (_badgesGagnes.isNotEmpty) {
         await widget.store.unlockBadges(_badgesGagnes.map((b) => b.cle));
       }
+      await _envoyerAuClassement();
       if (mounted) setState(() {});
+    }
+  }
+
+  /// Classement mondial : le défi du jour est le seul vraiment comparable
+  /// (même série pour tout le monde). Les records classiques partent dans
+  /// un tableau PAR difficulté — les barèmes ne sont pas comparables
+  /// entre eux.
+  Future<void> _envoyerAuClassement() async {
+    if (game.mode == GameMode.daily) {
+      await Classement.envoyer(Classement.defi, game.total);
+      final serie = widget.store.effectiveStreak;
+      if (serie > 0) {
+        await Classement.envoyer(Classement.serie, serie, max: 3650);
+      }
+      // L'autorisation de rappel n'est demandée qu'ici : après un premier
+      // défi TERMINÉ, jamais au lancement.
+      if (!widget.store.remindersOn && serie >= 2) {
+        final ok = await Rappels.demanderAutorisation();
+        if (ok) {
+          await widget.store.setRemindersOn(true);
+          await Rappels.programmer(serie: serie, defiFaitAujourdhui: true);
+        }
+      } else if (widget.store.remindersOn) {
+        await Rappels.programmer(serie: serie, defiFaitAujourdhui: true);
+      }
+    } else if (game.mode == GameMode.classique) {
+      await Classement.envoyer(
+          Classement.classique(game.diff.name), game.total);
     }
   }
 
@@ -588,7 +629,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 game.setFrac(f);
                 // Cran léger en franchissant une dizaine d'années : c'est ce
                 // qui donne au geste la sensation d'un vrai cadran.
-                if (game.guessYear ~/ 10 != avant) Retour.decennie();
+                if (game.guessYear ~/ 10 != avant) {
+              Retour.decennie();
+              Sons.decennie();
+            }
               },
             ),
             // Astuce du premier lancement : elle disparaît au premier

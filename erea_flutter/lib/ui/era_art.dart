@@ -42,6 +42,20 @@ class EraArt {
 
   static Future<void>? _loading;
 
+  /// Libère les textures de fond d'écran sous pression mémoire. Ce sont
+  /// les plus lourdes après le ruban, et les moins critiques : elles ne
+  /// servent qu'à un décor à 30 % d'opacité derrière le contenu.
+  /// Le prochain [load] les redécodera — sans ce remise à zéro de
+  /// `_loading`, le cache restait vide pour de bon.
+  static void libererDecor() {
+    for (final img in bgBlur.values) {
+      img.dispose();
+    }
+    bgBlur.clear();
+    _loading = null;
+    version++;
+  }
+
   static ui.Image? bgFor(int era) => bg[era];
 
   static Future<ui.Image?> _decode(String asset, {int? targetWidth}) async {
@@ -90,17 +104,25 @@ class EraArt {
       // Les 12 chargements partent ENSEMBLE : le temps d'apparition des
       // décors devient celui du plus lent, pas leur somme.
       await Future.wait<void>([
+        // Après une libération mémoire, seul ce qui manque est redécodé —
+        // sinon on remplacerait des images encore vivantes et on les
+        // laisserait fuir.
         for (var i = 0; i < eraThemes.length; i++)
-          _decode(eraThemes[i].bgAsset, targetWidth: 1200).then((img) async {
-            if (img == null) return;
-            bg[i] = img;
-            final blur = await _blurred(img);
-            if (blur != null) bgBlur[i] = blur;
-          }),
+          if (bgBlur[i] == null)
+            (bg[i] != null
+                ? Future.value(bg[i])
+                : _decode(eraThemes[i].bgAsset, targetWidth: 1200)
+            ).then((img) async {
+              if (img == null) return;
+              bg[i] = img;
+              final blur = await _blurred(img);
+              if (blur != null) bgBlur[i] = blur;
+            }),
         for (final e in travelerSpecs.entries)
-          _decode(e.value.asset).then((img) {
-            if (img != null) travelers[e.key] = img;
-          }),
+          if (travelers[e.key] == null)
+            _decode(e.value.asset).then((img) {
+              if (img != null) travelers[e.key] = img;
+            }),
       ]);
       // Planche de repli : utile seulement si une époque n'a pas son fond
       // dédié. Tant que les 6 sont là, ne pas la décoder du tout.

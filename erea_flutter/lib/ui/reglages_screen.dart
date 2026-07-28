@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart' hide Badge;
 
+import '../core/classement.dart';
+import '../core/rappels.dart';
 import '../core/retour.dart';
+import '../core/sons.dart';
 import '../data/store.dart';
 import '../game/badges.dart';
 import 'sticker_widgets.dart';
@@ -52,9 +55,37 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
               value: widget.store.soundOn,
               onChanged: (v) async {
                 await widget.store.setSoundOn(v);
+                Sons.actif = v;
                 if (mounted) setState(() {});
               },
               title: const Text('Sons'),
+              subtitle: const Text('Respecte le bouton silencieux de '
+                  'l’iPhone'),
+            ),
+            SwitchListTile(
+              value: widget.store.remindersOn,
+              onChanged: (v) async {
+                if (v) {
+                  final ok = await Rappels.demanderAutorisation();
+                  if (!ok) return;
+                  await Rappels.programmer(
+                    serie: widget.store.effectiveStreak,
+                    defiFaitAujourdhui: widget.store.dailyFinishedToday,
+                  );
+                } else {
+                  await Rappels.toutAnnuler();
+                }
+                await widget.store.setRemindersOn(v);
+                if (mounted) setState(() {});
+              },
+              title: const Text('Rappel du soir'),
+              subtitle: const Text('Seulement quand une série est en cours'),
+            ),
+            ListTile(
+              title: const Text('Classement mondial'),
+              subtitle: const Text('Défi du jour, série et records'),
+              trailing: const Icon(Icons.emoji_events, color: yellowColor),
+              onTap: () => Classement.afficher(tableau: Classement.defi),
             ),
           ]),
           const SizedBox(height: 16),
