@@ -39,6 +39,14 @@ const List<LevelTitle> levelTitles = [
   LevelTitle(9, 'Sage', '🦉'),
   LevelTitle(10, 'Maître du temps', '👑'),
   LevelTitle(13, 'Légende', '🌟'),
+  // Un bon joueur atteignait le niveau 13 vers la 27e partie et ne voyait
+  // plus jamais rien de neuf : la progression continue bien au-delà.
+  LevelTitle(16, 'Érudit', '🎓'),
+  LevelTitle(20, 'Archiviste', '🗄️'),
+  LevelTitle(25, 'Oracle', '🔮'),
+  LevelTitle(30, 'Gardien du temps', '⏰'),
+  LevelTitle(40, 'Mémoire du monde', '🌍'),
+  LevelTitle(50, 'Immortel', '💎'),
 ];
 
 LevelTitle titleFor(int level) {

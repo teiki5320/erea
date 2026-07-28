@@ -83,7 +83,8 @@ void main() {
     expect(find.text('Jouer !'), findsOneWidget);
     expect(find.text('Classique'), findsOneWidget);
     expect(find.text('Packs'), findsOneWidget);
-    expect(find.text('${repo.events.length} événements'), findsOneWidget);
+    expect(find.textContaining('/ ${repo.events.length} événements découverts'),
+        findsOneWidget);
   });
 
   testWidgets('le joueur démarre au niveau 1', (tester) async {

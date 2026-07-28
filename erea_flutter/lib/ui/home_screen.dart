@@ -464,12 +464,9 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Center(
-                          child: Text(
-                            '${widget.repo.events.length} événements',
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                        ),
+                        // « X / Y découverts » : un objectif dès le premier
+                        // lancement, à la place d'un simple total mort.
+                        _collectionBar(),
                       ],
                     ),
                   ),
@@ -493,6 +490,60 @@ class _HomeScreenState extends State<HomeScreen>
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Avancement de la collection : les événements déjà révélés au moins
+  /// une fois, sur toute la base.
+  Widget _collectionBar() {
+    final total = widget.repo.events.length;
+    final trouves = widget.store.discovered.length;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6),
+      child: Column(
+        children: [
+          Text(
+            '$trouves / $total événements découverts',
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontWeight: FontWeight.w800,
+              fontSize: 12,
+              color: inkSoftColor,
+            ),
+          ),
+          const SizedBox(height: 5),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: SizedBox(
+              height: 7,
+              width: double.infinity,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ColoredBox(color: inkColor.withValues(alpha: 0.12)),
+                  ),
+                  Positioned.fill(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: FractionallySizedBox(
+                        widthFactor:
+                            (trouves / total).clamp(0.0, 1.0).toDouble(),
+                        heightFactor: 1,
+                        child: const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient:
+                                LinearGradient(colors: [mintColor, skyColor]),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

@@ -1,7 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
+import '../core/progression.dart';
+import '../core/retour.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
@@ -76,6 +79,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   bool _showEnd = false;
   bool _finishing = false;
 
+  // Bilan de fin de partie : sans ça, l'écran final ne disait ni l'XP
+  // gagnée, ni le niveau franchi, ni le record battu — les trois étaient
+  // pourtant déjà calculés.
+  /// Astuce du geste : le glissement de la frise est la mécanique unique
+  /// du jeu et n'était expliqué nulle part.
+  late bool _astuceGeste;
+
+  int _xpAvant = 0;
+  bool _record = false;
+  bool _grilleCopiee = false;
+
   GameController get game => widget.controller;
 
   @override
@@ -96,6 +110,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // La manche 1 est déjà en place quand l'écran se monte (le contrôleur
     // démarre avant la navigation) : son fondu se déclenche donc ici.
     _fadedRound = game.round;
+    _astuceGeste = !widget.store.tutoSeen;
     _roundFade.forward(from: 0);
     _pop = AnimationController(
       vsync: this,
@@ -167,6 +182,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final result = game.validate();
     if (result == null) return;
     _lastResult = result;
+    if (result.base == maxScore) {
+      Retour.parfait();
+    } else {
+      Retour.validation();
+    }
     // Le ruban voyage de la réponse vers la vraie date.
     _travelBegin = game.frac;
     _travelEnd = yearToFrac(result.event.annee);
@@ -174,9 +194,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // Réponse exacte : le ruban n'a nulle part où aller. Un plancher de
     // 500 ms faisait attendre devant un écran immobile, juste avant le
     // meilleur moment du jeu.
-    var ms = dist < 0.0005
-        ? 120
-        : (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
+    var ms =
+        dist < 0.0005 ? 120 : (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
     if (MediaQuery.of(context).disableAnimations) ms = 80;
     _travel.duration = Duration(milliseconds: ms);
     _travel.forward(from: 0);
@@ -202,15 +221,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final continues = game.next();
     if (!continues) {
       _finishing = true;
+      _xpAvant = widget.store.xp;
       setState(() => _showEnd = true);
       // Fin de partie : XP (+ bonus de combo), records, anti-répétition.
       await widget.store.incGames();
+      await widget.store.markCatPlayed(game.catKey);
       await widget.store.markSeen(game.results.map((r) => r.event.id));
       if (game.mode == GameMode.daily) {
-        await widget.store
-            .finishDaily(game.total, grid: _grid(), day: game.dailyKey);
+        await widget.store.finishDaily(game.total,
+            grid: _grid(), day: game.dailyKey, guesses: game.guesses);
+        _record = game.total >= widget.store.dailyBest;
       } else {
-        await widget.store
+        _record = await widget.store
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
       }
       // Exactement la somme des « +N XP » annoncés manche après manche.
@@ -541,12 +563,49 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
         const SizedBox(height: 8),
         // La frise, plein-bord
-        TapeWidget(
-          key: _tapeKey,
-          frac: game.frac,
-          locked: !guessing,
-          height: _tapeHeightFor(available),
-          onFracChanged: (f) => game.setFrac(f),
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            TapeWidget(
+              key: _tapeKey,
+              frac: game.frac,
+              locked: !guessing,
+              height: _tapeHeightFor(available),
+              onFracChanged: (f) {
+                if (_astuceGeste) {
+                  setState(() => _astuceGeste = false);
+                  widget.store.setTutoSeen();
+                }
+                final avant = game.guessYear ~/ 10;
+                game.setFrac(f);
+                // Cran léger en franchissant une dizaine d'années : c'est ce
+                // qui donne au geste la sensation d'un vrai cadran.
+                if (game.guessYear ~/ 10 != avant) Retour.decennie();
+              },
+            ),
+            // Astuce du premier lancement : elle disparaît au premier
+            // contact avec la frise, et ne revient jamais.
+            if (_astuceGeste && guessing)
+              IgnorePointer(
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  decoration: BoxDecoration(
+                    color: inkColor.withValues(alpha: 0.88),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: const Text(
+                    '👆 Fais glisser la frise',
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 12),
         // Réglage fin : − minimap +
@@ -689,7 +748,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       fontWeight: FontWeight.w800,
                       fontSize: ptsSize,
                       height: 1.0,
-                      color: verdict == Verdict.rate ? inkPaleColor : coralColor,
+                      color:
+                          verdict == Verdict.rate ? inkPaleColor : coralColor,
                       fontFeatures: const [FontFeature.tabularFigures()],
                     ),
                   ),
@@ -700,7 +760,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                       fontFamily: 'Baloo2',
                       fontWeight: FontWeight.w800,
                       fontSize: 17,
-                      color: verdict == Verdict.rate ? inkPaleColor : coralColor,
+                      color:
+                          verdict == Verdict.rate ? inkPaleColor : coralColor,
                     ),
                   ),
                 ],
@@ -888,8 +949,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   Positioned(
                     top: 2,
                     left: bordGauche(gx, alignToi, wToi),
-                    child: pinScale(
-                        pastille(libelleToi, Colors.white, inkColor)),
+                    child:
+                        pinScale(pastille(libelleToi, Colors.white, inkColor)),
                   ),
                   // Tige de la vraie date (le ruban est centré dessus)
                   Positioned(
@@ -1086,62 +1147,244 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     );
   }
 
+  /// Écran de fin : ce que la partie a RAPPORTÉ. L'XP, le niveau franchi
+  /// et le record battu étaient déjà calculés mais n'étaient dits nulle
+  /// part — le joueur voyait dix promesses « +N XP » et jamais le total.
   Widget _buildEnd(BuildContext context) {
     final playable = playableFor(game.catKey);
+    final xpApres = _xpAvant + game.xpTotal;
+    final nivAvant = levelFromXp(_xpAvant);
+    final nivApres = levelFromXp(xpApres);
+    final monteDeNiveau = nivApres.level > nivAvant.level;
+    final titre = titleFor(nivApres.level);
     return Column(
       children: [
-        const SizedBox(height: 12),
-        Text('Partie terminée !',
-            style: Theme.of(context).textTheme.headlineSmall),
-        Text(
-          '${game.total} / $maxTotal',
-          style: Theme.of(context).textTheme.displaySmall,
+        const SizedBox(height: 10),
+        const Text(
+          'Partie terminée !',
+          style: TextStyle(
+            fontFamily: 'Baloo2',
+            fontWeight: FontWeight.w800,
+            fontSize: 26,
+            color: inkColor,
+          ),
         ),
-        Text(game.emojiGrid(), style: const TextStyle(fontSize: 20)),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            '${game.total} / $maxTotal',
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 46,
+              height: 1.05,
+              color: coralColor,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+        ),
+        if (_record)
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+            decoration: BoxDecoration(
+              color: yellowColor,
+              borderRadius: BorderRadius.circular(999),
+              boxShadow: const [pillShadow],
+            ),
+            child: const Text(
+              '🏆 Nouveau record !',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: inkColor,
+              ),
+            ),
+          ),
+        const SizedBox(height: 6),
+        Text(game.emojiGrid(), style: const TextStyle(fontSize: 22)),
+        const SizedBox(height: 2),
         Text(
           '${playable.label} · ${game.diff.label} · '
           'écart moyen ${game.averageEcart.round()} ans',
-          style: Theme.of(context).textTheme.bodySmall,
+          style: const TextStyle(
+            fontFamily: 'Nunito',
+            fontWeight: FontWeight.w800,
+            fontSize: 12.5,
+            color: inkSoftColor,
+          ),
+        ),
+        // Ce que la partie a rapporté : XP, barre de niveau, palier franchi
+        Padding(
+          padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.92),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: const [softShadow],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(titre.emoji, style: const TextStyle(fontSize: 26)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            monteDeNiveau
+                                ? 'Niveau ${nivApres.level} atteint ! '
+                                    '${titre.titre}'
+                                : '${titre.titre} · niveau ${nivApres.level}',
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15,
+                              color: monteDeNiveau ? coralColor : inkColor,
+                            ),
+                          ),
+                          Text(
+                            '${nivApres.into} / ${nivApres.need} XP',
+                            style: const TextStyle(
+                              fontFamily: 'Nunito',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 11.5,
+                              color: inkPaleColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '+${game.xpTotal} XP',
+                      style: const TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                        color: Color(0xFFA9761C),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: SizedBox(
+                    height: 8,
+                    width: double.infinity,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: ColoredBox(
+                              color: inkColor.withValues(alpha: 0.10)),
+                        ),
+                        Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: FractionallySizedBox(
+                              widthFactor: (nivApres.into / nivApres.need)
+                                  .clamp(0.0, 1.0)
+                                  .toDouble(),
+                              heightFactor: 1,
+                              child: const DecoratedBox(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [yellowColor, coralColor],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        // Partage : la grille sans spoiler, prête à coller n'importe où.
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 18),
+          child: PushButton(
+            onPressed: _copierGrille,
+            color: Colors.white,
+            shadowColor: const Color(0xFFD8DDEF),
+            shadowHeight: 4,
+            radius: 16,
+            padding: const EdgeInsets.symmetric(vertical: 11),
+            child: Center(
+              child: Text(
+                _grilleCopiee ? '✅ Copié !' : '📋 Copier ma grille',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  color: inkColor,
+                ),
+              ),
+            ),
+          ),
         ),
         const SizedBox(height: 8),
         Expanded(
           child: ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 18),
             itemCount: game.results.length,
-            itemBuilder: (context, i) {
-              final r = game.results[i];
-              return Card(
-                child: ListTile(
-                  leading:
-                      Text(r.event.emoji, style: const TextStyle(fontSize: 24)),
-                  title: Text(r.event.titre),
-                  subtitle: Text(
-                    'Toi : ${formatYear(r.guess)} · '
-                    'Vraie date : ${formatYear(r.event.annee)}',
-                  ),
-                  trailing: Text('${r.pts}'),
-                ),
-              );
-            },
+            itemBuilder: (context, i) => _ligneBilan(game.results[i]),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(18, 4, 18, 16),
           child: Row(
             children: [
               if (game.mode != GameMode.daily) ...[
                 Expanded(
-                  child: FilledButton(
+                  child: PushButton(
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Text('Rejouer'),
+                    color: inkColor,
+                    shadowColor: navyShadowColor,
+                    radius: 16,
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    child: const Center(
+                      child: Text(
+                        'Rejouer',
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 17,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
               ],
               Expanded(
-                child: OutlinedButton(
+                child: PushButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Accueil'),
+                  color: Colors.white,
+                  shadowColor: const Color(0xFFD8DDEF),
+                  radius: 16,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  child: const Center(
+                    child: Text(
+                      'Accueil',
+                      style: TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 17,
+                        color: inkColor,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -1149,6 +1392,87 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
       ],
     );
+  }
+
+  Widget _ligneBilan(RoundResult r) {
+    final v = verdictFor(r.base);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.88),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Text(r.event.emoji, style: const TextStyle(fontSize: 22)),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  r.event.titre,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13.5,
+                    height: 1.15,
+                    color: inkColor,
+                  ),
+                ),
+                Text(
+                  'Toi ${formatYear(r.guess)} · vraie date '
+                  '${formatYear(r.event.annee)}',
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11.5,
+                    color: inkSoftColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${r.pts}',
+            style: TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+              color: switch (v) {
+                Verdict.reussi => verdictMintColor,
+                Verdict.moyen => const Color(0xFFA9761C),
+                Verdict.rate => inkPaleColor,
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Texte de partage, sans spoiler : score, grille emoji, et la série
+  /// pour le défi du jour.
+  String _texteGrille() {
+    final quoi = game.mode == GameMode.daily
+        ? 'Défi du jour'
+        : '${playableFor(game.catKey).label} · ${game.diff.label}';
+    final serie =
+        game.mode == GameMode.daily && widget.store.effectiveStreak > 0
+            ? '\n🔥 ${widget.store.effectiveStreak} jours d’affilée'
+            : '';
+    return 'Erea ⏳ $quoi\n${game.total} / $maxTotal\n'
+        '${game.emojiGrid()}$serie';
+  }
+
+  Future<void> _copierGrille() async {
+    await Clipboard.setData(ClipboardData(text: _texteGrille()));
+    if (!mounted) return;
+    setState(() => _grilleCopiee = true);
   }
 
   Future<void> _confirmQuit(BuildContext context) async {

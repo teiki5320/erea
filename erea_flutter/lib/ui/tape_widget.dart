@@ -231,7 +231,14 @@ class _TapePainter extends CustomPainter {
 
     // Bandes d'époques : panneaux illustrés en tuiles (nom d'époque
     // compris dans l'image), ou bandes unies + filigrane en repli.
-    final bandBottom = size.height * 0.66;
+    //
+    // La bande descend aussi bas que les libellés d'années le permettent :
+    // à 0,66 fixe, une frise haute gagnait surtout du vide (près d'un quart
+    // de sa hauteur) au lieu d'un décor plus grand.
+    final bigFont = (size.height * 0.087).clamp(13.0, 18.0).toDouble();
+    final smallFont = (size.height * 0.07).clamp(10.5, 14.5).toDouble();
+    final bandBottom =
+        size.height * (1 - (bigFont * 1.5 + 10) / size.height).clamp(0.66, 0.84);
     for (var i = 0; i < eras.length; i++) {
       final e = eras[i];
       final left = _px(e.from);
@@ -391,7 +398,7 @@ class _TapePainter extends CustomPainter {
     }
 
     // Ligne de base (bornée à la fenêtre visible : même trait à l'écran)
-    final baseY = size.height * 0.66;
+    final baseY = bandBottom;
     canvas.drawLine(
       Offset(math.max(0, visLeft), baseY),
       Offset(math.min(tapeW, visRight), baseY),
@@ -484,8 +491,6 @@ class _TapePainter extends CustomPainter {
       tp.paint(canvas, Offset(x - tp.width / 2, baseY + 6));
     }
 
-    final bigFont = (size.height * 0.087).clamp(13.0, 18.0).toDouble();
-    final smallFont = (size.height * 0.07).clamp(10.5, 14.5).toDouble();
     for (final y in bigLabels) {
       drawLabel(y, bigFont, const Color(0xFF35406B));
     }

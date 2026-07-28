@@ -140,6 +140,10 @@ class Store {
   Future<void> setHapticsOn(bool v) =>
       _put(() => _prefs.setBool('opt.haptics', v));
 
+  /// Le geste de la frise n'est montré qu'une fois.
+  bool get tutoSeen => _prefs.getBool('opt.tuto') ?? false;
+  Future<void> setTutoSeen() => _put(() => _prefs.setBool('opt.tuto', true));
+
   bool get remindersOn => _prefs.getBool('opt.reminders') ?? false;
   Future<void> setRemindersOn(bool v) =>
       _put(() => _prefs.setBool('opt.reminders', v));
@@ -229,10 +233,25 @@ class Store {
   /// la série. [day] est le jour du LANCEMENT : un défi commencé avant
   /// minuit et fini après reste crédité au bon jour, sans verrouiller le
   /// lendemain.
-  Future<void> finishDaily(int total, {String grid = '', String? day}) async {
+  /// Les réponses du dernier défi TERMINÉ : la série d'événements étant
+  /// déterministe, elles suffisent à rejouer le défi en lecture seule.
+  List<int> get dailyDoneGuesses {
+    try {
+      final raw = _prefs.getString('daily.doneGuesses');
+      if (raw == null) return const [];
+      return (jsonDecode(raw) as List<dynamic>).cast<int>();
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  Future<void> finishDaily(int total,
+      {String grid = '', String? day, List<int> guesses = const []}) async {
     final key = day ?? dayKey(_now);
     if (dailyLast != key) return; // tentative d'un autre jour : on ignore
     if (dailyDone == key) return; // déjà enregistré
+    await _put(
+        () => _prefs.setString('daily.doneGuesses', jsonEncode(guesses)));
     final streak = dailyStreakDay == _dayBefore(key) ? dailyStreak + 1 : 1;
     await _put(() => _prefs.setString('daily.done', key));
     await _put(() => _prefs.setInt('daily.lastScore', total));

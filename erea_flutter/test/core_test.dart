@@ -150,7 +150,10 @@ void main() {
       expect(titleFor(1).titre, 'Apprenti du temps');
       expect(titleFor(8).titre, 'Historien'); // pas de palier 8 : on garde 7
       expect(titleFor(10).titre, 'Maître du temps');
-      expect(titleFor(99).titre, 'Légende');
+      expect(titleFor(13).titre, 'Légende');
+      // La progression ne s'arrête plus au niveau 13.
+      expect(titleFor(25).titre, 'Oracle');
+      expect(titleFor(99).titre, 'Immortel');
     });
 
     test('xpGain applique le multiplicateur et plafonne à 2000', () {
