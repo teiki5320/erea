@@ -97,6 +97,15 @@ class _TapeWidgetState extends State<TapeWidget>
 
   void _onDragEnd(DragEndDetails details) {
     if (widget.locked) return;
+    // « Réduire les animations » : le ruban s'arrête net avec le doigt.
+    // Le glissement lui-même reste (c'est de la manipulation directe), mais
+    // l'élan qui continue tout seul, lui, est bien une animation. Lu à la
+    // source, pour rester juste même si le réglage vient de changer.
+    if (WidgetsBinding
+        .instance.platformDispatcher.accessibilityFeatures.disableAnimations) {
+      _velocity = 0;
+      return;
+    }
     // Vitesse en px/s -> px/frame (60 fps), bornée comme sur le web.
     _velocity = (details.velocity.pixelsPerSecond.dx / 60)
         .clamp(-48.0, 48.0)

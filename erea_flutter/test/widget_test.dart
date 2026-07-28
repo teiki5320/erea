@@ -213,6 +213,38 @@ void main() {
     expect(store.seen, isNotEmpty);
   });
 
+  testWidgets('« Réduire les animations » est pris en compte à chaud',
+      (tester) async {
+    // Le réglage iOS peut être activé PENDANT que le jeu tourne : l'app le
+    // lisait une seule fois au démarrage et continuait d'animer ensuite.
+    tester.view.physicalSize = _iphone14;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    // On démarre AVEC les animations : la dérive d'époque tourne.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(EreaApp(repo: repo, store: await Store.load()));
+    await tester.pump();
+    expect(tester.binding.hasScheduledFrame, isTrue,
+        reason: 'la dérive d’époque anime l’accueil');
+
+    // Le joueur active le réglage sans quitter l'app.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    await tester.pumpAndSettle();
+    expect(tester.binding.hasScheduledFrame, isFalse,
+        reason: 'plus rien ne doit animer une fois le réglage activé');
+
+    // … puis il le désactive : l'accueil doit se remettre à respirer.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
+    await tester.pump();
+    expect(tester.binding.hasScheduledFrame, isTrue,
+        reason: 'la dérive doit repartir quand le réglage est levé');
+  });
+
   testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {
     await pumpApp(tester);
     await startClassique(tester);

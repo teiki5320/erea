@@ -82,13 +82,20 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
+  /// « Réduire les animations », lu à la SOURCE.
+  ///
+  /// Surtout pas via MediaQuery ici : le widget MediaQuery est lui aussi un
+  /// observateur du binding, et rien ne garantit qu'il ait été reconstruit
+  /// quand [didChangeAccessibilityFeatures] nous parvient. On lirait alors
+  /// l'ancienne valeur et la dérive resterait figée jusqu'à la prochaine
+  /// partie — le bug d'origine, simplement déplacé d'un cran.
+  static bool get _animationsReduites => WidgetsBinding
+      .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
+
   @override
   void didChangeAccessibilityFeatures() {
     if (!mounted) return;
-    final reduire =
-        WidgetsBinding.instance.platformDispatcher.accessibilityFeatures
-            .disableAnimations;
-    if (reduire) {
+    if (_animationsReduites) {
       _drift?.stop();
     } else {
       _reprendreDerive();
@@ -105,7 +112,7 @@ class _HomeScreenState extends State<HomeScreen>
     // « réduire les animations » est actif — ainsi il peut démarrer si le
     // réglage est désactivé en cours de route.
     _drift = createTicker(_onDrift);
-    if (!MediaQuery.of(context).disableAnimations) _drift!.start();
+    if (!_animationsReduites) _drift!.start();
   }
 
   void _onDrift(Duration elapsed) {
@@ -143,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen>
   /// pourtant toujours, pour pouvoir démarrer si le réglage est levé).
   void _reprendreDerive() {
     if (_driftStopped || !mounted) return;
-    if (MediaQuery.of(context).disableAnimations) return;
+    if (_animationsReduites) return;
     if (_drift?.isActive ?? true) return;
     _lastTick = Duration.zero;
     _drift!.start();
