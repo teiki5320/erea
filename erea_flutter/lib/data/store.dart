@@ -87,14 +87,20 @@ class Store {
     await _put(() => _prefs.setStringList('badges', all.toList()..sort()));
   }
 
-  /// Anti-répétition : ids des ~80 derniers événements joués.
+  /// Anti-répétition : ids des ~300 derniers événements joués. 80 ne
+  /// couvrait que huit parties — dans une petite catégorie, le jeu se
+  /// remettait à tourner en rond dès la troisième.
+  static const int memoireSeen = 300;
+
   Set<int> get seen => _seenCache ??= _idSet('seen');
 
   Future<void> markSeen(Iterable<int> ids) async {
     final nouveaux = ids.where((id) => !seen.contains(id)).toList();
     if (nouveaux.isEmpty) return;
     final list = [...seen.where((id) => !nouveaux.contains(id)), ...nouveaux];
-    final trimmed = list.length > 80 ? list.sublist(list.length - 80) : list;
+    final trimmed = list.length > memoireSeen
+        ? list.sublist(list.length - memoireSeen)
+        : list;
     _seenCache = trimmed.toSet();
     await _put(() => _prefs.setString('seen', jsonEncode(trimmed)));
   }

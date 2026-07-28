@@ -9,11 +9,15 @@ const int maxEcartBase = 200; // au-delà (en Normal) : 0 point
 
 /// Difficulté choisie par le joueur : module la tolérance, l'XP et les repères.
 enum Difficulty {
+  // Les multiplicateurs d'XP compensent le barème : à niveau de jeu égal,
+  // Difficile rapporte MOINS de points que Facile. Sans compensation,
+  // 1,3× ne suffisait pas et le mode exigeant rapportait autant que le
+  // mode facile — il n'y avait aucune raison de le choisir.
   facile(
     label: 'Facile',
     emoji: '😌',
     tolMult: 2.2,
-    xpMult: 0.8,
+    xpMult: 0.75,
     desc:
         'Grande marge d’erreur et événements connus — parfait pour débuter !',
   ),
@@ -28,7 +32,7 @@ enum Difficulty {
     label: 'Difficile',
     emoji: '🔥',
     tolMult: 0.55,
-    xpMult: 1.3,
+    xpMult: 1.75,
     desc: 'Marge réduite, événements pointus… mais +30 % d’XP !',
   );
 
@@ -51,20 +55,35 @@ enum Difficulty {
   final String desc;
 }
 
-/// Tolérance : 5 % de l'ancienneté, bornée entre 5 et 45 ans, x difficulté.
+/// Tolérance : 5 % de l'ancienneté, bornée entre 12 et 90 ans, × difficulté.
+///
+/// Le plancher est à 12 ans (et non 5) : avec 5, atteindre les 700 points
+/// du « vert » sur un événement récent demandait l'ANNÉE EXACTE en
+/// Difficile — le combo y était donc inatteignable. Le plafond est à 90
+/// ans (et non 45) : placer les pyramides à 150 ans près est une bonne
+/// réponse, pas un zéro.
 double tolerance(int annee, Difficulty diff) {
-  final base = ((maxYear - annee) * 0.05).clamp(5.0, 45.0).toDouble();
+  final base = ((maxYear - annee) * 0.05).clamp(12.0, 90.0).toDouble();
   return base * diff.tolMult;
 }
 
-/// Fenêtre au-delà de laquelle on marque 0 point.
-double maxEcart(Difficulty diff) => maxEcartBase * diff.tolMult;
+/// Fenêtre au-delà de laquelle on marque 0 point. Elle reste à 200 ans
+/// × difficulté pour les événements récents, mais s'élargit avec la
+/// tolérance sur les très anciens, où 200 ans d'erreur ne sont pas une
+/// faute grossière.
+double maxEcart(int annee, Difficulty diff) => math.max(
+      maxEcartBase * diff.tolMult,
+      tolerance(annee, diff) * 4.5,
+    );
 
 /// Points d'une manche (hors multiplicateur de manche finale).
 /// `points = round(1000 * exp(-écart / tolérance))`, 0 au-delà de la fenêtre.
 int scoreFor(int annee, int guess, Difficulty diff) {
   final ecart = (guess - annee).abs();
-  if (ecart >= maxEcart(diff)) return 0;
+  // Marge d'un cheveu : sans elle, un écart de PILE la fenêtre passait
+  // sous le « >= » à cause de l'arithmétique flottante et rapportait
+  // encore quelques points.
+  if (ecart >= maxEcart(annee, diff) - 1e-9) return 0;
   final pts = (maxScore * math.exp(-ecart / tolerance(annee, diff))).round();
   return pts.clamp(0, maxScore).toInt();
 }

@@ -1,6 +1,7 @@
 import 'package:erea/core/progression.dart';
 import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
+import 'package:erea/core/timeline_scale.dart';
 import 'package:erea/data/events_repository.dart';
 import 'package:erea/game/game_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -81,6 +82,42 @@ void main() {
         expect(picked.map((e) => e.id).toSet().length, picked.length);
       }
     }
+  });
+
+  test('plusieurs parties d’affilée dans une petite catégorie sans redite',
+      () {
+    // Le tirage par tranches resservait du déjà-vu dès la 3e partie parce
+    // qu'un niveau à court de frais ne cédait pas la place aux autres.
+    for (final cat in ['sciences', 'france', 'arts', 'quotidien']) {
+      for (final d in Difficulty.values) {
+        final seen = <int>{};
+        for (var partie = 1; partie <= 6; partie++) {
+          final picked = repo.pick(cat, d, seen: seen);
+          final redites = picked.where((e) => seen.contains(e.id)).length;
+          expect(redites, 0, reason: '$cat / $d, partie $partie');
+          seen.addAll(picked.map((e) => e.id));
+        }
+      }
+    }
+  });
+
+  test('à niveau de jeu égal, Difficile rapporte plus d’XP que Facile', () {
+    // Sinon le mode exigeant n'a aucune raison d'être choisi.
+    int xpMoyen(Difficulty d) {
+      var total = 0;
+      for (final e in repo.events) {
+        // Un joueur « à peu près juste » : 3 % de l'ancienneté d'erreur.
+        final err = ((maxYear - e.annee) * 0.03).round().clamp(2, 120);
+        total += xpForRound(scoreFor(e.annee, e.annee + err, d), d.xpMult);
+      }
+      return total ~/ repo.events.length;
+    }
+
+    final facile = xpMoyen(Difficulty.facile);
+    final normal = xpMoyen(Difficulty.normal);
+    final difficile = xpMoyen(Difficulty.difficile);
+    expect(normal, greaterThan(facile), reason: '$normal vs $facile');
+    expect(difficile, greaterThan(normal), reason: '$difficile vs $normal');
   });
 
   test('le jamais-vu passe avant le déjà-vu', () {

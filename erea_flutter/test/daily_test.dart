@@ -106,15 +106,16 @@ void main() {
   test('les découvertes ne sont jamais tronquées, contrairement à seen',
       () async {
     final s = await store();
-    final ids = List.generate(300, (i) => i);
+    final ids = List.generate(400, (i) => i);
     await s.markSeen(ids);
     await s.markDiscovered(ids);
 
-    expect(s.seen.length, 80, reason: 'tampon anti-répétition borné');
-    expect(s.discovered.length, 300, reason: 'la collection garde tout');
+    expect(s.seen.length, Store.memoireSeen,
+        reason: 'tampon anti-répétition borné');
+    expect(s.discovered.length, 400, reason: 'la collection garde tout');
 
     await s.markDiscovered([42, 1000]);
-    expect(s.discovered.length, 301, reason: 'sans doublon');
+    expect(s.discovered.length, 401, reason: 'sans doublon');
     expect(s.discovered, contains(1000));
   });
 

@@ -103,38 +103,46 @@ class EventsRepository {
     final random = rng ?? _defaultRng();
     final quotas = _quotas[diff]!;
 
-    // Chaque niveau est mélangé une fois, jamais-vu en tête : on y puisera
-    // dans l'ordre, d'abord le quota, puis les places laissées libres par
-    // les niveaux trop peu fournis.
-    final files = <int, List<HistEvent>>{};
+    // Deux piles par niveau : le jamais-vu et le déjà-vu, mélangées
+    // séparément. Le déjà-vu n'est servi qu'en tout dernier recours —
+    // sinon, dans une petite catégorie, un niveau à court de frais
+    // resservait aussitôt du connu alors que d'autres niveaux avaient
+    // encore de quoi faire.
+    final frais = <int, List<HistEvent>>{};
+    final vus = <int, List<HistEvent>>{};
     for (var niveau = 1; niveau <= 3; niveau++) {
-      final tier = p.where((e) => e.niveau == niveau).toList();
-      files[niveau] = [
-        ...shuffled(tier.where((e) => !seen.contains(e.id)).toList(), random),
-        ...shuffled(tier.where((e) => seen.contains(e.id)).toList(), random),
-      ];
+      final tier = p.where((e) => e.niveau == niveau);
+      frais[niveau] =
+          shuffled(tier.where((e) => !seen.contains(e.id)).toList(), random);
+      vus[niveau] =
+          shuffled(tier.where((e) => seen.contains(e.id)).toList(), random);
     }
 
     final picked = <HistEvent>[];
-    void drain(int niveau, int wanted) {
-      final file = files[niveau]!;
+    void drain(Map<int, List<HistEvent>> pile, int niveau, int wanted) {
+      final file = pile[niveau]!;
       final take = wanted.clamp(0, file.length);
       picked.addAll(file.take(take));
       file.removeRange(0, take);
     }
 
-    // 1) Les quotas, au prorata de `count` si la partie est plus courte.
+    // 1) Les quotas, sur du jamais-vu uniquement (au prorata de `count`
+    //    si la partie est plus courte).
     final quotaTotal = quotas.values.fold<int>(0, (s, v) => s + v);
     for (final entry in quotas.entries) {
-      drain(entry.key, (entry.value * count / quotaTotal).round());
+      drain(frais, entry.key, (entry.value * count / quotaTotal).round());
     }
-    // 2) Places restantes : d'abord les niveaux prévus par la difficulté,
-    //    puis, en dernier recours (petit pack), le reste de la base —
-    //    mieux vaut une partie complète qu'une partie écourtée.
+    // 2) Places restantes : encore du jamais-vu, d'abord dans les niveaux
+    //    prévus par la difficulté, puis ailleurs dans la base.
     final ordreSecours = [...quotas.keys, 1, 2, 3];
     for (final niveau in ordreSecours) {
       if (picked.length >= count) break;
-      drain(niveau, count - picked.length);
+      drain(frais, niveau, count - picked.length);
+    }
+    // 3) Vraiment plus rien de neuf : on repasse sur du déjà-vu.
+    for (final niveau in ordreSecours) {
+      if (picked.length >= count) break;
+      drain(vus, niveau, count - picked.length);
     }
 
     // Les quotas ont regroupé les événements par niveau : on rebat les

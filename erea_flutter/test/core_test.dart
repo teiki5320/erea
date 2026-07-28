@@ -65,11 +65,24 @@ void main() {
       expect(scoreFor(1500, 1500 + 110, Difficulty.difficile), 0);
     });
 
-    test('la tolérance vaut 5 % de l’ancienneté, bornée à [5, 45]', () {
-      expect(tolerance(2025, Difficulty.normal), 5.0); // plancher
-      expect(tolerance(1000, Difficulty.normal), 45.0); // plafond
-      expect(tolerance(1800, Difficulty.normal), closeTo(11.3, 1e-9));
-      expect(tolerance(1800, Difficulty.facile), closeTo(11.3 * 2.2, 1e-9));
+    test('la tolérance vaut 5 % de l’ancienneté, bornée à [12, 90]', () {
+      expect(tolerance(2025, Difficulty.normal), 12.0); // plancher
+      expect(tolerance(-1000, Difficulty.normal), 90.0); // plafond
+      expect(tolerance(1500, Difficulty.normal), closeTo(26.3, 1e-9));
+      expect(tolerance(1500, Difficulty.facile), closeTo(26.3 * 2.2, 1e-9));
+    });
+
+    test('le vert (700 pts) reste atteignable en Difficile sur du récent',
+        () {
+      // Avec l'ancien plancher de 5 ans, il fallait l'ANNÉE EXACTE : le
+      // combo était inatteignable.
+      expect(scoreFor(2000, 2002, Difficulty.difficile),
+          greaterThanOrEqualTo(700));
+    });
+
+    test('un gros écart sur du très ancien n’est plus un zéro sec', () {
+      // 150 ans d'erreur sur un fait de -2500 : c'est une bonne réponse.
+      expect(scoreFor(-2500, -2350, Difficulty.difficile), greaterThan(0));
     });
 
     test('le score décroît avec l’écart et jamais en négatif', () {
