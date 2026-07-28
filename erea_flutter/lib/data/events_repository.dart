@@ -33,6 +33,10 @@ const List<Playable> packs = [
   Playable('pack:afrique', 'Afrique & Moyen-Orient', '🌍'),
 ];
 
+/// Pays assez fournis pour une manche de « Tour du monde » : la roue ne
+/// doit jamais tomber sur un pays dont on a déjà tout vu.
+const int minFaitsParPays = 6;
+
 Playable playableFor(String key) {
   for (final p in categories) {
     if (p.key == key) return p;
@@ -74,8 +78,75 @@ class EventsRepository {
       final pk = catKey.substring(5);
       return events.where((e) => e.pack == pk).toList();
     }
+    if (catKey.startsWith('pays:')) {
+      final pays = catKey.substring(5);
+      return events.where((e) => e.pays == pays).toList();
+    }
     if (catKey == 'tout') return List.of(events);
     return events.where((e) => e.cat == catKey).toList();
+  }
+
+  /// Les pays jouables, groupés par continent : de quoi faire tourner la
+  /// roue du mode « Tour du monde ».
+  Map<String, List<String>> get paysParContinent {
+    final compte = <String, int>{};
+    final continent = <String, String>{};
+    for (final e in events) {
+      final p = e.pays;
+      if (p == null || p.isEmpty || e.continent == null) continue;
+      compte[p] = (compte[p] ?? 0) + 1;
+      continent[p] = e.continent!;
+    }
+    final parContinent = <String, List<String>>{};
+    for (final entry in compte.entries) {
+      if (entry.value < minFaitsParPays) continue;
+      parContinent.putIfAbsent(continent[entry.key]!, () => []).add(entry.key);
+    }
+    for (final l in parContinent.values) {
+      l.sort();
+    }
+    return parContinent;
+  }
+
+  /// Une manche de Tour du monde par pays : la roue tourne à CHAQUE
+  /// manche, jamais une fois par partie — seuls deux pays ont assez de
+  /// faits pour tenir dix manches à eux seuls.
+  List<HistEvent> tourDuMonde({
+    double Function()? rng,
+    Set<int> seen = const {},
+    int count = rounds,
+  }) {
+    final random = rng ?? _defaultRng();
+    final parContinent = paysParContinent;
+    // Deux pays par continent quand c'est possible, puis on complète.
+    final choisis = <String>[];
+    for (final liste in parContinent.values) {
+      choisis.addAll(shuffled(liste, random).take(2));
+    }
+    final tousPays = [
+      for (final l in parContinent.values) ...l,
+    ];
+    final tirage = shuffled(choisis, random).toList();
+    for (final p in shuffled(tousPays, random)) {
+      if (tirage.length >= count) break;
+      if (!tirage.contains(p)) tirage.add(p);
+    }
+
+    final picked = <HistEvent>[];
+    final pris = <int>{};
+    for (final pays in tirage) {
+      if (picked.length >= count) break;
+      final dispo = pool('pays:$pays').where((e) => !pris.contains(e.id));
+      final frais = shuffled(
+          dispo.where((e) => !seen.contains(e.id)).toList(), random);
+      final vus =
+          shuffled(dispo.where((e) => seen.contains(e.id)).toList(), random);
+      final choix = frais.isNotEmpty ? frais.first : (vus.isNotEmpty ? vus.first : null);
+      if (choix == null) continue;
+      picked.add(choix);
+      pris.add(choix.id);
+    }
+    return picked;
   }
 
   /// Composition d'une partie par difficulté : combien de manches de

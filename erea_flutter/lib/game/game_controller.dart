@@ -8,7 +8,7 @@ import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../models/hist_event.dart';
 
-enum GameMode { classique, daily, chrono, duel }
+enum GameMode { classique, daily, chrono, duel, tourDuMonde }
 
 enum GamePhase { guess, anim, reveal }
 
@@ -98,6 +98,11 @@ class GameController extends ChangeNotifier {
       events = repo.pick('tout', Difficulty.normal, rng: rng);
       catKey = 'tout';
       diff = Difficulty.normal;
+    } else if (m == GameMode.tourDuMonde) {
+      // La roue tourne à CHAQUE manche : dix pays différents, deux par
+      // continent quand la base le permet.
+      events = repo.tourDuMonde(seen: seenIds);
+      catKey = 'tout';
     } else {
       events = repo.pick(catKey, diff, seen: seenIds);
     }

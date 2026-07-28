@@ -120,6 +120,34 @@ void main() {
     expect(difficile, greaterThan(normal), reason: '$difficile vs $normal');
   });
 
+  test('Tour du monde : dix pays différents, plusieurs continents', () {
+    for (var partie = 0; partie < 30; partie++) {
+      final picked = repo.tourDuMonde();
+      expect(picked.length, rounds);
+      final pays = picked.map((e) => e.pays).toSet();
+      expect(pays.length, rounds, reason: 'un pays par manche');
+      final continents = picked.map((e) => e.continent).toSet();
+      expect(continents.length, greaterThanOrEqualTo(4),
+          reason: 'le tour du monde doit voyager');
+      expect(picked.map((e) => e.id).toSet().length, picked.length);
+    }
+  });
+
+  test('Tour du monde : la roue ne tombe que sur des pays bien fournis', () {
+    final parContinent = repo.paysParContinent;
+    final compte = <String, int>{};
+    for (final e in repo.events) {
+      if (e.pays != null) compte[e.pays!] = (compte[e.pays!] ?? 0) + 1;
+    }
+    for (final liste in parContinent.values) {
+      for (final p in liste) {
+        expect(compte[p], greaterThanOrEqualTo(minFaitsParPays), reason: p);
+      }
+    }
+    expect(parContinent.length, greaterThanOrEqualTo(5),
+        reason: 'les cinq continents');
+  });
+
   test('le jamais-vu passe avant le déjà-vu', () {
     final seen = repo.events.take(400).map((e) => e.id).toSet();
     final picked = repo.pick('tout', Difficulty.normal, seen: seen);

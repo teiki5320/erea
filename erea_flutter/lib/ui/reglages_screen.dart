@@ -1,0 +1,163 @@
+import 'package:flutter/material.dart' hide Badge;
+
+import '../core/retour.dart';
+import '../data/store.dart';
+import '../game/badges.dart';
+import 'sticker_widgets.dart';
+
+/// Réglages et succès. Un seul écran : le jeu n'a pas de quoi en remplir
+/// deux, et tout ce qui s'y règle tient sur une page.
+class ReglagesScreen extends StatefulWidget {
+  const ReglagesScreen({super.key, required this.store});
+
+  final Store store;
+
+  @override
+  State<ReglagesScreen> createState() => _ReglagesScreenState();
+}
+
+class _ReglagesScreenState extends State<ReglagesScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final obtenus = widget.store.badges;
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF7E8),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        title: const Text(
+          'Réglages & succès',
+          style: TextStyle(
+            fontFamily: 'Baloo2',
+            fontWeight: FontWeight.w800,
+            color: inkColor,
+          ),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
+        children: [
+          _carte([
+            SwitchListTile(
+              value: widget.store.hapticsOn,
+              onChanged: (v) async {
+                await widget.store.setHapticsOn(v);
+                Retour.actif = v;
+                if (mounted) setState(() {});
+              },
+              title: const Text('Vibrations'),
+              subtitle: const Text('Un cran par dizaine d’années, un choc à '
+                  'la validation'),
+            ),
+            SwitchListTile(
+              value: widget.store.soundOn,
+              onChanged: (v) async {
+                await widget.store.setSoundOn(v);
+                if (mounted) setState(() {});
+              },
+              title: const Text('Sons'),
+            ),
+          ]),
+          const SizedBox(height: 16),
+          Text(
+            'Succès  ${obtenus.length} / ${badges.length}',
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 18,
+              color: inkColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _carte([
+            for (final b in badges) _ligneSucces(b, obtenus.contains(b.cle)),
+          ]),
+          const SizedBox(height: 16),
+          _carte([
+            ListTile(
+              title: const Text('Tout remettre à zéro'),
+              subtitle: const Text('Progression, records, collection et série'),
+              trailing: const Icon(Icons.restart_alt, color: coralColor),
+              onTap: _confirmerRAZ,
+            ),
+          ]),
+          const SizedBox(height: 12),
+          const Center(
+            child: Text(
+              'Erea — aucune donnée ne quitte cet appareil.',
+              style: TextStyle(
+                fontFamily: 'Nunito',
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                color: inkPaleColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _carte(List<Widget> enfants) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: const [softShadow],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(children: enfants),
+      );
+
+  Widget _ligneSucces(Badge b, bool obtenu) => Opacity(
+        opacity: obtenu ? 1 : 0.42,
+        child: ListTile(
+          leading: Text(
+            obtenu ? b.emoji : '🔒',
+            style: const TextStyle(fontSize: 24),
+          ),
+          title: Text(
+            b.titre,
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 15,
+              color: inkColor,
+            ),
+          ),
+          subtitle: Text(
+            b.comment,
+            style: const TextStyle(
+              fontFamily: 'Nunito',
+              fontWeight: FontWeight.w700,
+              fontSize: 12.5,
+              color: inkSoftColor,
+            ),
+          ),
+        ),
+      );
+
+  Future<void> _confirmerRAZ() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Tout remettre à zéro ?'),
+        content: const Text(
+          'Niveau, XP, records, collection, succès et série seront effacés. '
+          'C’est irréversible.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Annuler'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Effacer'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    await widget.store.resetAll();
+    if (mounted) setState(() {});
+  }
+}

@@ -8,6 +8,7 @@ import '../data/store.dart';
 import '../game/game_controller.dart';
 import 'era_art.dart';
 import 'game_screen.dart';
+import 'reglages_screen.dart';
 import 'sticker_widgets.dart';
 import 'tape_widget.dart';
 
@@ -395,6 +396,8 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                             const SizedBox(width: 8),
                             _streakPill(),
+                            const SizedBox(width: 8),
+                            _reglagesPill(),
                           ],
                         ),
                         const SizedBox(height: 15),
@@ -440,10 +443,17 @@ class _HomeScreenState extends State<HomeScreen>
                           children: [
                             Expanded(
                               child: _modeTile(
-                                emoji: '👥',
-                                titre: 'Duel',
-                                sousTitre: 'Bientôt !',
-                                onTap: null,
+                                emoji: '🌍',
+                                titre: 'Tour du monde',
+                                sousTitre:
+                                    '${widget.repo.paysParContinent.values.fold<int>(0, (s, l) => s + l.length)} pays',
+                                onTap: () => _play(GameMode.tourDuMonde),
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment(0.7, 1),
+                                  colors: [mintColor, skyColor],
+                                ),
+                                light: true,
                               ),
                             ),
                             const SizedBox(width: 11),
@@ -493,6 +503,32 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  /// Accès aux réglages et aux succès.
+  Widget _reglagesPill() {
+    return GestureDetector(
+      onTap: () async {
+        await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => ReglagesScreen(store: widget.store),
+          ),
+        );
+        if (mounted) setState(() {});
+      },
+      child: Container(
+        padding: const EdgeInsets.all(7),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: inkColor, width: 2.5),
+          boxShadow: const [
+            BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
+          ],
+        ),
+        child: const Icon(Icons.tune, size: 18, color: inkColor),
       ),
     );
   }

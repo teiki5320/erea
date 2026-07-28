@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
 import '../core/progression.dart';
@@ -9,6 +9,7 @@ import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
 import '../data/store.dart';
+import '../game/badges.dart';
 import '../game/game_controller.dart';
 import 'sticker_widgets.dart';
 import 'tape_widget.dart';
@@ -88,6 +89,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   int _xpAvant = 0;
   bool _record = false;
+  List<Badge> _badgesGagnes = const [];
   bool _grilleCopiee = false;
 
   GameController get game => widget.controller;
@@ -237,6 +239,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       }
       // Exactement la somme des « +N XP » annoncés manche après manche.
       await widget.store.addXp(game.xpTotal);
+      // Les succès se jugent APRÈS l'enregistrement : sinon « niveau 10 »
+      // ou « 100 découvertes » manqueraient toujours d'une manche.
+      _badgesGagnes = nouveauxBadges(widget.store, game: game);
+      if (_badgesGagnes.isNotEmpty) {
+        await widget.store.unlockBadges(_badgesGagnes.map((b) => b.cle));
+      }
       if (mounted) setState(() {});
     }
   }
@@ -1308,6 +1316,44 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             ),
           ),
         ),
+        if (_badgesGagnes.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: yellowColor.withValues(alpha: 0.30),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _badgesGagnes.length == 1
+                        ? 'Nouveau succès !'
+                        : '${_badgesGagnes.length} nouveaux succès !',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 15,
+                      color: inkColor,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  for (final b in _badgesGagnes)
+                    Text(
+                      '${b.emoji}  ${b.titre} — ${b.comment}',
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12.5,
+                        color: inkSoftColor,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         const SizedBox(height: 10),
         // Partage : la grille sans spoiler, prête à coller n'importe où.
         Padding(
