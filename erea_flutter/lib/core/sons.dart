@@ -1,9 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
-/// Sons du jeu — famille « bois & feutre » : marimba pour les verdicts,
-/// cran de roue en bois pour le glissement. Six petits WAV embarqués
-/// (99 Ko au total), joués en local : rien ne part sur le réseau, l'app
+/// Sons du jeu — marimba pour les verdicts, échappement de montre
+/// mécanique pour le glissement de la frise. Sept petits WAV embarqués
+/// (~104 Ko au total), joués en local : rien ne part sur le réseau, l'app
 /// reste jouable hors ligne.
 ///
 /// Tout est enveloppé de try/catch : sur un appareil où l'audio est
@@ -18,11 +18,27 @@ class Sons {
   /// Un lecteur pour les verdicts…
   static final AudioPlayer _joueur = AudioPlayer();
 
-  /// … et un petit tour de rôle pour le cliquetis. Avec un seul lecteur,
-  /// chaque cran couperait le précédent : à 20 crans par seconde on
-  /// entendrait un hachis, pas un mécanisme.
-  static final List<AudioPlayer> _crans =
-      List.generate(4, (i) => AudioPlayer(playerId: 'cran$i'));
+  /// … et un tour de rôle pour le cliquetis. Avec un seul lecteur, chaque
+  /// cran couperait le précédent : à 20 crans par seconde on entendrait un
+  /// hachis, pas un mécanisme.
+  ///
+  /// Six lecteurs et non quatre : les crans peuvent se suivre toutes les
+  /// 26 ms pour une pointe qui dure ~32 ms, donc il faut de quoi en
+  /// superposer une poignée sans jamais rattraper le premier.
+  ///
+  /// Le nombre est PAIR à dessein. Les rangs pairs jouent le tic, les
+  /// impairs le tac, si bien que le tour de rôle alterne les deux tout
+  /// seul (voir [alimenter]).
+  ///
+  /// Le nombre est une constante et non la longueur de la liste : la liste
+  /// est paresseuse, et y toucher construirait de vrais [AudioPlayer], donc
+  /// ouvrirait un canal de plateforme. Le test de l'alternance n'a pas à
+  /// payer ça pour vérifier une parité.
+  @visibleForTesting
+  static const int nombreLecteursCran = 6;
+
+  static final List<AudioPlayer> _crans = List.generate(
+      nombreLecteursCran, (i) => AudioPlayer(playerId: 'cran$i'));
   static int _prochainCran = 0;
 
   static bool _pret = false;
@@ -41,13 +57,14 @@ class Sons {
       );
       await _joueur.setAudioContext(contexte);
       await _joueur.setReleaseMode(ReleaseMode.stop);
-      for (final p in _crans) {
+      for (var i = 0; i < _crans.length; i++) {
+        final p = _crans[i];
         await p.setAudioContext(contexte);
         await p.setReleaseMode(ReleaseMode.stop);
         // Mode faible latence : indispensable pour un cliquetis qui doit
         // coller au doigt.
         await p.setPlayerMode(PlayerMode.lowLatency);
-        await p.setSource(AssetSource('sfx/tick.wav'));
+        await p.setSource(AssetSource(alimenter(i)));
         await p.setVolume(0.30);
       }
       _pret = true;
@@ -67,12 +84,22 @@ class Sons {
     }
   }
 
-  /// Un cran de la frise. Bridé à 45 ms : au-delà de ~22 crans par
-  /// seconde, l'oreille n'entend plus qu'un bourdonnement.
+  /// Quel échantillon pour le lecteur de rang [i].
+  ///
+  /// Une vraie montre n'émet pas deux fois le même son : les deux
+  /// palettes de l'ancre n'ont ni la même géométrie ni le même point de
+  /// contact, d'où le « tic-tac » et non le « tic-tic ». Rejouer un
+  /// échantillon unique est exactement ce qui sonnait artificiel avant.
+  @visibleForTesting
+  static String alimenter(int i) => i.isEven ? 'sfx/tic.wav' : 'sfx/tac.wav';
+
+  /// Un cran de la frise. Bridé à 26 ms : c'est la cadence d'un
+  /// échappement lancé (~38 par seconde au plus vite), et au-delà
+  /// l'oreille n'entendrait plus qu'un bourdonnement.
   static void cran() {
     if (!actif || !_pret) return;
     final maintenant = DateTime.now().millisecondsSinceEpoch;
-    if (maintenant - _dernierCran < 45) return;
+    if (maintenant - _dernierCran < 26) return;
     _dernierCran = maintenant;
     try {
       final p = _crans[_prochainCran];

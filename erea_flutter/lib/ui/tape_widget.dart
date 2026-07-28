@@ -58,7 +58,12 @@ class _TapeWidgetState extends State<TapeWidget>
   /// époques récentes — un tic de temps en temps — contre une mitraille
   /// sur l'Antiquité. À la distance, le geste sonne pareil partout, et le
   /// cliquetis ralentit avec l'inertie, comme une roue qui s'arrête.
-  static const double _pasCran = 40;
+  ///
+  /// 24 px et non 40 depuis le passage à l'échappement de montre : ce son
+  /// dure 32 ms là où le cran de bois en durait 60, et c'est le
+  /// rapprochement des coups qui fait entendre un mécanisme qui tourne
+  /// plutôt qu'une suite de clics isolés.
+  static const double _pasCran = 24;
   double _depuisCran = 0;
 
   void _avancer(double avant, double apres) {

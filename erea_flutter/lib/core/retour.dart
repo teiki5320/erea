@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 /// trois intensités dont on a besoin.
 ///
 /// Trois moments seulement, pour que ça reste un signal et pas un bruit :
-/// - [cran] : cran léger tous les 40 px de ruban parcourus pendant le
+/// - [cran] : cran léger tous les 24 px de ruban parcourus pendant le
 ///   glissement (bridé, sinon il partirait 120 fois par seconde) ;
 /// - [validation] : impact moyen quand on pose sa réponse ;
 /// - [parfait] : impact fort sur une réponse exacte.
@@ -18,8 +18,9 @@ class Retour {
 
   static void cran() {
     if (!actif) return;
-    // Bride à 45 ms : à 120 Hz, un glissement rapide franchirait
-    // plusieurs crans par frame.
+    // Bride à 45 ms, soit près du double de celle du son (26 ms) : une
+    // vibration à chaque cran serait un bourdonnement continu dans la
+    // main, et viderait la batterie. Un cran sonore sur deux vibre.
     final maintenant = DateTime.now().millisecondsSinceEpoch;
     if (maintenant - _dernierCran < 45) return;
     _dernierCran = maintenant;

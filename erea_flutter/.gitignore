@@ -38,3 +38,6 @@ android/key.properties
 .idea/
 *.iml
 .vscode/
+
+# Caches Python des outils de synthèse
+tools/__pycache__/

@@ -36,19 +36,12 @@ def marimba(freqs, durees):
     return passe_bas(reverb(out, 0.045, 5, 0.5, 0.28), 6500)
 
 
-def clic_bois(f0=1150.0):
-    """Le cran du glissement : sec, mat, très court — il sonne des
-    dizaines de fois par partie, il ne doit jamais fatiguer."""
-    n = int(SR * 0.030)
-    t = np.arange(n) / SR
-    corps = np.sin(2 * np.pi * f0 * t + 2.0 * np.sin(2 * np.pi * f0 * 3.1 * t))
-    x = corps * env(n, 0.0004, 0.006)
-    x += bruit(n, 0.0016) * 0.5
-    return passe_bas(x, 7000)
-
+# Le cran du glissement n'est plus ici : c'est `montre.py` qui le génère
+# (tic.wav / tac.wav), depuis le passage à l'échappement de montre
+# mécanique. Le clic de bois qui vivait dans ce fichier rejouait le même
+# échantillon à chaque cran, et c'est précisément ce qui sonnait faux.
 
 SONS = {
-    'tick': clic_bois(),
     'pop': passe_bas(
         fm(392, 2.0, 3.0, note(0.30), index_chute=0.05) * env(note(0.30), 0.003, 0.10)
         + fm(784, 2.0, 1.5, note(0.30), index_chute=0.03)

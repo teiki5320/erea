@@ -1,6 +1,7 @@
 import 'package:erea/core/progression.dart';
 import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
+import 'package:erea/core/sons.dart';
 import 'package:erea/core/timeline_scale.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -217,6 +218,33 @@ void main() {
       expect(a, isNot(source)); // très improbable d'être identique
       expect(a.toSet(), source.toSet());
       expect(source, List<int>.generate(50, (i) => i)); // source intacte
+    });
+  });
+
+  group('cliquetis de la frise', () {
+    // Le cran s'entend des dizaines de fois par partie. Tant qu'il rejouait
+    // un échantillon unique il sonnait artificiel : une vraie montre alterne
+    // deux sons, parce que les deux palettes de l'ancre n'ont ni la même
+    // géométrie ni le même point de contact.
+    test('le tour de rôle alterne bien le tic et le tac', () {
+      // Une longueur impaire ferait boucler le tour de rôle sur un rang
+      // pair, et deux tics se suivraient sans que rien n'échoue.
+      expect(Sons.nombreLecteursCran.isEven, isTrue,
+          reason: 'le nombre de lecteurs doit rester pair');
+      expect(Sons.nombreLecteursCran, greaterThanOrEqualTo(4),
+          reason: 'il en faut assez pour superposer les crans rapprochés');
+
+      final joues = <String>[];
+      for (var tour = 0; tour < 3; tour++) {
+        for (var i = 0; i < Sons.nombreLecteursCran; i++) {
+          joues.add(Sons.alimenter(i));
+        }
+      }
+      for (var i = 1; i < joues.length; i++) {
+        expect(joues[i], isNot(joues[i - 1]),
+            reason: 'deux crans identiques de suite au rang $i');
+      }
+      expect(joues.toSet(), {'sfx/tic.wav', 'sfx/tac.wav'});
     });
   });
 }
