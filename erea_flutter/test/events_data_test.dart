@@ -157,6 +157,30 @@ void main() {
     }
   });
 
+  test('le mode Facile trouve vraiment ses événements faciles', () {
+    // Le test voisin ne compte que les MANCHES, jamais leur niveau. Or
+    // `pick` se replie automatiquement sur les autres niveaux quand un
+    // niveau est à sec : il rend donc toujours 10 manches, même si Facile
+    // va les chercher dans le niveau le plus difficile. Le tri de
+    // difficulté a laissé la catégorie sciences avec 3 événements de
+    // niveau 1 sur 270, et aucun test n'a bronché.
+    //
+    // Ici on regarde le niveau de ce qui sort réellement.
+    for (final c in categories) {
+      final faciles =
+          repo.pool(c.key).where((e) => e.niveau == 1).length;
+      expect(faciles, greaterThanOrEqualTo(7),
+          reason: '${c.label} : ${'$faciles'} événements de niveau 1, '
+              'de quoi remplir moins d’une partie Facile');
+
+      final tirage = repo.pick(c.key, Difficulty.facile);
+      expect(tirage.where((e) => e.niveau == 1).length,
+          greaterThanOrEqualTo(7),
+          reason: '${c.label} : une partie Facile doit tenir son quota de '
+              '7 manches de niveau 1 sans se replier');
+    }
+  });
+
   test('chaque difficulté a assez d’événements dans chaque catégorie', () {
     for (final c in categories) {
       for (final d in Difficulty.values) {

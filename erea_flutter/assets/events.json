@@ -18726,5 +18726,455 @@
   "niveau": 2,
   "fun": "Dynastie d'extrêmes : son grand-père Auguste fut le premier homme à atteindre la stratosphère (1931) et inspira à Hergé le professeur Tournesol ; son père Jacques toucha en 1960 le fond de la fosse des Mariannes.",
   "pack": "espace"
+ },
+ {
+  "id": 1659,
+  "annee": 1795,
+  "titre": "La France invente le mètre",
+  "desc": "Une loi crée une unité de longueur universelle, calculée à partir de la taille de la Terre",
+  "cat": "sciences",
+  "emoji": "📏",
+  "niveau": 1,
+  "fun": "Deux astronomes ont mis sept ans à mesurer le méridien de Dunkerque à Barcelone pour le calculer. Méchain, tourmenté par une erreur de relevé qu'il n'osa jamais avouer, mourut en Espagne en repartant mesurer."
+ },
+ {
+  "id": 1660,
+  "annee": 1918,
+  "titre": "La grippe espagnole frappe le monde",
+  "desc": "Une pandémie foudroyante emporte des dizaines de millions de personnes à la fin de la Grande Guerre",
+  "cat": "sciences",
+  "emoji": "🦠",
+  "niveau": 1,
+  "fun": "Elle n'a rien d'espagnol : les pays belligérants censuraient l'information et seule l'Espagne, neutre, en parlait librement dans ses journaux. Le monde a donc cru que le fléau venait de là."
+ },
+ {
+  "id": 1661,
+  "annee": 1940,
+  "titre": "La grotte de Lascaux découverte",
+  "desc": "Quatre adolescents s'enfoncent dans un trou du Périgord et trouvent une caverne couverte de peintures",
+  "cat": "sciences",
+  "emoji": "🐂",
+  "niveau": 1,
+  "fun": "Ouverte au public en 1948, elle a dû fermer dès 1963 : le gaz carbonique de plus de mille visiteurs par jour faisait verdir les parois d'algues. Un fac-similé, Lascaux II, a ouvert à côté en 1983."
+ },
+ {
+  "id": 1662,
+  "annee": 1967,
+  "titre": "La télévision passe à la couleur en France",
+  "desc": "La deuxième chaîne diffuse ses premières images en couleur, avec un procédé bien français",
+  "cat": "sciences",
+  "emoji": "📺",
+  "niveau": 1,
+  "fun": "La couleur n'arriva sur la première chaîne qu'en 1975, huit ans plus tard. Et il fallait 5 000 francs pour un poste couleur, trois fois le prix d'un noir et blanc, soit plusieurs mois de salaire moyen."
+ },
+ {
+  "id": 1663,
+  "annee": 1980,
+  "titre": "Le Post-it arrive sur les bureaux",
+  "desc": "De petits carrés de papier jaune qui collent et se décollent débarquent dans les papeteries",
+  "cat": "sciences",
+  "emoji": "📝",
+  "niveau": 1,
+  "fun": "La colle avait été ratée douze ans plus tôt par un chimiste qui cherchait un adhésif ultra-puissant. Elle est restée sans emploi jusqu'à ce qu'un collègue, agacé de voir ses marque-pages tomber, s'en serve."
+ },
+ {
+  "id": 1664,
+  "annee": 1982,
+  "titre": "Le disque compact arrive dans les bacs",
+  "desc": "Un disque de douze centimètres lu par un rayon laser est mis en vente au Japon, sans aiguille ni craquement",
+  "cat": "sciences",
+  "emoji": "💿",
+  "niveau": 1,
+  "fun": "Le tout premier album pressé en usine fut The Visitors d'ABBA. Les fabricants promettaient un son « parfait pour toujours » : on a découvert depuis que la couche réfléchissante de certains disques s'oxyde."
+ },
+ {
+  "id": 1665,
+  "annee": 1996,
+  "titre": "La crise de la vache folle",
+  "desc": "Londres admet que la maladie peut se transmettre à l'homme, l'Europe interdit le bœuf britannique",
+  "cat": "sciences",
+  "emoji": "🐄",
+  "niveau": 1,
+  "fun": "Le coupable n'est ni un virus ni une bactérie mais un prion : une simple protéine mal repliée, sans ADN, capable de déformer ses voisines. Stanley Prusiner, qui l'avait identifié, reçut le Nobel en 1997."
+ },
+ {
+  "id": 1666,
+  "annee": 1999,
+  "titre": "Le jour où le Soleil s'est éteint sur la France",
+  "desc": "Une éclipse totale traverse le pays du Cotentin à l'Alsace, lunettes en carton sur le nez",
+  "cat": "sciences",
+  "emoji": "🌑",
+  "niveau": 1,
+  "fun": "La bande de totalité est passée sur le nord du pays, de Cherbourg à Strasbourg, souvent sous les nuages. Il faudra attendre le 3 septembre 2081 pour revoir une éclipse totale depuis la France métropolitaine."
+ },
+ {
+  "id": 1667,
+  "annee": 1999,
+  "titre": "Deux tempêtes couchent les forêts françaises",
+  "desc": "Des rafales approchant 200 km/h balaient le pays en 48 heures et privent 3,5 millions de foyers de courant",
+  "cat": "sciences",
+  "emoji": "🌬️",
+  "niveau": 1,
+  "fun": "Le parc de Versailles a perdu près de 50 000 arbres, dont un tulipier planté sous Marie-Antoinette ; il a fallu une campagne « 10 000 arbres pour Versailles » pour replanter. Dans tout le pays, 138 millions de m³ de bois sont tombés."
+ },
+ {
+  "id": 1668,
+  "annee": 2000,
+  "titre": "Le Concorde s'écrase au décollage",
+  "desc": "L'avion supersonique prend feu en quittant Roissy et s'abat sur un hôtel, tuant cent treize personnes",
+  "cat": "sciences",
+  "emoji": "✈️",
+  "niveau": 1,
+  "fun": "Une lamelle de titane tombée d'un DC-10 parti cinq minutes plus tôt fit éclater un pneu ; projeté sous l'aile, un morceau de gomme fit céder un réservoir sans même le perforer. Concorde fut retiré du service en 2003."
+ },
+ {
+  "id": 1669,
+  "annee": 2001,
+  "titre": "L'explosion de l'usine AZF",
+  "desc": "Un stock de nitrate d'ammonium explose au sud de Toulouse : trente et un morts et une ville soufflée",
+  "cat": "sciences",
+  "emoji": "💥",
+  "niveau": 1,
+  "fun": "La détonation a été entendue à plus de 80 kilomètres et enregistrée par les sismographes comme une secousse de magnitude 3,4. Survenue dix jours après le 11-Septembre, elle a nourri pendant des années la rumeur d'un attentat."
+ },
+ {
+  "id": 1670,
+  "annee": 2003,
+  "titre": "La canicule qui a surpris la France",
+  "desc": "Une vague de chaleur sans précédent provoque près de 15 000 morts en plein mois d'août",
+  "cat": "sciences",
+  "emoji": "🌡️",
+  "niveau": 1,
+  "fun": "Ce sont surtout les nuits sans fraîcheur, pendant plus d'une semaine, qui ont tué : le corps ne récupérait plus. De cette crise est née la journée de solidarité, instaurée en 2004 et d'abord fixée au lundi de Pentecôte."
+ },
+ {
+  "id": 1671,
+  "annee": 2004,
+  "titre": "Le viaduc de Millau ouvre à la circulation",
+  "desc": "Un pont à haubans franchit la vallée du Tarn et supprime les bouchons de la route vers le Sud",
+  "cat": "sciences",
+  "emoji": "🌉",
+  "niveau": 1,
+  "fun": "Le sommet de sa plus haute pile-pylône culmine à 343 mètres, au-dessus de la tour Eiffel. Le tablier d'acier de 36 000 tonnes a été poussé depuis les deux rives par des vérins, 60 centimètres toutes les quatre minutes."
+ },
+ {
+  "id": 1672,
+  "annee": 2005,
+  "titre": "La première greffe de visage",
+  "desc": "À Amiens, des chirurgiens transplantent le nez, les lèvres et le menton d'une donneuse",
+  "cat": "sciences",
+  "emoji": "🩺",
+  "niveau": 1,
+  "fun": "La patiente avait été défigurée par son propre labrador. Posés sur le squelette du receveur, les tissus de la donneuse donnent un visage hybride, qui n'est celui de personne. Elle a vécu plus de dix ans avec ce visage."
+ },
+ {
+  "id": 1673,
+  "annee": 2010,
+  "titre": "Un volcan islandais paralyse le ciel européen",
+  "desc": "Un nuage de cendres cloue au sol des dizaines de milliers d'avions pendant près d'une semaine",
+  "cat": "sciences",
+  "emoji": "🌋",
+  "niveau": 1,
+  "fun": "Plus de 100 000 vols annulés et environ dix millions de passagers touchés : le ciel européen n'avait plus été aussi vide depuis la Seconde Guerre mondiale. Le nom du volcan, Eyjafjallajökull, a fait le désespoir des présentateurs."
+ },
+ {
+  "id": 1674,
+  "annee": 2006,
+  "titre": "Le coup de tête de Zidane en finale",
+  "desc": "Le capitaine des Bleus est expulsé en prolongation de la finale de la Coupe du monde",
+  "cat": "quotidien",
+  "emoji": "⚽",
+  "niveau": 1,
+  "fun": "Il a tout de même été élu meilleur joueur du tournoi : le vote des journalistes était clos avant la fin de la finale. C'était le dernier match de sa carrière."
+ },
+ {
+  "id": 1675,
+  "annee": 2003,
+  "titre": "La canicule qui a pris la France de court",
+  "desc": "Deux semaines de chaleur extrême en août provoquent près de 15 000 décès supplémentaires",
+  "cat": "quotidien",
+  "emoji": "🌡️",
+  "niveau": 1,
+  "fun": "C'est de cet été qu'est née la journée de solidarité, votée en 2004 : un jour férié transformé en jour travaillé, le lundi de Pentecôte au départ, pour financer l'aide aux personnes âgées."
+ },
+ {
+  "id": 1676,
+  "annee": 2018,
+  "titre": "Le mouvement des gilets jaunes",
+  "desc": "Une hausse des taxes sur les carburants déclenche des blocages de ronds-points partout en France",
+  "cat": "quotidien",
+  "emoji": "🦺",
+  "niveau": 1,
+  "fun": "Le symbole du mouvement dormait déjà dans chaque coffre : le gilet de haute visibilité est obligatoire à bord des voitures françaises depuis le 1er octobre 2008."
+ },
+ {
+  "id": 1677,
+  "annee": 1973,
+  "titre": "Le premier choc pétrolier",
+  "desc": "Le prix du baril quadruple en quelques mois et met fin aux Trente Glorieuses",
+  "cat": "quotidien",
+  "emoji": "🛢️",
+  "niveau": 1,
+  "fun": "C'est pour économiser l'énergie que la France a rétabli l'heure d'été, abandonnée depuis la guerre : décidée en 1975, elle s'applique dès 1976. Présentée comme provisoire, elle n'a jamais été supprimée."
+ },
+ {
+  "id": 1678,
+  "annee": 2016,
+  "titre": "La chasse aux Pokémon envahit les rues",
+  "desc": "Un jeu sur téléphone pousse des millions de gens dehors pour attraper des créatures virtuelles",
+  "cat": "quotidien",
+  "emoji": "📱",
+  "niveau": 1,
+  "fun": "Les lieux à visiter n'ont pas été choisis par le studio : ce sont les joueurs de son jeu précédent, Ingress, qui les avaient eux-mêmes proposés des années plus tôt."
+ },
+ {
+  "id": 1679,
+  "annee": 2007,
+  "titre": "La cigarette bannie des lieux publics",
+  "desc": "Il devient interdit de fumer dans les bureaux, les gares, les écoles et les administrations",
+  "cat": "quotidien",
+  "emoji": "🚭",
+  "niveau": 1,
+  "fun": "Cafés, restaurants, casinos et discothèques ont obtenu onze mois de sursis : leurs cendriers n'ont disparu qu'au 1er janvier suivant."
+ },
+ {
+  "id": 1680,
+  "annee": 1982,
+  "titre": "La première Fête de la musique",
+  "desc": "Le ministère de la Culture invite les amateurs à jouer dans la rue le soir du solstice",
+  "cat": "quotidien",
+  "emoji": "🎶",
+  "niveau": 1,
+  "fun": "Elle est née d'un chiffre : une enquête du ministère venait d'établir que cinq millions de Français jouaient d'un instrument, presque tous chez eux. D'où le mot d'ordre de l'affiche : « Faites de la musique »."
+ },
+ {
+  "id": 1681,
+  "annee": 1965,
+  "titre": "Les femmes n'ont plus besoin de l'accord de leur mari",
+  "desc": "Une réforme leur permet d'exercer un métier et d'ouvrir un compte en banque sans autorisation",
+  "cat": "quotidien",
+  "emoji": "🏦",
+  "niveau": 1,
+  "fun": "Depuis 1938, la femme mariée n'était plus juridiquement « incapable », mais son mari pouvait encore s'opposer au métier qu'elle voulait exercer, sauf à ce qu'un tribunal tranche. C'est cette opposition qui disparaît."
+ },
+ {
+  "id": 1682,
+  "annee": 1998,
+  "titre": "Le vote de la loi sur les 35 heures",
+  "desc": "Le gouvernement Jospin abaisse la durée légale du travail de 39 à 35 heures par semaine",
+  "cat": "quotidien",
+  "emoji": "⏱️",
+  "niveau": 1,
+  "fun": "L'annonce des 35 heures, en octobre 1997, a fait exploser le patronat : le président du CNPF a claqué la porte du sommet social en se disant floué. Son successeur a rebaptisé l'organisation Medef l'année suivante."
+ },
+ {
+  "id": 1683,
+  "annee": 1967,
+  "titre": "La contraception autorisée en France",
+  "desc": "Une loi autorise la vente des contraceptifs, interdite en France depuis 1920",
+  "cat": "quotidien",
+  "emoji": "💊",
+  "niveau": 1,
+  "fun": "Les décrets d'application ont traîné jusqu'en 1972. Il a fallu une nouvelle loi, en 1974, pour que la Sécurité sociale rembourse la pilule et que les mineures puissent l'obtenir sans autorisation parentale."
+ },
+ {
+  "id": 1684,
+  "annee": 1948,
+  "titre": "La 2CV dévoilée au Salon de l'automobile",
+  "desc": "Citroën présente une voiture minimaliste conçue pour les campagnes françaises",
+  "cat": "quotidien",
+  "emoji": "🚗",
+  "niveau": 1,
+  "fun": "La voiture était prête dès 1939 : à la déclaration de guerre, Citroën a fait détruire ou cacher les prototypes pour les soustraire aux Allemands. Trois ont refait surface en 1994, sous les combles de La Ferté-Vidame."
+ },
+ {
+  "id": 1685,
+  "annee": 2001,
+  "titre": "La télé-réalité fait irruption en France",
+  "desc": "Des inconnus enfermés dans un loft sous l'œil permanent des caméras captivent le pays",
+  "cat": "quotidien",
+  "emoji": "📺",
+  "niveau": 1,
+  "fun": "Le format vient du néerlandais Big Brother, baptisé d'après le personnage qui surveille tout le monde dans 1984, de George Orwell. La finale a culminé à 11,7 millions de téléspectateurs."
+ },
+ {
+  "id": 1686,
+  "annee": 1999,
+  "titre": "La tempête qui a couché les forêts françaises",
+  "desc": "Deux dépressions traversent le pays en deux jours et privent 3,4 millions de foyers d'électricité",
+  "cat": "quotidien",
+  "emoji": "🌬️",
+  "niveau": 1,
+  "fun": "Le parc de Versailles a perdu 18 500 arbres en quelques heures, dont un tulipier de Virginie planté sous Marie-Antoinette en 1783 et un pin corse, dernier témoin des séjours de Napoléon au Petit Trianon."
+ },
+ {
+  "id": 1687,
+  "annee": 1924,
+  "titre": "Paris accueille les Jeux olympiques une deuxième fois",
+  "desc": "La capitale organise des Jeux marqués par le premier village olympique de l'histoire",
+  "cat": "quotidien",
+  "emoji": "🏟️",
+  "niveau": 1,
+  "fun": "Johnny Weissmuller y a raflé trois titres olympiques en natation — plus un bronze en water-polo — avant de devenir, huit ans plus tard, le Tarzan des studios d'Hollywood."
+ },
+ {
+  "id": 1688,
+  "annee": 1984,
+  "titre": "Le premier grand titre du football français",
+  "desc": "Les Bleus de Platini remportent le Championnat d'Europe organisé à domicile",
+  "cat": "quotidien",
+  "emoji": "🏆",
+  "niveau": 1,
+  "fun": "Platini a inscrit neuf buts en cinq matchs, dont deux coups du chapeau consécutifs, et a marqué lors des cinq rencontres : personne n'a fait mieux dans un Championnat d'Europe depuis."
+ },
+ {
+  "id": 1689,
+  "annee": 1792,
+  "titre": "Naissance de La Marseillaise",
+  "desc": "À Strasbourg, Rouget de Lisle écrit en une nuit un chant de guerre pour l'armée du Rhin.",
+  "cat": "arts",
+  "emoji": "🎼",
+  "niveau": 1,
+  "fun": "Elle doit son nom aux fédérés marseillais qui l'ont chantée en entrant dans Paris le 30 juillet 1792. Son auteur, officier royaliste, fut emprisonné sous la Terreur ; l'hymne ne devint définitif qu'en 1879."
+ },
+ {
+  "id": 1690,
+  "annee": 1966,
+  "titre": "La Grande Vadrouille sort en salles",
+  "desc": "Bourvil et de Funès fuient à travers la France occupée dans la comédie de Gérard Oury.",
+  "cat": "arts",
+  "emoji": "🎬",
+  "niveau": 1,
+  "fun": "Avec 17,2 millions d'entrées, il a détenu le record du box-office français trente et un ans, jusqu'à Titanic. Ce fut le dernier film du duo : Bourvil meurt en 1970 et Yves Montand le remplace dans La Folie des grandeurs."
+ },
+ {
+  "id": 1691,
+  "annee": 1978,
+  "titre": "Mort de Claude François",
+  "desc": "Le chanteur meurt électrocuté dans sa salle de bains, à trente-neuf ans.",
+  "cat": "arts",
+  "emoji": "🎤",
+  "niveau": 1,
+  "fun": "Il a co-signé Comme d'habitude, devenue My Way pour Sinatra, l'une des chansons les plus reprises au monde. Alexandrie Alexandra est sortie en single le 15 mars 1978, quatre jours après sa mort, le jour de ses obsèques."
+ },
+ {
+  "id": 1692,
+  "annee": 1982,
+  "titre": "E.T. l'extra-terrestre sort au cinéma",
+  "desc": "Spielberg fait pleurer la planète avec un extraterrestre qui veut téléphoner chez lui.",
+  "cat": "arts",
+  "emoji": "👽",
+  "niveau": 1,
+  "fun": "Mars a refusé que les M&M's servent d'appât pour E.T. : Spielberg s'est rabattu sur les Reese's Pieces, dont les ventes ont bondi. Le film est resté le plus gros succès du cinéma pendant onze ans, jusqu'à Jurassic Park."
+ },
+ {
+  "id": 1693,
+  "annee": 1985,
+  "titre": "Retour vers le futur sort en salles",
+  "desc": "Une DeLorean, un savant fou et un adolescent projeté trente ans en arrière.",
+  "cat": "arts",
+  "emoji": "⏳",
+  "niveau": 1,
+  "fun": "Eric Stoltz a tourné six semaines dans le rôle de Marty avant d'être remercié : tout fut refait avec Michael J. Fox, qui tournait sa sitcom le jour et le film la nuit, ramené chez lui à l'aube par les chauffeurs de la production."
+ },
+ {
+  "id": 1694,
+  "annee": 1986,
+  "titre": "Mort de Coluche",
+  "desc": "L'humoriste, fondateur des Restos du cœur, se tue à moto sur une route des Alpes-Maritimes.",
+  "cat": "arts",
+  "emoji": "🎭",
+  "niveau": 1,
+  "fun": "Candidat à la présidentielle de 1981, il fut crédité de 16 % des intentions de vote par un sondage du JDD, semant la panique des partis avant qu'il renonce. Les Restos du cœur, lancés neuf mois avant sa mort, existent toujours."
+ },
+ {
+  "id": 1695,
+  "annee": 1994,
+  "titre": "Le Roi Lion sort au cinéma",
+  "desc": "Simba, Mufasa et Hakuna Matata : le dessin animé le plus rentable jamais sorti à cette date.",
+  "cat": "arts",
+  "emoji": "🦁",
+  "niveau": 1,
+  "fun": "Au studio, c'était le projet de second rang : les meilleurs animateurs avaient rejoint Pocahontas, jugé plus prestigieux. Les deux minutes de la ruée des gnous ont demandé près de trois ans et un logiciel créé pour l'occasion."
+ },
+ {
+  "id": 1696,
+  "annee": 2009,
+  "titre": "Mort de Michael Jackson",
+  "desc": "Le chanteur meurt à Los Angeles alors qu'il répétait une série de cinquante concerts à Londres.",
+  "cat": "arts",
+  "emoji": "🕺",
+  "niveau": 1,
+  "fun": "L'annonce a saturé le web : Google a pris la vague de recherches pour une attaque et renvoyé des pages d'erreur vingt-cinq minutes durant ; Twitter et Wikipédia ont flanché. Son médecin fut condamné en 2011 pour homicide involontaire."
+ },
+ {
+  "id": 1697,
+  "annee": 2017,
+  "titre": "Mort de Johnny Hallyday",
+  "desc": "Le chanteur s'éteint d'un cancer du poumon ; la France lui rend un hommage populaire sur les Champs-Élysées.",
+  "cat": "arts",
+  "emoji": "🏍",
+  "niveau": 1,
+  "fun": "Sept cents motards ont escorté son cercueil devant une foule immense. Jean-Philippe Smet devait son nom de scène à Lee Halliday, le mari de sa cousine ; une coquille sur une pochette de disque a changé le « i » en « y »."
+ },
+ {
+  "id": 1698,
+  "annee": 1918,
+  "titre": "Une pandémie plus meurtrière que la guerre",
+  "desc": "La grippe dite espagnole déferle sur le monde et tue des dizaines de millions de personnes.",
+  "cat": "monde",
+  "emoji": "🤒",
+  "niveau": 1,
+  "fun": "Elle n'a rien d'espagnol : les pays belligérants censuraient leur presse, l'Espagne neutre non. Comme seuls ses journaux en parlaient librement, le monde a cru que le fléau venait de là."
+ },
+ {
+  "id": 1699,
+  "annee": 1933,
+  "titre": "Hitler nommé chancelier",
+  "desc": "Le président Hindenburg confie la chancellerie allemande au chef du parti nazi.",
+  "cat": "monde",
+  "emoji": "🏛️",
+  "niveau": 1,
+  "fun": "Aux élections précédant sa nomination, le parti nazi avait reculé : 34 sièges perdus. Les conservateurs croyaient récupérer un homme affaibli qu'ils tiendraient en laisse."
+ },
+ {
+  "id": 1700,
+  "annee": 1968,
+  "titre": "Assassinat de Martin Luther King",
+  "desc": "Le pasteur du mouvement des droits civiques est abattu sur le balcon d'un motel de Memphis.",
+  "cat": "monde",
+  "emoji": "✊",
+  "niveau": 1,
+  "fun": "C'est Robert Kennedy qui a annoncé sa mort à une foule d'Indianapolis, dans un discours improvisé : il avait écarté le texte préparé par son équipe. Deux mois plus tard, il était assassiné à son tour."
+ },
+ {
+  "id": 1701,
+  "annee": 1997,
+  "titre": "Mort de Lady Diana",
+  "desc": "La princesse de Galles meurt des suites d'un accident de voiture dans le tunnel du pont de l'Alma, à Paris.",
+  "cat": "monde",
+  "emoji": "👑",
+  "niveau": 1,
+  "fun": "Bernie Taupin a réécrit pour ses obsèques les paroles de « Candle in the Wind », qu'Elton John a chantée à Westminster. Vendu à 33 millions d'exemplaires, ce single reste le plus vendu depuis l'existence des classements."
+ },
+ {
+  "id": 1702,
+  "annee": 1871,
+  "titre": "La Commune de Paris",
+  "desc": "Après la défaite face à la Prusse, Paris insurgé se gouverne seul 72 jours avant d'être écrasé.",
+  "cat": "france",
+  "emoji": "🚩",
+  "niveau": 1,
+  "fun": "Les communards abattirent la colonne Vendôme ; Courbet fut condamné à en payer la reconstruction par annuités. Il mourut en exil en Suisse le 31 décembre 1877, la veille du jour où la première était due."
+ },
+ {
+  "id": 1703,
+  "annee": 1981,
+  "titre": "Mitterrand élu président de la République",
+  "desc": "Pour la première fois sous la Ve République, un président de gauche entre à l'Élysée.",
+  "cat": "france",
+  "emoji": "🌹",
+  "niveau": 1,
+  "fun": "Battu par de Gaulle en 1965, puis de justesse par Giscard en 1974, il l'emporte à sa troisième tentative contre ce même Giscard, et restera quatorze ans à l'Élysée : record de la Ve République."
  }
 ]
