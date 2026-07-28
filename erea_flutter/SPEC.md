@@ -18,7 +18,7 @@ Tableau d'objets :
 | `emoji` | string | Un emoji. |
 | `niveau` | int | 1 = connu des enfants · 2 = culture générale · 3 = pointu. |
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
-| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. |
+| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack tient au moins 15 parties (150 événements)** : c'est l'unité de vente, elle ne doit pas s'épuiser en quatre parties. Verrouillé par un test. |
 | `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. Réservé aux futures catégories géographiques. |
 | `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 93 pays couverts, dont 42 avec au moins 10 faits. |
 
@@ -46,10 +46,16 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 
 ## 3. Barème
 
-- `tolérance = clamp(5 % × (maxYear − année), 5, 45) × multiplicateur de difficulté` — avec `maxYear = 2026`
+- `tolérance = clamp(5 % × (maxYear − année), 12, 90) × multiplicateur de difficulté` — avec `maxYear = 2026`
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
-- **0 point si `écart ≥ 200 × multiplicateur de difficulté`**
-- Difficultés : Facile ×2,2 (XP ×0,8) · Normal ×1 · Difficile ×0,55 (XP ×1,3)
+- **0 point au-delà de `max(200 × mult, tolérance × 4,5)`** — la fenêtre
+  s'élargit sur les faits très anciens, où 200 ans d'erreur ne sont pas
+  une faute grossière
+- Difficultés : Facile ×2,2 (XP ×0,75) · Normal ×1 · Difficile ×0,55 (XP ×1,75).
+  Le plancher de tolérance est à 12 ans (et non 5) : à 5, décrocher le vert
+  en Difficile sur un fait récent exigeait l'ANNÉE EXACTE et le combo y
+  était inatteignable. Les multiplicateurs d'XP compensent le barème :
+  sans ça, Difficile rapportait autant que Facile malgré sa promesse.
 - Composition d'une partie (QUOTAS par niveau, `EventsRepository._quotas`) :
   Facile 7×N1 + 3×N2 · Normal 3×N1 + 5×N2 + 2×N3 · Difficile 4×N2 + 6×N3.
   Des quotas, pas des tranches à épuiser : une tranche prioritaire plus
@@ -68,10 +74,14 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
 ## 4. Modes
 
 - **Classique** : 10 manches, catégorie + difficulté choisies, anti-répétition
-  (mémoriser ~80 derniers ids joués, piocher d'abord les non-vus).
+  (mémoriser les ~300 derniers ids joués, épuiser TOUT le jamais-vu — tous
+  niveaux confondus — avant de resservir quoi que ce soit).
+- **Tour du monde** : 10 manches, 10 pays différents, deux par continent
+  quand la base le permet. La roue tourne à CHAQUE manche et non une fois
+  par partie : aucun pays n'a de quoi tenir dix manches à lui seul.
 - **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
   série pour tous les joueurs de l'app à une date donnée. La parité avec le
-  prototype web n'est plus tenable (862 événements contre 613) et n'est pas
+  prototype web n'est plus tenable (1 642 événements contre 613) et n'est pas
   un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
   jour** : le verrou est posé au lancement (abandonner consomme la tentative),
   mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
@@ -84,15 +94,25 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
 
 ## 5. Progression
 
-- XP en fin de partie (sauf duel) : `round(total / 10 × XPmult)`, plafonné à 2000.
+- XP d'une MANCHE : `round(points / 10 × XPmult × (1,5 si combo))`. L'XP
+  d'une partie est la SOMME de ces valeurs, plafonnée à 2000 — c'est
+  exactement ce qui est annoncé au joueur à chaque révélation, donc ce qui
+  doit lui être crédité. Ne jamais recalculer l'XP à partir du seul total :
+  les arrondis divergeraient de l'affichage.
 - Niveau : passer du niveau n au n+1 coûte `400 + (n−1) × 300` XP.
 - Titres : 1 Apprenti du temps 🐣 · 2 Curieux d'histoire 🔍 · 3 Explorateur 🧭 ·
   4 Voyageur temporel ⏳ · 5 Aventurier 🗺️ · 6 Chasseur de dates 🎯 ·
-  7 Historien 📚 · 9 Sage 🦉 · 10 Maître du temps 👑 · 13 Légende 🌟.
+  7 Historien 📚 · 9 Sage 🦉 · 10 Maître du temps 👑 · 13 Légende 🌟 ·
+  16 Érudit 🎓 · 20 Archiviste 🗄️ · 25 Oracle 🔮 · 30 Gardien du temps ⏰ ·
+  40 Mémoire du monde 🌍 · 50 Immortel 💎.
 - Cosmétiques par niveau : mascottes (🦉 1, 🦖 3, 🧙 5, 🤖 8, 🐉 12), thèmes de
   frise (Classique 1, Bonbon 2, Océan 4, Forêt 7), confettis (Fête 1, Or 6, Étoiles 9).
 
-## 6. Succès (14)
+## 6. Succès (14) — implémentés dans `lib/game/badges.dart`
+
+Chacun se juge tout seul à partir de ce qui est persisté, et est évalué
+APRÈS l'enregistrement de la partie (sinon « niveau 10 » et « 100
+découvertes » manqueraient toujours d'une manche).
 
 premiers pas (1 partie) · PERFECT · 3 PERFECT en une partie · 8000 pts ·
 jouer les 5 catégories · 10 parties · 50 parties · marquer en Difficile ·

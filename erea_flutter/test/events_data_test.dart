@@ -106,10 +106,19 @@ void main() {
     }
   });
 
-  test('chaque pack à thème a de quoi remplir une partie', () {
+  test('chaque pack à thème tient au moins 15 parties sans redite', () {
+    // Un pack est l'unité de vente : en vendre un qui s'épuise en quatre
+    // parties (c'était le cas de « Conquête de l'espace ») n'est pas tenable.
     for (final p in packs) {
-      expect(repo.pool(p.key).length, greaterThanOrEqualTo(rounds),
+      expect(repo.pool(p.key).length, greaterThanOrEqualTo(15 * rounds),
           reason: p.label);
+    }
+  });
+
+  test('aucune catégorie ne s’épuise en moins de 15 parties', () {
+    for (final c in categories) {
+      expect(repo.pool(c.key).length, greaterThanOrEqualTo(15 * rounds),
+          reason: c.label);
     }
   });
 
