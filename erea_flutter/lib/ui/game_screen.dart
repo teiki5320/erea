@@ -4,6 +4,7 @@ import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
 
 import '../core/progression.dart';
+import '../core/accessibilite.dart';
 import '../core/classement.dart';
 import '../core/rappels.dart';
 import '../core/retour.dart';
@@ -147,9 +148,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       if (status == AnimationStatus.completed) {
         game.finishReveal();
         if (mounted) {
-          final reduce =
-              MediaQuery.maybeOf(context)?.disableAnimations ?? false;
-          if (reduce) {
+          // Lu à la source : ce callback tourne AVANT la phase de build,
+          // MediaQuery y porterait encore la valeur de la frame passée.
+          if (animationsReduites) {
             _pop.value = 1;
           } else {
             _pop.forward(from: 0);
@@ -210,7 +211,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // meilleur moment du jeu.
     var ms =
         dist < 0.0005 ? 120 : (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
-    if (MediaQuery.of(context).disableAnimations) ms = 80;
+    if (animationsReduites) ms = 80; // idem : appelé depuis un geste
     _travel.duration = Duration(milliseconds: ms);
     _travel.forward(from: 0);
   }
@@ -747,6 +748,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       children: [
         const SizedBox(height: 12),
         ScaleTransition(
+          key: const ValueKey('badge-verdict'),
           scale: _popBadge,
           child: Transform.rotate(
             angle: dansLaCible ? -0.035 : 0,

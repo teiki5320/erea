@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../core/accessibilite.dart';
 import '../core/progression.dart';
 import '../core/scoring.dart';
 import '../data/events_repository.dart';
@@ -82,20 +83,10 @@ class _HomeScreenState extends State<HomeScreen>
     }
   }
 
-  /// « Réduire les animations », lu à la SOURCE.
-  ///
-  /// Surtout pas via MediaQuery ici : le widget MediaQuery est lui aussi un
-  /// observateur du binding, et rien ne garantit qu'il ait été reconstruit
-  /// quand [didChangeAccessibilityFeatures] nous parvient. On lirait alors
-  /// l'ancienne valeur et la dérive resterait figée jusqu'à la prochaine
-  /// partie — le bug d'origine, simplement déplacé d'un cran.
-  static bool get _animationsReduites => WidgetsBinding
-      .instance.platformDispatcher.accessibilityFeatures.disableAnimations;
-
   @override
   void didChangeAccessibilityFeatures() {
     if (!mounted) return;
-    if (_animationsReduites) {
+    if (animationsReduites) {
       _drift?.stop();
     } else {
       _reprendreDerive();
@@ -112,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen>
     // « réduire les animations » est actif — ainsi il peut démarrer si le
     // réglage est désactivé en cours de route.
     _drift = createTicker(_onDrift);
-    if (!_animationsReduites) _drift!.start();
+    if (!animationsReduites) _drift!.start();
   }
 
   void _onDrift(Duration elapsed) {
@@ -150,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen>
   /// pourtant toujours, pour pouvoir démarrer si le réglage est levé).
   void _reprendreDerive() {
     if (_driftStopped || !mounted) return;
-    if (_animationsReduites) return;
+    // Pas de dérive derrière l'écran de jeu : lever le réglage en pleine
+    // partie n'a aucune raison de réveiller l'accueil, qui n'est pas visible.
+    if (_navigating) return;
+    if (animationsReduites) return;
     if (_drift?.isActive ?? true) return;
     _lastTick = Duration.zero;
     _drift!.start();

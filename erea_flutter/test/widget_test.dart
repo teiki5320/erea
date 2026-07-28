@@ -245,6 +245,57 @@ void main() {
         reason: 'la dérive doit repartir quand le réglage est levé');
   });
 
+  testWidgets('l’inertie de la frise s’arrête net si le réglage est activé '
+      'en pleine glissade', (tester) async {
+    tester.view.physicalSize = _iphone14;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
+    SharedPreferences.setMockInitialValues({});
+    await tester.pumpWidget(EreaApp(repo: repo, store: await Store.load()));
+    await tester.pump();
+
+    // Lancer la mini-frise arrête DÉFINITIVEMENT la dérive d'époque : la
+    // seule chose encore animée est donc l'élan du ruban.
+    await tester.fling(find.byType(TapeWidget), const Offset(-320, 0), 900);
+    await tester.pump();
+    expect(tester.binding.hasScheduledFrame, isTrue,
+        reason: 'le ruban est lancé sur son élan');
+
+    // Le joueur active le réglage sans quitter l'app (raccourci iOS).
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    await tester.pump(const Duration(milliseconds: 20));
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(tester.binding.hasScheduledFrame, isFalse,
+        reason: 'l’élan ne doit pas finir sa course sur une seconde');
+  });
+
+  testWidgets('le réglage activé pendant le voyage du ruban coupe le ressort '
+      'du verdict', (tester) async {
+    await pumpApp(tester); // animations réduites : on part au calme
+    await startClassique(tester);
+    // On rétablit les animations, puis on valide : le ruban voyage.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures();
+    await tapVisible(tester, find.text('+'));
+    await tester.tap(find.text('Je place ici !'));
+    await tester.pump();
+
+    // … et le joueur active « réduire les animations » PENDANT le voyage.
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    await tester.pump(const Duration(seconds: 2)); // le voyage s'achève
+
+    // Le badge de verdict ne doit pas jaillir : il est déjà à sa taille.
+    final badge = tester.widget<ScaleTransition>(
+        find.byKey(const ValueKey('badge-verdict')));
+    expect(badge.scale.value, 1.0,
+        reason: 'le ressort du badge a joué malgré le réglage');
+  });
+
   testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {
     await pumpApp(tester);
     await startClassique(tester);

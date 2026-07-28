@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../core/accessibilite.dart';
 import '../core/timeline_scale.dart';
 import 'era_art.dart';
 import 'era_theme.dart';
@@ -70,7 +71,10 @@ class _TapeWidgetState extends State<TapeWidget>
     _lastTick = elapsed;
     final frames = dtMs / 16.7;
     _velocity *= math.pow(0.94, frames).toDouble();
-    if (_velocity.abs() < 0.3 || widget.locked) {
+    // Le réglage est relu à CHAQUE frame : activé en pleine glissade (le
+    // raccourci d'accessibilité iOS le permet sans quitter l'app), le
+    // ruban s'arrête net au lieu de finir sa course sur ~1 s.
+    if (_velocity.abs() < 0.3 || widget.locked || animationsReduites) {
       _ticker?.stop();
       return;
     }
@@ -101,8 +105,7 @@ class _TapeWidgetState extends State<TapeWidget>
     // Le glissement lui-même reste (c'est de la manipulation directe), mais
     // l'élan qui continue tout seul, lui, est bien une animation. Lu à la
     // source, pour rester juste même si le réglage vient de changer.
-    if (WidgetsBinding
-        .instance.platformDispatcher.accessibilityFeatures.disableAnimations) {
+    if (animationsReduites) {
       _velocity = 0;
       return;
     }
