@@ -26,10 +26,10 @@ const List<Playable> categories = [
 ];
 
 const List<Playable> packs = [
-  Playable('pack:egypte', 'Égypte & Orient ancien', '🏺'),
+  Playable('pack:egypte', 'Antiquité & Orient ancien', '🏺'),
   Playable('pack:asie', 'Asie', '🏯'),
   Playable('pack:ameriques', 'Les Amériques', '🌎'),
-  Playable('pack:espace', 'Conquête de l’espace', '🚀'),
+  Playable('pack:espace', 'Ciel & conquête spatiale', '🚀'),
   Playable('pack:afrique', 'Afrique & Moyen-Orient', '🌍'),
 ];
 

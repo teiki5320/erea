@@ -141,7 +141,7 @@ void main() {
 
   test('playableFor retombe sur « Tout » pour une clé inconnue', () {
     expect(playableFor('france').label, 'Histoire de France');
-    expect(playableFor('pack:espace').label, 'Conquête de l’espace');
+    expect(playableFor('pack:espace').label, 'Ciel & conquête spatiale');
     expect(playableFor('inexistant').key, 'tout');
   });
 }
