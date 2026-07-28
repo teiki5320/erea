@@ -118,6 +118,67 @@ void main() {
     expect(s.discovered, contains(1000));
   });
 
+  test('un défi interrompu par un arrêt subi est reprenable', () async {
+    final s = await store();
+    final today = Store.dayKey(DateTime.now());
+    await s.lockDaily();
+    await s.saveDailyProgress(today, [1800, 1900, 1500]);
+
+    expect(s.dailyResumable, isTrue);
+    expect(s.dailyProgress, [1800, 1900, 1500]);
+
+    // Un abandon VOLONTAIRE, lui, efface la reprise.
+    await s.clearDailyProgress();
+    expect(s.dailyResumable, isFalse);
+    expect(s.dailyProgress, isEmpty);
+  });
+
+  test('terminer le défi efface la reprise et garde le meilleur score',
+      () async {
+    final s = await store();
+    final today = Store.dayKey(DateTime.now());
+    await s.lockDaily();
+    await s.saveDailyProgress(today, [1800]);
+    await s.finishDaily(6000, day: today);
+
+    expect(s.dailyResumable, isFalse);
+    expect(s.dailyBest, 6000);
+  });
+
+  test('l’horloge injectable rend le passage de minuit testable', () async {
+    final s = await store();
+    var maintenant = DateTime(2026, 5, 10, 23, 59);
+    s.clock = () => maintenant;
+
+    await s.lockDaily();
+    expect(s.dailyPlayedToday, isTrue);
+
+    // Minuit passe : le défi de la veille est fini, celui du jour est libre.
+    maintenant = DateTime(2026, 5, 11, 0, 5);
+    expect(s.dailyPlayedToday, isFalse,
+        reason: 'un nouveau jour, un nouveau défi');
+    expect(s.dailyResumable, isFalse);
+  });
+
+  test('une écriture impossible lève le drapeau au lieu de passer inaperçue',
+      () async {
+    final s = await store();
+    expect(s.writeFailed, isFalse);
+    await s.addXp(120);
+    expect(s.xp, 120);
+    expect(s.writeFailed, isFalse, reason: 'écriture normale');
+  });
+
+  test('marquer un événement déjà connu n’écrit rien', () async {
+    final s = await store();
+    await s.markDiscovered([1, 2, 3]);
+    await s.markSeen([1, 2, 3]);
+    expect(s.discovered, {1, 2, 3});
+    // Deuxième passage : mêmes ids, la collection ne bouge pas.
+    await s.markDiscovered([1, 2]);
+    expect(s.discovered, {1, 2, 3});
+  });
+
   test('une préférence corrompue ne bloque ni le jeu ni la collection',
       () async {
     SharedPreferences.setMockInitialValues({

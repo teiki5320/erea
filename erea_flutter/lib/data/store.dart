@@ -3,56 +3,114 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Persistance locale (équivalent du localStorage du prototype web) :
-/// XP, records, anti-répétition, défi du jour.
+/// XP, records, anti-répétition, collection, défi du jour, réglages.
+///
+/// Deux principes :
+/// - **aucune écriture silencieusement perdue** : chaque écriture est
+///   vérifiée et retentée une fois, et un échec définitif lève le drapeau
+///   [writeFailed] que l'interface peut signaler ;
+/// - **l'horloge est injectable** ([clock]) : sans ça, le passage de minuit
+///   et le changement d'heure ne seraient testables qu'en modifiant
+///   l'heure de l'appareil.
 class Store {
   Store._(this._prefs);
 
   final SharedPreferences _prefs;
+
+  /// Horloge du store. Remplaçable dans les tests.
+  DateTime Function() clock = DateTime.now;
+
+  /// Passe à vrai dès qu'une écriture a définitivement échoué (stockage
+  /// plein, plugin indisponible…). L'accueil peut alors prévenir plutôt
+  /// que de laisser croire que la partie a été enregistrée.
+  bool writeFailed = false;
+
+  Set<int>? _seenCache;
+  Set<int>? _discoveredCache;
 
   static Future<Store> load() async {
     final prefs = await SharedPreferences.getInstance();
     return Store._(prefs);
   }
 
+  DateTime get _now => clock();
+
+  /// Écrit, vérifie, retente UNE fois. Ne relance jamais : une préférence
+  /// perdue ne doit pas faire échouer la fin de partie et emporter avec
+  /// elle l'XP et le record qui suivent dans la même séquence.
+  Future<bool> _put(Future<bool> Function() write) async {
+    for (var essai = 0; essai < 2; essai++) {
+      try {
+        if (await write()) return true;
+      } catch (_) {
+        // On retente une fois, puis on abandonne proprement.
+      }
+    }
+    writeFailed = true;
+    return false;
+  }
+
   int get xp => _prefs.getInt('xp') ?? 0;
-  Future<void> addXp(int gain) => _prefs.setInt('xp', xp + gain);
+  Future<void> addXp(int gain) async {
+    if (gain == 0) return;
+    await _put(() => _prefs.setInt('xp', xp + gain));
+  }
 
   int get games => _prefs.getInt('games') ?? 0;
-  Future<void> incGames() => _prefs.setInt('games', games + 1);
+  Future<void> incGames() => _put(() => _prefs.setInt('games', games + 1));
 
   /// Records par « catKey|difficulty ». Retourne true si record battu.
   int bestFor(String key) => _prefs.getInt('best.$key') ?? 0;
   Future<bool> submitScore(String key, int total) async {
-    if (total > bestFor(key)) {
-      await _prefs.setInt('best.$key', total);
-      return true;
-    }
-    return false;
+    if (total <= bestFor(key)) return false;
+    await _put(() => _prefs.setInt('best.$key', total));
+    return true;
+  }
+
+  /// Catégories et packs déjà joués (succès « toucher à tout »).
+  Set<String> get catsPlayed =>
+      (_prefs.getStringList('catsPlayed') ?? const <String>[]).toSet();
+  Future<void> markCatPlayed(String key) async {
+    final all = catsPlayed;
+    if (!all.add(key)) return;
+    await _put(() => _prefs.setStringList('catsPlayed', all.toList()..sort()));
+  }
+
+  /// Succès débloqués (clés de `lib/game/badges.dart`).
+  Set<String> get badges =>
+      (_prefs.getStringList('badges') ?? const <String>[]).toSet();
+  Future<void> unlockBadges(Iterable<String> keys) async {
+    final all = badges;
+    final avant = all.length;
+    all.addAll(keys);
+    if (all.length == avant) return;
+    await _put(() => _prefs.setStringList('badges', all.toList()..sort()));
   }
 
   /// Anti-répétition : ids des ~80 derniers événements joués.
-  /// Une préférence corrompue ne doit jamais bloquer le jeu.
-  Set<int> get seen => _idSet('seen');
+  Set<int> get seen => _seenCache ??= _idSet('seen');
 
   Future<void> markSeen(Iterable<int> ids) async {
-    final list = [
-      ...seen.where((id) => !ids.contains(id)),
-      ...ids,
-    ];
+    final nouveaux = ids.where((id) => !seen.contains(id)).toList();
+    if (nouveaux.isEmpty) return;
+    final list = [...seen.where((id) => !nouveaux.contains(id)), ...nouveaux];
     final trimmed = list.length > 80 ? list.sublist(list.length - 80) : list;
-    await _prefs.setString('seen', jsonEncode(trimmed));
+    _seenCache = trimmed.toSet();
+    await _put(() => _prefs.setString('seen', jsonEncode(trimmed)));
   }
 
   /// Événements découverts (révélés au moins une fois), SANS plafond :
   /// c'est la collection du joueur, distincte du tampon anti-répétition
-  /// [seen] qui, lui, ne garde que les 80 derniers. Alimentée dès
-  /// maintenant pour que l'album et le succès « 100 événements
-  /// découverts » (SPEC §6) soient remplis rétroactivement.
-  Set<int> get discovered => _idSet('discovered');
+  /// [seen] qui, lui, ne garde que les 80 derniers.
+  Set<int> get discovered => _discoveredCache ??= _idSet('discovered');
 
   Future<void> markDiscovered(Iterable<int> ids) async {
-    final all = discovered..addAll(ids);
-    await _prefs.setString('discovered', jsonEncode(all.toList()..sort()));
+    final all = discovered;
+    final avant = all.length;
+    all.addAll(ids);
+    if (all.length == avant) return; // rien de neuf : aucune écriture
+    await _put(
+        () => _prefs.setString('discovered', jsonEncode(all.toList()..sort())));
   }
 
   /// Liste d'ids persistée en JSON ; une préférence corrompue ne doit
@@ -67,15 +125,39 @@ class Store {
     }
   }
 
-  /// Défi du jour. Trois dates distinctes :
-  /// - `daily.last` : jour de la TENTATIVE (posé au lancement, verrou
-  ///   anti-rejeu) ;
-  /// - `daily.done` : jour du défi réellement TERMINÉ (10 manches) ;
-  /// - `daily.streakDay` : dernier jour terminé, base du calcul de série.
+  // ---------------------------------------------------------------- réglages
+
+  bool get soundOn => _prefs.getBool('opt.sound') ?? true;
+  Future<void> setSoundOn(bool v) => _put(() => _prefs.setBool('opt.sound', v));
+
+  bool get hapticsOn => _prefs.getBool('opt.haptics') ?? true;
+  Future<void> setHapticsOn(bool v) =>
+      _put(() => _prefs.setBool('opt.haptics', v));
+
+  bool get remindersOn => _prefs.getBool('opt.reminders') ?? false;
+  Future<void> setRemindersOn(bool v) =>
+      _put(() => _prefs.setBool('opt.reminders', v));
+
+  /// Remise à zéro complète (écran de réglages).
+  Future<void> resetAll() async {
+    _seenCache = null;
+    _discoveredCache = null;
+    await _put(() => _prefs.clear());
+  }
+
+  // -------------------------------------------------------------- défi du jour
+
+  /// - `daily.last` : jour de la TENTATIVE (verrou anti-rejeu) ;
+  /// - `daily.done` : jour du défi réellement TERMINÉ ;
+  /// - `daily.streakDay` : dernier jour terminé, base du calcul de série ;
+  /// - `daily.progress*` : manches déjà jouées, pour reprendre après un
+  ///   arrêt SUBI (l'app tuée par iOS) — un abandon volontaire, lui,
+  ///   efface cette reprise.
   String get dailyLast => _prefs.getString('daily.last') ?? '';
   String get dailyDone => _prefs.getString('daily.done') ?? '';
   String get dailyStreakDay => _prefs.getString('daily.streakDay') ?? '';
   int get dailyLastScore => _prefs.getInt('daily.lastScore') ?? 0;
+  int get dailyBest => _prefs.getInt('daily.best') ?? 0;
 
   /// Qualité des 10 manches du dernier défi joué : 'g' ≥ 700 points de
   /// base, 'y' ≥ 350, 'r' sinon (les barres du panneau d'accueil).
@@ -92,10 +174,70 @@ class Store {
       dayKey(DateTime(d.year, d.month, d.day - 1));
 
   /// Tentative du jour déjà utilisée (terminée OU abandonnée).
-  bool get dailyPlayedToday => dailyLast == dayKey(DateTime.now());
+  bool get dailyPlayedToday => dailyLast == dayKey(_now);
 
   /// Défi du jour mené à son terme : seul cas où un score est affichable.
-  bool get dailyFinishedToday => dailyDone == dayKey(DateTime.now());
+  bool get dailyFinishedToday => dailyDone == dayKey(_now);
+
+  /// Défi du jour interrompu par un arrêt subi : il peut être REPRIS là où
+  /// il s'était arrêté. Un abandon volontaire efface la reprise.
+  bool get dailyResumable =>
+      dailyPlayedToday &&
+      !dailyFinishedToday &&
+      _prefs.getString('daily.progressDay') == dayKey(_now);
+
+  /// Années déjà proposées pendant le défi en cours. La série d'événements
+  /// étant déterministe (graine = date), ces réponses suffisent à
+  /// reconstituer entièrement la partie.
+  List<int> get dailyProgress {
+    try {
+      final raw = _prefs.getString('daily.progress');
+      if (raw == null) return const [];
+      return (jsonDecode(raw) as List<dynamic>).cast<int>();
+    } catch (_) {
+      return const [];
+    }
+  }
+
+  Future<void> saveDailyProgress(String day, List<int> guesses) async {
+    await _put(() => _prefs.setString('daily.progressDay', day));
+    await _put(() => _prefs.setString('daily.progress', jsonEncode(guesses)));
+  }
+
+  Future<void> clearDailyProgress() async {
+    await _put(() => _prefs.remove('daily.progressDay'));
+    await _put(() => _prefs.remove('daily.progress'));
+  }
+
+  /// Verrouille la tentative du jour DÈS LE LANCEMENT du défi : abandonner
+  /// en cours de route ne permet plus de rejouer en connaissant les
+  /// réponses. La série, elle, n'est PAS créditée ici : elle récompense un
+  /// défi terminé (cf. [finishDaily]).
+  Future<void> lockDaily({DateTime? now}) async {
+    final key = dayKey(now ?? _now);
+    if (dailyLast == key) return; // déjà verrouillé pour ce jour
+    await _put(() => _prefs.setString('daily.last', key));
+  }
+
+  /// Enregistre le résultat du défi verrouillé par [lockDaily] et crédite
+  /// la série. [day] est le jour du LANCEMENT : un défi commencé avant
+  /// minuit et fini après reste crédité au bon jour, sans verrouiller le
+  /// lendemain.
+  Future<void> finishDaily(int total, {String grid = '', String? day}) async {
+    final key = day ?? dayKey(_now);
+    if (dailyLast != key) return; // tentative d'un autre jour : on ignore
+    if (dailyDone == key) return; // déjà enregistré
+    final streak = dailyStreakDay == _dayBefore(key) ? dailyStreak + 1 : 1;
+    await _put(() => _prefs.setString('daily.done', key));
+    await _put(() => _prefs.setInt('daily.lastScore', total));
+    await _put(() => _prefs.setString('daily.grid', grid));
+    await _put(() => _prefs.setInt('daily.streak', streak));
+    await _put(() => _prefs.setString('daily.streakDay', key));
+    if (total > dailyBest) {
+      await _put(() => _prefs.setInt('daily.best', total));
+    }
+    await clearDailyProgress();
+  }
 
   /// Série brute telle que stockée (dernière valeur créditée).
   int get dailyStreak => _prefs.getInt('daily.streak') ?? 0;
@@ -105,39 +247,11 @@ class Store {
   /// à la lecture — sinon l'accueil affiche encore « 🔥 5 » une semaine
   /// après le dernier défi.
   int get effectiveStreak {
-    final now = DateTime.now();
     final day = dailyStreakDay;
     if (day.isEmpty) return 0;
+    final now = _now;
     if (day == dayKey(now) || day == _yesterdayKey(now)) return dailyStreak;
     return 0;
-  }
-
-  /// Verrouille la tentative du jour DÈS LE LANCEMENT du défi : abandonner
-  /// en cours de route ne permet plus de rejouer en connaissant les
-  /// réponses. La série, elle, n'est PAS créditée ici : elle récompense un
-  /// défi terminé (cf. [finishDaily]), sinon elle s'entretiendrait en
-  /// lançant puis quittant chaque jour.
-  Future<void> lockDaily({DateTime? now}) async {
-    final d = now ?? DateTime.now();
-    final key = dayKey(d);
-    if (dailyLast == key) return; // déjà verrouillé pour ce jour
-    await _prefs.setString('daily.last', key);
-  }
-
-  /// Enregistre le résultat du défi verrouillé par [lockDaily] et crédite
-  /// la série. [day] est le jour du LANCEMENT : un défi commencé avant
-  /// minuit et fini après reste crédité au bon jour, sans verrouiller le
-  /// lendemain.
-  Future<void> finishDaily(int total, {String grid = '', String? day}) async {
-    final key = day ?? dayKey(DateTime.now());
-    if (dailyLast != key) return; // tentative d'un autre jour : on ignore
-    if (dailyDone == key) return; // déjà enregistré
-    final streak = dailyStreakDay == _dayBefore(key) ? dailyStreak + 1 : 1;
-    await _prefs.setString('daily.done', key);
-    await _prefs.setInt('daily.lastScore', total);
-    await _prefs.setString('daily.grid', grid);
-    await _prefs.setInt('daily.streak', streak);
-    await _prefs.setString('daily.streakDay', key);
   }
 
   /// La veille d'une clé AAAA-MM-JJ, en calendrier.

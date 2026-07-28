@@ -69,6 +69,19 @@ int scoreFor(int annee, int guess, Difficulty diff) {
   return pts.clamp(0, maxScore).toInt();
 }
 
+/// Verdict d'une manche. SOURCE UNIQUE : le badge de révélation, la
+/// couleur des points, le trait d'écart, la pastille de manche, la grille
+/// emoji de partage et la série se calent tous dessus. Sans ça, le même
+/// écran pouvait annoncer « dans la cible 🎯 » en menthe et « série
+/// perdue » juste en dessous.
+enum Verdict { reussi, moyen, rate }
+
+Verdict verdictFor(int base) => base >= 700
+    ? Verdict.reussi
+    : base >= 350
+        ? Verdict.moyen
+        : Verdict.rate;
+
 /// La dernière manche d'une partie classique/quotidienne vaut double.
 int roundMultiplier(int roundIndex, {bool chrono = false}) {
   return (!chrono && roundIndex == rounds - 1) ? 2 : 1;

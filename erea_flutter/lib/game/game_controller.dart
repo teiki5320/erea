@@ -169,6 +169,22 @@ class GameController extends ChangeNotifier {
     return false;
   }
 
+  /// Les années proposées jusqu'ici. La série d'un défi du jour étant
+  /// déterministe, elles suffisent à reconstituer toute la partie.
+  List<int> get guesses => [for (final r in results) r.guess];
+
+  /// Rejoue des manches déjà validées (reprise d'un défi interrompu par un
+  /// arrêt subi). Reconstruit résultats, total, combo et XP à l'identique.
+  void restore(List<int> anciennes) {
+    for (final g in anciennes) {
+      if (results.length >= rounds) break;
+      setYear(g);
+      validate();
+      finishReveal();
+      if (!next()) break;
+    }
+  }
+
   int get perfects => results.where((r) => r.base == maxScore).length;
 
   double get averageEcart {

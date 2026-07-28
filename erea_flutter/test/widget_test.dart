@@ -182,6 +182,36 @@ void main() {
     });
   }
 
+  // Le réglage fin et la mini-carte ne doivent JAMAIS passer sous la ligne
+  // de flottaison : c'est la carte de l'événement qui défile sur elle-même.
+  for (final format in [('iPhone 14', _iphone14), ('iPhone SE', _iphoneSE)]) {
+    testWidgets('le réglage fin reste visible sans défiler (${format.$1})',
+        (tester) async {
+      await pumpApp(tester, size: format.$2);
+      await startClassique(tester);
+      final ecran = tester.getSize(find.byType(MaterialApp));
+      for (final glyphe in ['−', '+']) {
+        final r = tester.getRect(find.text(glyphe));
+        expect(r.bottom, lessThanOrEqualTo(ecran.height),
+            reason: '« $glyphe » sous la ligne de flottaison');
+        expect(r.top, greaterThanOrEqualTo(0.0));
+      }
+    });
+  }
+
+  testWidgets('un événement déjà révélé ne revient pas après un abandon',
+      (tester) async {
+    await pumpApp(tester);
+    await startClassique(tester);
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.text('Je place ici !'));
+    // La manche est révélée : l'événement doit être mémorisé AVANT même
+    // que la partie se termine.
+    final store = await Store.load();
+    expect(store.discovered, isNotEmpty);
+    expect(store.seen, isNotEmpty);
+  });
+
   testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {
     await pumpApp(tester);
     await startClassique(tester);

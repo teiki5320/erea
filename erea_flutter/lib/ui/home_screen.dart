@@ -30,7 +30,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   String catKey = 'tout';
   Difficulty diff = Difficulty.normal;
   bool _navigating = false;
@@ -51,6 +51,11 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    // Le défi du jour dépend de la DATE : une app laissée en arrière-plan
+    // et rouverte le lendemain doit rendre le défi disponible sans qu'on
+    // ait à la tuer. Idem pour « réduire les animations », modifiable à
+    // tout moment dans les réglages du système.
+    WidgetsBinding.instance.addObserver(this);
     // Les textures de fond peuvent finir de se décoder après le premier
     // build : on force alors une reconstruction (sinon, avec « réduire
     // les animations », elles n'apparaîtraient jamais).
@@ -60,13 +65,34 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) setState(() {});
+  }
+
+  @override
+  void didChangeAccessibilityFeatures() {
+    if (!mounted) return;
+    final reduire =
+        WidgetsBinding.instance.platformDispatcher.accessibilityFeatures
+            .disableAnimations;
+    if (reduire) {
+      _drift?.stop();
+    } else {
+      _reprendreDerive();
+    }
+    setState(() {});
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_driftInit) return;
     _driftInit = true;
-    if (!MediaQuery.of(context).disableAnimations) {
-      _drift = createTicker(_onDrift)..start();
-    }
+    // Le ticker existe toujours : il n'est simplement pas démarré tant que
+    // « réduire les animations » est actif — ainsi il peut démarrer si le
+    // réglage est désactivé en cours de route.
+    _drift = createTicker(_onDrift);
+    if (!MediaQuery.of(context).disableAnimations) _drift!.start();
   }
 
   void _onDrift(Duration elapsed) {
@@ -99,8 +125,20 @@ class _HomeScreenState extends State<HomeScreen>
     _drift?.stop();
   }
 
+  /// Relance la dérive — jamais si le joueur a touché la mini-frise, jamais
+  /// non plus si « réduire les animations » est actif (le ticker existe
+  /// pourtant toujours, pour pouvoir démarrer si le réglage est levé).
+  void _reprendreDerive() {
+    if (_driftStopped || !mounted) return;
+    if (MediaQuery.of(context).disableAnimations) return;
+    if (_drift?.isActive ?? true) return;
+    _lastTick = Duration.zero;
+    _drift!.start();
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _drift?.dispose();
     super.dispose();
   }
@@ -130,6 +168,12 @@ class _HomeScreenState extends State<HomeScreen>
         // constituée : jamais de tentative brûlée sans avoir joué.
         if (mode == GameMode.daily) {
           await widget.store.lockDaily(now: _dailyNow);
+          // Défi interrompu par un arrêt SUBI (iOS a déchargé l'app) : on
+          // rejoue les manches déjà validées et le joueur reprend où il
+          // s'était arrêté. Un abandon volontaire, lui, a effacé la reprise.
+          if (widget.store.dailyResumable) {
+            controller.restore(widget.store.dailyProgress);
+          }
         }
         final replay = await navigator.push<bool>(
           MaterialPageRoute(
@@ -137,16 +181,14 @@ class _HomeScreenState extends State<HomeScreen>
                 GameScreen(controller: controller, store: widget.store),
           ),
         );
+        controller.dispose();
         again = replay == true;
       }
     } finally {
       _navigating = false;
       if (mounted) {
         setState(() {});
-        if (!_driftStopped) {
-          _lastTick = Duration.zero;
-          _drift?.start();
-        }
+        _reprendreDerive();
       }
     }
   }
