@@ -58,19 +58,43 @@ void main() {
       expect(scoreFor(-480, -480, Difficulty.difficile), maxScore);
     });
 
-    test('la fenêtre à 0 point suit le multiplicateur de difficulté', () {
-      // Normal : 200 ans. Facile : 440 ans. Difficile : 110 ans.
-      expect(scoreFor(1500, 1500 + 200, Difficulty.normal), 0);
-      expect(scoreFor(1500, 1500 + 199, Difficulty.normal), greaterThan(0));
-      expect(scoreFor(1500, 1500 + 440, Difficulty.facile), 0);
-      expect(scoreFor(1500, 1500 + 110, Difficulty.difficile), 0);
+    test('le zéro arrive à 7,6 × la tolérance, et suit donc le mode', () {
+      // Il n'y a plus de fenêtre dure : l'exponentielle atteint zéro
+      // d'elle-même. Facile 201 ans, Normal 92, Difficile 51.
+      const bornes = {
+        Difficulty.facile: 201,
+        Difficulty.normal: 92,
+        Difficulty.difficile: 51,
+      };
+      bornes.forEach((diff, zero) {
+        expect(scoreFor(1500, 1500 + zero, diff), 0,
+            reason: '${diff.label} : zéro attendu à $zero ans');
+        expect(scoreFor(1500, 1500 + zero - 1, diff), greaterThan(0),
+            reason: '${diff.label} : encore des points à ${zero - 1} ans');
+      });
     });
 
-    test('la tolérance vaut 5 % de l’ancienneté, bornée à [12, 90]', () {
-      expect(tolerance(2025, Difficulty.normal), 12.0); // plancher
-      expect(tolerance(-1000, Difficulty.normal), 90.0); // plafond
-      expect(tolerance(1500, Difficulty.normal), closeTo(26.3, 1e-9));
-      expect(tolerance(1500, Difficulty.facile), closeTo(26.3 * 2.2, 1e-9));
+    test('la tolérance ne dépend QUE du mode, jamais de l’époque', () {
+      expect(tolerance(Difficulty.facile), closeTo(12 * 2.2, 1e-9));
+      expect(tolerance(Difficulty.normal), 12.0);
+      expect(tolerance(Difficulty.difficile), closeTo(12 * 0.55, 1e-9));
+    });
+
+    test('à écart égal, le score est le même à toutes les époques', () {
+      // Le vrai garde-fou. Avec l'ancienne tolérance proportionnelle à
+      // l'ancienneté, 50 ans d'erreur valaient 777 points avant notre ère
+      // et 150 points en l'an 2000 : une partie qui tirait beaucoup
+      // d'Antiquité était mécaniquement plus généreuse.
+      for (final diff in Difficulty.values) {
+        for (final ecart in [0, 5, 20, 50, 120]) {
+          final reference = scoreFor(2000, 2000 + ecart, diff);
+          for (final annee in [-3000, -500, 476, 1492, 1789, 1900, 2020]) {
+            expect(scoreFor(annee, annee + ecart, diff), reference,
+                reason: 'écart de $ecart ans en ${diff.label} : '
+                    'l’an $annee ne doit pas rapporter plus que l’an 2000');
+          }
+        }
+      }
     });
 
     test('le vert (700 pts) reste atteignable en Difficile sur du récent',
@@ -81,9 +105,15 @@ void main() {
           greaterThanOrEqualTo(700));
     });
 
-    test('un gros écart sur du très ancien n’est plus un zéro sec', () {
-      // 150 ans d'erreur sur un fait de -2500 : c'est une bonne réponse.
-      expect(scoreFor(-2500, -2350, Difficulty.difficile), greaterThan(0));
+    test('la fenêtre à zéro est la même partout', () {
+      // Ce test vérifiait l'inverse : 150 ans d'erreur sur un fait de
+      // -2500 rapportaient encore des points en Difficile, alors que le
+      // même écart sur du récent valait zéro. L'époque ne donne plus
+      // aucun passe-droit.
+      expect(scoreFor(-2500, -2350, Difficulty.difficile), 0);
+      expect(scoreFor(2000, 2150, Difficulty.difficile), 0);
+      expect(scoreFor(-2500, -2400, Difficulty.facile),
+          scoreFor(2000, 2100, Difficulty.facile));
     });
 
     test('le score décroît avec l’écart et jamais en négatif', () {

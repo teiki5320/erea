@@ -729,7 +729,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   /// linéaire sans avoir à l'expliquer.
   Widget _revealBody(BuildContext context, RoundResult r, double available) {
     final reduce = MediaQuery.of(context).disableAnimations;
-    final tol = tolerance(r.event.annee, game.diff);
+    final tol = tolerance(game.diff);
     // UN SEUL verdict pour tout l'écran : badge, points, trait d'écart et
     // titre de la carte disent la même chose que la pastille de manche et
     // que la grille de partage (cf. scoring.dart).

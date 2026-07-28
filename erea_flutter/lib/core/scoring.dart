@@ -1,11 +1,8 @@
 import 'dart:math' as math;
 
-import 'timeline_scale.dart';
-
 const int rounds = 10;
 const int maxScore = 1000; // par manche (avant multiplicateur)
 const int maxTotal = 11000; // 9 manches + manche finale x2
-const int maxEcartBase = 200; // au-delà (en Normal) : 0 point
 
 /// Difficulté choisie par le joueur : module la tolérance, l'XP et les repères.
 enum Difficulty {
@@ -33,7 +30,7 @@ enum Difficulty {
     emoji: '🔥',
     tolMult: 0.55,
     xpMult: 1.75,
-    desc: 'Marge réduite, événements pointus… mais +30 % d’XP !',
+    desc: 'Marge réduite, événements pointus… mais +75 % d’XP !',
   );
 
   const Difficulty({
@@ -55,36 +52,44 @@ enum Difficulty {
   final String desc;
 }
 
-/// Tolérance : 5 % de l'ancienneté, bornée entre 12 et 90 ans, × difficulté.
+/// Marge d'erreur de base, en années. Identique à TOUTES les époques.
 ///
-/// Le plancher est à 12 ans (et non 5) : avec 5, atteindre les 700 points
-/// du « vert » sur un événement récent demandait l'ANNÉE EXACTE en
-/// Difficile — le combo y était donc inatteignable. Le plafond est à 90
-/// ans (et non 45) : placer les pyramides à 150 ans près est une bonne
-/// réponse, pas un zéro.
-double tolerance(int annee, Difficulty diff) {
-  final base = ((maxYear - annee) * 0.05).clamp(12.0, 90.0).toDouble();
-  return base * diff.tolMult;
-}
+/// Elle a d'abord valu 5 % de l'ancienneté du fait, bornée entre 12 et
+/// 90 ans. L'intention était bonne — placer les pyramides à 150 ans près
+/// n'est pas une faute grossière — mais la conséquence ne l'était pas :
+/// à connaissance ÉGALE, l'Antiquité rapportait bien plus de points. Un
+/// fait situé à 50 ans près valait 777 points avant notre ère et 150
+/// points en l'an 2000. Une partie qui tirait beaucoup d'Antiquité était
+/// donc mécaniquement plus généreuse, et l'écart mesuré entre une partie
+/// chanceuse et une partie ingrate atteignait 1,93×.
+///
+/// La marge est maintenant la même partout : le score ne dépend plus que
+/// de ce que le joueur sait, jamais de l'époque tirée.
+///
+/// 12 ans et non 5 : avec 5, atteindre les 700 points du « vert » sur un
+/// événement récent demandait l'ANNÉE EXACTE en Difficile, et le combo y
+/// était inatteignable.
+const double toleranceBase = 12;
 
-/// Fenêtre au-delà de laquelle on marque 0 point. Elle reste à 200 ans
-/// × difficulté pour les événements récents, mais s'élargit avec la
-/// tolérance sur les très anciens, où 200 ans d'erreur ne sont pas une
-/// faute grossière.
-double maxEcart(int annee, Difficulty diff) => math.max(
-      maxEcartBase * diff.tolMult,
-      tolerance(annee, diff) * 4.5,
-    );
+/// Tolérance du barème : [toleranceBase] × le multiplicateur du mode.
+///
+/// C'est ici, et seulement ici, que la difficulté se joue : Facile ×2,2,
+/// Normal ×1, Difficile ×0,55.
+double tolerance(Difficulty diff) => toleranceBase * diff.tolMult;
 
 /// Points d'une manche (hors multiplicateur de manche finale).
-/// `points = round(1000 * exp(-écart / tolérance))`, 0 au-delà de la fenêtre.
+///
+/// `points = round(1000 × exp(−écart / tolérance))`.
+///
+/// Il n'y a plus de fenêtre explicite à zéro : l'exponentielle y arrive
+/// d'elle-même, à 7,6 × la tolérance, soit 201 ans en Facile, 92 en
+/// Normal et 51 en Difficile. L'ancienne borne dure (200 ans × mode)
+/// était calculée pour une tolérance qui montait jusqu'à 90 ans sur
+/// l'Antiquité ; depuis que la tolérance est uniforme, elle tombait
+/// toujours APRÈS le zéro naturel et ne pouvait plus se déclencher.
 int scoreFor(int annee, int guess, Difficulty diff) {
   final ecart = (guess - annee).abs();
-  // Marge d'un cheveu : sans elle, un écart de PILE la fenêtre passait
-  // sous le « >= » à cause de l'arithmétique flottante et rapportait
-  // encore quelques points.
-  if (ecart >= maxEcart(annee, diff) - 1e-9) return 0;
-  final pts = (maxScore * math.exp(-ecart / tolerance(annee, diff))).round();
+  final pts = (maxScore * math.exp(-ecart / tolerance(diff))).round();
   return pts.clamp(0, maxScore).toInt();
 }
 
