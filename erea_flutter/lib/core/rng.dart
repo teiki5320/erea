@@ -1,7 +1,13 @@
-/// PRNG mulberry32, identique bit à bit à celui du prototype web :
-/// le défi du jour tire ainsi la MÊME série que la version web pour une
-/// même date, sur toutes les plateformes (y compris Flutter Web, d'où
-/// l'arithmétique 32 bits explicite, sûre sous dart2js).
+/// PRNG mulberry32, identique bit à bit à celui du prototype web : à
+/// graine égale il produit la même suite sur toutes les plateformes (y
+/// compris Flutter Web, d'où l'arithmétique 32 bits explicite, sûre sous
+/// dart2js). C'est ce qui rend le défi du jour identique pour TOUS les
+/// joueurs de l'app à une date donnée.
+///
+/// En revanche la série n'est plus celle du prototype web : la base de
+/// l'app compte 862 événements contre 613 côté web, et le tirage applique
+/// des quotas par niveau — deux listes différentes, donc deux suites de
+/// tirages différentes. La parité avec le site n'est pas un objectif.
 library;
 
 const int _mask32 = 0xFFFFFFFF;

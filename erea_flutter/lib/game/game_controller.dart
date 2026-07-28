@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../core/progression.dart';
 import '../core/rng.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
@@ -17,7 +18,14 @@ class RoundResult {
   final int ecart;
   final int base; // points avant multiplicateur
   final int pts; // points avec multiplicateur (manche finale x2)
-  const RoundResult(this.event, this.guess, this.ecart, this.base, this.pts);
+
+  /// XP de CETTE manche, bonus de combo compris. C'est exactement ce qui
+  /// est annoncé au joueur à la révélation ET ce qui sera crédité : le
+  /// total d'XP d'une partie est la somme de ces valeurs, jamais un
+  /// arrondi calculé à part.
+  final int xp;
+  const RoundResult(
+      this.event, this.guess, this.ecart, this.base, this.pts, this.xp);
 }
 
 /// État central d'une partie (solo classique / défi du jour pour ce squelette ;
@@ -42,12 +50,19 @@ class GameController extends ChangeNotifier {
 
   /// Combo : réponses consécutives ≥ 700 points de base. À partir de 3,
   /// la manche suivante rapporte 1,5× d'XP. Le multiplicateur ne touche
-  /// JAMAIS les points (barème et records intacts, cf. SPEC §10) : il
-  /// s'accumule dans [comboBonusXp], crédité en fin de partie.
+  /// JAMAIS les points (barème et records intacts, cf. SPEC §10) : il ne
+  /// joue que sur l'XP de la manche.
   int combo = 0;
   bool boostNext = false;
   bool lastBoosted = false;
-  int comboBonusXp = 0;
+
+  /// XP cumulée des manches jouées (somme des [RoundResult.xp]), bornée au
+  /// crédit par le plafond de [xpTotal].
+  int xpEarned = 0;
+
+  /// XP réellement créditée en fin de partie : la somme annoncée manche
+  /// après manche, plafonnée comme le veut SPEC §5.
+  int get xpTotal => xpEarned.clamp(0, maxXpPerGame);
 
   /// Instant de lancement du défi du jour (fourni par l'écran d'accueil,
   /// le même que celui du verrou) et sa clé AAAA-MM-JJ : un défi à cheval
@@ -69,7 +84,7 @@ class GameController extends ChangeNotifier {
     combo = 0;
     boostNext = false;
     lastBoosted = false;
-    comboBonusXp = 0;
+    xpEarned = 0;
     if (m == GameMode.daily) {
       final now = dailyNow ?? DateTime.now();
       dailyKey = Store.dayKey(now);
@@ -80,7 +95,10 @@ class GameController extends ChangeNotifier {
     } else {
       events = repo.pick(catKey, diff, seen: seenIds);
     }
-    if (events.isEmpty) return false;
+    // Une partie incomplète resservirait les mêmes événements (`round %
+    // events.length`) : la 2ᵉ occurrence donnerait la réponse. Mieux vaut
+    // refuser de démarrer.
+    if (events.length < rounds) return false;
     _setupRound();
     return true;
   }
@@ -116,12 +134,11 @@ class GameController extends ChangeNotifier {
     final base = scoreFor(ev.annee, guessYear, diff);
     final ecart = (guessYear - ev.annee).abs();
     final pts = base * multiplier;
-    final result = RoundResult(ev, guessYear, ecart, base, pts);
-    results.add(result);
     lastBoosted = boostNext;
-    if (lastBoosted) {
-      comboBonusXp += (pts / 10 * diff.xpMult * 0.5).round();
-    }
+    final xp = xpForRound(pts, diff.xpMult, boosted: lastBoosted);
+    final result = RoundResult(ev, guessYear, ecart, base, pts, xp);
+    results.add(result);
+    xpEarned += xp;
     combo = base >= 700 ? combo + 1 : 0;
     boostNext = combo >= 3;
     notifyListeners();

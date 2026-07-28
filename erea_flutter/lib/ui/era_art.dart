@@ -57,15 +57,27 @@ class EraArt {
     }
   }
 
+  /// Copie floutée en DEMI-résolution : cette texture n'est affichée que
+  /// derrière le contenu, à 30 % d'opacité et déjà floue — la moitié des
+  /// pixels suffit, et un flou σ=1 sur une image deux fois plus petite
+  /// rend le même σ=2 une fois réaffichée. Économise ~11 Mo de mémoire.
   static Future<ui.Image?> _blurred(ui.Image src) async {
     try {
+      final w = (src.width / 2).round();
+      final h = (src.height / 2).round();
       final rec = ui.PictureRecorder();
       final canvas = ui.Canvas(rec);
       final paint = ui.Paint()
+        ..filterQuality = ui.FilterQuality.medium
         ..imageFilter = ui.ImageFilter.blur(
-            sigmaX: 2, sigmaY: 2, tileMode: ui.TileMode.clamp);
-      canvas.drawImage(src, ui.Offset.zero, paint);
-      return await rec.endRecording().toImage(src.width, src.height);
+            sigmaX: 1, sigmaY: 1, tileMode: ui.TileMode.clamp);
+      canvas.drawImageRect(
+        src,
+        ui.Rect.fromLTWH(0, 0, src.width.toDouble(), src.height.toDouble()),
+        ui.Rect.fromLTWH(0, 0, w.toDouble(), h.toDouble()),
+        paint,
+      );
+      return await rec.endRecording().toImage(w, h);
     } catch (_) {
       return null;
     }
@@ -75,18 +87,25 @@ class EraArt {
     return _loading ??= () async {
       // Les décors sont affichés au plus à ~1,2x la largeur d'écran :
       // décoder à 1200 px divise la mémoire par ~1,5 sans perte visible.
-      frise = await _decode('assets/img/frise.webp', targetWidth: 1200);
-      for (var i = 0; i < eraThemes.length; i++) {
-        final img = await _decode(eraThemes[i].bgAsset, targetWidth: 1200);
-        if (img != null) {
-          bg[i] = img;
-          final blur = await _blurred(img);
-          if (blur != null) bgBlur[i] = blur;
-        }
-      }
-      for (final e in travelerSpecs.entries) {
-        final img = await _decode(e.value.asset);
-        if (img != null) travelers[e.key] = img;
+      // Les 12 chargements partent ENSEMBLE : le temps d'apparition des
+      // décors devient celui du plus lent, pas leur somme.
+      await Future.wait<void>([
+        for (var i = 0; i < eraThemes.length; i++)
+          _decode(eraThemes[i].bgAsset, targetWidth: 1200).then((img) async {
+            if (img == null) return;
+            bg[i] = img;
+            final blur = await _blurred(img);
+            if (blur != null) bgBlur[i] = blur;
+          }),
+        for (final e in travelerSpecs.entries)
+          _decode(e.value.asset).then((img) {
+            if (img != null) travelers[e.key] = img;
+          }),
+      ]);
+      // Planche de repli : utile seulement si une époque n'a pas son fond
+      // dédié. Tant que les 6 sont là, ne pas la décoder du tout.
+      if (bg.length < eraThemes.length) {
+        frise = await _decode('assets/img/frise.webp', targetWidth: 1200);
       }
       version++;
     }();

@@ -1,3 +1,4 @@
+import 'package:erea/core/scoring.dart';
 import 'package:erea/data/events_repository.dart';
 import 'package:erea/data/store.dart';
 import 'package:erea/game/game_controller.dart';
@@ -48,6 +49,30 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('C’est parti !'));
     await tester.pumpAndSettle();
+  }
+
+  /// Tape un élément qui peut se trouver sous la ligne de flottaison : les
+  /// événements à longue description repoussent le réglage fin hors de
+  /// l'écran, et un tap « à l'aveugle » tomberait dans le vide.
+  Future<void> tapVisible(WidgetTester tester, Finder finder) async {
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    await tester.tap(finder);
+    await tester.pumpAndSettle();
+  }
+
+  /// Joue les 10 manches d'une partie déjà lancée.
+  Future<void> playAllRounds(WidgetTester tester) async {
+    for (var i = 1; i <= rounds; i++) {
+      expect(find.text('MANCHE $i/$rounds'), findsOneWidget);
+      // Le +1 « touche » la frise : sans ça la validation reste désactivée.
+      await tapVisible(tester, find.text('+'));
+      await tapVisible(tester, find.text('Je place ici !'));
+      await tapVisible(
+        tester,
+        find.text(i < rounds ? 'Manche suivante →' : 'Voir mes résultats 🏁'),
+      );
+    }
   }
 
   testWidgets('l’accueil affiche le logo, le défi du jour et les modes',
@@ -156,19 +181,7 @@ void main() {
       (tester) async {
     await pumpApp(tester);
     await startClassique(tester);
-
-    for (var i = 1; i <= 10; i++) {
-      expect(find.text('MANCHE $i/10'), findsOneWidget);
-      // Le +1 « touche » la frise : sans ça la validation reste désactivée.
-      await tester.tap(find.text('+'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('Je place ici !'));
-      await tester.pumpAndSettle();
-      await tester.tap(
-        find.text(i < 10 ? 'Manche suivante →' : 'Voir mes résultats 🏁'),
-      );
-      await tester.pumpAndSettle();
-    }
+    await playAllRounds(tester);
 
     expect(find.text('Partie terminée !'), findsOneWidget);
     expect(find.textContaining('/ 11000'), findsOneWidget);
@@ -178,6 +191,48 @@ void main() {
     await tester.tap(find.text('Accueil'));
     await tester.pumpAndSettle();
     expect(find.text('Classique'), findsOneWidget);
+  });
+
+  testWidgets('le défi du jour se verrouille et affiche son score une fois '
+      'terminé', (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Jouer !'));
+    await tester.pumpAndSettle();
+
+    await playAllRounds(tester);
+    await tester.tap(find.text('Accueil'));
+    await tester.pumpAndSettle();
+
+    // Tentative consommée, score restitué, série créditée.
+    expect(find.textContaining('Déjà joué ·'), findsOneWidget);
+    expect(find.text('Jouer !'), findsNothing);
+    expect(find.text('🔥 1'), findsOneWidget);
+  });
+
+  testWidgets('un défi abandonné consomme la tentative sans afficher de score',
+      (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Jouer !'));
+    await tester.pumpAndSettle();
+    // Une manche entamée, puis on quitte.
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.byIcon(Icons.close));
+    await tapVisible(tester, find.text('Quitter'));
+
+    expect(find.text('Prochain défi demain !'), findsOneWidget);
+    expect(find.text('Jouer !'), findsNothing);
+    // Un abandon ne crédite aucune série.
+    expect(find.text('🔥 0'), findsOneWidget);
+  });
+
+  testWidgets('la confirmation d’abandon prévient que la tentative du jour '
+      'est perdue', (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Jouer !'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('tentative du défi du jour'), findsOneWidget);
   });
 
   test('le contrôleur de partie enchaîne bien 10 manches', () async {

@@ -27,10 +27,10 @@ flutter:
   # fonctionner hors ligne, sans rien télécharger au premier lancement.
   # Licence SIL OFL : assets/fonts/OFL-*.txt.
   fonts:
+    # Baloo 2 n'est utilisée qu'en 700 (thème) et 800 (titres) : le fichier
+    # Regular (418 Ko) n'était résolu par aucun style.
     - family: Baloo2
       fonts:
-        - asset: assets/fonts/Baloo2-Regular.ttf
-          weight: 400
         - asset: assets/fonts/Baloo2-Bold.ttf
           weight: 700
         - asset: assets/fonts/Baloo2-ExtraBold.ttf

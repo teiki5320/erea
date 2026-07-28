@@ -14,25 +14,22 @@ enum Difficulty {
     emoji: '😌',
     tolMult: 2.2,
     xpMult: 0.8,
-    anchors: true,
     desc:
-        'Grande marge d’erreur, repères affichés, événements connus — parfait pour débuter !',
+        'Grande marge d’erreur et événements connus — parfait pour débuter !',
   ),
   normal(
     label: 'Normal',
     emoji: '🙂',
     tolMult: 1.0,
     xpMult: 1.0,
-    anchors: true,
-    desc: 'L’équilibre classique : marge normale et repères affichés.',
+    desc: 'L’équilibre classique : marge normale, événements variés.',
   ),
   difficile(
     label: 'Difficile',
     emoji: '🔥',
     tolMult: 0.55,
     xpMult: 1.3,
-    anchors: false,
-    desc: 'Marge réduite, frise nue, événements pointus… mais +30 % d’XP !',
+    desc: 'Marge réduite, événements pointus… mais +30 % d’XP !',
   );
 
   const Difficulty({
@@ -40,7 +37,6 @@ enum Difficulty {
     required this.emoji,
     required this.tolMult,
     required this.xpMult,
-    required this.anchors,
     required this.desc,
   });
 
@@ -48,7 +44,10 @@ enum Difficulty {
   final String emoji;
   final double tolMult;
   final double xpMult;
-  final bool anchors;
+
+  /// Montré au joueur dans le sélecteur : ne doit promettre que ce que le
+  /// jeu fait réellement (les repères emoji du prototype web ne sont pas
+  /// portés — ne pas réintroduire « repères affichés » / « frise nue »).
   final String desc;
 }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../core/progression.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../data/events_repository.dart';
@@ -39,6 +38,15 @@ class _GameScreenState extends State<GameScreen>
     with TickerProviderStateMixin {
   late final AnimationController _travel;
   late final AnimationController _roundFade;
+
+  /// Courbe du fondu de manche, construite UNE fois : la recréer à chaque
+  /// build réattacherait des écouteurs à chaque mouvement du doigt.
+  late final Animation<double> _roundFadeCurve;
+
+  /// Même clé pour la frise de visée et celle de la révélation : Flutter
+  /// réutilise alors le même State (sens de marche des personnages
+  /// conservé, pas de re-création du ticker ni de re-rastérisation).
+  final GlobalKey _tapeKey = GlobalKey();
   int _fadedRound = -1;
   double _travelBegin = 0;
   double _travelEnd = 0;
@@ -58,10 +66,23 @@ class _GameScreenState extends State<GameScreen>
       duration: const Duration(milliseconds: 320),
       value: 1,
     );
+    _roundFadeCurve = _roundFade.drive(CurveTween(curve: Curves.easeOut));
+    // Le fondu se déclenche sur un changement de manche — depuis un
+    // écouteur du contrôleur, jamais depuis build() (un effet de bord en
+    // pleine construction casserait dès qu'un listener appellera setState).
+    game.addListener(_onGameChanged);
+    // La manche 1 est déjà en place quand l'écran se monte (le contrôleur
+    // démarre avant la navigation) : son fondu se déclenche donc ici.
+    _fadedRound = game.round;
+    _roundFade.forward(from: 0);
     _travel = AnimationController(vsync: this);
     _travel.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         game.finishReveal();
+        // La collection du joueur se remplit à la révélation, manche par
+        // manche : une partie abandonnée garde ce qu'elle a déjà montré.
+        final ev = _lastResult?.event;
+        if (ev != null) widget.store.markDiscovered([ev.id]);
       }
     });
     _travel.addListener(() {
@@ -75,9 +96,17 @@ class _GameScreenState extends State<GameScreen>
 
   @override
   void dispose() {
+    game.removeListener(_onGameChanged);
     _travel.dispose();
     _roundFade.dispose();
     super.dispose();
+  }
+
+  void _onGameChanged() {
+    if (game.round != _fadedRound && !_showEnd) {
+      _fadedRound = game.round;
+      _roundFade.forward(from: 0);
+    }
   }
 
   void _validate() {
@@ -110,8 +139,8 @@ class _GameScreenState extends State<GameScreen>
         await widget.store
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
       }
-      await widget.store
-          .addXp(xpGain(game.total, game.diff.xpMult) + game.comboBonusXp);
+      // Exactement la somme des « +N XP » annoncés manche après manche.
+      await widget.store.addXp(game.xpTotal);
       if (mounted) setState(() {});
     }
   }
@@ -159,20 +188,17 @@ class _GameScreenState extends State<GameScreen>
         body: ListenableBuilder(
           listenable: game,
           builder: (context, _) {
-            if (game.round != _fadedRound && !_showEnd) {
-              _fadedRound = game.round;
-              _roundFade.forward(from: 0);
-            }
             return Stack(
               fit: StackFit.expand,
               children: [
                 // Fond fondu : fonction pure de frac (aucune animation
                 // pendant le geste). Seul le lancement d'une manche fait
                 // un vrai fondu temporel de 320 ms.
-                FadeTransition(
-                  opacity: _roundFade
-                      .drive(CurveTween(curve: Curves.easeOut)),
-                  child: EraBackdrop(frac: game.frac),
+                RepaintBoundary(
+                  child: FadeTransition(
+                    opacity: _roundFadeCurve,
+                    child: EraBackdrop(frac: game.frac),
+                  ),
                 ),
                 SafeArea(
                   child: _showEnd ? _buildEnd(context) : _buildGame(context),
@@ -428,6 +454,7 @@ class _GameScreenState extends State<GameScreen>
         const SizedBox(height: 8),
         // La frise, plein-bord
         TapeWidget(
+          key: _tapeKey,
           frac: game.frac,
           locked: !guessing,
           height: 150,
@@ -541,7 +568,7 @@ class _GameScreenState extends State<GameScreen>
           builder: (context, constraints) {
             final w = constraints.maxWidth;
             double xOf(int year) =>
-                w / 2 + (yearToFrac(year) - game.frac) * 3200;
+                w / 2 + (yearToFrac(year) - game.frac) * TapeWidget.tapeW;
             // Marge assez large pour « Toi · 3000 av. J.-C. »
             final gx = xOf(r.guess).clamp(78.0, w - 78.0);
             Widget pinScale(Widget child) => reduce
@@ -564,6 +591,7 @@ class _GameScreenState extends State<GameScreen>
                     left: 0,
                     right: 0,
                     child: TapeWidget(
+                      key: _tapeKey,
                       frac: game.frac,
                       locked: true,
                       height: 150,
@@ -691,7 +719,7 @@ class _GameScreenState extends State<GameScreen>
                           const Color(0xFF5F6890)),
                       const SizedBox(width: 8),
                       _token(
-                        '+${(r.pts / 10 * game.diff.xpMult * (game.lastBoosted ? 1.5 : 1)).round()} XP',
+                        '+${r.xp} XP',
                         const Color(0xFFFFF3D9),
                         const Color(0xFFA9761C),
                       ),
@@ -879,8 +907,14 @@ class _GameScreenState extends State<GameScreen>
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Quitter la partie ?'),
-        content:
-            const Text('Ton score de cette partie ne sera pas enregistré.'),
+        content: Text(
+          game.mode == GameMode.daily
+              // Le verrou est déjà posé : le dire, plutôt que de laisser
+              // croire qu'on pourra recommencer le défi du jour.
+              ? 'Ton score ne sera pas enregistré, et ta tentative du défi '
+                  'du jour est déjà utilisée : le prochain défi sera demain.'
+              : 'Ton score de cette partie ne sera pas enregistré.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),

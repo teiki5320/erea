@@ -126,6 +126,11 @@ class _HomeScreenState extends State<HomeScreen>
           );
           return;
         }
+        // Le verrou du défi n'est posé qu'une fois la partie réellement
+        // constituée : jamais de tentative brûlée sans avoir joué.
+        if (mode == GameMode.daily) {
+          await widget.store.lockDaily(now: _dailyNow);
+        }
         final replay = await navigator.push<bool>(
           MaterialPageRoute(
             builder: (_) =>
@@ -303,7 +308,10 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     final level = levelFromXp(widget.store.xp);
     final title = titleFor(level.level);
-    final dailyDone = widget.store.dailyPlayedToday;
+    // Tentative consommée (le bouton se ferme) vs défi mené à son terme
+    // (seul cas où un score et une grille existent).
+    final dailyUsed = widget.store.dailyPlayedToday;
+    final dailyDone = widget.store.dailyFinishedToday;
     // Le record de la tuile Classique : jamais celui d'un pack.
     final classiqueKey =
         categories.any((c) => c.key == catKey) ? catKey : 'tout';
@@ -357,7 +365,7 @@ class _HomeScreenState extends State<HomeScreen>
                         const SizedBox(height: 6),
                         EraPillPair(frac: homeFrac),
                         const SizedBox(height: 15),
-                        _dailyPanel(dailyDone, now),
+                        _dailyPanel(dailyUsed, dailyDone, now),
                         const SizedBox(height: 15),
                         // Grille des 4 modes
                         Row(
@@ -507,7 +515,8 @@ class _HomeScreenState extends State<HomeScreen>
         ],
       ),
       child: Text(
-        '🔥 ${widget.store.dailyStreak}',
+        // Série RÉELLE : une série interrompue ne doit plus s'afficher.
+        '🔥 ${widget.store.effectiveStreak}',
         style: const TextStyle(
           fontFamily: 'Baloo2',
           fontWeight: FontWeight.w800,
@@ -518,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _dailyPanel(bool dailyDone, DateTime now) {
+  Widget _dailyPanel(bool dailyUsed, bool dailyDone, DateTime now) {
     final grid = widget.store.dailyGrid;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -589,14 +598,13 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           const SizedBox(height: 12),
           PushButton(
-            onPressed: dailyDone
+            onPressed: dailyUsed
                 ? null
                 : () async {
-                    // Verrou immédiat : une seule tentative, même en
-                    // abandonnant en cours de partie.
-                    final now = DateTime.now();
-                    await widget.store.lockDaily(now: now);
-                    _dailyNow = now;
+                    // Le verrou est posé dans _play, après un démarrage
+                    // réussi : une seule tentative, même en abandonnant en
+                    // cours de partie.
+                    _dailyNow = DateTime.now();
                     await _play(GameMode.daily);
                   },
             color: coralColor,
@@ -606,7 +614,11 @@ class _HomeScreenState extends State<HomeScreen>
               child: Text(
                 dailyDone
                     ? 'Déjà joué · ${widget.store.dailyLastScore} pts'
-                    : 'Jouer !',
+                    : dailyUsed
+                        // Tentative consommée sans aller au bout : ne pas
+                        // présenter ça comme un score de 0.
+                        ? 'Prochain défi demain !'
+                        : 'Jouer !',
                 style: const TextStyle(
                   fontFamily: 'Baloo2',
                   fontWeight: FontWeight.w800,

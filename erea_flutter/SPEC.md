@@ -49,8 +49,15 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 - `tolérance = clamp(5 % × (maxYear − année), 5, 45) × multiplicateur de difficulté` — avec `maxYear = 2026`
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
 - **0 point si `écart ≥ 200 × multiplicateur de difficulté`**
-- Difficultés : Facile ×2,2 (repères affichés, événements niveau ≤ 2, XP ×0,8) ·
-  Normal ×1 · Difficile ×0,55 (pas de repères, niveau ≥ 2, XP ×1,3)
+- Difficultés : Facile ×2,2 (XP ×0,8) · Normal ×1 · Difficile ×0,55 (XP ×1,3)
+- Composition d'une partie (QUOTAS par niveau, `EventsRepository._quotas`) :
+  Facile 7×N1 + 3×N2 · Normal 3×N1 + 5×N2 + 2×N3 · Difficile 4×N2 + 6×N3.
+  Des quotas, pas des tranches à épuiser : une tranche prioritaire plus
+  grande que la partie rendrait le reste de la base inatteignable.
+  Places non pourvues (petit pack) : report sur les niveaux de la
+  difficulté, puis sur le reste de la base.
+- Les « repères » (emoji d'ancrage du prototype web) ne sont PAS portés :
+  ne rien promettre de tel dans les descriptions de difficulté.
 - **Manche 10 : points × 2** (total maximal 11 000)
 - Réponse exacte : PERFECT (confettis, fanfare)
 
@@ -62,9 +69,13 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
 
 - **Classique** : 10 manches, catégorie + difficulté choisies, anti-répétition
   (mémoriser ~80 derniers ids joués, piocher d'abord les non-vus).
-- **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32 identique
-  bit à bit au web → même série que le site pour une même date). Catégorie
-  « Tout », difficulté Normal, une tentative par jour, série de jours consécutifs 🔥.
+- **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
+  série pour tous les joueurs de l'app à une date donnée. La parité avec le
+  prototype web n'est plus tenable (862 événements contre 613) et n'est pas
+  un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
+  jour** : le verrou est posé au lancement (abandonner consomme la tentative),
+  mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
+  éteinte dès qu'un jour est sauté (`Store.effectiveStreak`).
 - **Chrono** : 90 s au total, décompte uniquement pendant la phase de choix,
   +5 s si points de base ≥ 700, événements illimités, pas de manche ×2.
 - **Duel local** : 2 joueurs sur le même appareil, même série. Par manche :

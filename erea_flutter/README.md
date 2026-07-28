@@ -52,7 +52,9 @@ livrer sur TestFlight sans Mac.
 - **`lib/core/`** — les règles du jeu, portées à l'identique du web :
   échelle non linéaire de la frise, barème (tolérance, fenêtre de 200 ans,
   manche finale ×2), courbe d'XP et titres, PRNG mulberry32 compatible bit à
-  bit avec le web (le défi du jour tire la même série que le site).
+  bit avec le web (le défi du jour tire la même série pour tous les joueurs
+  de l'app à une date donnée ; la base ayant grandi, ce n'est plus la même
+  série que le site).
 - **`lib/data/`** — chargement de la base, filtres catégorie/pack/difficulté,
   anti-répétition, persistance (XP, records, défi du jour) via
   `shared_preferences`.

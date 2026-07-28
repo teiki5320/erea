@@ -49,8 +49,19 @@ LevelTitle titleFor(int level) {
   return t;
 }
 
-/// XP gagnée en fin de partie : total/10 x multiplicateur de difficulté.
+/// Plafond d'XP pour une partie, bonus de combo compris.
+const int maxXpPerGame = 2000;
+
+/// XP d'une manche : points/10 × multiplicateur de difficulté, × 1,5 si la
+/// manche bénéficiait du bonus de combo. L'XP d'une partie est la SOMME de
+/// ces valeurs (plafonnée à [maxXpPerGame]) : c'est ce qui est annoncé au
+/// joueur à chaque révélation, donc ce qui doit lui être crédité.
+int xpForRound(int pts, double xpMult, {bool boosted = false}) =>
+    (pts / 10 * xpMult * (boosted ? 1.5 : 1)).round();
+
+/// XP d'une partie à partir du seul total de points (sans combo) : utilisé
+/// pour les estimations et les tests de barème.
 int xpGain(int total, double xpMult) {
   final gain = (total / 10 * xpMult).round();
-  return gain.clamp(0, 2000).toInt();
+  return gain.clamp(0, maxXpPerGame).toInt();
 }

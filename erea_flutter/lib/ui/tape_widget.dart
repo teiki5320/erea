@@ -19,6 +19,11 @@ class TapeWidget extends StatefulWidget {
     this.height = 150,
   });
 
+  /// Largeur du ruban virtuel, en px logiques. Toute vue qui positionne
+  /// quelque chose au-dessus de la frise (épingles de révélation) doit
+  /// utiliser cette constante plutôt que de la recopier.
+  static const double tapeW = 3200;
+
   /// Position [0, 1] du ruban (l'année sous l'aiguille).
   final double frac;
   final ValueChanged<double> onFracChanged;
@@ -31,7 +36,7 @@ class TapeWidget extends StatefulWidget {
 
 class _TapeWidgetState extends State<TapeWidget>
     with SingleTickerProviderStateMixin {
-  static const double tapeW = 3200;
+  static const double tapeW = TapeWidget.tapeW;
 
   Ticker? _ticker;
   double _velocity = 0; // px par frame de référence (16,7 ms)
@@ -116,15 +121,22 @@ class _TapeWidgetState extends State<TapeWidget>
         height: widget.height,
         child: Stack(
           children: [
+            // Couche isolée : le ruban se repeint à chaque pixel de
+            // glissement (jusqu'à 120 Hz) sans entraîner la carte, les
+            // boutons et leurs ombres floues dans la re-rastérisation.
             Positioned.fill(
-              child: ClipRect(
-                child: CustomPaint(
-                  painter: _TapePainter(
-                    frac: widget.frac,
-                    tapeW: tapeW,
-                    frise: EraArt.frise,
-                    artVersion: EraArt.version,
-                    facingLeft: _facingLeft,
+              child: RepaintBoundary(
+                child: ClipRect(
+                  child: CustomPaint(
+                    isComplex: true,
+                    willChange: true,
+                    painter: _TapePainter(
+                      frac: widget.frac,
+                      tapeW: tapeW,
+                      frise: EraArt.frise,
+                      artVersion: EraArt.version,
+                      facingLeft: _facingLeft,
+                    ),
                   ),
                 ),
               ),
@@ -176,11 +188,46 @@ class _TapePainter extends CustomPainter {
 
   double _px(num year) => yearToFrac(year) * tapeW;
 
+  /// Textes du ruban (années, noms d'époques) : styles et contenus sont
+  /// constants, seule leur position bouge. Les mettre en page à chaque
+  /// frame était le poste CPU dominant du glissement — on les garde donc
+  /// tout prêts, indexés par contenu + taille + couleur.
+  static final Map<String, TextPainter> _textCache = {};
+
+  static TextPainter _text(
+    String value,
+    double fontSize,
+    Color color, {
+    double letterSpacing = 0,
+  }) {
+    final key = '$value|$fontSize|${color.toARGB32()}|$letterSpacing';
+    return _textCache[key] ??= TextPainter(
+      text: TextSpan(
+        text: value,
+        style: TextStyle(
+          color: color,
+          fontSize: fontSize,
+          fontWeight: FontWeight.w800,
+          letterSpacing: letterSpacing,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     final dx = size.width / 2 - frac * tapeW;
     canvas.save();
     canvas.translate(dx, 0);
+
+    // Fenêtre réellement visible, en coordonnées du ruban. Tout ce qui
+    // tombe en dehors est de toute façon rogné par le ClipRect : ne pas
+    // l'enregistrer produit exactement la même image, sans le coût.
+    final visLeft = frac * tapeW - size.width / 2;
+    final visRight = visLeft + size.width;
+    bool visible(double left, double right, [double marge = 8]) =>
+        right >= visLeft - marge && left <= visRight + marge;
 
     // Bandes d'époques : panneaux illustrés en tuiles (nom d'époque
     // compris dans l'image), ou bandes unies + filigrane en repli.
@@ -189,6 +236,7 @@ class _TapePainter extends CustomPainter {
       final e = eras[i];
       final left = _px(e.from);
       final right = _px(e.to);
+      if (!visible(left, right)) continue; // époque hors écran
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTRB(left, 0, right, size.height),
         const Radius.circular(16),
@@ -205,6 +253,9 @@ class _TapePainter extends CustomPainter {
         final phase = (frac * tapeW * shift) % period;
         var j = 0;
         for (var x = left + phase - period; x < right; x += tileW, j++) {
+          // `j` continue de compter : l'alternance miroir des tuiles ne
+          // dépend pas de ce qui est à l'écran.
+          if (!visible(x, x + tileW)) continue;
           final dst = Rect.fromLTWH(x, 0, tileW, bandBottom);
           if (j.isOdd) {
             canvas.save();
@@ -283,6 +334,7 @@ class _TapePainter extends CustomPainter {
               fi = ((frac * tapeW / 24).floor() + k) % frames;
               if (fi < 0) fi += frames;
             }
+            if (!visible(x, x + sprW)) continue;
             final srcR = Rect.fromLTWH(fi * fw, 0, fw, fh);
             final dstR = Rect.fromLTWH(x, sprTop, sprW, sprH);
             if (facingLeft) {
@@ -299,18 +351,8 @@ class _TapePainter extends CustomPainter {
         }
         canvas.restore();
       } else {
-        final tp = TextPainter(
-          text: TextSpan(
-            text: e.name.toUpperCase(),
-            style: const TextStyle(
-              color: Color(0x1A35406B),
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 3,
-            ),
-          ),
-          textDirection: TextDirection.ltr,
-        )..layout();
+        final tp = _text(e.name.toUpperCase(), 22, const Color(0x1A35406B),
+            letterSpacing: 3);
         tp.paint(
           canvas,
           Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
@@ -320,23 +362,16 @@ class _TapePainter extends CustomPainter {
       // Nom de l'époque sur les bandes illustrées : une pastille par
       // ~560 px de bande, visible où qu'on soit sans tapisser le ruban.
       if (bg != null || img != null) {
-        final label = TextPainter(
-          text: TextSpan(
-            text: e.name.toUpperCase(),
-            style: const TextStyle(
-              color: Color(0xFF5F6890),
-              fontSize: 11,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.5,
-            ),
-          ),
-          textDirection: TextDirection.ltr,
-        )..layout();
+        final label = _text(e.name.toUpperCase(), 11, const Color(0xFF5F6890),
+            letterSpacing: 1.5);
         final bandW = right - left;
         final n = math.max(1, bandW ~/ 560);
         final spacing = bandW / n;
         for (var k = 0; k < n; k++) {
           final cx = left + spacing * (k + 0.5);
+          if (!visible(cx - label.width / 2 - 7, cx + label.width / 2 + 7)) {
+            continue;
+          }
           final at = Offset(cx - label.width / 2, 8);
           canvas.drawRRect(
             RRect.fromRectAndRadius(
@@ -355,11 +390,11 @@ class _TapePainter extends CustomPainter {
       }
     }
 
-    // Ligne de base
+    // Ligne de base (bornée à la fenêtre visible : même trait à l'écran)
     final baseY = size.height * 0.66;
     canvas.drawLine(
-      Offset(0, baseY),
-      Offset(tapeW, baseY),
+      Offset(math.max(0, visLeft), baseY),
+      Offset(math.min(tapeW, visRight), baseY),
       Paint()
         ..color = const Color(0x8C35406B)
         ..strokeWidth = 3,
@@ -386,6 +421,7 @@ class _TapePainter extends CustomPainter {
       final s = segments[p.seg];
       for (var y = s.from; y <= s.to; y += p.minor) {
         final x = _px(y);
+        if (x < visLeft - 4 || x > visRight + 4) continue;
         double h;
         Paint pt;
         if (y % p.major == 0) {
@@ -442,18 +478,10 @@ class _TapePainter extends CustomPainter {
       2020,
     ];
     void drawLabel(int year, double fontSize, Color color) {
-      final tp = TextPainter(
-        text: TextSpan(
-          text: year < 0 ? '-${-year}' : '$year',
-          style: TextStyle(
-            color: color,
-            fontSize: fontSize,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-      tp.paint(canvas, Offset(_px(year) - tp.width / 2, baseY + 6));
+      final x = _px(year);
+      if (x < visLeft - 60 || x > visRight + 60) return;
+      final tp = _text(year < 0 ? '-${-year}' : '$year', fontSize, color);
+      tp.paint(canvas, Offset(x - tp.width / 2, baseY + 6));
     }
 
     final bigFont = (size.height * 0.087).clamp(13.0, 18.0).toDouble();
