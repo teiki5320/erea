@@ -188,6 +188,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final result = game.validate();
     if (result == null) return;
     _lastResult = result;
+    // Le « pop » répond à l'appui tout de suite ; le verdict, lui, arrive
+    // après le voyage du ruban.
+    Sons.validation();
     if (result.base == maxScore) {
       Retour.parfait();
       Sons.parfait();
@@ -626,14 +629,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   setState(() => _astuceGeste = false);
                   widget.store.setTutoSeen();
                 }
-                final avant = game.guessYear ~/ 10;
+                // Le cliquetis du glissement est géré par TapeWidget, qui
+                // seul connaît la distance réellement parcourue sur le ruban.
                 game.setFrac(f);
-                // Cran léger en franchissant une dizaine d'années : c'est ce
-                // qui donne au geste la sensation d'un vrai cadran.
-                if (game.guessYear ~/ 10 != avant) {
-              Retour.decennie();
-              Sons.decennie();
-            }
               },
             ),
             // Astuce du premier lancement : elle disparaît au premier

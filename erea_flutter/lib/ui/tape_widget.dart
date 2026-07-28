@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../core/accessibilite.dart';
+import '../core/retour.dart';
+import '../core/sons.dart';
 import '../core/timeline_scale.dart';
 import 'era_art.dart';
 import 'era_theme.dart';
@@ -48,6 +50,25 @@ class _TapeWidgetState extends State<TapeWidget>
   double _lastFrac = -1;
   bool _facingLeft = false;
 
+  /// Distance parcourue depuis le dernier cran, en px de ruban.
+  ///
+  /// Le cliquetis se déclenche à la DISTANCE, pas à la décennie franchie :
+  /// l'échelle étant non linéaire, une décennie fait 76 px vers 2000 mais
+  /// 2 px vers −2000. On n'avait donc que 4 crans par balayage sur les
+  /// époques récentes — un tic de temps en temps — contre une mitraille
+  /// sur l'Antiquité. À la distance, le geste sonne pareil partout, et le
+  /// cliquetis ralentit avec l'inertie, comme une roue qui s'arrête.
+  static const double _pasCran = 40;
+  double _depuisCran = 0;
+
+  void _avancer(double avant, double apres) {
+    _depuisCran += (apres - avant).abs() * tapeW;
+    if (_depuisCran < _pasCran) return;
+    _depuisCran = 0;
+    Retour.cran();
+    Sons.cran();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,6 +101,7 @@ class _TapeWidgetState extends State<TapeWidget>
     }
     final next =
         (widget.frac - _velocity * frames / tapeW).clamp(0.0, 1.0).toDouble();
+    _avancer(widget.frac, next);
     widget.onFracChanged(next);
     if (next <= 0.0 || next >= 1.0) _ticker?.stop();
   }
@@ -87,6 +109,7 @@ class _TapeWidgetState extends State<TapeWidget>
   void _onDragStart(DragStartDetails details) {
     _ticker?.stop();
     _velocity = 0;
+    _depuisCran = 0;
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
@@ -96,6 +119,7 @@ class _TapeWidgetState extends State<TapeWidget>
     final speed = dx.abs(); // px par événement
     final factor = (0.4 + speed * 0.12).clamp(0.4, 1.0).toDouble();
     final next = (widget.frac - dx * factor / tapeW).clamp(0.0, 1.0).toDouble();
+    _avancer(widget.frac, next);
     widget.onFracChanged(next);
   }
 

@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 /// trois intensités dont on a besoin.
 ///
 /// Trois moments seulement, pour que ça reste un signal et pas un bruit :
-/// - [decennie] : cran léger en franchissant une dizaine d'années pendant
-///   le glissement (bridé, sinon il partirait 120 fois par seconde) ;
+/// - [cran] : cran léger tous les 40 px de ruban parcourus pendant le
+///   glissement (bridé, sinon il partirait 120 fois par seconde) ;
 /// - [validation] : impact moyen quand on pose sa réponse ;
 /// - [parfait] : impact fort sur une réponse exacte.
 class Retour {
@@ -16,10 +16,10 @@ class Retour {
 
   static int _dernierCran = 0;
 
-  static void decennie() {
+  static void cran() {
     if (!actif) return;
-    // Bride à 45 ms : à 120 Hz, un glissement rapide traverserait
-    // plusieurs dizaines par frame.
+    // Bride à 45 ms : à 120 Hz, un glissement rapide franchirait
+    // plusieurs crans par frame.
     final maintenant = DateTime.now().millisecondsSinceEpoch;
     if (maintenant - _dernierCran < 45) return;
     _dernierCran = maintenant;
