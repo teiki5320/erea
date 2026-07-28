@@ -154,9 +154,15 @@ manche, 2a/2b révélation).
 ## 11. La révélation : la frise DEVIENT le graphique
 
 - **La frise domine les deux écrans.** Pendant le choix c'est l'outil de
-  visée : hauteur proportionnelle à la place disponible, bornée à
-  [165, 210] px, pour rester généreuse sans repousser le réglage fin sous
-  la ligne de flottaison sur un petit écran. À la révélation : 190 px.
+  visée : 44 % de la hauteur disponible, bornée à [210, 310] px — soit
+  ~280 px sur un iPhone 14 contre 150 px à l'origine. À la révélation :
+  240 px. Le réglage fin et la mini-carte peuvent passer sous la ligne de
+  flottaison sur les événements à longue description : c'est assumé, la
+  frise elle-même reste le contrôle principal.
+- **L'arrivée du verdict claque.** Badge et points entrent au ressort
+  (`elasticOut`, 900 ms) : le badge jaillit de 0,3 à 1, les points suivent
+  avec 14 % de décalage, montent de 26 px et rebondissent. Neutralisé par
+  « réduire les animations ».
 - **L'écart n'est pas raconté, il est MONTRÉ.** Les deux épingles (« Toi ·
   année » au-dessus du ruban, la vraie date en dessous) sont reliées par un
   trait corail qui porte le nombre d'années. Trait PLEIN dans la tolérance,

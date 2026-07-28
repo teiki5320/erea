@@ -43,16 +43,24 @@ class _GameScreenState extends State<GameScreen>
   /// rester généreuse sur grand écran sans repousser le réglage fin sous
   /// la ligne de flottaison sur un iPhone SE.
   static double _tapeHeightFor(double available) =>
-      (available * 0.32).clamp(165.0, 210.0).toDouble();
+      (available * 0.44).clamp(210.0, 310.0).toDouble();
 
   /// Révélation : la frise reste grande, avec la place des deux pastilles
   /// au-dessus (« Toi · … ») et en dessous (la vraie date).
-  static const double _revealTapeH = 190;
+  static const double _revealTapeH = 240;
   static const double _revealTopPad = 44;
   static const double _revealBottomPad = 46;
 
   late final AnimationController _travel;
   late final AnimationController _roundFade;
+
+  /// Entrée de la révélation : le badge de verdict jaillit, les points
+  /// arrivent juste derrière et rebondissent. C'est le moment de
+  /// récompense de la manche, il doit claquer.
+  late final AnimationController _pop;
+  late final Animation<double> _popBadge;
+  late final Animation<double> _popPoints;
+  late final Animation<double> _popPointsMontee;
 
   /// Courbe du fondu de manche, construite UNE fois : la recréer à chaque
   /// build réattacherait des écouteurs à chaque mouvement du doigt.
@@ -90,10 +98,43 @@ class _GameScreenState extends State<GameScreen>
     // démarre avant la navigation) : son fondu se déclenche donc ici.
     _fadedRound = game.round;
     _roundFade.forward(from: 0);
+    _pop = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    // Ressort franc : les deux éléments dépassent leur taille finale avant
+    // de se poser. Le badge part quasiment de rien, les points de plus bas
+    // encore et avec un léger décalage — l'œil suit l'un puis l'autre.
+    _popBadge = Tween<double>(begin: 0.3, end: 1).animate(
+      CurvedAnimation(
+        parent: _pop,
+        curve: const Interval(0, 0.60, curve: Curves.elasticOut),
+      ),
+    );
+    _popPoints = Tween<double>(begin: 0.2, end: 1).animate(
+      CurvedAnimation(
+        parent: _pop,
+        curve: const Interval(0.14, 1, curve: Curves.elasticOut),
+      ),
+    );
+    _popPointsMontee = Tween<double>(begin: 26, end: 0).animate(
+      CurvedAnimation(
+        parent: _pop,
+        curve: const Interval(0.14, 0.55, curve: Curves.easeOutBack),
+      ),
+    );
     _travel = AnimationController(vsync: this);
     _travel.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         game.finishReveal();
+        if (mounted) {
+          final reduce = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+          if (reduce) {
+            _pop.value = 1;
+          } else {
+            _pop.forward(from: 0);
+          }
+        }
         // La collection du joueur se remplit à la révélation, manche par
         // manche : une partie abandonnée garde ce qu'elle a déjà montré.
         final ev = _lastResult?.event;
@@ -114,6 +155,7 @@ class _GameScreenState extends State<GameScreen>
     game.removeListener(_onGameChanged);
     _travel.dispose();
     _roundFade.dispose();
+    _pop.dispose();
     super.dispose();
   }
 
@@ -554,54 +596,64 @@ class _GameScreenState extends State<GameScreen>
       mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 12),
-        Transform.rotate(
-          angle: dansLaCible ? -0.035 : 0,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
-            decoration: BoxDecoration(
-              color: dansLaCible ? verdictMintColor : Colors.white,
-              borderRadius: BorderRadius.circular(999),
-              boxShadow: const [pillShadow],
-            ),
-            child: Text(
-              '${_reaction(r)} ${dansLaCible ? '🎯' : '😅'}',
-              style: TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 22,
-                color: dansLaCible ? Colors.white : inkColor,
+        ScaleTransition(
+          scale: _popBadge,
+          child: Transform.rotate(
+            angle: dansLaCible ? -0.035 : 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
+              decoration: BoxDecoration(
+                color: dansLaCible ? verdictMintColor : Colors.white,
+                borderRadius: BorderRadius.circular(999),
+                boxShadow: const [pillShadow],
+              ),
+              child: Text(
+                '${_reaction(r)} ${dansLaCible ? '🎯' : '😅'}',
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 22,
+                  color: dansLaCible ? Colors.white : inkColor,
+                ),
               ),
             ),
           ),
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              '+${r.pts}',
-              style: TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 56,
-                height: 1.0,
-                color: dansLaCible ? coralColor : inkPaleColor,
-                fontFeatures: const [FontFeature.tabularFigures()],
+        AnimatedBuilder(
+          animation: _pop,
+          builder: (context, child) => Transform.translate(
+            offset: Offset(0, _popPointsMontee.value),
+            child: Transform.scale(scale: _popPoints.value, child: child),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                '+${r.pts}',
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 56,
+                  height: 1.0,
+                  color: dansLaCible ? coralColor : inkPaleColor,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              'pts',
-              style: TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 17,
-                color: dansLaCible ? coralColor : inkPaleColor,
+              const SizedBox(width: 5),
+              Text(
+                'pts',
+                style: TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 17,
+                  color: dansLaCible ? coralColor : inkPaleColor,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 2),
         Text(

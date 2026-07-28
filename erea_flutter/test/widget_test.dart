@@ -168,6 +168,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // C'est l'outil de visée : la frise doit rester nettement plus haute que
+  // les 150 px d'origine, sur tous les formats.
+  for (final format in [('iPhone 14', _iphone14), ('iPhone SE', _iphoneSE)]) {
+    testWidgets('la frise domine l’écran de jeu (${format.$1})',
+        (tester) async {
+      await pumpApp(tester, size: format.$2);
+      await startClassique(tester);
+      expect(
+        tester.getSize(find.byType(TapeWidget)).height,
+        greaterThan(200),
+      );
+    });
+  }
+
   testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {
     await pumpApp(tester);
     await startClassique(tester);
