@@ -66,10 +66,15 @@ enum Difficulty {
 /// La marge est maintenant la même partout : le score ne dépend plus que
 /// de ce que le joueur sait, jamais de l'époque tirée.
 ///
-/// 12 ans et non 5 : avec 5, atteindre les 700 points du « vert » sur un
-/// événement récent demandait l'ANNÉE EXACTE en Difficile, et le combo y
-/// était inatteignable.
-const double toleranceBase = 12;
+/// La valeur elle-même est un curseur de confort, réglable ici et nulle
+/// part ailleurs. À 30 ans, se tromper d'une génération reste une bonne
+/// réponse : en Facile il faut situer l'année à ± 24 ans pour les 700
+/// points du « vert », à ± 11 ans en Normal, à ± 6 ans en Difficile.
+///
+/// Elle a valu 12 un temps. C'était jouable sur le récent, mais cela
+/// condamnait tout ce qui n'a pas de date au demi-siècle près — soit une
+/// grande part de l'Antiquité et de l'archéologie.
+const double toleranceBase = 30;
 
 /// Tolérance du barème : [toleranceBase] × le multiplicateur du mode.
 ///

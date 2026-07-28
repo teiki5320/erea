@@ -60,11 +60,11 @@ void main() {
 
     test('le zéro arrive à 7,6 × la tolérance, et suit donc le mode', () {
       // Il n'y a plus de fenêtre dure : l'exponentielle atteint zéro
-      // d'elle-même. Facile 201 ans, Normal 92, Difficile 51.
+      // d'elle-même. Facile 502 ans, Normal 229, Difficile 126.
       const bornes = {
-        Difficulty.facile: 201,
-        Difficulty.normal: 92,
-        Difficulty.difficile: 51,
+        Difficulty.facile: 502,
+        Difficulty.normal: 229,
+        Difficulty.difficile: 126,
       };
       bornes.forEach((diff, zero) {
         expect(scoreFor(1500, 1500 + zero, diff), 0,
@@ -75,9 +75,10 @@ void main() {
     });
 
     test('la tolérance ne dépend QUE du mode, jamais de l’époque', () {
-      expect(tolerance(Difficulty.facile), closeTo(12 * 2.2, 1e-9));
-      expect(tolerance(Difficulty.normal), 12.0);
-      expect(tolerance(Difficulty.difficile), closeTo(12 * 0.55, 1e-9));
+      expect(tolerance(Difficulty.facile), closeTo(toleranceBase * 2.2, 1e-9));
+      expect(tolerance(Difficulty.normal), toleranceBase);
+      expect(tolerance(Difficulty.difficile),
+          closeTo(toleranceBase * 0.55, 1e-9));
     });
 
     test('à écart égal, le score est le même à toutes les époques', () {
@@ -112,6 +113,8 @@ void main() {
       // aucun passe-droit.
       expect(scoreFor(-2500, -2350, Difficulty.difficile), 0);
       expect(scoreFor(2000, 2150, Difficulty.difficile), 0);
+      expect(scoreFor(-2500, -2380, Difficulty.difficile),
+          scoreFor(2000, 2120, Difficulty.difficile));
       expect(scoreFor(-2500, -2400, Difficulty.facile),
           scoreFor(2000, 2100, Difficulty.facile));
     });
