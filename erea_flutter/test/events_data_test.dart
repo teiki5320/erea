@@ -115,6 +115,41 @@ void main() {
     }
   });
 
+  test('le pack « Ciel & conquête spatiale » ne contient pas d’intrus', () {
+    // Le pack avait été rempli par recherche de SOUS-CHAÎNES, sans limite
+    // de mot : « MARSeille » a fait entrer la fondation de Marseille,
+    // « éTOILE des Bleus » la victoire des Bleus, « colons VENUS de
+    // Phocée » a matché Vénus, et « aéROPORT d’Entebbe » un raid
+    // militaire. Le pack sur l’espace contenait donc l’OM, la Coupe du
+    // monde de rugby et Banksy.
+    //
+    // Ce garde-fou est nominatif à dessein : aucune règle automatique ne
+    // peut décider qu’un fait est hors sujet, mais un script de
+    // regénération qui réintroduirait ces huit-là serait repéré tout de
+    // suite.
+    const intrus = {
+      'Fondation de Marseille',
+      'L’OM champion d’Europe',
+      'Deuxième étoile des Bleus',
+      'Banksy autodétruit sa toile',
+      'Accord de Paris sur le climat',
+      'Première Coupe du monde de rugby',
+      'Cap sur les atolls des Marshall',
+      'Invention des lunettes',
+    };
+    final titres = repo.pool('pack:espace').map((e) => e.titre).toSet();
+    for (final t in intrus) {
+      expect(titres, isNot(contains(t)),
+          reason: '« $t » n’a rien à faire dans le pack sur le ciel');
+    }
+    // …et ils doivent rester jouables ailleurs : on les sort du pack, on
+    // ne les supprime pas du jeu.
+    final tous = repo.pool('tout').map((e) => e.titre).toSet();
+    for (final t in intrus) {
+      expect(tous, contains(t), reason: '« $t » a disparu de la base');
+    }
+  });
+
   test('aucune catégorie ne s’épuise en moins de 15 parties', () {
     for (final c in categories) {
       expect(repo.pool(c.key).length, greaterThanOrEqualTo(15 * rounds),
