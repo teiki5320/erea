@@ -48,7 +48,7 @@
   "desc": "Le roi des Francs est couronné empereur à Rome",
   "cat": "france",
   "emoji": "👑",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Couronné le jour de Noël, Charlemagne n’aurait rien su des intentions du pape, à en croire son biographe Éginhard."
  },
  {
@@ -1574,7 +1574,7 @@
   "desc": "Saint-Exupéry publie son conte poétique à New York",
   "cat": "arts",
   "emoji": "🌹",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Publié d’abord à New York, le conte ne parut en France qu’en 1946, deux ans après la disparition de son auteur en mer."
  },
  {
@@ -1604,7 +1604,7 @@
   "desc": "Un demi-million de personnes réunies pour trois jours de musique",
   "cat": "arts",
   "emoji": "✌️",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Malgré son nom, le festival n’eut pas lieu à Woodstock mais sur une ferme laitière de Bethel, à quelque 70 kilomètres de là."
  },
  {
@@ -2004,7 +2004,7 @@
   "desc": "Les chars nord-vietnamiens entrent dans la ville tandis que les derniers Américains fuient",
   "cat": "monde",
   "emoji": "🚁",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Près de 7 000 personnes furent évacuées par hélicoptère en moins de 24 heures — la plus grande évacuation héliportée de l’histoire — et la ville fut rebaptisée Hô Chi Minh-Ville.",
   "id": 192,
   "pack": "asie"
@@ -2075,7 +2075,7 @@
   "desc": "Un jeune reporter à la houppette et son fox-terrier Milou débutent dans un journal belge",
   "cat": "arts",
   "emoji": "🐶",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Hergé n’avait jamais mis les pieds en URSS : Tintin au pays des Soviets était une commande anticommuniste du journal catholique qui l’employait.",
   "id": 199
  },
@@ -2377,7 +2377,7 @@
   "desc": "Le royaume enchanté de Mickey ouvre ses portes à Marne-la-Vallée",
   "cat": "quotidien",
   "emoji": "🎠",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Le parc s’appelait « Euro Disneyland » à ses débuts et ne fut rebaptisé « Disneyland Paris » qu’en 1994.",
   "id": 229
  },
@@ -2778,7 +2778,7 @@
   "desc": "La loi de Jules Ferry rend l’instruction obligatoire et l’école publique laïque",
   "cat": "france",
   "emoji": "🏫",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "La loi rend l’instruction obligatoire de 6 à 13 ans, mais pas l’école : apprendre en famille restait permis.",
   "id": 269
  },
@@ -3452,7 +3452,7 @@
   "desc": "Maladie, retraite, famille : la France se dote d’un grand système de protection",
   "cat": "france",
   "emoji": "🏥",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Le projet découlait du programme du Conseil national de la Résistance, adopté dans la clandestinité et joliment intitulé « Les Jours heureux ».",
   "id": 336
  },
@@ -3533,7 +3533,7 @@
   "desc": "Les couples de même sexe peuvent désormais se marier et adopter",
   "cat": "france",
   "emoji": "🏳️‍🌈",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Le premier mariage fut célébré à Montpellier douze jours après la loi, entre Vincent Autin et Bruno Boileau, sous les yeux du monde entier.",
   "id": 344
  },
@@ -4163,7 +4163,7 @@
   "desc": "L’architecte Ieoh Ming Pei fait surgir une pyramide de verre au cœur du Louvre",
   "cat": "arts",
   "emoji": "💠",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Une rumeur tenace lui prête 666 plaques de verre, chiffre du diable ; le Louvre en a fait compter 673.",
   "id": 407
  },
@@ -4409,7 +4409,7 @@
   "desc": "Ben Gourion proclame l’indépendance du nouvel État dans un musée de Tel-Aviv",
   "cat": "monde",
   "emoji": "🇮🇱",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Onze minutes après la proclamation, les États-Unis reconnaissaient le nouvel État ; ses voisins arabes lui déclarèrent la guerre dès le lendemain.",
   "id": 432,
   "pack": "afrique"
@@ -4462,7 +4462,7 @@
   "desc": "Un réacteur de la centrale explose et disperse un nuage radioactif sur l’Europe",
   "cat": "monde",
   "emoji": "☢️",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "C’est une centrale suédoise, à plus de 1 000 kilomètres, qui donna l’alerte : Moscou ne reconnut l’accident que deux jours plus tard.",
   "id": 438
  },
@@ -4472,7 +4472,7 @@
   "desc": "L’armée chinoise écrase dans le sang le mouvement étudiant de Pékin",
   "cat": "monde",
   "emoji": "🕯️",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "L’identité du « Tank Man », l’inconnu qui arrêta seul une colonne de chars sur la photo devenue mondialement célèbre, reste un mystère.",
   "id": 439,
   "pack": "asie"
@@ -4483,7 +4483,7 @@
   "desc": "L’extermination de la minorité tutsi plonge le pays des mille collines dans l’horreur",
   "cat": "monde",
   "emoji": "🎗️",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Environ 800 000 personnes furent tuées en une centaine de jours, tandis que l’ONU réduisait ses casques bleus sur place de 2 500 à 270.",
   "id": 440,
   "pack": "afrique"
@@ -4505,7 +4505,7 @@
   "desc": "Un séisme sous-marin géant soulève des vagues meurtrières de l’Indonésie jusqu’à l’Afrique",
   "cat": "monde",
   "emoji": "🌊",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Grâce à un cours de géographie, la Britannique Tilly Smith, 10 ans, reconnut les signes de la vague et fit évacuer sa plage en Thaïlande.",
   "id": 442,
   "pack": "asie"
@@ -8850,7 +8850,7 @@
   "desc": "En une seule nuit, barbelés puis parpaings coupent Berlin en deux, séparant du jour au lendemain des familles et des amis.",
   "cat": "monde",
   "emoji": "🧱",
-  "niveau": 2,
+  "niveau": 1,
   "fun": "Deux jours après le début des travaux, le jeune soldat est-allemand Conrad Schumann sauta par-dessus les barbelés pour passer à l'Ouest : la photo de son bond a fait le tour du monde.",
   "continent": "europe",
   "pays": "Allemagne"
