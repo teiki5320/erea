@@ -56,6 +56,11 @@ class GameController extends ChangeNotifier {
   bool boostNext = false;
   bool lastBoosted = false;
 
+  /// Vrai quand la manche qui vient d'être jouée a rompu une série en
+  /// cours : la révélation l'annonce, au lieu de faire disparaître le
+  /// bandeau sans explication.
+  bool comboBroken = false;
+
   /// XP cumulée des manches jouées (somme des [RoundResult.xp]), bornée au
   /// crédit par le plafond de [xpTotal].
   int xpEarned = 0;
@@ -84,6 +89,7 @@ class GameController extends ChangeNotifier {
     combo = 0;
     boostNext = false;
     lastBoosted = false;
+    comboBroken = false;
     xpEarned = 0;
     if (m == GameMode.daily) {
       final now = dailyNow ?? DateTime.now();
@@ -139,6 +145,7 @@ class GameController extends ChangeNotifier {
     final result = RoundResult(ev, guessYear, ecart, base, pts, xp);
     results.add(result);
     xpEarned += xp;
+    comboBroken = combo > 0 && base < 700;
     combo = base >= 700 ? combo + 1 : 0;
     boostNext = combo >= 3;
     notifyListeners();

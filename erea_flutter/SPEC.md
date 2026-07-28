@@ -142,9 +142,31 @@ manche, 2a/2b révélation).
   arrêtée définitivement au premier contact sur la mini-frise ; jamais
   démarrée si « réduire les animations ».
 - **Combo** : 3 réponses consécutives ≥ 700 points de base → la manche
-  suivante rapporte ×1,5 d'**XP** (`comboBonusXp`, crédité en fin de
-  partie). Le multiplicateur ne touche JAMAIS les points : le barème §3,
-  les records et la comparabilité du défi du jour restent intacts.
+  suivante rapporte ×1,5 d'**XP** (somme des `RoundResult.xp`, plafonnée à
+  `maxXpPerGame`). Le multiplicateur ne touche JAMAIS les points : le
+  barème §3, les records et la comparabilité du défi du jour restent
+  intacts. Une série rompue se DIT (« Série perdue — on repart de zéro »,
+  bandeau grisé, ×1) plutôt que de disparaître sans explication.
 - Le rendu du ruban (`tape_widget.dart`) est inchangé ; ses teintes
   d'époque vivent désormais dans `era_theme.dart` (source unique) et ses
   images dans le cache partagé `era_art.dart` (réutilisé par le fond).
+
+## 11. La révélation : la frise DEVIENT le graphique
+
+- **La frise domine les deux écrans.** Pendant le choix c'est l'outil de
+  visée : hauteur proportionnelle à la place disponible, bornée à
+  [165, 210] px, pour rester généreuse sans repousser le réglage fin sous
+  la ligne de flottaison sur un petit écran. À la révélation : 190 px.
+- **L'écart n'est pas raconté, il est MONTRÉ.** Les deux épingles (« Toi ·
+  année » au-dessus du ruban, la vraie date en dessous) sont reliées par un
+  trait corail qui porte le nombre d'années. Trait PLEIN dans la tolérance,
+  POINTILLÉ au-delà. Sa longueur EST l'erreur : c'est ce qui fait
+  comprendre l'échelle non linéaire du jeu sans jamais l'expliquer.
+- **Les épingles ne se recouvrent jamais.** Sous 92 px d'écart à l'écran,
+  chaque pastille se décale du côté opposé à l'autre ; au-delà, chacune est
+  centrée sur son trait. C'est l'information la plus lue de l'écran.
+- **Réussite et échec ne sont pas symétriques.** Dans la tolérance : badge
+  menthe légèrement incliné, points en corail, carte « Le savais-tu ? ».
+  Hors tolérance : badge BLANC (jamais rouge — on ne punit pas), points en
+  gris, et la carte change de titre pour « Pour t'en souvenir » — c'est le
+  moment où le joueur apprend vraiment.

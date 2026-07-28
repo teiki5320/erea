@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../core/scoring.dart';
@@ -36,6 +38,19 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen>
     with TickerProviderStateMixin {
+  /// Hauteur de la frise pendant le choix : c'est l'outil de visée, elle
+  /// doit dominer l'écran. Proportionnelle à la hauteur disponible, pour
+  /// rester généreuse sur grand écran sans repousser le réglage fin sous
+  /// la ligne de flottaison sur un iPhone SE.
+  static double _tapeHeightFor(double available) =>
+      (available * 0.32).clamp(165.0, 210.0).toDouble();
+
+  /// Révélation : la frise reste grande, avec la place des deux pastilles
+  /// au-dessus (« Toi · … ») et en dessous (la vraie date).
+  static const double _revealTapeH = 190;
+  static const double _revealTopPad = 44;
+  static const double _revealBottomPad = 46;
+
   late final AnimationController _travel;
   late final AnimationController _roundFade;
 
@@ -262,7 +277,7 @@ class _GameScreenState extends State<GameScreen>
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: revealed && _lastResult != null
                     ? _revealBody(context, _lastResult!)
-                    : _guessBody(context, guessing),
+                    : _guessBody(context, guessing, constraints.maxHeight),
               ),
             ),
           ),
@@ -343,7 +358,7 @@ class _GameScreenState extends State<GameScreen>
   }
 
   /// Phase de choix (et voyage du ruban) : carte, année, frise, réglage fin.
-  Widget _guessBody(BuildContext context, bool guessing) {
+  Widget _guessBody(BuildContext context, bool guessing, double available) {
     final ev = game.current;
     final cat = playableFor(ev.cat);
     return Column(
@@ -457,7 +472,7 @@ class _GameScreenState extends State<GameScreen>
           key: _tapeKey,
           frac: game.frac,
           locked: !guessing,
-          height: 150,
+          height: _tapeHeightFor(available),
           onFracChanged: (f) => game.setFrac(f),
         ),
         const SizedBox(height: 12),
@@ -525,37 +540,72 @@ class _GameScreenState extends State<GameScreen>
     );
   }
 
-  /// Révélation : verdict, frise figée à deux épingles, « Le savais-tu ? »,
-  /// bandeau de combo.
+  /// Révélation : badge de verdict, points, puis la frise figée qui porte
+  /// les deux épingles RELIÉES par le trait de l'écart — la longueur du
+  /// trait EST l'erreur, c'est ce qui fait comprendre l'échelle non
+  /// linéaire sans avoir à l'expliquer.
   Widget _revealBody(BuildContext context, RoundResult r) {
     final reduce = MediaQuery.of(context).disableAnimations;
+    final tol = tolerance(r.event.annee, game.diff);
+    // Réussite et échec ne sont pas symétriques : réussi = menthe + corail,
+    // raté = blanc + gris. Jamais de rouge, on ne punit pas.
+    final dansLaCible = r.ecart <= tol;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        const SizedBox(height: 12),
+        Transform.rotate(
+          angle: dansLaCible ? -0.035 : 0,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
+            decoration: BoxDecoration(
+              color: dansLaCible ? verdictMintColor : Colors.white,
+              borderRadius: BorderRadius.circular(999),
+              boxShadow: const [pillShadow],
+            ),
+            child: Text(
+              '${_reaction(r)} ${dansLaCible ? '🎯' : '😅'}',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 22,
+                color: dansLaCible ? Colors.white : inkColor,
+              ),
+            ),
+          ),
+        ),
         const SizedBox(height: 10),
-        Text(
-          _reaction(r),
-          style: const TextStyle(
-            fontFamily: 'Baloo2',
-            fontWeight: FontWeight.w800,
-            fontSize: 26,
-            color: verdictMintColor,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Text(
+              '+${r.pts}',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 56,
+                height: 1.0,
+                color: dansLaCible ? coralColor : inkPaleColor,
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
+            ),
+            const SizedBox(width: 5),
+            Text(
+              'pts',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 17,
+                color: dansLaCible ? coralColor : inkPaleColor,
+              ),
+            ),
+          ],
         ),
+        const SizedBox(height: 2),
         Text(
-          '+ ${r.pts}',
-          style: const TextStyle(
-            fontFamily: 'Baloo2',
-            fontWeight: FontWeight.w800,
-            fontSize: 56,
-            height: 1.0,
-            color: coralColor,
-            fontFeatures: [FontFeature.tabularFigures()],
-          ),
-        ),
-        Text(
-          '${_direction(r)} · tolérance '
-          '${tolerance(r.event.annee, game.diff).round()} ans',
+          '${_direction(r)} · tolérance ${tol.round()} ans',
           style: const TextStyle(
             fontFamily: 'Nunito',
             fontWeight: FontWeight.w800,
@@ -563,14 +613,24 @@ class _GameScreenState extends State<GameScreen>
             color: inkSoftColor,
           ),
         ),
-        // La frise figée porte les deux épingles (marges pour les pastilles)
+        const SizedBox(height: 12),
+        // La frise figée porte les deux épingles et le trait de l'écart
         LayoutBuilder(
           builder: (context, constraints) {
             final w = constraints.maxWidth;
             double xOf(int year) =>
                 w / 2 + (yearToFrac(year) - game.frac) * TapeWidget.tapeW;
             // Marge assez large pour « Toi · 3000 av. J.-C. »
-            final gx = xOf(r.guess).clamp(78.0, w - 78.0);
+            final trueX = w / 2;
+            final gx = xOf(r.guess).clamp(78.0, w - 78.0).toDouble();
+            // Épingles trop proches : elles se recouvriraient. On les écarte
+            // chacune du côté opposé à l'autre — c'est l'information la plus
+            // lue de l'écran, elle ne doit jamais être illisible.
+            final proches = (gx - trueX).abs() < 92;
+            final aGauche = gx <= trueX;
+            final alignGuess = proches ? (aGauche ? -1.0 : 1.0) : 0.0;
+            final alignTrue = proches ? (aGauche ? 1.0 : -1.0) : 0.0;
+            final ecartX = (gx - trueX).abs();
             Widget pinScale(Widget child) => reduce
                 ? child
                 : TweenAnimationBuilder<double>(
@@ -582,30 +642,76 @@ class _GameScreenState extends State<GameScreen>
                     child: child,
                   );
             return SizedBox(
-              height: 44.0 + 150 + 46,
+              height: _revealTopPad + _revealTapeH + _revealBottomPad,
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
                   Positioned(
-                    top: 44,
+                    top: _revealTopPad,
                     left: 0,
                     right: 0,
                     child: TapeWidget(
                       key: _tapeKey,
                       frac: game.frac,
                       locked: true,
-                      height: 150,
+                      height: _revealTapeH,
                       onFracChanged: (_) {},
                     ),
                   ),
+                  // Trait de l'écart entre les deux épingles : plein dans la
+                  // tolérance, pointillé quand on est loin.
+                  if (r.ecart > 0)
+                    Positioned(
+                      top: _revealTopPad + _revealTapeH * 0.30,
+                      left: math.min(gx, trueX),
+                      child: SizedBox(
+                        width: ecartX,
+                        height: 3,
+                        child: CustomPaint(
+                          painter: _GapLinePainter(dashed: !dansLaCible),
+                        ),
+                      ),
+                    ),
+                  // … et le nombre d'années, porté par le trait.
+                  if (r.ecart > 0)
+                    Positioned(
+                      top: _revealTopPad + _revealTapeH * 0.30 - 11,
+                      left: (gx + trueX) / 2,
+                      child: FractionalTranslation(
+                        translation: const Offset(-0.5, 0),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 9, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: coralColor,
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Text(
+                            r.ecart == 1 ? '1 an' : '${r.ecart} ans',
+                            style: const TextStyle(
+                              fontFamily: 'Nunito',
+                              fontWeight: FontWeight.w900,
+                              fontSize: 11.5,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   // Épingle « Toi »
                   Positioned(
                     top: 2,
                     left: gx,
                     child: FractionalTranslation(
-                      translation: const Offset(-0.5, 0),
+                      translation: Offset(-0.5 + alignGuess * 0.5, 0),
                       child: pinScale(
                         Column(
+                          crossAxisAlignment: alignGuess < 0
+                              ? CrossAxisAlignment.end
+                              : alignGuess > 0
+                                  ? CrossAxisAlignment.start
+                                  : CrossAxisAlignment.center,
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -626,7 +732,10 @@ class _GameScreenState extends State<GameScreen>
                               ),
                             ),
                             Container(
-                                width: 3, height: 18, color: inkPaleColor),
+                              width: 3,
+                              height: _revealTopPad - 22,
+                              color: inkPaleColor,
+                            ),
                           ],
                         ),
                       ),
@@ -634,16 +743,21 @@ class _GameScreenState extends State<GameScreen>
                   ),
                   // Épingle de la vraie date (le ruban est centré dessus)
                   Positioned(
-                    top: 44.0 + 150 - 14,
-                    left: w / 2,
+                    top: _revealTopPad + _revealTapeH - 15,
+                    left: trueX,
                     child: FractionalTranslation(
-                      translation: const Offset(-0.5, 0),
+                      translation: Offset(-0.5 + alignTrue * 0.5, 0),
                       child: pinScale(
                         Column(
+                          crossAxisAlignment: alignTrue < 0
+                              ? CrossAxisAlignment.end
+                              : alignTrue > 0
+                                  ? CrossAxisAlignment.start
+                                  : CrossAxisAlignment.center,
                           children: [
                             Container(
                               width: 4,
-                              height: 18,
+                              height: 19,
                               decoration: BoxDecoration(
                                 color: mintColor,
                                 border:
@@ -692,9 +806,11 @@ class _GameScreenState extends State<GameScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Le savais-tu ? 💡',
-                    style: TextStyle(
+                  Text(
+                    // Raté : ce n'est plus une anecdote en passant, c'est le
+                    // moment où l'on apprend vraiment. Le titre le dit.
+                    dansLaCible ? 'Le savais-tu ? 💡' : 'Pour t’en souvenir 💡',
+                    style: const TextStyle(
                       fontFamily: 'Baloo2',
                       fontWeight: FontWeight.w800,
                       fontSize: 18,
@@ -729,34 +845,43 @@ class _GameScreenState extends State<GameScreen>
               ),
             ),
           ),
-        // Bandeau de combo
-        if (game.combo > 0)
+        // Bandeau de série : montante en jaune-corail, ou perdue en gris —
+        // une série qui se brise doit se dire, pas disparaître en silence.
+        if (game.combo > 0 || game.comboBroken)
           Padding(
             padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
             child: Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF3D9),
+                color: game.comboBroken
+                    ? inkColor.withValues(alpha: 0.06)
+                    : const Color(0xFFFFF3D9),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(
                 children: [
-                  const Text('🔥', style: TextStyle(fontSize: 18)),
+                  Opacity(
+                    opacity: game.comboBroken ? 0.4 : 1,
+                    child: const Text('🔥', style: TextStyle(fontSize: 18)),
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          game.combo == 1
-                              ? '1 bonne réponse'
-                              : '${game.combo} bonnes réponses d’affilée',
-                          style: const TextStyle(
+                          game.comboBroken
+                              ? 'Série perdue — on repart de zéro'
+                              : game.combo == 1
+                                  ? '1 bonne réponse'
+                                  : '${game.combo} bonnes réponses d’affilée',
+                          style: TextStyle(
                             fontFamily: 'Nunito',
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
-                            color: inkColor,
+                            color:
+                                game.comboBroken ? inkPaleColor : inkColor,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -776,9 +901,11 @@ class _GameScreenState extends State<GameScreen>
                                   child: Align(
                                     alignment: Alignment.centerLeft,
                                     child: FractionallySizedBox(
-                                      widthFactor: (game.combo / 3)
-                                          .clamp(0.0, 1.0)
-                                          .toDouble(),
+                                      widthFactor: game.comboBroken
+                                          ? 0.0
+                                          : (game.combo / 3)
+                                              .clamp(0.0, 1.0)
+                                              .toDouble(),
                                       heightFactor: 1,
                                       child: const DecoratedBox(
                                         decoration: BoxDecoration(
@@ -797,18 +924,18 @@ class _GameScreenState extends State<GameScreen>
                       ],
                     ),
                   ),
-                  if (game.boostNext && !game.isLastRound) ...[
-                    const SizedBox(width: 10),
-                    const Text(
-                      '×1,5',
-                      style: TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        color: coralColor,
-                      ),
+                  const SizedBox(width: 10),
+                  Text(
+                    game.boostNext && !game.isLastRound ? '×1,5' : '×1',
+                    style: TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: game.boostNext && !game.isLastRound
+                          ? coralColor
+                          : inkPaleColor,
                     ),
-                  ],
+                  ),
                 ],
               ),
             ),
@@ -931,4 +1058,39 @@ class _GameScreenState extends State<GameScreen>
       Navigator.of(context).pop(false);
     }
   }
+}
+
+/// Trait qui relie l'épingle « Toi » à la vraie date. Sa LONGUEUR est
+/// l'erreur : c'est ce qui fait sentir l'échelle non linéaire de la frise
+/// sans avoir à l'expliquer. Plein quand la réponse tient dans la
+/// tolérance, pointillé quand elle est loin.
+class _GapLinePainter extends CustomPainter {
+  const _GapLinePainter({required this.dashed});
+
+  final bool dashed;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final trait = Paint()
+      ..color = coralColor
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    final y = size.height / 2;
+    if (!dashed) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), trait);
+      return;
+    }
+    const plein = 7.0;
+    const vide = 5.0;
+    for (var x = 0.0; x < size.width; x += plein + vide) {
+      canvas.drawLine(
+        Offset(x, y),
+        Offset(math.min(x + plein, size.width), y),
+        trait,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GapLinePainter old) => old.dashed != dashed;
 }

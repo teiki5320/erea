@@ -134,8 +134,7 @@ void main() {
       find.widgetWithText(PushButton, 'Je place ici !'),
     );
     expect(button.onPressed, isNull);
-    await tester.tap(find.text('+'));
-    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('+'));
     final enabled = tester.widget<PushButton>(
       find.widgetWithText(PushButton, 'Je place ici !'),
     );
@@ -167,6 +166,40 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('2026'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {
+    await pumpApp(tester);
+    await startClassique(tester);
+    // On vise volontairement l'extrémité de la frise : l'écart est énorme,
+    // donc le trait doit être visible entre les deux épingles.
+    tester.widget<TapeWidget>(find.byType(TapeWidget)).onFracChanged(0.0);
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Je place ici !'));
+
+    // Les deux épingles…
+    expect(find.textContaining('Toi · '), findsOneWidget);
+    expect(find.textContaining('🎯'), findsWidgets);
+    // … reliées par le trait de l'écart, qui porte le nombre d'années.
+    expect(
+      find.byWidgetPredicate((w) =>
+          w is CustomPaint && w.painter.runtimeType.toString() == '_GapLinePainter'),
+      findsOneWidget,
+      reason: 'la longueur du trait EST l’erreur',
+    );
+    // La carte de savoir est là, sous l'un de ses deux titres.
+    final savoir = find.text('Le savais-tu ? 💡').evaluate().length +
+        find.text('Pour t’en souvenir 💡').evaluate().length;
+    expect(savoir, 1);
+  });
+
+  testWidgets('la révélation ne déborde pas sur un iPhone SE', (tester) async {
+    await pumpApp(tester, size: _iphoneSE);
+    await startClassique(tester);
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.text('Je place ici !'));
+    expect(tester.takeException(), isNull);
+    expect(find.text('Manche suivante →'), findsOneWidget);
   });
 
   testWidgets('la police embarquée Nunito est bien appliquée au thème',
