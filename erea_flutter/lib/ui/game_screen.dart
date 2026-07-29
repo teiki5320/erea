@@ -20,8 +20,7 @@ import 'tape_widget.dart';
 
 /// Couleur d'étiquette par catégorie (carte de l'événement).
 const Map<String, Color> _catColors = {
-  'france': coralColor,
-  'monde': skyColor,
+  'pouvoir': coralColor,
   'sciences': mintColor,
   'arts': violetColor,
   'quotidien': orangeColor,

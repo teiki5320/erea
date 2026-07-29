@@ -100,9 +100,9 @@ void main() {
     await tester.tap(find.text('Catégorie'));
     await tester.pumpAndSettle();
     expect(find.text('Choisis une catégorie'), findsOneWidget);
-    await tester.tap(find.text('Histoire de France'));
+    await tester.tap(find.text('Pouvoir & guerres'));
     await tester.pumpAndSettle();
-    expect(find.text('Histoire de France'), findsOneWidget);
+    expect(find.text('Pouvoir & guerres'), findsOneWidget);
   });
 
   testWidgets('le sélecteur de difficulté s’ouvre et applique le choix',

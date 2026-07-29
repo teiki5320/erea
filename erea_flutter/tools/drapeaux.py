@@ -74,7 +74,7 @@ ISO = {
     'Tchad': 'TD', 'Thaïlande': 'TH', 'Timor oriental': 'TL',
     'Togo': 'TG', 'Tonga': 'TO', 'Tunisie': 'TN',
     'Turkménistan': 'TM', 'Turquie': 'TR', 'Ukraine': 'UA',
-    'Uruguay': 'UY', 'Vanuatu': 'VU', 'Venezuela': 'VE',
+    'Uruguay': 'UY', 'Vatican': 'VA', 'Vanuatu': 'VU', 'Venezuela': 'VE',
     'Vietnam': 'VN', 'Yémen': 'YE', 'Zambie': 'ZM', 'Zimbabwe': 'ZW',
 }
 

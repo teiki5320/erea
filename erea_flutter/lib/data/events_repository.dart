@@ -16,13 +16,30 @@ class Playable {
   const Playable(this.key, this.label, this.emoji);
 }
 
+/// Les catégories sont désormais purement THÉMATIQUES.
+///
+/// L'ancienne liste mélangeait deux axes dans un seul champ :
+/// « Histoire de France » est un critère géographique, « Sciences » et
+/// « Arts » des critères thématiques, et « Monde » n'était ni l'un ni
+/// l'autre — juste le reste, 44 % de la base. Un fait français ET
+/// scientifique n'avait donc aucune place correcte, ce dont la base
+/// portait la trace : le premier vol du Concorde était rangé dans
+/// « France », son accident dans « Sciences ».
+///
+/// La géographie vit maintenant dans les champs `pays` et `continent`,
+/// et alimente la roulette de drapeaux. Un fait français va dans son
+/// thème, avec « France » à côté.
+///
+/// Un thème « croyances » a existé le temps du reclassement : il n'a
+/// récolté que 4 % de la base, très loin des 150 faits qu'il faut pour
+/// tenir 15 parties. Une religion étant d'abord un fait culturel, il a
+/// été fondu dans « Culture & croyances ».
 const List<Playable> categories = [
   Playable('tout', 'Tout', '🌍'),
-  Playable('france', 'Histoire de France', '🇫🇷'),
-  Playable('monde', 'Monde', '🗺️'),
-  Playable('sciences', 'Sciences & inventions', '🔬'),
-  Playable('arts', 'Arts & culture', '🎨'),
-  Playable('quotidien', 'Sport & vie quotidienne', '⚽'),
+  Playable('pouvoir', 'Pouvoir & guerres', '⚔️'),
+  Playable('sciences', 'Sciences & explorations', '🔬'),
+  Playable('arts', 'Culture & croyances', '🎭'),
+  Playable('quotidien', 'Vie quotidienne & sport', '⚽'),
 ];
 
 const List<Playable> packs = [

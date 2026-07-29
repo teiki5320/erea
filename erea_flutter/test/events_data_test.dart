@@ -31,7 +31,7 @@ void main() {
   });
 
   test('les catégories et packs sont ceux déclarés dans SPEC.md', () {
-    const knownCats = {'france', 'monde', 'sciences', 'arts', 'quotidien'};
+    const knownCats = {'pouvoir', 'sciences', 'arts', 'quotidien'};
     const knownPacks = {'egypte', 'asie', 'ameriques', 'espace', 'afrique'};
     for (final e in repo.events) {
       expect(knownCats, contains(e.cat), reason: '#${e.id}');
@@ -208,7 +208,7 @@ void main() {
   });
 
   test('playableFor retombe sur « Tout » pour une clé inconnue', () {
-    expect(playableFor('france').label, 'Histoire de France');
+    expect(playableFor('pouvoir').label, 'Pouvoir & guerres');
     expect(playableFor('pack:espace').label, 'Ciel & conquête spatiale');
     expect(playableFor('inexistant').key, 'tout');
   });

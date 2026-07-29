@@ -88,7 +88,7 @@ void main() {
       () {
     // Le tirage par tranches resservait du déjà-vu dès la 3e partie parce
     // qu'un niveau à court de frais ne cédait pas la place aux autres.
-    for (final cat in ['sciences', 'france', 'arts', 'quotidien']) {
+    for (final cat in ['sciences', 'pouvoir', 'arts', 'quotidien']) {
       for (final d in Difficulty.values) {
         final seen = <int>{};
         for (var partie = 1; partie <= 6; partie++) {
