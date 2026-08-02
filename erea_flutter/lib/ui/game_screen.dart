@@ -287,6 +287,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _badgesGagnes = nouveauxBadges(widget.store, game: game);
       if (_badgesGagnes.isNotEmpty) {
         await widget.store.unlockBadges(_badgesGagnes.map((b) => b.cle));
+        // Le carillon accompagne la carte « nouveau succès » de l'écran de
+        // fin. Sur le lecteur des verdicts, libre à cet instant.
+        Sons.badge();
       }
       await _envoyerAuClassement();
       if (mounted) setState(() {});
@@ -398,7 +401,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           child: Row(
             children: [
               IconButton(
-                onPressed: () => _confirmQuit(context),
+                onPressed: () {
+                  Sons.retour();
+                  _confirmQuit(context);
+                },
                 icon: const Icon(Icons.close, color: inkColor),
               ),
               Text(
@@ -458,6 +464,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           child: guessing
               ? PushButton(
                   onPressed: game.touched ? _validate : null,
+                  // « Je place ici » joue déjà le « pop » du verdict via
+                  // _validate : pas de « toc » d'appui par-dessus.
+                  son: SonBouton.aucun,
                   gradient: const LinearGradient(
                     begin: Alignment.centerLeft,
                     end: Alignment(0.94, 0.34),
@@ -1502,6 +1511,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               Expanded(
                 child: PushButton(
                   onPressed: () => Navigator.of(context).pop(false),
+                  son: SonBouton.retour,
                   color: Colors.white,
                   shadowColor: const Color(0xFFD8DDEF),
                   radius: 16,

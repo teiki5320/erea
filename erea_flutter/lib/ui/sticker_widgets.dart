@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/sons.dart';
 import '../core/timeline_scale.dart';
 import 'era_art.dart';
 import 'era_theme.dart';
@@ -180,10 +181,16 @@ class PushButton extends StatefulWidget {
     this.radius = 20,
     this.padding = const EdgeInsets.all(14),
     this.border,
+    this.son = SonBouton.appui,
   });
 
   final Widget child;
   final VoidCallback? onPressed;
+
+  /// Le son joué à l'appui. Par défaut le « toc » d'un bouton d'action ;
+  /// [SonBouton.retour] pour un retour/annulation, [SonBouton.aucun] pour
+  /// un bouton qui déclenche déjà son propre son (ex. « Je place ici »).
+  final SonBouton son;
   final Color? color;
   final Gradient? gradient;
   final Color shadowColor;
@@ -222,7 +229,12 @@ class _PushButtonState extends State<PushButton> {
       onTapDown: enabled ? (_) => setState(() => _pressed = true) : null,
       onTapUp: enabled ? (_) => setState(() => _pressed = false) : null,
       onTapCancel: enabled ? () => setState(() => _pressed = false) : null,
-      onTap: widget.onPressed,
+      onTap: widget.onPressed == null
+          ? null
+          : () {
+              Sons.bouton(widget.son);
+              widget.onPressed!();
+            },
       child: Opacity(
         opacity: enabled ? 1 : 0.45,
         child: Transform.translate(

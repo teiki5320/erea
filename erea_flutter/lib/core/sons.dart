@@ -15,8 +15,14 @@ class Sons {
   /// Réglable par le joueur (écran de réglages).
   static bool actif = true;
 
-  /// Un lecteur pour les verdicts…
+  /// Un lecteur pour les verdicts (et le carillon de succès, joué en fin de
+  /// partie quand ce lecteur est libre)…
   static final AudioPlayer _joueur = AudioPlayer();
+
+  /// … un lecteur à part pour les petits sons d'interface (appui, retour,
+  /// clac de roulette). Séparé des verdicts pour qu'un appui de bouton ne
+  /// coupe jamais un jingle, et l'inverse.
+  static final AudioPlayer _ui = AudioPlayer(playerId: 'ui');
 
   /// … et un tour de rôle pour le cliquetis. Chaque cran est joué EXACTEMENT
   /// comme un verdict — `await stop()` puis `play(source)` dans une fonction
@@ -55,6 +61,8 @@ class Sons {
       );
       await _joueur.setAudioContext(contexte);
       await _joueur.setReleaseMode(ReleaseMode.stop);
+      await _ui.setAudioContext(contexte);
+      await _ui.setReleaseMode(ReleaseMode.stop);
       for (final p in _crans) {
         await p.setAudioContext(contexte);
         await p.setReleaseMode(ReleaseMode.stop);
@@ -131,12 +139,67 @@ class Sons {
   static void rate() => _jouer('rate', 0.45);
   static void parfait() => _jouer('parfait', 0.6);
 
+  /// Petit son d'interface, sur le lecteur [_ui] dédié : jamais au prix
+  /// d'un verdict, et un tap ne coupe que le tap précédent.
+  static Future<void> _jouerUi(String nom, double volume) async {
+    if (!actif || !_pret) return;
+    try {
+      await _ui.stop();
+      await _ui.setVolume(volume);
+      await _ui.play(AssetSource('sfx/$nom.wav'));
+    } catch (_) {
+      // Silence : jamais au prix de la partie.
+    }
+  }
+
+  /// Le « toc » d'un bouton principal. Volontairement discret : il ponctue
+  /// chaque appui sans jamais fatiguer l'oreille.
+  static void appui() => _jouerUi('appui', 0.4);
+
+  /// Le son plus grave d'un retour en arrière (fermer, annuler, revenir).
+  static void retour() => _jouerUi('retour', 0.42);
+
+  /// Le clac de la roulette qui se cale sur un pays.
+  static void drapeau() => _jouerUi('drapeau', 0.5);
+
+  /// Le carillon d'un succès débloqué. Joué sur le lecteur des verdicts,
+  /// libre en fin de partie : il peut ainsi sonner par-dessus rien.
+  static void badge() => _jouer('badge', 0.55);
+
+  /// Quel son pour un bouton, selon son rôle. Centralisé ici pour que
+  /// [PushButton] n'ait qu'à déclarer sa nature.
+  static void bouton(SonBouton s) {
+    switch (s) {
+      case SonBouton.appui:
+        appui();
+      case SonBouton.retour:
+        retour();
+      case SonBouton.aucun:
+        break;
+    }
+  }
+
   static Future<void> liberer() async {
     try {
       await _joueur.dispose();
+      await _ui.dispose();
       for (final p in _crans) {
         await p.dispose();
       }
     } catch (_) {}
   }
+}
+
+/// Le son attaché à un bouton, selon son rôle. [PushButton] le déclare et
+/// [Sons.bouton] le joue — une seule source de vérité pour l'habillage.
+enum SonBouton {
+  /// Bouton d'action principal : le « toc » d'appui (défaut).
+  appui,
+
+  /// Bouton de retour/annulation : le son plus grave.
+  retour,
+
+  /// Aucun son propre : le bouton en déclenche déjà un (ex. « Je place ici »
+  /// qui joue le « pop » du verdict). Évite le doublon.
+  aucun,
 }

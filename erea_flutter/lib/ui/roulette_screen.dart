@@ -59,6 +59,8 @@ class _RouletteScreenState extends State<RouletteScreen>
       ..addListener(_cliqueter)
       ..addStatusListener((st) {
         if (st == AnimationStatus.completed && mounted) {
+          // La roue se cale : le clac de résultat.
+          Sons.drapeau();
           setState(() => _termine = true);
         }
       });
@@ -99,8 +101,10 @@ class _RouletteScreenState extends State<RouletteScreen>
       _lance = true;
     });
     if (animationsReduites) {
-      // Pas de roue qui tourne : le résultat s'affiche, point.
+      // Pas de roue qui tourne : le résultat s'affiche, point. Le clac
+      // marque quand même l'arrêt.
       _ctrl.value = 1;
+      Sons.drapeau();
       setState(() => _termine = true);
     } else {
       _ctrl.forward(from: 0);
@@ -134,7 +138,10 @@ class _RouletteScreenState extends State<RouletteScreen>
         child: Row(
           children: [
             IconButton(
-              onPressed: () => Navigator.of(context).maybePop(),
+              onPressed: () {
+                Sons.retour();
+                Navigator.of(context).maybePop();
+              },
               icon: const Icon(Icons.arrow_back_rounded, color: inkColor),
             ),
             const Spacer(),

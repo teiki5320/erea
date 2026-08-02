@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import '../core/accessibilite.dart';
 import '../core/progression.dart';
 import '../core/scoring.dart';
+import '../core/sons.dart';
 import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
@@ -305,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen>
       trailing: selected ? const Icon(Icons.check) : null,
       selected: selected,
       onTap: () {
+        Sons.appui();
         setState(() => catKey = p.key);
         Navigator.of(context).pop();
       },
@@ -328,6 +330,7 @@ class _HomeScreenState extends State<HomeScreen>
                 trailing: diff == d ? const Icon(Icons.check) : null,
                 selected: diff == d,
                 onTap: () {
+                  Sons.appui();
                   setState(() => diff = d);
                   Navigator.of(context).pop();
                 },

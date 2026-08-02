@@ -36,6 +36,47 @@ def marimba(freqs, durees):
     return passe_bas(reverb(out, 0.045, 5, 0.5, 0.28), 6500)
 
 
+# --------------------------------------------------------- sons d'interface
+# Mêmes briques « bois & feutre » que les verdicts : tout l'habillage sonore
+# doit avoir l'air d'un seul instrument. Ces quatre-là ont été validés depuis
+# les démos de ui_sons.py ; on les fige ici, dans le générateur canonique.
+def appui():
+    """Le « toc » chaud d'un bouton principal : court, mat, jamais criard."""
+    n = note(0.16)
+    x = fm(523.25, 2.0, 2.6, n, index_chute=0.05) * env(n, 0.002, 0.05)
+    x += fm(1046.5, 2.0, 1.0, n, index_chute=0.03) * env(n, 0.002, 0.03) * 0.3
+    return passe_bas(x, 6000)
+
+
+def retour():
+    """Plus grave et plus court : on recule d'un cran (annuler, revenir)."""
+    n = note(0.14)
+    x = fm(311.13, 2.0, 2.2, n, index_chute=0.05) * env(n, 0.002, 0.045)
+    return passe_bas(x, 3800)
+
+
+def badge():
+    """Petit arpège cristallin ascendant : un succès débloqué."""
+    freqs = [523.25, 659.25, 783.99, 1046.5]
+    total = note(0.5)
+    out = np.zeros(total)
+    for k, f in enumerate(freqs):
+        n = note(0.28)
+        v = fm(f, 2.0, 3.0, n, index_chute=0.04) * env(n, 0.002, 0.09)
+        d = note(0.05 * k)
+        out[d:d + n] += v[:total - d] if d + n > total else v
+    return passe_bas(reverb(out, 0.05, 5, 0.5, 0.3), 7000)
+
+
+def drapeau():
+    """Un « clac » net et bref : la roue de la roulette se cale sur un pays."""
+    n = note(0.12)
+    x = sinus(180, n) * env(n, 0.0006, 0.02)
+    x += bruit(n, 0.006) * 0.6
+    x += fm(900, 2.0, 1.5, n, index_chute=0.02) * env(n, 0.001, 0.012) * 0.4
+    return passe_bas(x, 5000)
+
+
 # Le cran du glissement n'est plus ici : c'est `montre.py` qui le génère
 # (tic.wav / tac.wav), depuis le passage à l'échappement de montre
 # mécanique. Le clic de bois qui vivait dans ce fichier rejouait le même
@@ -51,6 +92,10 @@ SONS = {
     'rate': marimba([349.23, 293.66], [0.12, 0.34]),
     'parfait': marimba([523.25, 659.25, 783.99, 1046.50, 1318.51],
                        [0.075, 0.075, 0.075, 0.075, 0.42]),
+    'appui': appui(),
+    'retour': retour(),
+    'badge': badge(),
+    'drapeau': drapeau(),
 }
 
 
