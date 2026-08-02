@@ -57,15 +57,16 @@ class Sons {
       );
       await _joueur.setAudioContext(contexte);
       await _joueur.setReleaseMode(ReleaseMode.stop);
-      for (var i = 0; i < _crans.length; i++) {
-        final p = _crans[i];
+      for (final p in _crans) {
         await p.setAudioContext(contexte);
         await p.setReleaseMode(ReleaseMode.stop);
-        // Mode faible latence : indispensable pour un cliquetis qui doit
-        // coller au doigt.
-        await p.setPlayerMode(PlayerMode.lowLatency);
-        await p.setSource(AssetSource(alimenter(i)));
-        await p.setVolume(0.30);
+        // PAS de mode « faible latence » : sur iOS il passe par un chemin
+        // natif qui, sollicité par seek()+resume() des dizaines de fois,
+        // se fige au bout de quelques secondes — le cliquetis mourait
+        // après ~10 s et ne revenait plus. Les sons de verdict, eux, n'ont
+        // jamais lâché : ils passent par play() sur un lecteur normal.
+        // Les crans empruntent désormais exactement ce chemin éprouvé.
+        await p.setVolume(0.5);
       }
       _pret = true;
     } catch (e) {
@@ -96,18 +97,30 @@ class Sons {
   /// Un cran de la frise. Bridé à 26 ms : c'est la cadence d'un
   /// échappement lancé (~38 par seconde au plus vite), et au-delà
   /// l'oreille n'entendrait plus qu'un bourdonnement.
-  static void cran() {
+  ///
+  /// `play(source)` et non seek()+resume() : c'est le chemin fiable des
+  /// verdicts. Le pool tourne pour qu'un cran ne coupe pas le précédent,
+  /// et la parité du rang alterne tic/tac toute seule.
+  static void cran() => _cran(26);
+
+  static void _cran(int brideMs) {
     if (!actif || !_pret) return;
     final maintenant = DateTime.now().millisecondsSinceEpoch;
-    if (maintenant - _dernierCran < 26) return;
+    if (maintenant - _dernierCran < brideMs) return;
     _dernierCran = maintenant;
     try {
       final p = _crans[_prochainCran];
+      final nom = alimenter(_prochainCran);
       _prochainCran = (_prochainCran + 1) % _crans.length;
-      p.seek(Duration.zero);
-      p.resume();
+      p.play(AssetSource(nom));
     } catch (_) {}
   }
+
+  /// Le cran de la roulette de drapeaux. Bridé plus large (70 ms) : la roue
+  /// démarre très vite, et sans ça les crans se chevauchaient en un
+  /// bourdonnement à peine audible. À 70 ms on entend des tics distincts
+  /// qui s'espacent tout seuls quand la roue ralentit — un vrai cliquet.
+  static void cranRoulette() => _cran(70);
 
   static void validation() => _jouer('pop', 0.5);
   static void reussi() => _jouer('bien', 0.55);

@@ -116,9 +116,11 @@ final double densiteContemporaine =
 /// (plancher 0,4, plafond 1) : rien ne change là où c'était déjà bien.
 double facteurGlissement(double frac, double vitessePxParFrame) {
   final plancherLocal = 0.4 * densiteContemporaine / densiteLocale(frac);
-  // Fondu entre 2 et 8 px/frame (≈ 120 à 480 px/s), lissé : sans lui, le
-  // passage ajustement → navigation ferait un à-coup au milieu du geste.
-  final t = ((vitessePxParFrame - 2.0) / 6.0).clamp(0.0, 1.0);
+  // Fondu entre 0,8 et 4 px/frame, lissé. La borne haute était à 8, et un
+  // balayage franc restait alors à demi-vitesse : dans une petite époque,
+  // ce demi devenait un quasi-arrêt (le plancher y est de 1 %). Dès qu'on
+  // dépasse un geste d'ajustement, on suit le doigt en plein.
+  final t = ((vitessePxParFrame - 0.8) / 3.2).clamp(0.0, 1.0);
   final doux = t * t * (3 - 2 * t);
   return plancherLocal + (1.0 - plancherLocal) * doux;
 }

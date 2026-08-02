@@ -80,7 +80,9 @@ class _RouletteScreenState extends State<RouletteScreen>
     if (cran == _dernierCran) return;
     _dernierCran = cran;
     Retour.cran();
-    Sons.cran();
+    // Bride propre à la roulette : la roue part très vite et le tic de
+    // frise s'y noyait en bourdonnement.
+    Sons.cranRoulette();
   }
 
   double get _distance {
