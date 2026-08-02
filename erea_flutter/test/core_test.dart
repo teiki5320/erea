@@ -280,4 +280,45 @@ void main() {
       expect(joues.toSet(), {'sfx/tic.wav', 'sfx/tac.wav'});
     });
   });
+
+  group('sensibilité du glissement', () {
+    // La frise est non linéaire : l'Antiquité met 15 000 ans là où
+    // l'époque contemporaine en met 420, un rapport de 36 que le doigt ne
+    // voit pas. Le facteur de glissement doit gommer cet écart en geste
+    // lent, et s'effacer en geste rapide.
+    const epoques = [-2000, 800, 1700, 1980];
+
+    test('un geste LENT déplace le même nombre d’années partout', () {
+      final reference = facteurGlissement(yearToFrac(1980), 0.5) *
+          densiteLocale(yearToFrac(1980));
+      for (final annee in epoques) {
+        final f = yearToFrac(annee);
+        final ansParPx = facteurGlissement(f, 0.5) * densiteLocale(f);
+        expect(ansParPx, closeTo(reference, reference * 0.01),
+            reason: 'précision en $annee différente du contemporain');
+      }
+    });
+
+    test('un geste RAPIDE suit le doigt, à toutes les époques', () {
+      for (final annee in epoques) {
+        expect(facteurGlissement(yearToFrac(annee), 10), closeTo(1.0, 1e-9),
+            reason: 'la navigation ne doit pas être bridée en $annee');
+      }
+    });
+
+    test('l’époque contemporaine garde son plancher historique de 0,4', () {
+      expect(facteurGlissement(yearToFrac(1980), 0), closeTo(0.4, 1e-9));
+    });
+
+    test('le facteur croît continûment avec la vitesse', () {
+      final f = yearToFrac(-2000);
+      var precedent = -1.0;
+      for (var v = 0.0; v <= 12; v += 0.25) {
+        final x = facteurGlissement(f, v);
+        expect(x, greaterThanOrEqualTo(precedent));
+        expect(x, inInclusiveRange(0.0, 1.0));
+        precedent = x;
+      }
+    });
+  });
 }

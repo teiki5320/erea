@@ -66,6 +66,12 @@ class _TapeWidgetState extends State<TapeWidget>
   static const double _pasCran = 24;
   double _depuisCran = 0;
 
+  /// Horloge du geste en cours et dernier facteur appliqué : le premier
+  /// rend la vitesse indépendante de la cadence tactile de l'écran, le
+  /// second évite l'à-coup quand l'élan prend le relais du doigt.
+  Duration? _dragTs;
+  double _dernierFacteur = 1.0;
+
   void _avancer(double avant, double apres) {
     _depuisCran += (apres - avant).abs() * tapeW;
     if (_depuisCran < _pasCran) return;
@@ -115,14 +121,28 @@ class _TapeWidgetState extends State<TapeWidget>
     _ticker?.stop();
     _velocity = 0;
     _depuisCran = 0;
+    _dragTs = details.sourceTimeStamp;
   }
 
   void _onDragUpdate(DragUpdateDetails details) {
     if (widget.locked) return;
     final dx = details.delta.dx;
-    // Réglage fin : quand le doigt ralentit, le ruban défile moins vite.
-    final speed = dx.abs(); // px par événement
-    final factor = (0.4 + speed * 0.12).clamp(0.4, 1.0).toDouble();
+    // Vitesse en px par frame de 60 Hz, calculée sur l'horloge des
+    // événements tactiles. L'ancien « px par événement » dépendait de la
+    // cadence de l'écran : à 120 Hz chaque événement porte deux fois
+    // moins de pixels, le ruban paraissait ~30 % plus lent.
+    final ts = details.sourceTimeStamp;
+    var dtMs = 16.7;
+    if (ts != null && _dragTs != null) {
+      final brut = (ts - _dragTs!).inMicroseconds / 1000.0;
+      if (brut > 0 && brut < 100) dtMs = brut;
+    }
+    _dragTs = ts;
+    final vitesse = dx.abs() * 16.7 / dtMs;
+    // Réglage fin adaptatif : geste lent = précision contemporaine à
+    // toutes les époques ; geste rapide = le ruban suit le doigt.
+    final factor = facteurGlissement(widget.frac, vitesse);
+    _dernierFacteur = factor;
     final next = (widget.frac - dx * factor / tapeW).clamp(0.0, 1.0).toDouble();
     _avancer(widget.frac, next);
     widget.onFracChanged(next);
@@ -139,7 +159,11 @@ class _TapeWidgetState extends State<TapeWidget>
       return;
     }
     // Vitesse en px/s -> px/frame (60 fps), bornée comme sur le web.
-    _velocity = (details.velocity.pixelsPerSecond.dx / 60)
+    // Mise à l'échelle du DERNIER facteur de glissement : en plein
+    // ajustement fin, le ruban suivait le doigt au ralenti puis l'élan
+    // repartait à pleine vitesse — un à-coup au lâcher. L'élan hérite du
+    // régime dans lequel le geste s'est terminé.
+    _velocity = (details.velocity.pixelsPerSecond.dx / 60 * _dernierFacteur)
         .clamp(-48.0, 48.0)
         .toDouble();
     if (_velocity.abs() > 0.8 && !(_ticker?.isActive ?? true)) {

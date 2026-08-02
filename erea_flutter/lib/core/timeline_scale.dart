@@ -76,3 +76,49 @@ Era eraFor(int y) {
   }
   return eras.last;
 }
+
+/// Années par unité de position autour de [frac] : la « densité » locale
+/// de l'échelle. L'Antiquité en met 15 000 là où l'époque contemporaine
+/// en met 420 — un rapport de 36 que le doigt, lui, ne voit pas.
+double densiteLocale(double frac) {
+  final f = frac.clamp(0.0, 1.0);
+  var acc = 0.0;
+  for (final s in segments) {
+    if (f <= acc + s.w) return (s.to - s.from) / s.w;
+    acc += s.w;
+  }
+  final s = segments.last;
+  return (s.to - s.from) / s.w;
+}
+
+/// La densité de l'époque contemporaine : c'est elle qui définit la
+/// précision de référence du réglage fin.
+final double densiteContemporaine =
+    (segments.last.to - segments.last.from) / segments.last.w;
+
+/// Fraction de la vitesse du doigt appliquée au ruban, selon l'époque et
+/// la vitesse du geste (en px par frame de 60 Hz).
+///
+/// Le problème résolu ici : à geste égal, l'Antiquité faisait défiler 36
+/// fois plus d'années que l'époque contemporaine — l'ajustement fin y
+/// était impossible. Mais brider uniformément interdirait de la
+/// traverser : 3 000 ans à la précision contemporaine, c'est 23 000 px de
+/// doigt.
+///
+/// D'où deux régimes, fondus par une interpolation douce :
+/// - geste LENT (ajustement) : le ruban est freiné dans le rapport des
+///   densités, si bien qu'un pixel de doigt déplace le même nombre
+///   d'ANNÉES à toutes les époques — la précision contemporaine partout ;
+/// - geste RAPIDE (navigation) : le ruban suit le doigt en pixels, comme
+///   avant — traverser trente siècles reste un seul balayage.
+///
+/// À l'époque contemporaine, la formule redonne l'ancien comportement
+/// (plancher 0,4, plafond 1) : rien ne change là où c'était déjà bien.
+double facteurGlissement(double frac, double vitessePxParFrame) {
+  final plancherLocal = 0.4 * densiteContemporaine / densiteLocale(frac);
+  // Fondu entre 2 et 8 px/frame (≈ 120 à 480 px/s), lissé : sans lui, le
+  // passage ajustement → navigation ferait un à-coup au milieu du geste.
+  final t = ((vitessePxParFrame - 2.0) / 6.0).clamp(0.0, 1.0);
+  final doux = t * t * (3 - 2 * t);
+  return plancherLocal + (1.0 - plancherLocal) * doux;
+}
