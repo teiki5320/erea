@@ -23,8 +23,8 @@ class Badge {
 }
 
 const List<Badge> badges = [
-  Badge('premiers-pas', 'Premiers pas', '👣', 'Termine une partie',
-      _premiersPas),
+  Badge(
+      'premiers-pas', 'Premiers pas', '👣', 'Termine une partie', _premiersPas),
   Badge('perfect', 'Pile dessus', '🎯', 'Trouve une année exacte', _perfect),
   Badge('triple-perfect', 'Triplé', '🎪', 'Trois années exactes en une partie',
       _triplePerfect),
@@ -36,16 +36,16 @@ const List<Badge> badges = [
   Badge('50-parties', 'Pilier', '🏛️', 'Joue 50 parties', _cinquanteParties),
   Badge('difficile', 'Tête brûlée', '🔥', 'Marque des points en Difficile',
       _difficile),
-  Badge('serie-3', 'Trois jours', '📅', 'Trois défis du jour d’affilée',
-      _serie3),
-  Badge('serie-7', 'Une semaine', '🗓️', 'Sept défis du jour d’affilée',
-      _serie7),
+  Badge(
+      'serie-3', 'Trois jours', '📅', 'Trois défis du jour d’affilée', _serie3),
+  Badge(
+      'serie-7', 'Une semaine', '🗓️', 'Sept défis du jour d’affilée', _serie7),
   Badge('chrono-12', 'Éclair', '⚡', 'Douze événements en Chrono', _chrono12),
   Badge('duel', 'Duelliste', '⚔️', 'Termine un duel', _duel),
-  Badge('100-decouvertes', 'Collectionneur', '📚',
-      'Découvre 100 événements', _centDecouvertes),
-  Badge('niveau-10', 'Maître du temps', '👑', 'Atteins le niveau 10',
-      _niveau10),
+  Badge('100-decouvertes', 'Collectionneur', '📚', 'Découvre 100 événements',
+      _centDecouvertes),
+  Badge(
+      'niveau-10', 'Maître du temps', '👑', 'Atteins le niveau 10', _niveau10),
 ];
 
 bool _premiersPas(Store s, GameController? g) => s.games >= 1;

@@ -15,8 +15,7 @@ enum Difficulty {
     emoji: '😌',
     tolMult: 2.2,
     xpMult: 0.75,
-    desc:
-        'Grande marge d’erreur et événements connus — parfait pour débuter !',
+    desc: 'Grande marge d’erreur et événements connus — parfait pour débuter !',
   ),
   normal(
     label: 'Normal',

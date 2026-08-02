@@ -81,8 +81,8 @@ void main() {
     test('la tolérance ne dépend QUE du mode, jamais de l’époque', () {
       expect(tolerance(Difficulty.facile), closeTo(toleranceBase * 2.2, 1e-9));
       expect(tolerance(Difficulty.normal), toleranceBase);
-      expect(tolerance(Difficulty.difficile),
-          closeTo(toleranceBase * 0.55, 1e-9));
+      expect(
+          tolerance(Difficulty.difficile), closeTo(toleranceBase * 0.55, 1e-9));
     });
 
     test('à écart égal, le score est le même à toutes les époques', () {
@@ -102,8 +102,7 @@ void main() {
       }
     });
 
-    test('le vert (700 pts) reste atteignable en Difficile sur du récent',
-        () {
+    test('le vert (700 pts) reste atteignable en Difficile sur du récent', () {
       // Avec l'ancien plancher de 5 ans, il fallait l'ANNÉE EXACTE : le
       // combo était inatteignable.
       expect(scoreFor(2000, 2002, Difficulty.difficile),
@@ -340,7 +339,8 @@ void main() {
       }
       // Un pays de roulette ne doit PAS compter comme une catégorie.
       await s.markCatPlayed('pays:Japon');
-      expect(nouveauxBadges(s).map((b) => b.cle), isNot(contains('touche-a-tout')));
+      expect(nouveauxBadges(s).map((b) => b.cle),
+          isNot(contains('touche-a-tout')));
       // Le quatrième thème débloque.
       await s.markCatPlayed(themes.last);
       expect(nouveauxBadges(s).map((b) => b.cle), contains('touche-a-tout'));

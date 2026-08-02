@@ -12,8 +12,7 @@ void main() {
       }
     });
 
-    test('exactement sur une frontière : t = 0,5 entre les deux époques',
-        () {
+    test('exactement sur une frontière : t = 0,5 entre les deux époques', () {
       for (var i = 0; i < eras.length - 1; i++) {
         final b = eraBlendAt(yearToFrac(eras[i].to));
         expect(b.a, i);

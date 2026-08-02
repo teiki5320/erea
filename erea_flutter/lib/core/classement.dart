@@ -49,7 +49,8 @@ class Classement {
     }
   }
 
-  static Future<void> envoyer(String tableau, int valeur, {int max = 11000}) async {
+  static Future<void> envoyer(String tableau, int valeur,
+      {int max = 11000}) async {
     // Garde-fou anti-absurde : un score hors barème ne part pas.
     if (valeur < 0 || valeur > max) return;
     if (!await connecter()) return;

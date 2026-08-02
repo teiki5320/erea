@@ -292,7 +292,8 @@ void main() {
         reason: 'la dérive doit repartir quand le réglage est levé');
   });
 
-  testWidgets('l’inertie de la frise s’arrête net si le réglage est activé '
+  testWidgets(
+      'l’inertie de la frise s’arrête net si le réglage est activé '
       'en pleine glissade', (tester) async {
     tester.view.physicalSize = _iphone14;
     tester.view.devicePixelRatio = 1.0;
@@ -320,7 +321,8 @@ void main() {
         reason: 'l’élan ne doit pas finir sa course sur une seconde');
   });
 
-  testWidgets('le réglage activé pendant le voyage du ruban coupe le ressort '
+  testWidgets(
+      'le réglage activé pendant le voyage du ruban coupe le ressort '
       'du verdict', (tester) async {
     await pumpApp(tester); // animations réduites : on part au calme
     await startClassique(tester);
@@ -337,8 +339,8 @@ void main() {
     await tester.pump(const Duration(seconds: 2)); // le voyage s'achève
 
     // Le badge de verdict ne doit pas jaillir : il est déjà à sa taille.
-    final badge = tester.widget<ScaleTransition>(
-        find.byKey(const ValueKey('badge-verdict')));
+    final badge = tester
+        .widget<ScaleTransition>(find.byKey(const ValueKey('badge-verdict')));
     expect(badge.scale.value, 1.0,
         reason: 'le ressort du badge a joué malgré le réglage');
   });
@@ -358,7 +360,8 @@ void main() {
     // … reliées par le trait de l'écart, qui porte le nombre d'années.
     expect(
       find.byWidgetPredicate((w) =>
-          w is CustomPaint && w.painter.runtimeType.toString() == '_GapLinePainter'),
+          w is CustomPaint &&
+          w.painter.runtimeType.toString() == '_GapLinePainter'),
       findsOneWidget,
       reason: 'la longueur du trait EST l’erreur',
     );
@@ -401,7 +404,8 @@ void main() {
     expect(find.text('Classique'), findsOneWidget);
   });
 
-  testWidgets('le défi du jour se verrouille et affiche son score une fois '
+  testWidgets(
+      'le défi du jour se verrouille et affiche son score une fois '
       'terminé', (tester) async {
     await pumpApp(tester);
     await tester.tap(find.text('Jouer !'));
@@ -433,7 +437,8 @@ void main() {
     expect(find.text('🔥 0'), findsOneWidget);
   });
 
-  testWidgets('la confirmation d’abandon prévient que la tentative du jour '
+  testWidgets(
+      'la confirmation d’abandon prévient que la tentative du jour '
       'est perdue', (tester) async {
     await pumpApp(tester);
     await tester.tap(find.text('Jouer !'));

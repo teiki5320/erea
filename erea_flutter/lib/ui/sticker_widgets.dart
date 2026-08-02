@@ -290,8 +290,7 @@ class MiniMap extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(color: inkColor, width: 1.5),
-                    gradient:
-                        LinearGradient(colors: colors, stops: stops),
+                    gradient: LinearGradient(colors: colors, stops: stops),
                   ),
                 ),
                 Positioned(

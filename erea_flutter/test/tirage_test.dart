@@ -83,8 +83,7 @@ void main() {
     }
   });
 
-  test('plusieurs parties d’affilée dans une petite catégorie sans redite',
-      () {
+  test('plusieurs parties d’affilée dans une petite catégorie sans redite', () {
     // Le tirage par tranches resservait du déjà-vu dès la 3e partie parce
     // qu'un niveau à court de frais ne cédait pas la place aux autres.
     for (final cat in ['sciences', 'pouvoir', 'arts', 'quotidien']) {
@@ -171,7 +170,8 @@ void main() {
       return c.validate()!.xp;
     }
 
-    expect(xpPour(Difficulty.difficile), greaterThan(xpPour(Difficulty.facile)));
+    expect(
+        xpPour(Difficulty.difficile), greaterThan(xpPour(Difficulty.facile)));
   });
 
   test('le plafond d’XP rogne les annonces, jamais le versement', () {
@@ -250,7 +250,8 @@ void main() {
     expect(picked.where((e) => seen.contains(e.id)), isEmpty);
   });
 
-  test('le défi du jour est identique à graine égale, et varie d’un jour à '
+  test(
+      'le défi du jour est identique à graine égale, et varie d’un jour à '
       'l’autre', () {
     List<int> serie(DateTime d) => repo
         .pick('tout', Difficulty.normal, rng: mulberry32(dailySeed(d)))
@@ -262,7 +263,8 @@ void main() {
     expect(serie(jour), isNot(serie(DateTime(2026, 7, 29))));
   });
 
-  test('une sélection trop pauvre refuse de démarrer plutôt que de '
+  test(
+      'une sélection trop pauvre refuse de démarrer plutôt que de '
       'resservir les mêmes événements', () {
     // `current` boucle avec `round % events.length` : une partie
     // incomplète donnerait la réponse à la seconde occurrence.
@@ -271,8 +273,7 @@ void main() {
     expect(controller.start(GameMode.classique), isFalse);
   });
 
-  test('l’XP annoncée manche après manche est exactement celle créditée',
-      () {
+  test('l’XP annoncée manche après manche est exactement celle créditée', () {
     for (final d in Difficulty.values) {
       final controller = GameController(repo);
       controller.diff = d;
@@ -321,8 +322,8 @@ void main() {
     controller.setYear(controller.current.annee);
     final boostee = controller.validate()!;
     expect(boostee.base, maxScore, reason: 'les points restent au barème');
-    expect(boostee.xp, xpForRound(boostee.pts, controller.diff.xpMult,
-        boosted: true));
+    expect(boostee.xp,
+        xpForRound(boostee.pts, controller.diff.xpMult, boosted: true));
     expect(boostee.xp,
         greaterThan(xpForRound(boostee.pts, controller.diff.xpMult)));
   });

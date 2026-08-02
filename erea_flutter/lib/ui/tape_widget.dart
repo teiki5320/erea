@@ -302,8 +302,8 @@ class _TapePainter extends CustomPainter {
     // de sa hauteur) au lieu d'un décor plus grand.
     final bigFont = (size.height * 0.087).clamp(13.0, 18.0).toDouble();
     final smallFont = (size.height * 0.07).clamp(10.5, 14.5).toDouble();
-    final bandBottom =
-        size.height * (1 - (bigFont * 1.5 + 10) / size.height).clamp(0.66, 0.84);
+    final bandBottom = size.height *
+        (1 - (bigFont * 1.5 + 10) / size.height).clamp(0.66, 0.84);
     for (var i = 0; i < eras.length; i++) {
       final e = eras[i];
       final left = _px(e.from);

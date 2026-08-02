@@ -43,7 +43,11 @@ void main() {
 
   test('les continents sont connus et chaque continent porte 45+ faits', () {
     const knownContinents = {
-      'afrique', 'ameriques', 'asie', 'europe', 'oceanie',
+      'afrique',
+      'ameriques',
+      'asie',
+      'europe',
+      'oceanie',
     };
     final parContinent = <String, int>{};
     for (final e in repo.events) {
@@ -127,8 +131,8 @@ void main() {
 
   test('aucun titre ne donne l’année en clair', () {
     // Un titre qui contient « 1789 » ou « an mil » offre la réponse.
-    final annee = RegExp(r'\b(1\d{3}|20[0-2]\d|an mil)\b',
-        caseSensitive: false);
+    final annee =
+        RegExp(r'\b(1\d{3}|20[0-2]\d|an mil)\b', caseSensitive: false);
     for (final e in repo.events) {
       expect(annee.hasMatch(e.titre), isFalse,
           reason: '#${e.id} « ${e.titre} » énonce sa date');
@@ -187,15 +191,13 @@ void main() {
     //
     // Ici on regarde le niveau de ce qui sort réellement.
     for (final c in categories) {
-      final faciles =
-          repo.pool(c.key).where((e) => e.niveau == 1).length;
+      final faciles = repo.pool(c.key).where((e) => e.niveau == 1).length;
       expect(faciles, greaterThanOrEqualTo(7),
           reason: '${c.label} : ${'$faciles'} événements de niveau 1, '
               'de quoi remplir moins d’une partie Facile');
 
       final tirage = repo.pick(c.key, Difficulty.facile);
-      expect(tirage.where((e) => e.niveau == 1).length,
-          greaterThanOrEqualTo(7),
+      expect(tirage.where((e) => e.niveau == 1).length, greaterThanOrEqualTo(7),
           reason: '${c.label} : une partie Facile doit tenir son quota de '
               '7 manches de niveau 1 sans se replier');
     }

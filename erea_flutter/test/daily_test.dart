@@ -53,7 +53,8 @@ void main() {
   test('une série interrompue n’est plus affichée', () async {
     // Dernier défi terminé il y a une semaine : la série est morte, même
     // si la valeur stockée n'a pas encore été recalculée.
-    final vieux = Store.dayKey(DateTime.now().subtract(const Duration(days: 7)));
+    final vieux =
+        Store.dayKey(DateTime.now().subtract(const Duration(days: 7)));
     SharedPreferences.setMockInitialValues({
       'daily.last': vieux,
       'daily.done': vieux,

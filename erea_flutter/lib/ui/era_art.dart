@@ -110,9 +110,9 @@ class EraArt {
         for (var i = 0; i < eraThemes.length; i++)
           if (bgBlur[i] == null)
             (bg[i] != null
-                ? Future.value(bg[i])
-                : _decode(eraThemes[i].bgAsset, targetWidth: 1200)
-            ).then((img) async {
+                    ? Future.value(bg[i])
+                    : _decode(eraThemes[i].bgAsset, targetWidth: 1200))
+                .then((img) async {
               if (img == null) return;
               bg[i] = img;
               final blur = await _blurred(img);

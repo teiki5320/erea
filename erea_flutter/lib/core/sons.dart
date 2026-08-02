@@ -37,8 +37,8 @@ class Sons {
   @visibleForTesting
   static const int nombreLecteursCran = 6;
 
-  static final List<AudioPlayer> _crans = List.generate(
-      nombreLecteursCran, (i) => AudioPlayer(playerId: 'cran$i'));
+  static final List<AudioPlayer> _crans =
+      List.generate(nombreLecteursCran, (i) => AudioPlayer(playerId: 'cran$i'));
   static int _prochainCran = 0;
 
   static bool _pret = false;

@@ -15,8 +15,18 @@ import 'sticker_widgets.dart';
 import 'tape_widget.dart';
 
 const _mois = [
-  'JANVIER', 'FÉVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN',
-  'JUILLET', 'AOÛT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DÉCEMBRE',
+  'JANVIER',
+  'FÉVRIER',
+  'MARS',
+  'AVRIL',
+  'MAI',
+  'JUIN',
+  'JUILLET',
+  'AOÛT',
+  'SEPTEMBRE',
+  'OCTOBRE',
+  'NOVEMBRE',
+  'DÉCEMBRE',
 ];
 
 /// Accueil « Sticker Arcade » (handoff 4a) : dérive d'époque automatique,
@@ -252,6 +262,19 @@ class _HomeScreenState extends State<HomeScreen>
       if (mounted) {
         setState(() {});
         _reprendreDerive();
+        // Un enregistrement disque qui a échoué (après une nouvelle
+        // tentative) ne doit pas rester muet : le joueur croirait sa
+        // progression sauvée. `writeFailed` était positionné mais lu nulle
+        // part.
+        if (widget.store.writeFailed) {
+          widget.store.writeFailed = false;
+          messenger.showSnackBar(const SnackBar(
+            content: Text(
+                'Ta progression n’a pas pu être enregistrée. Réessaie plus '
+                'tard, ou vérifie l’espace de stockage.'),
+            duration: Duration(seconds: 5),
+          ));
+        }
       }
     }
   }
@@ -396,7 +419,8 @@ class _HomeScreenState extends State<HomeScreen>
                 ListTile(
                   leading: Text(p.emoji, style: const TextStyle(fontSize: 22)),
                   title: Text(p.label),
-                  subtitle: Text('${widget.repo.pool(p.key).length} événements'),
+                  subtitle:
+                      Text('${widget.repo.pool(p.key).length} événements'),
                   onTap: () {
                     setState(() => catKey = p.key);
                     Navigator.of(sheetContext).pop();
@@ -465,8 +489,7 @@ class _HomeScreenState extends State<HomeScreen>
                         const SizedBox(height: 15),
                         // Bloc logo
                         const Center(
-                            child:
-                                Text('🦉', style: TextStyle(fontSize: 42))),
+                            child: Text('🦉', style: TextStyle(fontSize: 42))),
                         const SizedBox(height: 2),
                         const Center(child: _Logo()),
                         const SizedBox(height: 6),
@@ -867,9 +890,8 @@ class _HomeScreenState extends State<HomeScreen>
               fontFamily: 'Nunito',
               fontWeight: FontWeight.w700,
               fontSize: 11,
-              color: light
-                  ? Colors.white.withValues(alpha: 0.85)
-                  : inkPaleColor,
+              color:
+                  light ? Colors.white.withValues(alpha: 0.85) : inkPaleColor,
             ),
           ),
         ],

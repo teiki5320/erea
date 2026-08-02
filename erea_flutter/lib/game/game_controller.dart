@@ -166,8 +166,8 @@ class GameController extends ChangeNotifier {
     // dès ~12 ans d'erreur moyenne, Facile rapportait PLUS d'XP que
     // Difficile — l'inverse de la promesse du sélecteur. Sur une base
     // neutre, l'ordre Facile < Normal < Difficile tient à toute adresse.
-    final ptsNeutres = scoreFor(ev.annee, guessYear, Difficulty.normal) *
-        multiplier;
+    final ptsNeutres =
+        scoreFor(ev.annee, guessYear, Difficulty.normal) * multiplier;
     // Plafond appliqué MANCHE PAR MANCHE : chaque « +N XP » annoncé est
     // déjà rogné au budget restant, si bien que la somme affichée est
     // exactement ce qui sera crédité. Avant, l'écran promettait manche
