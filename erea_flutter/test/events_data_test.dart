@@ -115,6 +115,26 @@ void main() {
     }
   });
 
+  test('aucun doublon exact dans la base', () {
+    // Le même événement raconté deux fois perce l'anti-répétition : une
+    // partie pouvait poser deux fois la même question, réponse déjà vue.
+    final vus = <String>{};
+    for (final e in repo.events) {
+      final cle = '${e.annee}|${e.titre.toLowerCase().trim()}';
+      expect(vus.add(cle), isTrue, reason: 'doublon : #${e.id} « ${e.titre} »');
+    }
+  });
+
+  test('aucun titre ne donne l’année en clair', () {
+    // Un titre qui contient « 1789 » ou « an mil » offre la réponse.
+    final annee = RegExp(r'\b(1\d{3}|20[0-2]\d|an mil)\b',
+        caseSensitive: false);
+    for (final e in repo.events) {
+      expect(annee.hasMatch(e.titre), isFalse,
+          reason: '#${e.id} « ${e.titre} » énonce sa date');
+    }
+  });
+
   test('le pack « Ciel & conquête spatiale » ne contient pas d’intrus', () {
     // Le pack avait été rempli par recherche de SOUS-CHAÎNES, sans limite
     // de mot : « MARSeille » a fait entrer la fondation de Marseille,

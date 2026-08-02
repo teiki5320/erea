@@ -302,18 +302,6 @@
   "continent": "europe"
  },
  {
-  "id": 25,
-  "annee": 1871,
-  "titre": "La Commune de Paris",
-  "desc": "L'insurrection parisienne s'achève dans le sang",
-  "cat": "pouvoir",
-  "emoji": "🔥",
-  "niveau": 2,
-  "fun": "Accusé d’avoir fait abattre la colonne Vendôme, le peintre Gustave Courbet fut condamné à payer sa reconstruction.",
-  "pays": "France",
-  "continent": "europe"
- },
- {
   "id": 26,
   "annee": 1889,
   "titre": "Inauguration de la tour Eiffel",
@@ -5644,16 +5632,6 @@
   "id": 466
  },
  {
-  "annee": 2002,
-  "titre": "L’euro dans les porte-monnaie",
-  "desc": "Douze pays abandonnent leurs monnaies : les mêmes pièces et billets circulent de Lisbonne à Helsinki",
-  "cat": "quotidien",
-  "emoji": "💶",
-  "niveau": 1,
-  "fun": "Les Français purent découvrir les pièces dès décembre 2001 grâce à des « kits euros », et échanger leurs billets en francs jusqu’en 2012.",
-  "id": 467
- },
- {
   "annee": 2006,
   "titre": "Facebook s’ouvre à tous",
   "desc": "Plus besoin d’être étudiant : le réseau social de Mark Zuckerberg accepte tous les internautes",
@@ -6001,7 +5979,6 @@
   "emoji": "🐪",
   "niveau": 2,
   "fun": "Avant l’assaut, Bonaparte aurait lancé : « Du haut de ces pyramides, quarante siècles vous contemplent ! »",
-  "pack": "egypte",
   "id": 495,
   "pays": "Égypte",
   "continent": "afrique"
@@ -6040,7 +6017,6 @@
   "emoji": "🚢",
   "niveau": 2,
   "fun": "L’expédition militaire franco-britannique qui suivit dut se retirer sous la pression conjointe des États-Unis et de l’URSS, fait rarissime en pleine guerre froide.",
-  "pack": "egypte",
   "id": 498,
   "pays": "Égypte",
   "continent": "afrique"
@@ -17205,7 +17181,7 @@
  {
   "id": 1388,
   "annee": 1000,
-  "titre": "La légende de la peur de l'an mil",
+  "titre": "La grande peur de la fin du monde",
   "desc": "Une rumeur affole une partie de l'Europe chrétienne, persuadée que la fin du monde est arrivée.",
   "cat": "arts",
   "emoji": "😨",
@@ -20740,18 +20716,6 @@
   "continent": "europe"
  },
  {
-  "id": 1675,
-  "annee": 2003,
-  "titre": "La canicule qui a pris la France de court",
-  "desc": "Deux semaines de chaleur extrême en août provoquent près de 15 000 décès supplémentaires",
-  "cat": "quotidien",
-  "emoji": "🌡️",
-  "niveau": 1,
-  "fun": "C'est de cet été qu'est née la journée de solidarité, votée en 2004 : un jour férié transformé en jour travaillé, le lundi de Pentecôte au départ, pour financer l'aide aux personnes âgées.",
-  "pays": "France",
-  "continent": "europe"
- },
- {
   "id": 1676,
   "annee": 2018,
   "titre": "Le mouvement des gilets jaunes",
@@ -20835,7 +20799,7 @@
   "id": 1683,
   "annee": 1967,
   "titre": "La contraception autorisée en France",
-  "desc": "Une loi autorise la vente des contraceptifs, interdite en France depuis 1920",
+  "desc": "Une loi autorise la vente des contraceptifs, interdite depuis des décennies",
   "cat": "quotidien",
   "emoji": "💊",
   "niveau": 1,
@@ -20864,18 +20828,6 @@
   "emoji": "📺",
   "niveau": 1,
   "fun": "Le format vient du néerlandais Big Brother, baptisé d'après le personnage qui surveille tout le monde dans 1984, de George Orwell. La finale a culminé à 11,7 millions de téléspectateurs.",
-  "pays": "France",
-  "continent": "europe"
- },
- {
-  "id": 1686,
-  "annee": 1999,
-  "titre": "La tempête qui a couché les forêts françaises",
-  "desc": "Deux dépressions traversent le pays en deux jours et privent 3,4 millions de foyers d'électricité",
-  "cat": "quotidien",
-  "emoji": "🌬️",
-  "niveau": 1,
-  "fun": "Le parc de Versailles a perdu 18 500 arbres en quelques heures, dont un tulipier de Virginie planté sous Marie-Antoinette en 1783 et un pin corse, dernier témoin des séjours de Napoléon au Petit Trianon.",
   "pays": "France",
   "continent": "europe"
  },
@@ -21010,16 +20962,6 @@
   "fun": "Sept cents motards ont escorté son cercueil devant une foule immense. Jean-Philippe Smet devait son nom de scène à Lee Halliday, le mari de sa cousine ; une coquille sur une pochette de disque a changé le « i » en « y ».",
   "pays": "France",
   "continent": "europe"
- },
- {
-  "id": 1698,
-  "annee": 1918,
-  "titre": "Une pandémie plus meurtrière que la guerre",
-  "desc": "La grippe dite espagnole déferle sur le monde et tue des dizaines de millions de personnes.",
-  "cat": "quotidien",
-  "emoji": "🤒",
-  "niveau": 1,
-  "fun": "Elle n'a rien d'espagnol : les pays belligérants censuraient leur presse, l'Espagne neutre non. Comme seuls ses journaux en parlaient librement, le monde a cru que le fléau venait de là."
  },
  {
   "id": 1699,

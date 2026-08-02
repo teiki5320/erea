@@ -1,6 +1,10 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:erea/core/progression.dart';
 import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
+import 'package:erea/data/store.dart';
+import 'package:erea/data/events_repository.dart';
+import 'package:erea/game/badges.dart';
 import 'package:erea/core/sons.dart';
 import 'package:erea/core/timeline_scale.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -319,6 +323,27 @@ void main() {
         expect(x, inInclusiveRange(0.0, 1.0));
         precedent = x;
       }
+    });
+  });
+
+  group('succès touche-à-tout', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues({});
+    });
+    test('les 4 thèmes le débloquent, un pays de roulette non', () async {
+      final s = await Store.load();
+      final themes =
+          categories.map((c) => c.key).where((k) => k != 'tout').toList();
+      // Jouer trois thèmes sur quatre : pas encore.
+      for (final k in themes.take(3)) {
+        await s.markCatPlayed(k);
+      }
+      // Un pays de roulette ne doit PAS compter comme une catégorie.
+      await s.markCatPlayed('pays:Japon');
+      expect(nouveauxBadges(s).map((b) => b.cle), isNot(contains('touche-a-tout')));
+      // Le quatrième thème débloque.
+      await s.markCatPlayed(themes.last);
+      expect(nouveauxBadges(s).map((b) => b.cle), contains('touche-a-tout'));
     });
   });
 }

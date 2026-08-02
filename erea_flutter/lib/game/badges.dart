@@ -1,5 +1,6 @@
 import '../core/progression.dart';
 import '../core/scoring.dart';
+import '../data/events_repository.dart';
 import '../data/store.dart';
 import 'game_controller.dart';
 
@@ -29,8 +30,8 @@ const List<Badge> badges = [
       _triplePerfect),
   Badge('8000', 'Grand score', '💫', 'Dépasse 8 000 points en une partie',
       _huitMille),
-  Badge('touche-a-tout', 'Touche-à-tout', '🎨', 'Joue les 5 catégories',
-      _toucheATout),
+  Badge('touche-a-tout', 'Touche-à-tout', '🎨',
+      'Joue les 4 catégories de thème', _toucheATout),
   Badge('10-parties', 'Habitué', '🔁', 'Joue 10 parties', _dixParties),
   Badge('50-parties', 'Pilier', '🏛️', 'Joue 50 parties', _cinquanteParties),
   Badge('difficile', 'Tête brûlée', '🔥', 'Marque des points en Difficile',
@@ -51,8 +52,15 @@ bool _premiersPas(Store s, GameController? g) => s.games >= 1;
 bool _perfect(Store s, GameController? g) => (g?.perfects ?? 0) >= 1;
 bool _triplePerfect(Store s, GameController? g) => (g?.perfects ?? 0) >= 3;
 bool _huitMille(Store s, GameController? g) => (g?.total ?? 0) >= 8000;
+// Les quatre catégories THÉMATIQUES, nommément. L'ancien prédicat
+// comptait « toute clé qui n'est ni 'tout' ni un pack » et exigeait 5 :
+// depuis la migration à 4 thèmes, c'était inatteignable par les
+// catégories, et débloqué à tort par cinq PAYS de la roulette (clés
+// 'pays:…', ni 'tout' ni 'pack:'). On énumère les vraies catégories.
+final Set<String> _themesJouables =
+    categories.map((c) => c.key).where((k) => k != 'tout').toSet();
 bool _toucheATout(Store s, GameController? g) =>
-    s.catsPlayed.where((c) => c != 'tout' && !c.startsWith('pack:')).length >= 5;
+    _themesJouables.every(s.catsPlayed.contains);
 bool _dixParties(Store s, GameController? g) => s.games >= 10;
 bool _cinquanteParties(Store s, GameController? g) => s.games >= 50;
 bool _difficile(Store s, GameController? g) =>
