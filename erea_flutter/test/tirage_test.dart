@@ -33,9 +33,19 @@ void main() {
         reason: '40 % de la base était inatteignable');
   });
 
-  test('le niveau 2 est réellement tiré en Difficile et en Facile', () {
+  test('le niveau 2 est réellement tiré en Difficile', () {
     expect(niveauxVus('tout', Difficulty.difficile), contains(2));
-    expect(niveauxVus('tout', Difficulty.facile), contains(2));
+  });
+
+  test('en Facile, une grande catégorie ne sert que du niveau 1', () {
+    // Choix produit : même les faits « culture générale » (niveau 2)
+    // passaient pour trop pointus en Facile. Sur « tout », abondant en
+    // niveau 1, une partie Facile n'a QUE du niveau 1. Le niveau 2 n'est
+    // plus qu'un repli pour les petites sélections à court de faits connus.
+    final niveaux = niveauxVus('tout', Difficulty.facile);
+    expect(niveaux, contains(1));
+    expect(niveaux, isNot(contains(2)));
+    expect(niveaux, isNot(contains(3)));
   });
 
   test('Facile ne sert jamais de niveau 3 (SPEC §3)', () {

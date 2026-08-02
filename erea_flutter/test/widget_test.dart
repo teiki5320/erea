@@ -95,6 +95,19 @@ void main() {
     expect(find.textContaining('NIV. 1'), findsOneWidget);
   });
 
+  test('en Facile, une partie ne tire que des faits connus (niveau 1)', () {
+    // « tout » a largement assez de faits niveau 1 pour dix manches : aucun
+    // niveau 2 ne doit apparaître. Le « 2: 0 » du quota Facile n'est qu'un
+    // repli pour les petites sélections à court de faits connus.
+    final ev = repo.pick('tout', Difficulty.facile);
+    expect(ev, isNotEmpty);
+    expect(
+      ev.every((e) => e.niveau == 1),
+      isTrue,
+      reason: 'niveaux tirés : ${ev.map((e) => e.niveau).toList()}',
+    );
+  });
+
   // Le bloc « Classement mondial » de l'accueil : il doit s'afficher sans
   // déborder (le libellé + le rang/l'invite tenaient de justesse), sur les
   // deux formats. En test Game Center est indisponible : on vérifie surtout

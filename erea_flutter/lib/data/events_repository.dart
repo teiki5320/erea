@@ -201,8 +201,16 @@ class EventsRepository {
   /// prioritaire plus grande que la partie rendrait tout le reste de la
   /// base mathématiquement inatteignable (le niveau 3 n'apparaissait
   /// jamais en Normal). Conforme à SPEC §3 : Facile ≤ 2, Difficile ≥ 2.
+  ///
+  /// Facile ne vise QUE le niveau 1 (les faits vraiment connus) : les
+  /// niveau 2, même de « culture générale », passaient encore pour trop
+  /// pointus. Le `2: 0` n'est pas un quota mais un REPLI : il n'ouvre le
+  /// niveau 2 que si une petite sélection (p. ex. la catégorie Sciences, ou
+  /// un pack étroit) n'a plus assez de faits niveau 1 pour tenir dix
+  /// manches. Dans les catégories fournies, une partie Facile est donc
+  /// entièrement composée de faits connus.
   static const Map<Difficulty, Map<int, int>> _quotas = {
-    Difficulty.facile: {1: 7, 2: 3},
+    Difficulty.facile: {1: 10, 2: 0},
     Difficulty.normal: {1: 3, 2: 5, 3: 2},
     Difficulty.difficile: {2: 4, 3: 6},
   };
