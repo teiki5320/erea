@@ -1,7 +1,6 @@
 import 'package:erea/core/progression.dart';
 import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
-import 'package:erea/core/timeline_scale.dart';
 import 'package:erea/data/events_repository.dart';
 import 'package:erea/game/game_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -188,6 +187,17 @@ void main() {
     expect(r.xp, 10, reason: 'l’annonce doit être rognée au budget restant');
     expect(c.xpEarned, maxXpPerGame);
     expect(c.xpTotal, maxXpPerGame);
+  });
+
+  test('la roulette joue toujours en Normal, quel que soit le réglage', () {
+    // Elle héritait en silence de la difficulté choisie dans la feuille
+    // « Partie classique » : même réponse, score ×2,5 d'écart, sans que
+    // rien ne l'affiche dans son flux.
+    final c = GameController(repo)
+      ..diff = Difficulty.difficile
+      ..pays = repo.paysJouables.first;
+    expect(c.start(GameMode.roulette), isTrue);
+    expect(c.diff, Difficulty.normal);
   });
 
   test('Roulette : un seul drapeau, dix manches sur ce pays', () {

@@ -112,6 +112,11 @@ class GameController extends ChangeNotifier {
       if (choisi == null || choisi.isEmpty) return false;
       events = repo.partiePays(choisi, seen: seenIds);
       catKey = 'pays:$choisi';
+      // Difficulté FIXE, comme le défi du jour. Sans ça, la roulette
+      // héritait en silence du réglage fait dans la feuille « Partie
+      // classique » — même réponse, score ×2,5 d'écart — alors que son
+      // flux n'affiche ni ne propose de difficulté.
+      diff = Difficulty.normal;
     } else {
       events = repo.pick(catKey, diff, seen: seenIds);
     }

@@ -227,6 +227,25 @@ class _HomeScreenState extends State<HomeScreen>
         );
         controller.dispose();
         again = replay == true;
+        // « Rejouer » après une roulette : on RELANCE la roue au lieu de
+        // repartir sur le même pays. Sur un pays au minimum du seuil (10
+        // faits), rejouer resservait exactement les dix mêmes questions,
+        // réponses révélées trente secondes plus tôt.
+        if (again && mode == GameMode.roulette && mounted) {
+          final pays = await navigator.push<String>(
+            MaterialPageRoute(
+              builder: (_) => RouletteScreen(
+                repo: widget.repo,
+                seen: widget.store.seen,
+              ),
+            ),
+          );
+          if (pays == null) {
+            again = false;
+          } else {
+            _paysRoulette = pays;
+          }
+        }
       }
     } finally {
       _navigating = false;

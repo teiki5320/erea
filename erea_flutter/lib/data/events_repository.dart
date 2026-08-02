@@ -7,6 +7,7 @@ import '../core/rng.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import '../models/hist_event.dart';
+import 'drapeaux.dart';
 
 /// Catégorie ou pack jouable (clé « pack:xxx » pour les packs).
 class Playable {
@@ -65,6 +66,13 @@ Playable playableFor(String key) {
   }
   for (final p in packs) {
     if (p.key == key) return p;
+  }
+  // Une partie de roulette : l'étiquette est le pays et son drapeau.
+  // Sans ce cas, l'écran de fin et le texte de partage annonçaient
+  // « Tout 🌍 » — le pays joué disparaissait du bilan.
+  if (key.startsWith('pays:')) {
+    final pays = key.substring(5);
+    return Playable(key, pays, drapeauDe(pays));
   }
   return categories.first;
 }
