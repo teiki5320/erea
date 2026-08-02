@@ -48,14 +48,34 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   /// doit dominer l'écran. Proportionnelle à la hauteur disponible, pour
   /// rester généreuse sur grand écran sans repousser le réglage fin sous
   /// la ligne de flottaison sur un iPhone SE.
-  static double _tapeHeightFor(double available) =>
-      (available * 0.44).clamp(210.0, 310.0).toDouble();
+  /// Elle CÈDE avant la carte : en très grande police système, les blocs
+  /// fixes (année plafonnée, pastilles, réglage fin) plus une frise de
+  /// 210 px laissaient 0 px à la carte de l'événement — le fait à deviner
+  /// devenait invisible. La carte a droit à 140 px quoi qu'il arrive, et
+  /// c'est la frise qui descend, jusqu'à 150 px au pire.
+  static double _tapeHeightFor(double available) {
+    // Somme des hauteurs fixes de _guessBody hors carte et hors frise :
+    // 14 + 14 + 26 (pastilles) + 2 + 60 (année) + 8 + 12 + 46 (réglage
+    // fin) + 8.
+    const fixe = 190.0;
+    // 84 px : ce que la carte a toujours eu sur iPhone SE — elle y défile
+    // sur elle-même. La garantie sert le cas grande police, où elle
+    // tombait à 0 ; elle ne doit pas rapetisser la frise sur petit écran.
+    const carteMin = 84.0;
+    final voulu = (available * 0.44).clamp(210.0, 310.0).toDouble();
+    if (available - fixe - voulu >= carteMin) return voulu;
+    return (available - fixe - carteMin).clamp(150.0, 310.0).toDouble();
+  }
 
   /// Révélation : la frise reste grande, avec la place des deux pastilles
   /// au-dessus (« Toi · … ») et en dessous (la vraie date).
   static const double _revealTapeH = 240;
   static const double _revealTopPad = 44;
   static const double _revealBottomPad = 46;
+
+  /// Jingle du verdict, mis de côté à la validation et joué à la fin du
+  /// voyage du ruban — au moment où le badge apparaît.
+  void Function()? _jingleVerdict;
 
   late final AnimationController _travel;
   late final AnimationController _roundFade;
@@ -145,6 +165,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _travel = AnimationController(vsync: this);
     _travel.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
+        // Le verdict sonne quand il s'AFFICHE, pas quand on appuie.
+        _jingleVerdict?.call();
+        _jingleVerdict = null;
         game.finishReveal();
         if (mounted) {
           // Lu à la source : ce callback tourne AVANT la phase de build,
@@ -190,19 +213,19 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // Le « pop » répond à l'appui tout de suite ; le verdict, lui, arrive
     // après le voyage du ruban.
     Sons.validation();
+    // L'haptique répond au doigt tout de suite. Le JINGLE de verdict, lui,
+    // attend la fin du voyage du ruban (écouteur de _travel) : joué ici,
+    // il partait avant la révélation et étouffait le « pop » d'appui.
     if (result.base == maxScore) {
       Retour.parfait();
-      Sons.parfait();
+      _jingleVerdict = Sons.parfait;
     } else {
       Retour.validation();
-      switch (verdictFor(result.base)) {
-        case Verdict.reussi:
-          Sons.reussi();
-        case Verdict.moyen:
-          Sons.moyen();
-        case Verdict.rate:
-          Sons.rate();
-      }
+      _jingleVerdict = switch (verdictFor(result.base)) {
+        Verdict.reussi => Sons.reussi,
+        Verdict.moyen => Sons.moyen,
+        Verdict.rate => Sons.rate,
+      };
     }
     // Le ruban voyage de la réponse vers la vraie date.
     _travelBegin = game.frac;
@@ -245,9 +268,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       await widget.store.markCatPlayed(game.catKey);
       await widget.store.markSeen(game.results.map((r) => r.event.id));
       if (game.mode == GameMode.daily) {
+        // Meilleur score AVANT enregistrement, et comparaison stricte :
+        // finishDaily met le record à jour, donc « >= » après coup était
+        // toujours vrai — « Nouveau record ! » s'affichait pour une simple
+        // égalité, et même pour 0 point.
+        final meilleurAvant = widget.store.dailyBest;
         await widget.store.finishDaily(game.total,
             grid: _grid(), day: game.dailyKey, guesses: game.guesses);
-        _record = game.total >= widget.store.dailyBest;
+        _record = game.total > meilleurAvant;
       } else {
         _record = await widget.store
             .submitScore('${game.catKey}|${game.diff.name}', game.total);
@@ -414,12 +442,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
               if (!(revealed && _lastResult != null)) {
                 return _guessBody(context, guessing, h);
               }
-              return SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: h),
-                  child: _revealBody(context, _lastResult!, h),
-                ),
-              );
+              // Même architecture que la phase de choix : AUCUN défilement
+              // global. L'ancien SingleChildScrollView débordait de
+              // quelques pixels sur certains iPhone — tout l'écran se
+              // laissait glisser d'un demi-millimètre pour rien. C'est
+              // l'anecdote qui défile en interne quand il manque de la
+              // place.
+              return _revealBody(context, _lastResult!, h);
             },
           ),
         ),
@@ -596,19 +625,26 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         // Année : pastille d'époque + nombre, sans bulle
         EraPillPair(frac: game.frac, bordered: false),
         const SizedBox(height: 2),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              formatYear(game.guessYear),
-              style: const TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 56,
-                height: 1.05,
-                color: inkColor,
-                fontFeatures: [FontFeature.tabularFigures()],
+        // Hauteur PLAFONNÉE : en très grande police système, ce nombre
+        // gonflait les blocs fixes jusqu'à écraser la carte de l'événement
+        // à 0 px. Dans une boîte bornée, FittedBox réduit au lieu de
+        // pousser.
+        SizedBox(
+          height: 60,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                formatYear(game.guessYear),
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 56,
+                  height: 1.05,
+                  color: inkColor,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
             ),
           ),
@@ -741,7 +777,6 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final ptsSize = serre ? 44.0 : 56.0;
     final badgeSize = serre ? 18.0 : 22.0;
     return Column(
-      mainAxisSize: MainAxisSize.min,
       children: [
         const SizedBox(height: 12),
         ScaleTransition(
@@ -1028,57 +1063,65 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           },
         ),
 
-        // Le savais-tu ? + jetons
+        // Le savais-tu ? + jetons. C'est la SEULE partie qui cède de la
+        // place : longue anecdote ou grande police, elle défile sur
+        // elle-même au lieu de pousser l'écran au-delà du bord.
         if (r.event.fun.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 4, 18, 0),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: const [softShadow],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    // Raté : ce n'est plus une anecdote en passant, c'est le
-                    // moment où l'on apprend vraiment. Le titre le dit.
-                    dansLaCible ? 'Le savais-tu ? 💡' : 'Pour t’en souvenir 💡',
-                    style: const TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
-                      color: inkColor,
-                    ),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 4, 18, 0),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: const [softShadow],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    r.event.fun,
-                    style: const TextStyle(
-                      fontFamily: 'Nunito',
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14.5,
-                      height: 1.5,
-                      color: inkSoftColor,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _token('＋ Album', const Color(0xFFEEF3FF),
-                          const Color(0xFF5F6890)),
-                      const SizedBox(width: 8),
-                      _token(
-                        '+${r.xp} XP',
-                        const Color(0xFFFFF3D9),
-                        const Color(0xFFA9761C),
+                      Text(
+                        // Raté : ce n'est plus une anecdote en passant, c'est le
+                        // moment où l'on apprend vraiment. Le titre le dit.
+                        dansLaCible
+                            ? 'Le savais-tu ? 💡'
+                            : 'Pour t’en souvenir 💡',
+                        style: const TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                          color: inkColor,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        r.event.fun,
+                        style: const TextStyle(
+                          fontFamily: 'Nunito',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14.5,
+                          height: 1.5,
+                          color: inkSoftColor,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          _token('＋ Album', const Color(0xFFEEF3FF),
+                              const Color(0xFF5F6890)),
+                          const SizedBox(width: 8),
+                          _token(
+                            '+${r.xp} XP',
+                            const Color(0xFFFFF3D9),
+                            const Color(0xFFA9761C),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

@@ -28,7 +28,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  Future<void> pumpApp(WidgetTester tester, {Size size = _iphone14}) async {
+  Future<void> pumpApp(WidgetTester tester,
+      {Size size = _iphone14, double textScale = 1.0}) async {
     // L'app est en portrait uniquement : on teste sur une vraie taille de
     // téléphone plutôt que sur le 800x600 par défaut de flutter_test.
     tester.view.physicalSize = size;
@@ -39,6 +40,8 @@ void main() {
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures(disableAnimations: true);
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final store = await Store.load();
     await tester.pumpWidget(EreaApp(repo: repo, store: store));
     await tester.pumpAndSettle();
@@ -182,6 +185,50 @@ void main() {
       );
     });
   }
+
+  testWidgets('en très grande police, la carte de l’événement reste visible',
+      (tester) async {
+    // Réglage iOS « texte plus grand » au maximum : les blocs fixes
+    // (année, pastilles) sont plafonnés, donc la carte garde sa place et
+    // défile sur elle-même. Avant, elle était écrasée à 0 px — le fait à
+    // deviner disparaissait de l'écran.
+    await pumpApp(tester);
+    await startClassique(tester);
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    // Débordements horizontaux de pastilles : cosmétiques, hors sujet ici.
+    while (tester.takeException() != null) {}
+    final carte = tester.getSize(find.byType(SingleChildScrollView).first);
+    expect(carte.height, greaterThanOrEqualTo(84),
+        reason: 'la carte de l’événement doit rester lisible');
+    expect(tester.getSize(find.byType(TapeWidget)).height,
+        greaterThanOrEqualTo(150));
+  });
+
+  testWidgets('la révélation tient dans l’écran, sans défilement global',
+      (tester) async {
+    // Le « demi-millimètre » : l'écran de révélation débordait de quelques
+    // pixels et TOUT se laissait glisser pour rien. Désormais seule
+    // l'anecdote défile, en interne : la frise, ses épingles et le bouton
+    // ne sont plus dans aucune zone défilante et tiennent à l'écran.
+    await pumpApp(tester);
+    await startClassique(tester);
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.text('Je place ici !'));
+    expect(
+      find.ancestor(
+          of: find.byType(TapeWidget), matching: find.byType(Scrollable)),
+      findsNothing,
+      reason: 'la frise ne doit plus vivre dans un défilement global',
+    );
+    final ecran = tester.getSize(find.byType(MaterialApp));
+    final frise = tester.getRect(find.byType(TapeWidget));
+    expect(frise.bottom, lessThanOrEqualTo(ecran.height));
+    final bouton = tester.getRect(find.text('Manche suivante →'));
+    expect(bouton.bottom, lessThanOrEqualTo(ecran.height));
+    await tapVisible(tester, find.text('Manche suivante →'));
+  });
 
   // Le réglage fin et la mini-carte ne doivent JAMAIS passer sous la ligne
   // de flottaison : c'est la carte de l'événement qui défile sur elle-même.
