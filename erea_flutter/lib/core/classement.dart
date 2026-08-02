@@ -78,4 +78,33 @@ class Classement {
       debugPrint('Affichage du classement impossible : $e');
     }
   }
+
+  /// Le rang MONDIAL du joueur sur un tableau (portée mondiale, tout temps),
+  /// ou null si indisponible.
+  ///
+  /// Retourne null sans bruit dans tous les cas « normaux » : Game Center
+  /// désactivé, joueur pas connecté, ou aucun score déposé sur ce tableau.
+  /// L'appelant affiche alors une invite plutôt qu'un rang.
+  ///
+  /// Sur les tableaux Classique (un par difficulté), ce rang est PERMANENT :
+  /// il existe dès que la difficulté a été jouée, contrairement au défi du
+  /// jour qui repart de zéro chaque nuit.
+  static Future<int?> rang(String tableau) async {
+    if (!await connecter()) return null;
+    try {
+      final data = await Leaderboards.getPlayerScoreObject(
+        iOSLeaderboardID: tableau,
+        androidLeaderboardID: tableau,
+        scope: PlayerScope.global,
+        timeScope: TimeScope.allTime,
+      );
+      final r = data?.rank;
+      // Un rang nul ou négatif n'a pas de sens : on le traite comme absent.
+      return (r != null && r > 0) ? r : null;
+    } catch (e) {
+      // Cas fréquent et sans gravité : aucun score encore déposé.
+      debugPrint('Rang indisponible : $e');
+      return null;
+    }
+  }
 }

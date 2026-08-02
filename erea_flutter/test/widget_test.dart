@@ -95,6 +95,19 @@ void main() {
     expect(find.textContaining('NIV. 1'), findsOneWidget);
   });
 
+  // Le bloc « Classement mondial » de l'accueil : il doit s'afficher sans
+  // déborder (le libellé + le rang/l'invite tenaient de justesse), sur les
+  // deux formats. En test Game Center est indisponible : on vérifie surtout
+  // la mise en page, pas le rang lui-même.
+  for (final format in [('iPhone 14', _iphone14), ('iPhone SE', _iphoneSE)]) {
+    testWidgets('l’accueil montre le classement mondial sans déborder '
+        '(${format.$1})', (tester) async {
+      await pumpApp(tester, size: format.$2);
+      expect(find.text('Classement mondial'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
   testWidgets('le sélecteur de catégorie s’ouvre et applique le choix',
       (tester) async {
     await pumpApp(tester);

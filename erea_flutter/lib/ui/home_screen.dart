@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../core/accessibilite.dart';
+import '../core/classement.dart';
 import '../core/progression.dart';
 import '../core/scoring.dart';
 import '../core/sons.dart';
@@ -50,6 +53,18 @@ class _HomeScreenState extends State<HomeScreen>
   bool _navigating = false;
   DateTime? _dailyNow;
 
+  /// Rangs mondiaux par difficulté (Classique). Une entrée absente = pas
+  /// encore chargée ; une entrée à null = chargée mais sans rang (difficulté
+  /// pas encore jouée, ou Game Center indisponible). [_rangsCharges]
+  /// distingue « en cours » de « chargé ».
+  final Map<Difficulty, int?> _rangs = {};
+  bool _rangsCharges = false;
+
+  /// Difficulté actuellement montrée par le bloc de classement, qui défile
+  /// (Facile → Normal → Difficile) toutes les 5 s.
+  int _diffAffichee = 0;
+  Timer? _cycleClassement;
+
   // Dérive d'époque : 0,0011/s (≈ 3,5 px/s sur le ruban virtuel, la
   // frise entière en ~15 min), en aller-retour — le modulo ferait
   // claquer le fondu au passage 1 → 0. Arrêtée définitivement au
@@ -76,11 +91,43 @@ class _HomeScreenState extends State<HomeScreen>
     EraArt.load().then((_) {
       if (mounted) setState(() {});
     });
+    // Rangs mondiaux dès l'ouverture : c'est ici que la connexion Game
+    // Center se déclenche (choix assumé de la montrer au démarrage). Tout
+    // échec est silencieux — l'accueil reste identique, juste sans rang.
+    _chargerRangs();
+    // Le bloc défile entre les difficultés toutes les 5 s.
+    _cycleClassement = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted) return;
+      setState(() {
+        _diffAffichee = (_diffAffichee + 1) % Difficulty.values.length;
+      });
+    });
+  }
+
+  Future<void> _chargerRangs() async {
+    // En parallèle : trois allers-retours Game Center, on n'attend pas
+    // qu'ils s'enchaînent.
+    final resultats = await Future.wait([
+      for (final d in Difficulty.values)
+        Classement.rang(Classement.classique(d.name)),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      for (var i = 0; i < Difficulty.values.length; i++) {
+        _rangs[Difficulty.values[i]] = resultats[i];
+      }
+      _rangsCharges = true;
+    });
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && mounted) setState(() {});
+    if (state == AppLifecycleState.resumed && mounted) {
+      setState(() {});
+      // Les rangs ont pu changer pendant l'absence. On les rafraîchit sans
+      // bloquer.
+      _chargerRangs();
+    }
   }
 
   @override
@@ -166,6 +213,7 @@ class _HomeScreenState extends State<HomeScreen>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _drift?.dispose();
+    _cycleClassement?.cancel();
     super.dispose();
   }
 
@@ -263,6 +311,9 @@ class _HomeScreenState extends State<HomeScreen>
       if (mounted) {
         setState(() {});
         _reprendreDerive();
+        // La partie qu'on vient de jouer a pu déposer un nouveau score : on
+        // rafraîchit les rangs affichés sur l'accueil.
+        _chargerRangs();
         // Un enregistrement disque qui a échoué (après une nouvelle
         // tentative) ne doit pas rester muet : le joueur croirait sa
         // progression sauvée. `writeFailed` était positionné mais lu nulle
@@ -565,6 +616,8 @@ class _HomeScreenState extends State<HomeScreen>
                         // « X / Y découverts » : un objectif dès le premier
                         // lancement, à la place d'un simple total mort.
                         _collectionBar(),
+                        const SizedBox(height: 16),
+                        _classementMondial(),
                       ],
                     ),
                   ),
@@ -674,6 +727,159 @@ class _HomeScreenState extends State<HomeScreen>
       ),
     );
   }
+
+  /// Le rang MONDIAL du joueur, par difficulté du mode Classique, qui défile
+  /// (Facile → Normal → Difficile) toutes les 5 s. Tapable pour ouvrir le
+  /// classement complet de la difficulté montrée dans Game Center.
+  ///
+  /// Ces tableaux étant permanents (contrairement au défi du jour), un rang
+  /// s'affiche dès que la difficulté a été jouée. Tant qu'aucune n'a de rang
+  /// (jamais connecté / rien joué), un seul message d'invite, sans défilé.
+  Widget _classementMondial() {
+    // Rien encore de chargé : un bloc discret, sans à-coup.
+    if (!_rangsCharges) {
+      return _pilClassement(
+        onPressed: null,
+        contenu: const [
+          Expanded(
+            child: Text(
+              'Classement mondial',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: inkColor,
+              ),
+            ),
+          ),
+          Text('…',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 18,
+                color: inkPaleColor,
+              )),
+        ],
+      );
+    }
+
+    // Chargé mais aucun rang nulle part : une invite unique, pas de défilé
+    // sur trois « non classé ».
+    final aucunRang = _rangs.values.every((r) => r == null);
+    if (aucunRang) {
+      return _pilClassement(
+        onPressed: () =>
+            Classement.afficher(tableau: Classement.classique('normal')),
+        contenu: const [
+          Expanded(
+            child: Text(
+              'Classement mondial',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: inkColor,
+              ),
+            ),
+          ),
+          SizedBox(width: 8),
+          Text(
+            'Joue pour te classer',
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: inkPaleColor,
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Cas courant : on défile entre les difficultés.
+    final diff = Difficulty.values[_diffAffichee % Difficulty.values.length];
+    final rang = _rangs[diff];
+    final Widget valeur = rang != null
+        ? Text(
+            _ordinal(rang),
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 20,
+              color: coralColor,
+            ),
+          )
+        : const Text(
+            'non classé',
+            style: TextStyle(
+              fontFamily: 'Nunito',
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              color: inkPaleColor,
+            ),
+          );
+    // Sous « réduire les animations », le fondu devient instantané : le
+    // contenu change quand même toutes les 5 s, sans mouvement.
+    final duree = animationsReduites
+        ? Duration.zero
+        : const Duration(milliseconds: 340);
+    return _pilClassement(
+      onPressed: () =>
+          Classement.afficher(tableau: Classement.classique(diff.name)),
+      contenu: [
+        const Text('🌍', style: TextStyle(fontSize: 20)),
+        const SizedBox(width: 10),
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: duree,
+            child: Text(
+              '${diff.emoji} ${diff.label}',
+              key: ValueKey('lbl$_diffAffichee'),
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 15,
+                color: inkColor,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        AnimatedSwitcher(
+          duration: duree,
+          child: KeyedSubtree(
+            key: ValueKey('rang$_diffAffichee'),
+            child: valeur,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Coquille commune du bloc de classement : même pastille blanche, mêmes
+  /// marges, pour que les trois états (chargement, invite, défilé) ne
+  /// « sautent » pas d'une taille à l'autre.
+  Widget _pilClassement({
+    required VoidCallback? onPressed,
+    required List<Widget> contenu,
+  }) {
+    return PushButton(
+      onPressed: onPressed,
+      son: SonBouton.aucun, // le bloc n'est pas un bouton d'action franc
+      color: Colors.white,
+      shadowColor: const Color(0xFFD8DDEF),
+      shadowHeight: 4,
+      radius: 16,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(children: contenu),
+    );
+  }
+
+  /// Ordinal français : « 1er », puis « 2e », « 142e »…
+  String _ordinal(int n) => n == 1 ? '1er' : '${n}e';
 
   Widget _profilePill(LevelInfo level, LevelTitle title) {
     return Container(
