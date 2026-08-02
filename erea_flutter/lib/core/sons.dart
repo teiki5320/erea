@@ -18,24 +18,22 @@ class Sons {
   /// Un lecteur pour les verdicts…
   static final AudioPlayer _joueur = AudioPlayer();
 
-  /// … et un tour de rôle pour le cliquetis. Avec un seul lecteur, chaque
-  /// cran couperait le précédent : à 20 crans par seconde on entendrait un
-  /// hachis, pas un mécanisme.
+  /// … et un tour de rôle pour le cliquetis. Chaque cran est joué EXACTEMENT
+  /// comme un verdict — `await stop()` puis `play(source)` dans une fonction
+  /// async — parce que c'est le seul chemin qui n'a jamais lâché. Les
+  /// versions précédentes (mode faible latence + seek/resume, puis play()
+  /// sans stop ni await) se figeaient au bout de quelques secondes.
   ///
-  /// Six lecteurs et non quatre : les crans peuvent se suivre toutes les
-  /// 26 ms pour une pointe qui dure ~32 ms, donc il faut de quoi en
-  /// superposer une poignée sans jamais rattraper le premier.
+  /// Un tour de rôle sur quatre lecteurs, et non un seul : un cran ne doit
+  /// pas couper le précédent (sinon un hachis), et sur du normal le stop()
+  /// d'un lecteur ne doit pas tomber en plein milieu de sa propre pointe.
+  /// À la bride de 55 ms, chaque lecteur n'est resollicité que toutes les
+  /// ~220 ms — largement de quoi laisser son stop/play se poser.
   ///
-  /// Le nombre est PAIR à dessein. Les rangs pairs jouent le tic, les
-  /// impairs le tac, si bien que le tour de rôle alterne les deux tout
-  /// seul (voir [alimenter]).
-  ///
-  /// Le nombre est une constante et non la longueur de la liste : la liste
-  /// est paresseuse, et y toucher construirait de vrais [AudioPlayer], donc
-  /// ouvrirait un canal de plateforme. Le test de l'alternance n'a pas à
-  /// payer ça pour vérifier une parité.
+  /// Le nombre est PAIR : les rangs pairs jouent le tic, les impairs le tac,
+  /// l'alternance vient donc du tour de rôle (voir [alimenter]).
   @visibleForTesting
-  static const int nombreLecteursCran = 6;
+  static const int nombreLecteursCran = 4;
 
   static final List<AudioPlayer> _crans =
       List.generate(nombreLecteursCran, (i) => AudioPlayer(playerId: 'cran$i'));
@@ -94,33 +92,38 @@ class Sons {
   @visibleForTesting
   static String alimenter(int i) => i.isEven ? 'sfx/tic.wav' : 'sfx/tac.wav';
 
-  /// Un cran de la frise. Bridé à 26 ms : c'est la cadence d'un
-  /// échappement lancé (~38 par seconde au plus vite), et au-delà
-  /// l'oreille n'entendrait plus qu'un bourdonnement.
-  ///
-  /// `play(source)` et non seek()+resume() : c'est le chemin fiable des
-  /// verdicts. Le pool tourne pour qu'un cran ne coupe pas le précédent,
-  /// et la parité du rang alterne tic/tac toute seule.
-  static void cran() => _cran(26);
+  /// Un cran de la frise. Bridé à 55 ms (~18 par seconde au plus vite) :
+  /// assez pour un mécanisme vivant, assez large pour que chaque lecteur
+  /// du tour de rôle ait fini sa pointe avant d'être resollicité.
+  static void cran() => _cran(55);
+
+  /// Le cran de la roulette de drapeaux. Bridé plus large (90 ms) : la roue
+  /// démarre très vite, et sans ça les crans se chevauchaient en un
+  /// bourdonnement à peine audible. À 90 ms on entend des tics distincts
+  /// qui s'espacent tout seuls quand la roue ralentit — un vrai cliquet.
+  static void cranRoulette() => _cran(90);
 
   static void _cran(int brideMs) {
     if (!actif || !_pret) return;
     final maintenant = DateTime.now().millisecondsSinceEpoch;
     if (maintenant - _dernierCran < brideMs) return;
     _dernierCran = maintenant;
-    try {
-      final p = _crans[_prochainCran];
-      final nom = alimenter(_prochainCran);
-      _prochainCran = (_prochainCran + 1) % _crans.length;
-      p.play(AssetSource(nom));
-    } catch (_) {}
+    final rang = _prochainCran;
+    _prochainCran = (_prochainCran + 1) % _crans.length;
+    // Fire-and-forget, comme les verdicts : le geste est synchrone, la
+    // lecture ne doit pas le bloquer.
+    _jouerCran(rang);
   }
 
-  /// Le cran de la roulette de drapeaux. Bridé plus large (70 ms) : la roue
-  /// démarre très vite, et sans ça les crans se chevauchaient en un
-  /// bourdonnement à peine audible. À 70 ms on entend des tics distincts
-  /// qui s'espacent tout seuls quand la roue ralentit — un vrai cliquet.
-  static void cranRoulette() => _cran(70);
+  static Future<void> _jouerCran(int rang) async {
+    try {
+      final p = _crans[rang];
+      await p.stop();
+      await p.play(AssetSource(alimenter(rang)));
+    } catch (_) {
+      // Silence : jamais au prix de la partie.
+    }
+  }
 
   static void validation() => _jouer('pop', 0.5);
   static void reussi() => _jouer('bien', 0.55);
