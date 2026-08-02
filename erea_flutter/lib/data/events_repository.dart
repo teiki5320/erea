@@ -241,15 +241,31 @@ class EventsRepository {
     for (final entry in quotas.entries) {
       drain(frais, entry.key, (entry.value * count / quotaTotal).round());
     }
-    // 2) Places restantes : encore du jamais-vu, d'abord dans les niveaux
-    //    prévus par la difficulté, puis ailleurs dans la base.
-    final ordreSecours = [...quotas.keys, 1, 2, 3];
-    for (final niveau in ordreSecours) {
+    // 2) Places restantes : du jamais-vu, dans les niveaux prévus par la
+    //    difficulté.
+    for (final niveau in quotas.keys) {
       if (picked.length >= count) break;
       drain(frais, niveau, count - picked.length);
     }
-    // 3) Vraiment plus rien de neuf : on repasse sur du déjà-vu.
-    for (final niveau in ordreSecours) {
+    // 3) Puis du DÉJÀ-VU, toujours dans les niveaux du mode. C'est l'étape
+    //    qui manquait : l'ancien repli passait directement au jamais-vu
+    //    des AUTRES niveaux, et dès la 3e partie d'un pack une partie
+    //    Facile servait du niveau 3 « frais » alors qu'il restait plein de
+    //    faits faciles simplement déjà vus (et Difficile s'adoucissait au
+    //    niveau 1 à la 15e). Revoir un fait adapté vaut mieux que
+    //    découvrir un fait qui trahit le mode choisi : le mode est un
+    //    contrat.
+    for (final niveau in quotas.keys) {
+      if (picked.length >= count) break;
+      drain(vus, niveau, count - picked.length);
+    }
+    // 4) Catégorie vraiment à sec pour ce mode : on ouvre aux autres
+    //    niveaux, jamais-vu puis déjà-vu.
+    for (final niveau in [1, 2, 3]) {
+      if (picked.length >= count) break;
+      drain(frais, niveau, count - picked.length);
+    }
+    for (final niveau in [1, 2, 3]) {
       if (picked.length >= count) break;
       drain(vus, niveau, count - picked.length);
     }

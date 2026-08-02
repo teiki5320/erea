@@ -101,23 +101,93 @@ void main() {
     }
   });
 
-  test('à niveau de jeu égal, Difficile rapporte plus d’XP que Facile', () {
-    // Sinon le mode exigeant n'a aucune raison d'être choisi.
-    int xpMoyen(Difficulty d) {
-      var total = 0;
-      for (final e in repo.events) {
-        // Un joueur « à peu près juste » : 3 % de l'ancienneté d'erreur.
-        final err = ((maxYear - e.annee) * 0.03).round().clamp(2, 120);
-        total += xpForRound(scoreFor(e.annee, e.annee + err, d), d.xpMult);
+  test('un pack épuisé en Facile ressert du facile plutôt que du pointu', () {
+    // Le repli du tirage passait au niveau 3 « frais » dès la 3e partie
+    // d'un pack, alors qu'il restait plein de faits faciles déjà vus. Le
+    // mode choisi est un contrat : tant que le pack contient assez de
+    // niveaux 1-2 (vus ou non), une partie Facile n'a AUCUN niveau 3.
+    for (final p in packs) {
+      final pool = repo.pool(p.key);
+      final n12 = pool.where((e) => e.niveau <= 2).length;
+      final seen = <int>{};
+      for (var partie = 1; partie <= 12; partie++) {
+        final picked = repo.pick(p.key, Difficulty.facile, seen: seen);
+        if (n12 >= rounds) {
+          expect(picked.where((e) => e.niveau == 3), isEmpty,
+              reason: '${p.label}, partie $partie : du niveau 3 en Facile');
+        }
+        seen.addAll(picked.map((e) => e.id));
       }
-      return total ~/ repo.events.length;
+    }
+  });
+
+  test('Difficile ne s’adoucit pas quand un pack s’épuise', () {
+    for (final p in packs) {
+      final pool = repo.pool(p.key);
+      final n23 = pool.where((e) => e.niveau >= 2).length;
+      final seen = <int>{};
+      for (var partie = 1; partie <= 15; partie++) {
+        final picked = repo.pick(p.key, Difficulty.difficile, seen: seen);
+        if (n23 >= rounds) {
+          expect(picked.where((e) => e.niveau == 1), isEmpty,
+              reason: '${p.label}, partie $partie : du niveau 1 en Difficile');
+        }
+        seen.addAll(picked.map((e) => e.id));
+      }
+    }
+  });
+
+  test('à niveau de jeu égal, Difficile rapporte plus d’XP que Facile', () {
+    // Sinon le mode exigeant n'a aucune raison d'être choisi. L'ancien
+    // modèle de ce test (3 % d'ancienneté, borné à 120 ans) n'explorait
+    // que la zone experte : sur les points AFFICHÉS, l'ordre s'inversait
+    // dès ~12 ans d'erreur moyenne sans que le test bronche. L'XP se
+    // calcule maintenant sur le score en Normal (base neutre), et l'ordre
+    // doit tenir à TOUTE adresse — du tireur d'élite au débutant.
+    for (final ecart in [0, 5, 12, 20, 40, 80, 150]) {
+      int xpDe(Difficulty d) =>
+          xpForRound(scoreFor(1500, 1500 + ecart, Difficulty.normal), d.xpMult);
+      final facile = xpDe(Difficulty.facile);
+      final normal = xpDe(Difficulty.normal);
+      final difficile = xpDe(Difficulty.difficile);
+      expect(normal, greaterThanOrEqualTo(facile),
+          reason: 'écart $ecart : $normal vs $facile');
+      expect(difficile, greaterThanOrEqualTo(normal),
+          reason: 'écart $ecart : $difficile vs $normal');
+      if (ecart <= 80) {
+        expect(difficile, greaterThan(facile),
+            reason: 'écart $ecart : l’ordre doit être STRICT tant '
+                'qu’il reste des points');
+      }
+    }
+  });
+
+  test('le contrôleur crédite plus d’XP en Difficile, à écart égal', () {
+    // La garantie précédente au niveau du vrai chemin de jeu : validate()
+    // doit bien passer par la base neutre.
+    int xpPour(Difficulty d) {
+      final c = GameController(repo)..diff = d;
+      expect(c.start(GameMode.classique), isTrue);
+      c.setYear(c.current.annee + 20);
+      return c.validate()!.xp;
     }
 
-    final facile = xpMoyen(Difficulty.facile);
-    final normal = xpMoyen(Difficulty.normal);
-    final difficile = xpMoyen(Difficulty.difficile);
-    expect(normal, greaterThan(facile), reason: '$normal vs $facile');
-    expect(difficile, greaterThan(normal), reason: '$difficile vs $normal');
+    expect(xpPour(Difficulty.difficile), greaterThan(xpPour(Difficulty.facile)));
+  });
+
+  test('le plafond d’XP rogne les annonces, jamais le versement', () {
+    // Avant : chaque manche annonçait son « +N XP » plein, et la fin de
+    // partie écrêtait en silence — jusqu'à 628 XP promis et jamais versés.
+    // Le plafond s'applique maintenant manche par manche : la somme des
+    // annonces EST le versement.
+    final c = GameController(repo)..diff = Difficulty.difficile;
+    expect(c.start(GameMode.classique), isTrue);
+    c.xpEarned = maxXpPerGame - 10;
+    c.setYear(c.current.annee); // réponse exacte : l'XP pleine dépasserait
+    final r = c.validate()!;
+    expect(r.xp, 10, reason: 'l’annonce doit être rognée au budget restant');
+    expect(c.xpEarned, maxXpPerGame);
+    expect(c.xpTotal, maxXpPerGame);
   });
 
   test('Roulette : un seul drapeau, dix manches sur ce pays', () {

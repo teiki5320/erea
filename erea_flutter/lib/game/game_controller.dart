@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/foundation.dart';
 
 import '../core/progression.dart';
@@ -153,7 +155,22 @@ class GameController extends ChangeNotifier {
     final ecart = (guessYear - ev.annee).abs();
     final pts = base * multiplier;
     lastBoosted = boostNext;
-    final xp = xpForRound(pts, diff.xpMult, boosted: lastBoosted);
+    // L'XP se calcule sur le score que la MÊME réponse aurait obtenu en
+    // Normal, pas sur les points affichés. Les points s'effondrent bien
+    // plus vite en Difficile (marge ÷ 4) que le bonus ×1,75 ne compense :
+    // dès ~12 ans d'erreur moyenne, Facile rapportait PLUS d'XP que
+    // Difficile — l'inverse de la promesse du sélecteur. Sur une base
+    // neutre, l'ordre Facile < Normal < Difficile tient à toute adresse.
+    final ptsNeutres = scoreFor(ev.annee, guessYear, Difficulty.normal) *
+        multiplier;
+    // Plafond appliqué MANCHE PAR MANCHE : chaque « +N XP » annoncé est
+    // déjà rogné au budget restant, si bien que la somme affichée est
+    // exactement ce qui sera crédité. Avant, l'écran promettait manche
+    // après manche jusqu'à 628 XP de plus que le versement final.
+    final xp = math.min(
+      xpForRound(ptsNeutres, diff.xpMult, boosted: lastBoosted),
+      maxXpPerGame - xpEarned,
+    );
     final result = RoundResult(ev, guessYear, ecart, base, pts, xp);
     results.add(result);
     xpEarned += xp;

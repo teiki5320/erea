@@ -61,9 +61,15 @@ LevelTitle titleFor(int level) {
 const int maxXpPerGame = 2000;
 
 /// XP d'une manche : points/10 × multiplicateur de difficulté, × 1,5 si la
-/// manche bénéficiait du bonus de combo. L'XP d'une partie est la SOMME de
-/// ces valeurs (plafonnée à [maxXpPerGame]) : c'est ce qui est annoncé au
-/// joueur à chaque révélation, donc ce qui doit lui être crédité.
+/// manche bénéficiait du bonus de combo.
+///
+/// Les points passés ici sont ceux que la réponse aurait obtenus en
+/// NORMAL (voir GameController.validate) : sur les points affichés, la
+/// marge réduite de Difficile écrasait le score plus vite que ×1,75 ne
+/// compensait, et Facile rapportait davantage dès ~12 ans d'erreur
+/// moyenne. L'XP d'une partie est la SOMME de ces valeurs, chaque manche
+/// étant déjà rognée au budget [maxXpPerGame] restant : ce qui est
+/// annoncé à chaque révélation est exactement ce qui est crédité.
 int xpForRound(int pts, double xpMult, {bool boosted = false}) =>
     (pts / 10 * xpMult * (boosted ? 1.5 : 1)).round();
 
