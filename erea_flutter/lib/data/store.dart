@@ -149,10 +149,22 @@ class Store {
       _put(() => _prefs.setBool('opt.reminders', v));
 
   /// Remise à zéro complète (écran de réglages).
+  ///
+  /// Le défi du jour DÉJÀ TERMINÉ reste verrouillé : sans ça, une remise
+  /// à zéro rendait le défi rejouable le jour même, avec les dix mêmes
+  /// questions (la série est déterministe par date) — de quoi refaire son
+  /// score à volonté. On efface tout, puis on repose le seul verrou du
+  /// jour, sans le score ni la série.
   Future<void> resetAll() async {
     _seenCache = null;
     _discoveredCache = null;
+    final defiTermineAujourdhui = dailyFinishedToday;
+    final jour = dayKey(_now);
     await _put(() => _prefs.clear());
+    if (defiTermineAujourdhui) {
+      await _put(() => _prefs.setString('daily.last', jour));
+      await _put(() => _prefs.setString('daily.done', jour));
+    }
   }
 
   // -------------------------------------------------------------- défi du jour

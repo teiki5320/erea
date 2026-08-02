@@ -189,6 +189,15 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
     );
     if (ok != true) return;
     await widget.store.resetAll();
+    // Les réglages son/vibration sont des champs statiques chargés au
+    // démarrage : après un clear(), le magasin repasse à « activé » par
+    // défaut et l'interrupteur l'affiche, mais les statiques gardaient
+    // l'ancienne valeur — bascule sans effet jusqu'au redémarrage. On les
+    // resynchronise. Et les rappels du soir déjà programmés dans iOS
+    // survivaient au reset, interrupteur pourtant éteint : on les annule.
+    Sons.actif = widget.store.soundOn;
+    Retour.actif = widget.store.hapticsOn;
+    await Rappels.toutAnnuler();
     if (mounted) setState(() {});
   }
 }

@@ -789,7 +789,12 @@ class _HomeScreenState extends State<HomeScreen>
           ),
           const SizedBox(height: 12),
           PushButton(
-            onPressed: dailyUsed
+            // Un défi interrompu par un arrêt SUBI (iOS a déchargé l'app)
+            // se reprend là où il s'était arrêté. Ce bouton est l'UNIQUE
+            // porte d'entrée du mode : verrouillé dès que la tentative
+            // était posée, il rendait tout le mécanisme de reprise
+            // inaccessible — manches jouées, XP et série perdues.
+            onPressed: dailyUsed && !widget.store.dailyResumable
                 ? null
                 : () async {
                     // Le verrou est posé dans _play, après un démarrage
@@ -805,11 +810,13 @@ class _HomeScreenState extends State<HomeScreen>
               child: Text(
                 dailyDone
                     ? 'Déjà joué · ${widget.store.dailyLastScore} pts'
-                    : dailyUsed
-                        // Tentative consommée sans aller au bout : ne pas
-                        // présenter ça comme un score de 0.
-                        ? 'Prochain défi demain !'
-                        : 'Jouer !',
+                    : widget.store.dailyResumable
+                        ? 'Reprendre le défi ↩︎'
+                        : dailyUsed
+                            // Tentative consommée sans aller au bout : ne
+                            // pas présenter ça comme un score de 0.
+                            ? 'Prochain défi demain !'
+                            : 'Jouer !',
                 style: const TextStyle(
                   fontFamily: 'Baloo2',
                   fontWeight: FontWeight.w800,

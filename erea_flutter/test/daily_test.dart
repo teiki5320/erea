@@ -190,4 +190,27 @@ void main() {
     expect(s.seen, isEmpty);
     expect(s.discovered, isEmpty);
   });
+
+  test('la remise à zéro laisse le défi du jour terminé verrouillé', () async {
+    final s = await store();
+    final today = DateTime.now();
+    await s.lockDaily(now: today);
+    await s.finishDaily(8000, grid: 'gggggggggg', day: Store.dayKey(today));
+    expect(s.dailyFinishedToday, isTrue);
+
+    await s.resetAll();
+    // Tout est effacé — SAUF le verrou du jour : sinon le défi serait
+    // rejouable le jour même avec les mêmes questions.
+    expect(s.xp, 0, reason: 'les XP sont bien effacées');
+    expect(s.dailyPlayedToday, isTrue, reason: 'le jour reste verrouillé');
+    expect(s.dailyLastScore, 0, reason: 'le score, lui, est effacé');
+    expect(s.effectiveStreak, 0, reason: 'la série est effacée');
+  });
+
+  test('la remise à zéro n’invente pas de verrou si rien n’a été joué',
+      () async {
+    final s = await store();
+    await s.resetAll();
+    expect(s.dailyPlayedToday, isFalse);
+  });
 }
