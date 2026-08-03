@@ -152,15 +152,15 @@ class EraPillPair extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final blend = eraBlendAt(frac);
+    // Une SEULE pastille, pleine. Le fondu-enchaîné superposait deux
+    // pastilles semi-transparentes de largeurs différentes : pendant toute
+    // la zone de transition on voyait un double contour et le nom de
+    // l'époque voisine en filigrane — un « titre doublé », flagrant sur
+    // l'accueil iPad où la dérive traîne longtemps entre deux époques.
+    final era = blend.t < 0.5 ? blend.a : blend.b;
     return SizedBox(
       height: 26,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          _pill(blend.a, 1 - blend.t),
-          if (blend.t > 0.001) _pill(blend.b, blend.t),
-        ],
-      ),
+      child: Center(child: _pill(era, 1)),
     );
   }
 }
