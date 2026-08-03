@@ -541,10 +541,8 @@ class _HomeScreenState extends State<HomeScreen>
                           ],
                         ),
                         const SizedBox(height: 15),
-                        // Bloc logo
-                        const Center(
-                            child: Text('🦉', style: TextStyle(fontSize: 42))),
-                        const SizedBox(height: 2),
+                        // Bloc logo (le hibou d'origine a été retiré : la
+                        // nouvelle identité, c'est le logotype seul)
                         const Center(child: _Logo()),
                         const SizedBox(height: 6),
                         EraPillPair(frac: homeFrac),
