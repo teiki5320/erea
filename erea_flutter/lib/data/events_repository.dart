@@ -223,8 +223,11 @@ class EventsRepository {
     double Function()? rng,
     Set<int> seen = const {},
     int count = rounds,
+    // Ids bannis du tirage. Sert au mélange régional : la moitié « monde »
+    // ne doit pas resservir un fait déjà pris par la moitié « Afrique ».
+    Set<int> exclure = const {},
   }) {
-    final p = pool(catKey);
+    final p = pool(catKey).where((e) => !exclure.contains(e.id)).toList();
     final random = rng ?? _defaultRng();
     final quotas = _quotas[diff]!;
 

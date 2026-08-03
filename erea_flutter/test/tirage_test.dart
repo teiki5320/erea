@@ -1,4 +1,5 @@
 import 'package:erea/core/progression.dart';
+import 'package:erea/core/region.dart';
 import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
 import 'package:erea/data/events_repository.dart';
@@ -197,6 +198,47 @@ void main() {
     expect(r.xp, 10, reason: 'l’annonce doit être rognée au budget restant');
     expect(c.xpEarned, maxXpPerGame);
     expect(c.xpTotal, maxXpPerGame);
+  });
+
+  test('détecté en Afrique, le Classique « Tout » mélange Afrique et monde',
+      () {
+    regionForcee = 'SN'; // appareil réglé « Sénégal »
+    addTearDown(() => regionForcee = null);
+    for (var i = 0; i < 20; i++) {
+      final c = GameController(repo);
+      expect(c.start(GameMode.classique), isTrue);
+      expect(c.events.length, rounds);
+      expect(c.events.map((e) => e.id).toSet().length, rounds,
+          reason: 'jamais deux fois le même fait');
+      final afrique = c.events.where((e) => e.pack == 'afrique').length;
+      expect(afrique, greaterThanOrEqualTo(rounds ~/ 2),
+          reason: 'au moins la moitié vient de l’univers Afrique');
+    }
+  });
+
+  test('hors mélange : une catégorie choisie explicitement est respectée',
+      () {
+    regionForcee = 'SN';
+    addTearDown(() => regionForcee = null);
+    final c = GameController(repo)..catKey = 'sciences';
+    expect(c.start(GameMode.classique), isTrue);
+    expect(c.events.every((e) => e.cat == 'sciences'), isTrue,
+        reason: 'le choix explicite du joueur passe avant la région');
+  });
+
+  test('le défi du jour est identique, détecté en Afrique ou non', () {
+    List<int> serie() {
+      final c = GameController(repo)..dailyNow = DateTime(2026, 8, 3);
+      expect(c.start(GameMode.daily), isTrue);
+      return c.events.map((e) => e.id).toList();
+    }
+
+    regionForcee = null;
+    final monde = serie();
+    regionForcee = 'SN';
+    addTearDown(() => regionForcee = null);
+    expect(serie(), monde,
+        reason: 'le classement mondial exige la même série pour tous');
   });
 
   test('la roulette joue toujours en Normal, quel que soit le réglage', () {

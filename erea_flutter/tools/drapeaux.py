@@ -33,6 +33,7 @@ ISO = {
     'Biélorussie': 'BY', 'Birmanie': 'MM', 'Bolivie': 'BO',
     'Bosnie-Herzégovine': 'BA', 'Botswana': 'BW', 'Brésil': 'BR',
     'Bulgarie': 'BG', 'Burkina Faso': 'BF', 'Burundi': 'BI',
+    'Côte d’Ivoire': 'CI',
     'Cambodge': 'KH', 'Cameroun': 'CM', 'Canada': 'CA', 'Chili': 'CL',
     'Chine': 'CN', 'Chypre': 'CY', 'Colombie': 'CO', 'Comores': 'KM',
     'Congo': 'CG', 'Corée du Nord': 'KP', 'Corée du Sud': 'KR',

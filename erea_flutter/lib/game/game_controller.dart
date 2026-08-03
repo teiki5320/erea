@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 
 import '../core/progression.dart';
+import '../core/region.dart';
 import '../core/rng.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
@@ -117,6 +118,24 @@ class GameController extends ChangeNotifier {
       // classique » — même réponse, score ×2,5 d'écart — alors que son
       // flux n'affiche ni ne propose de difficulté.
       diff = Difficulty.normal;
+    } else if (m == GameMode.classique && catKey == 'tout' && joueurEnAfrique) {
+      // Joueur détecté en Afrique (pays de réglage de l'appareil) : le
+      // Classique « Tout » n'est plus écrit pour un joueur français. Une
+      // moitié de la partie vient de l'univers Afrique, l'autre du monde
+      // entier — local ET varié. Le choix explicite d'une catégorie ou
+      // d'un pack, lui, est toujours respecté tel quel, et le défi du
+      // jour reste mondial (même série pour tous).
+      final rng = math.Random().nextDouble;
+      final afrique =
+          repo.pick('pack:afrique', diff, seen: seenIds, count: rounds ~/ 2);
+      final monde = repo.pick(
+        'tout',
+        diff,
+        seen: seenIds,
+        count: rounds - afrique.length,
+        exclure: afrique.map((e) => e.id).toSet(),
+      );
+      events = shuffled([...afrique, ...monde], rng);
     } else {
       events = repo.pick(catKey, diff, seen: seenIds);
     }
