@@ -95,6 +95,27 @@ void main() {
     expect(find.textContaining('NIV. 1'), findsOneWidget);
   });
 
+  testWidgets('le Chrono décompte, met zéro au temps écoulé et enchaîne seul',
+      (tester) async {
+    // PAS de pumpAndSettle après l'entrée en jeu : le tic d'affichage
+    // (100 ms) du compte à rebours ne « settle » jamais.
+    await pumpApp(tester);
+    await tester.tap(find.text('Chrono'));
+    await tester.pump(); // montage de la route
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('MANCHE 1/10'), findsOneWidget);
+    expect(find.textContaining('⏱'), findsWidgets);
+    // On ne répond pas : à 10 s le temps expire (manche à zéro), le ruban
+    // voyage (80 ms en animations réduites) puis la révélation s'affiche.
+    await tester.pump(const Duration(seconds: 10, milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Manche suivante →'), findsOneWidget);
+    // …et la manche suivante part toute seule (~2,2 s plus tard).
+    await tester.pump(const Duration(milliseconds: 2400));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('MANCHE 2/10'), findsOneWidget);
+  });
+
   test('en Facile, une partie ne tire que des faits connus (niveau 1)', () {
     // « tout » a largement assez de faits niveau 1 pour dix manches : aucun
     // niveau 2 ne doit apparaître. Le « 2: 0 » du quota Facile n'est qu'un

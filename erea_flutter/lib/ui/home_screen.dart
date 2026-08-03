@@ -568,8 +568,10 @@ class _HomeScreenState extends State<HomeScreen>
                               child: _modeTile(
                                 emoji: '⏱️',
                                 titre: 'Chrono',
-                                sousTitre: 'Bientôt !',
-                                onTap: null,
+                                sousTitre: widget.store.bestFor('chrono') > 0
+                                    ? 'record ${widget.store.bestFor('chrono')}'
+                                    : '10 s par question',
+                                onTap: () => _play(GameMode.chrono),
                               ),
                             ),
                           ],

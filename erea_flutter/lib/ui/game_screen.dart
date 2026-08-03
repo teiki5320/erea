@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide Badge;
@@ -115,6 +116,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   List<Badge> _badgesGagnes = const [];
   bool _grilleCopiee = false;
 
+  /// Mode Chrono : 10 secondes par question. Le temps restant est compté
+  /// en TICS de 100 ms ([_restantMs]), pas à l'horloge murale : les tics
+  /// s'arrêtent quand l'app passe en arrière-plan (personne ne perd sa
+  /// manche pour un appel reçu) et suivent l'horloge simulée des tests.
+  /// [_autoSuivant] expédie la révélation — le rythme ne retombe jamais.
+  static const Duration dureeChrono = Duration(seconds: 10);
+  Timer? _chrono;
+  int _restantMs = 0;
+  Timer? _autoSuivant;
+
   GameController get game => widget.controller;
 
   @override
@@ -137,6 +148,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _fadedRound = game.round;
     _astuceGeste = !widget.store.tutoSeen;
     _roundFade.forward(from: 0);
+    _armerChrono();
     _pop = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -179,6 +191,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
           }
         }
         _persistRound();
+        // Chrono : la révélation ne traîne pas, la manche suivante part
+        // toute seule. Le bouton reste actif pour les impatients.
+        if (game.mode == GameMode.chrono && mounted) {
+          _autoSuivant?.cancel();
+          _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
+            if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+              _next();
+            }
+          });
+        }
       }
     });
     _travel.addListener(() {
@@ -193,6 +215,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     game.removeListener(_onGameChanged);
+    _chrono?.cancel();
+    _autoSuivant?.cancel();
     _travel.dispose();
     _roundFade.dispose();
     _pop.dispose();
@@ -203,12 +227,52 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     if (game.round != _fadedRound && !_showEnd) {
       _fadedRound = game.round;
       _roundFade.forward(from: 0);
+      // Nouvelle manche : le compte à rebours du Chrono repart.
+      _armerChrono();
     }
+  }
+
+  /// (Ré)arme le compte à rebours d'une manche de Chrono. Hors Chrono,
+  /// ne fait rien — aucun timer ne tourne dans les autres modes.
+  void _armerChrono() {
+    if (game.mode != GameMode.chrono) return;
+    _restantMs = dureeChrono.inMilliseconds;
+    _chrono?.cancel();
+    _chrono = Timer.periodic(const Duration(milliseconds: 100), (_) {
+      if (!mounted || game.phase != GamePhase.guess) return;
+      _restantMs -= 100;
+      if (_restantMs <= 0) {
+        _tempsEcoule();
+      } else {
+        setState(() {}); // rafraîchit l'afficheur de secondes
+      }
+    });
+  }
+
+  /// Temps écoulé : la manche vaut zéro et la révélation s'enchaîne,
+  /// exactement comme après une validation — même voyage du ruban.
+  void _tempsEcoule() {
+    _chrono?.cancel();
+    final result = game.validateTimeout();
+    if (result == null) return;
+    _lastResult = result;
+    Retour.validation();
+    _jingleVerdict = Sons.rate;
+    _travelBegin = game.frac;
+    _travelEnd = yearToFrac(result.event.annee);
+    final dist = (_travelEnd - _travelBegin).abs();
+    var ms =
+        dist < 0.0005 ? 120 : (500 + dist * 2200).clamp(500.0, 1500.0).toInt();
+    if (animationsReduites) ms = 80;
+    _travel.duration = Duration(milliseconds: ms);
+    _travel.forward(from: 0);
+    if (mounted) setState(() {});
   }
 
   void _validate() {
     final result = game.validate();
     if (result == null) return;
+    _chrono?.cancel(); // répondu à temps : le compte à rebours s'arrête
     _lastResult = result;
     // Le « pop » répond à l'appui tout de suite ; le verdict, lui, arrive
     // après le voyage du ruban.
@@ -241,6 +305,32 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _travel.forward(from: 0);
   }
 
+  /// Le compte à rebours du Chrono : passe au corail sous 3 secondes.
+  /// Largeur figée (chiffres tabulaires) pour que la barre ne « respire »
+  /// pas dix fois par seconde.
+  Widget _pastilleChrono() {
+    final s = (_restantMs / 1000).clamp(0.0, dureeChrono.inSeconds.toDouble());
+    final urgent = s <= 3;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+      decoration: BoxDecoration(
+        color: urgent ? coralColor : Colors.white,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: urgent ? coralColor : inkColor, width: 2),
+      ),
+      child: Text(
+        '⏱ ${s.toStringAsFixed(1)}',
+        style: TextStyle(
+          fontFamily: 'Baloo2',
+          fontWeight: FontWeight.w800,
+          fontSize: 13,
+          color: urgent ? Colors.white : inkColor,
+          fontFeatures: const [FontFeature.tabularFigures()],
+        ),
+      ),
+    );
+  }
+
   /// Tout ce qui doit survivre à une partie interrompue est écrit DÈS la
   /// révélation, manche par manche : l'événement rejoint la collection, il
   /// est marqué comme vu (sinon il reviendrait aussitôt avec sa réponse),
@@ -258,6 +348,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   Future<void> _next() async {
     if (_finishing) return; // évite le double-tap (XP doublée sinon)
+    _autoSuivant?.cancel(); // tap manuel : l'enchaînement auto se tait
     final continues = game.next();
     if (!continues) {
       _finishing = true;
@@ -277,8 +368,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
             grid: _grid(), day: game.dailyKey, guesses: game.guesses);
         _record = game.total > meilleurAvant;
       } else {
-        _record = await widget.store
-            .submitScore('${game.catKey}|${game.diff.name}', game.total);
+        // Le Chrono a son propre tableau : « tout|normal » aurait mélangé
+        // ses records avec ceux du Classique, barème pourtant différent
+        // (pas de manche finale doublée, temps limité).
+        final cle = game.mode == GameMode.chrono
+            ? 'chrono'
+            : '${game.catKey}|${game.diff.name}';
+        _record = await widget.store.submitScore(cle, game.total);
       }
       // Exactement la somme des « +N XP » annoncés manche après manche.
       await widget.store.addXp(game.xpTotal);
@@ -321,6 +417,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     } else if (game.mode == GameMode.classique) {
       await Classement.envoyer(
           Classement.classique(game.diff.name), game.total);
+    } else if (game.mode == GameMode.chrono) {
+      // Barème sans manche doublée : le maximum est de 10 × 1000.
+      await Classement.envoyer(Classement.chrono, game.total,
+          max: maxScore * rounds);
     }
   }
 
@@ -417,6 +517,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   color: inkColor.withValues(alpha: 0.6),
                 ),
               ),
+              if (game.mode == GameMode.chrono && guessing) ...[
+                const SizedBox(width: 8),
+                _pastilleChrono(),
+              ],
               const SizedBox(width: 10),
               Expanded(child: _roundPills()),
               const SizedBox(width: 10),
@@ -1602,12 +1706,16 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   String _texteGrille() {
     final quoi = game.mode == GameMode.daily
         ? 'Défi du jour'
-        : '${playableFor(game.catKey).label} · ${game.diff.label}';
+        : game.mode == GameMode.chrono
+            ? 'Chrono ⏱'
+            : '${playableFor(game.catKey).label} · ${game.diff.label}';
+    // En Chrono, pas de manche finale doublée : le maximum est 10 × 1000.
+    final max = game.mode == GameMode.chrono ? maxScore * rounds : maxTotal;
     final serie =
         game.mode == GameMode.daily && widget.store.effectiveStreak > 0
             ? '\n🔥 ${widget.store.effectiveStreak} jours d’affilée'
             : '';
-    return 'Erea ⏳ $quoi\n${game.total} / $maxTotal\n'
+    return 'Erea ⏳ $quoi\n${game.total} / $max\n'
         '${game.emojiGrid()}$serie';
   }
 

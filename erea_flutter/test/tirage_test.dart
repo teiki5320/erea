@@ -241,6 +241,38 @@ void main() {
         reason: 'le classement mondial exige la même série pour tous');
   });
 
+  test('le Chrono force Normal et « tout », sans manche finale doublée', () {
+    final c = GameController(repo)
+      ..catKey = 'sciences'
+      ..diff = Difficulty.difficile;
+    expect(c.start(GameMode.chrono), isTrue);
+    expect(c.diff, Difficulty.normal, reason: 'barème comparable pour tous');
+    expect(c.catKey, 'tout');
+    // 10 réponses parfaites : 10 × 1000 tout rond — la manche finale
+    // doublée du Classique n'existe pas en Chrono.
+    var more = true;
+    while (more) {
+      c.setYear(c.current.annee);
+      c.validate();
+      c.finishReveal();
+      more = c.next();
+    }
+    expect(c.total, maxScore * rounds);
+  });
+
+  test('Chrono : le temps écoulé vaut zéro et la partie continue', () {
+    final c = GameController(repo);
+    expect(c.start(GameMode.chrono), isTrue);
+    final r = c.validateTimeout()!;
+    expect(r.base, 0);
+    expect(r.pts, 0);
+    expect(r.xp, 0, reason: 'pas de récompense sans réponse');
+    c.finishReveal();
+    expect(c.total, 0);
+    expect(c.next(), isTrue, reason: 'la partie enchaîne normalement');
+    expect(c.round, 1);
+  });
+
   test('la roulette joue toujours en Normal, quel que soit le réglage', () {
     // Elle héritait en silence de la difficulté choisie dans la feuille
     // « Partie classique » : même réponse, score ×2,5 d'écart, sans que

@@ -118,6 +118,13 @@ class GameController extends ChangeNotifier {
       // classique » — même réponse, score ×2,5 d'écart — alors que son
       // flux n'affiche ni ne propose de difficulté.
       diff = Difficulty.normal;
+    } else if (m == GameMode.chrono) {
+      // Chrono : 10 secondes par question. Tirage et barème FIXES (toute
+      // la base, Normal) — le mode a son propre classement mondial, les
+      // scores doivent être comparables entre joueurs, comme au défi.
+      events = repo.pick('tout', Difficulty.normal, seen: seenIds);
+      catKey = 'tout';
+      diff = Difficulty.normal;
     } else if (m == GameMode.classique && catKey == 'tout' && joueurEnAfrique) {
       // Joueur détecté en Afrique (pays de réglage de l'appareil) : le
       // Classique « Tout » n'est plus écrit pour un joueur français. Une
@@ -201,6 +208,25 @@ class GameController extends ChangeNotifier {
     comboBroken = combo > 0 && base < 700;
     combo = base >= 700 ? combo + 1 : 0;
     boostNext = combo >= 3;
+    notifyListeners();
+    return result;
+  }
+
+  /// Temps écoulé (mode Chrono) : la manche vaut ZÉRO, quelle que soit la
+  /// position du curseur — ne pas répondre à temps, c'est ne pas répondre.
+  /// Même cheminement d'états que [validate], pour que l'écran enchaîne
+  /// exactement pareil (voyage du ruban, révélation, manche suivante).
+  RoundResult? validateTimeout() {
+    if (phase != GamePhase.guess) return null;
+    phase = GamePhase.anim;
+    final ev = current;
+    final ecart = (guessYear - ev.annee).abs();
+    lastBoosted = false;
+    final result = RoundResult(ev, guessYear, ecart, 0, 0, 0);
+    results.add(result);
+    comboBroken = combo > 0;
+    combo = 0;
+    boostNext = false;
     notifyListeners();
     return result;
   }

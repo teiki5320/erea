@@ -23,6 +23,7 @@ class Classement {
   /// différentes, se retrouveraient dans le même tableau.
   static const String defi = 'erea.daily';
   static const String serie = 'erea.streak';
+  static const String chrono = 'erea.chrono';
   static String classique(String difficulte) => 'erea.classic.$difficulte';
 
   static bool _connecte = false;
