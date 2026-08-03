@@ -27,25 +27,48 @@ class Classement {
   static String classique(String difficulte) => 'erea.classic.$difficulte';
 
   static bool _connecte = false;
-  static bool _tente = false;
 
-  /// Connexion paresseuse. Retourne false sans bruit si Game Center est
-  /// indisponible.
-  static Future<bool> connecter() async {
-    if (_connecte) return true;
-    if (_tente) return false; // une seule tentative par lancement
-    _tente = true;
+  /// Connexion EN COURS, partagée : les trois requêtes de rang du bloc
+  /// d'accueil partent en parallèle — sans ce partage, chacune lançait sa
+  /// propre tentative et deux sur trois échouaient à froid.
+  static Future<bool>? _enCours;
+
+  /// Dernier échec : on ne retente pas en boucle, mais on retente. La
+  /// version précédente (« une seule tentative par lancement ») rendait
+  /// tout Game Center définitivement muet après un simple raté réseau au
+  /// démarrage — jusqu'à perdre l'envoi du score du défi du jour.
+  static DateTime? _dernierEchec;
+  static const Duration _repit = Duration(minutes: 1);
+
+  /// Connexion paresseuse, partagée et ré-essayable. Retourne false sans
+  /// bruit si Game Center est indisponible.
+  static Future<bool> connecter() {
+    if (_connecte) return Future.value(true);
+    final echec = _dernierEchec;
+    if (echec != null && DateTime.now().difference(echec) < _repit) {
+      return Future.value(false);
+    }
+    return _enCours ??= _connecterVraiment().whenComplete(() {
+      _enCours = null;
+    });
+  }
+
+  static Future<bool> _connecterVraiment() async {
     try {
       final signed = await GameAuth.isSignedIn;
-      if (signed) {
-        _connecte = true;
-        return true;
+      if (!signed) {
+        final res = await GameAuth.signIn();
+        if (res != 'success') {
+          _dernierEchec = DateTime.now();
+          return false;
+        }
       }
-      final res = await GameAuth.signIn();
-      _connecte = res == 'success';
-      return _connecte;
+      _connecte = true;
+      _dernierEchec = null;
+      return true;
     } catch (e) {
       debugPrint('Game Center indisponible : $e');
+      _dernierEchec = DateTime.now();
       return false;
     }
   }

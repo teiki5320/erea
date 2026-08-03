@@ -169,21 +169,37 @@ class Store {
 
   /// Remise à zéro complète (écran de réglages).
   ///
-  /// Le défi du jour DÉJÀ TERMINÉ reste verrouillé : sans ça, une remise
-  /// à zéro rendait le défi rejouable le jour même, avec les dix mêmes
-  /// questions (la série est déterministe par date) — de quoi refaire son
-  /// score à volonté. On efface tout, puis on repose le seul verrou du
-  /// jour, sans le score ni la série.
+  /// Trois choses survivent, à dessein :
+  /// - le VERROU du défi du jour, dès qu'une tentative a été LANCÉE
+  ///   aujourd'hui (terminée ou non) : la série étant déterministe par
+  ///   date, une remise à zéro rendait sinon le défi rejouable avec les
+  ///   réponses déjà vues — et le score partait au classement mondial ;
+  /// - le score et la grille du défi TERMINÉ : l'accueil affichait
+  ///   sinon « Déjà joué · 0 pts », un score jamais réalisé ;
+  /// - le pays choisi et le parcours d'accueil : remettre sa progression
+  ///   à zéro n'est pas déménager, et l'écran « Mon pays » aurait montré
+  ///   « Automatique » alors que l'ancien choix restait appliqué.
   Future<void> resetAll() async {
     _seenCache = null;
     _discoveredCache = null;
+    final tentativeAujourdhui = dailyPlayedToday;
     final defiTermineAujourdhui = dailyFinishedToday;
+    final score = dailyLastScore;
+    final grille = dailyGrid;
+    final pays = (nom: paysChoisiNom, iso: paysChoisiIso);
+    final accueilVu = onboardingVu;
     final jour = dayKey(_now);
     await _put(() => _prefs.clear());
-    if (defiTermineAujourdhui) {
+    if (tentativeAujourdhui) {
       await _put(() => _prefs.setString('daily.last', jour));
-      await _put(() => _prefs.setString('daily.done', jour));
     }
+    if (defiTermineAujourdhui) {
+      await _put(() => _prefs.setString('daily.done', jour));
+      await _put(() => _prefs.setInt('daily.lastScore', score));
+      await _put(() => _prefs.setString('daily.grid', grille));
+    }
+    if (accueilVu) await setOnboardingVu();
+    if (pays.iso != null) await setPaysChoisi(nom: pays.nom, iso: pays.iso);
   }
 
   // -------------------------------------------------------------- défi du jour
@@ -241,8 +257,11 @@ class Store {
   }
 
   Future<void> saveDailyProgress(String day, List<int> guesses) async {
-    await _put(() => _prefs.setString('daily.progressDay', day));
+    // Les réponses AVANT le jour : si l'app meurt entre les deux écritures,
+    // un progressDay orphelin ferait rejouer les réponses de la VEILLE sur
+    // la série du jour. L'ordre inverse laisse au pire une reprise vide.
     await _put(() => _prefs.setString('daily.progress', jsonEncode(guesses)));
+    await _put(() => _prefs.setString('daily.progressDay', day));
   }
 
   Future<void> clearDailyProgress() async {
@@ -264,25 +283,11 @@ class Store {
   /// la série. [day] est le jour du LANCEMENT : un défi commencé avant
   /// minuit et fini après reste crédité au bon jour, sans verrouiller le
   /// lendemain.
-  /// Les réponses du dernier défi TERMINÉ : la série d'événements étant
-  /// déterministe, elles suffisent à rejouer le défi en lecture seule.
-  List<int> get dailyDoneGuesses {
-    try {
-      final raw = _prefs.getString('daily.doneGuesses');
-      if (raw == null) return const [];
-      return (jsonDecode(raw) as List<dynamic>).cast<int>();
-    } catch (_) {
-      return const [];
-    }
-  }
-
   Future<void> finishDaily(int total,
       {String grid = '', String? day, List<int> guesses = const []}) async {
     final key = day ?? dayKey(_now);
     if (dailyLast != key) return; // tentative d'un autre jour : on ignore
     if (dailyDone == key) return; // déjà enregistré
-    await _put(
-        () => _prefs.setString('daily.doneGuesses', jsonEncode(guesses)));
     final streak = dailyStreakDay == _dayBefore(key) ? dailyStreak + 1 : 1;
     await _put(() => _prefs.setString('daily.done', key));
     await _put(() => _prefs.setInt('daily.lastScore', total));

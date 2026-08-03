@@ -276,6 +276,12 @@ class _HomeScreenState extends State<HomeScreen>
           // s'était arrêté. Un abandon volontaire, lui, a effacé la reprise.
           if (widget.store.dailyResumable) {
             controller.restore(widget.store.dailyProgress);
+          } else {
+            // Reprise armée DÈS le lancement (liste vide) : une app tuée
+            // par iOS avant la première réponse brûlait la tentative sans
+            // aucune reprise possible.
+            await widget.store
+                .saveDailyProgress(controller.dailyKey, const []);
           }
         }
         final replay = await navigator.push<bool>(
@@ -652,11 +658,19 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _reglagesPill() {
     return GestureDetector(
       onTap: () async {
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => ReglagesScreen(store: widget.store),
-          ),
-        );
+        // Même garde que les modes de jeu : un double-tap empilait deux
+        // écrans de réglages.
+        if (_navigating) return;
+        _navigating = true;
+        try {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ReglagesScreen(store: widget.store),
+            ),
+          );
+        } finally {
+          _navigating = false;
+        }
         if (mounted) setState(() {});
       },
       child: Container(

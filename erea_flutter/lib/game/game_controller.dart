@@ -27,8 +27,14 @@ class RoundResult {
   /// total d'XP d'une partie est la somme de ces valeurs, jamais un
   /// arrondi calculé à part.
   final int xp;
+
+  /// Mode Chrono : la manche s'est terminée SANS réponse (temps écoulé).
+  /// L'écran doit dire « Temps écoulé », pas « Trop loin ! » — surtout
+  /// quand le curseur était pile sur la bonne année.
+  final bool tempsEcoule;
   const RoundResult(
-      this.event, this.guess, this.ecart, this.base, this.pts, this.xp);
+      this.event, this.guess, this.ecart, this.base, this.pts, this.xp,
+      {this.tempsEcoule = false});
 }
 
 /// État central d'une partie (solo classique / défi du jour pour ce squelette ;
@@ -125,6 +131,13 @@ class GameController extends ChangeNotifier {
       events = repo.pick('tout', Difficulty.normal, seen: seenIds);
       catKey = 'tout';
       diff = Difficulty.normal;
+    } else if (m == GameMode.classique && catKey.startsWith('pack:')) {
+      // La feuille Packs n'affiche ni ne propose de difficulté : comme la
+      // roulette, on fixe Normal plutôt que d'hériter en silence du
+      // dernier réglage de la feuille Classique — même réponse, score
+      // très différent, sans que rien ne l'explique.
+      diff = Difficulty.normal;
+      events = repo.pick(catKey, diff, seen: seenIds);
     } else if (m == GameMode.classique && catKey == 'tout' && joueurEnAfrique) {
       // Joueur détecté en Afrique (pays de réglage de l'appareil) : le
       // Classique « Tout » n'est plus écrit pour un joueur français. Une
@@ -222,7 +235,8 @@ class GameController extends ChangeNotifier {
     final ev = current;
     final ecart = (guessYear - ev.annee).abs();
     lastBoosted = false;
-    final result = RoundResult(ev, guessYear, ecart, 0, 0, 0);
+    final result =
+        RoundResult(ev, guessYear, ecart, 0, 0, 0, tempsEcoule: true);
     results.add(result);
     comboBroken = combo > 0;
     combo = 0;

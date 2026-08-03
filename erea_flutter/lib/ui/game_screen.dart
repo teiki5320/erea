@@ -44,7 +44,8 @@ class GameScreen extends StatefulWidget {
   State<GameScreen> createState() => _GameScreenState();
 }
 
-class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
+class _GameScreenState extends State<GameScreen>
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   /// Hauteur de la frise pendant le choix : c'est l'outil de visée, elle
   /// doit dominer l'écran. Proportionnelle à la hauteur disponible, pour
   /// rester généreuse sur grand écran sans repousser le réglage fin sous
@@ -143,12 +144,26 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     // écouteur du contrôleur, jamais depuis build() (un effet de bord en
     // pleine construction casserait dès qu'un listener appellera setState).
     game.addListener(_onGameChanged);
+    // Chrono : le compte à rebours se fige quand l'app passe en
+    // arrière-plan (appel reçu, changement d'app) — personne ne perd sa
+    // manche pour une interruption. Les timers Dart, eux, continueraient
+    // de tourner sur Android.
+    WidgetsBinding.instance.addObserver(this);
     // La manche 1 est déjà en place quand l'écran se monte (le contrôleur
     // démarre avant la navigation) : son fondu se déclenche donc ici.
     _fadedRound = game.round;
     _astuceGeste = !widget.store.tutoSeen;
     _roundFade.forward(from: 0);
     _armerChrono();
+    // Reprise d'un défi tué APRÈS la dixième révélation : tout est déjà
+    // joué, plus rien à deviner — on file à l'écran de fin (XP, record,
+    // série), qui n'avait jamais été crédité. Sans ça, l'écran remontait
+    // en pleine phase de révélation, sans interface cohérente.
+    if (game.results.length >= rounds) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_showEnd) _next();
+      });
+    }
     _pop = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -213,7 +228,28 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (game.mode != GameMode.chrono) return;
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      _chrono?.cancel();
+      _autoSuivant?.cancel();
+    } else if (state == AppLifecycleState.resumed && mounted && !_showEnd) {
+      if (game.phase == GamePhase.guess) {
+        _demarrerTic(); // reprend le temps restant, sans le remettre à 10 s
+      } else if (game.phase == GamePhase.reveal) {
+        _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
+          if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+            _next();
+          }
+        });
+      }
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     game.removeListener(_onGameChanged);
     _chrono?.cancel();
     _autoSuivant?.cancel();
@@ -237,6 +273,13 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _armerChrono() {
     if (game.mode != GameMode.chrono) return;
     _restantMs = dureeChrono.inMilliseconds;
+    _demarrerTic();
+  }
+
+  /// (Re)lance le tic SANS toucher au temps restant — c'est ce qui permet
+  /// de mettre le compte à rebours en pause (dialogue d'abandon) puis de
+  /// reprendre là où il en était.
+  void _demarrerTic() {
     _chrono?.cancel();
     _chrono = Timer.periodic(const Duration(milliseconds: 100), (_) {
       if (!mounted || game.phase != GamePhase.guess) return;
@@ -414,7 +457,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       } else if (widget.store.remindersOn) {
         await Rappels.programmer(serie: serie, defiFaitAujourdhui: true);
       }
-    } else if (game.mode == GameMode.classique) {
+    } else if (game.mode == GameMode.classique &&
+        !game.catKey.startsWith('pack:')) {
+      // Les packs ne partent PAS au tableau du Classique : leurs pools
+      // resserrés rendraient les scores incomparables.
       await Classement.envoyer(
           Classement.classique(game.diff.name), game.total);
     } else if (game.mode == GameMode.chrono) {
@@ -433,6 +479,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       .join();
 
   String _reaction(RoundResult r) {
+    if (r.tempsEcoule) return 'TEMPS ÉCOULÉ !';
     if (r.base == maxScore) return 'PILE DESSUS !';
     if (r.base >= 900) return 'Incroyable !';
     if (r.base >= 700) return 'Excellent !';
@@ -443,6 +490,9 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   String _direction(RoundResult r) {
+    // Temps écoulé avec le curseur pile dessus : le dire, sinon l'écran
+    // afficherait « Année exacte ! » à côté de zéro point.
+    if (r.tempsEcoule && r.ecart == 0) return 'Tu y étais… trop tard ⏱';
     if (r.ecart == 0) return 'Année exacte !';
     final unit = r.ecart == 1 ? 'an' : 'ans';
     return r.guess < r.event.annee
@@ -970,7 +1020,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ),
         const SizedBox(height: 2),
         Text(
-          '${_direction(r)} · tolérance ${tol.round()} ans',
+          // La « cible » affichée = l'écart qui donne encore le vert
+          // (700 pts) : tolérance × ln(1000/700). Afficher la tolérance
+          // brute (30 ans en Normal) contredisait le verdict du dessus.
+          '${_direction(r)} · cible ± ${(tol * 0.3567).round()} ans',
           style: const TextStyle(
             fontFamily: 'Nunito',
             fontWeight: FontWeight.w800,
@@ -1379,7 +1432,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
-            '${game.total} / $maxTotal',
+            // Chrono : pas de manche finale doublée, le maximum est 10 000.
+            '${game.total} / ${game.mode == GameMode.chrono ? maxScore * rounds : maxTotal}',
             style: const TextStyle(
               fontFamily: 'Baloo2',
               fontWeight: FontWeight.w800,
@@ -1726,6 +1780,11 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   Future<void> _confirmQuit(BuildContext context) async {
+    // Chrono : on fige TOUT pendant que le joueur réfléchit — sinon la
+    // partie se jouait toute seule derrière la modale (manches à zéro,
+    // score enregistré… alors que le dialogue promet le contraire).
+    _chrono?.cancel();
+    _autoSuivant?.cancel();
     final quit = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -1750,6 +1809,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
         ],
       ),
     );
+    if (quit != true) {
+      // Le joueur reste : le compte à rebours reprend où il en était, et
+      // la révélation en cours retrouve son enchaînement automatique.
+      if (game.mode == GameMode.chrono && mounted) {
+        if (game.phase == GamePhase.guess) {
+          _demarrerTic();
+        } else if (game.phase == GamePhase.reveal && !_showEnd) {
+          _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
+            if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+              _next();
+            }
+          });
+        }
+      }
+    }
     if (quit == true && context.mounted) {
       // Abandon VOLONTAIRE : on efface la reprise, sinon le joueur
       // relancerait le défi en connaissant déjà les réponses vues.

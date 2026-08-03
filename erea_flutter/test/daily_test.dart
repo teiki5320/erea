@@ -200,12 +200,30 @@ void main() {
     expect(s.dailyFinishedToday, isTrue);
 
     await s.resetAll();
-    // Tout est effacé — SAUF le verrou du jour : sinon le défi serait
-    // rejouable le jour même avec les mêmes questions.
+    // Tout est effacé — SAUF le verrou du jour (sinon le défi serait
+    // rejouable le jour même avec les mêmes questions) et le score/grille
+    // du défi TERMINÉ : l'accueil affichait sinon « Déjà joué · 0 pts »,
+    // un score jamais réalisé.
     expect(s.xp, 0, reason: 'les XP sont bien effacées');
     expect(s.dailyPlayedToday, isTrue, reason: 'le jour reste verrouillé');
-    expect(s.dailyLastScore, 0, reason: 'le score, lui, est effacé');
+    expect(s.dailyLastScore, 8000,
+        reason: 'le vrai score du défi terminé reste affichable');
+    expect(s.dailyGrid, 'gggggggggg', reason: 'la grille aussi');
     expect(s.effectiveStreak, 0, reason: 'la série est effacée');
+  });
+
+  test('la remise à zéro verrouille aussi une tentative NON terminée',
+      () async {
+    // La faille : commencer le défi (verrou posé), abandonner, tout
+    // remettre à zéro → le défi redevenait jouable avec les réponses déjà
+    // vues, et le score partait au classement mondial.
+    final s = await store();
+    await s.lockDaily(now: DateTime.now());
+    expect(s.dailyFinishedToday, isFalse);
+    await s.resetAll();
+    expect(s.dailyPlayedToday, isTrue,
+        reason: 'la tentative entamée reste consommée');
+    expect(s.dailyFinishedToday, isFalse);
   });
 
   test('la remise à zéro n’invente pas de verrou si rien n’a été joué',

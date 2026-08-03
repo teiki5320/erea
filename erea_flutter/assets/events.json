@@ -3625,7 +3625,6 @@
   "niveau": 1,
   "fun": "À Carnarvon qui demandait « Voyez-vous quelque chose ? », Carter répondit : « Oui, des merveilles ! » — la tombe livra plus de 5 000 objets.",
   "id": 300,
-  "pack": "egypte",
   "pays": "Égypte",
   "continent": "afrique"
  },
@@ -5928,7 +5927,6 @@
   "emoji": "🗿",
   "niveau": 3,
   "fun": "Un second obélisque, resté à Louxor, appartenait aussi à la France : elle y a officiellement renoncé en 1981.",
-  "pack": "egypte",
   "id": 496,
   "pays": "France",
   "continent": "europe"
@@ -5941,7 +5939,6 @@
   "emoji": "👸",
   "niveau": 3,
   "fun": "Le buste, exposé à Berlin, n’a jamais reçu son œil gauche, et l’Égypte en réclame toujours le retour.",
-  "pack": "egypte",
   "id": 497,
   "pays": "Égypte",
   "continent": "afrique"
@@ -5966,7 +5963,6 @@
   "emoji": "🏗️",
   "niveau": 3,
   "fun": "Les temples furent sciés en plus de mille blocs, puis remontés 65 mètres plus haut pour échapper aux eaux du lac Nasser.",
-  "pack": "egypte",
   "id": 499,
   "pays": "Égypte",
   "continent": "afrique"
@@ -5979,7 +5975,6 @@
   "emoji": "💧",
   "niveau": 3,
   "fun": "Le barrage retient le limon qui fertilisait les champs depuis des millénaires : les paysans égyptiens doivent désormais recourir massivement aux engrais artificiels.",
-  "pack": "egypte",
   "id": 500,
   "pays": "Égypte",
   "continent": "afrique"
@@ -5992,7 +5987,6 @@
   "emoji": "✈️",
   "niveau": 3,
   "fun": "À l’aéroport du Bourget, la momie fut accueillie avec les honneurs militaires dus à un chef d’État en visite.",
-  "pack": "egypte",
   "id": 501,
   "pays": "France",
   "continent": "europe"
@@ -6005,7 +5999,6 @@
   "emoji": "🖼️",
   "niveau": 1,
   "fun": "C’est le plus grand musée du monde consacré à une seule civilisation, et le trésor complet de Toutânkhamon y est réuni pour la première fois.",
-  "pack": "egypte",
   "id": 502,
   "pays": "Égypte",
   "continent": "afrique"
@@ -14381,8 +14374,7 @@
   "niveau": 3,
   "fun": "L'opération, menée depuis Israël jusqu'en Ouganda à plus de 4000 kilomètres de distance, n'a duré qu'environ une heure sur place.",
   "continent": "asie",
-  "pays": "Israël",
-  "pack": "espace"
+  "pays": "Israël"
  },
  {
   "id": 1204,
@@ -20386,18 +20378,6 @@
   "id": 1720
  },
  {
-  "annee": 1885,
-  "titre": "Pasteur vaccine contre la rage",
-  "desc": "Louis Pasteur sauve le petit Joseph Meister, mordu par un chien enragé, grâce à son vaccin.",
-  "cat": "sciences",
-  "emoji": "💉",
-  "niveau": 1,
-  "fun": "Reconnaissant, Joseph Meister deviendra plus tard gardien… de l'Institut Pasteur.",
-  "pays": "France",
-  "continent": "europe",
-  "id": 1721
- },
- {
   "annee": 1901,
   "titre": "Marconi relie l'Atlantique par radio",
   "desc": "Un simple « S » en morse traverse l'océan sans fil, de l'Angleterre à Terre-Neuve.",
@@ -20423,8 +20403,8 @@
  },
  {
   "annee": 1965,
-  "titre": "Percée du tunnel du Mont-Blanc",
-  "desc": "France et Italie se rejoignent sous le toit de l'Europe : 11,6 km de tunnel routier.",
+  "titre": "Ouverture du tunnel du Mont-Blanc",
+  "desc": "France et Italie se rejoignent sous le toit de l'Europe : 11,6 km de tunnel routier ouverts à la circulation.",
   "cat": "sciences",
   "emoji": "⛰️",
   "niveau": 1,
@@ -20494,7 +20474,7 @@
  {
   "annee": 1985,
   "titre": "L'épave du Titanic retrouvée",
-  "desc": "Robert Ballard localise l'épave par 3 800 mètres de fond, 73 ans après le naufrage.",
+  "desc": "Robert Ballard localise l'épave par 3 800 mètres de fond, des décennies après le naufrage.",
   "cat": "sciences",
   "emoji": "🚢",
   "niveau": 1,
@@ -20522,18 +20502,6 @@
   "pays": "États-Unis",
   "continent": "ameriques",
   "id": 1732
- },
- {
-  "annee": 2004,
-  "titre": "Inauguration du viaduc de Millau",
-  "desc": "Le pont le plus haut du monde enjambe le Tarn à 343 mètres — plus haut que la tour Eiffel.",
-  "cat": "sciences",
-  "emoji": "🌉",
-  "niveau": 1,
-  "fun": "Dessiné par Norman Foster et Michel Virlogeux, il a été construit en trois ans seulement.",
-  "pays": "France",
-  "continent": "europe",
-  "id": 1733
  },
  {
   "annee": 2005,
@@ -20632,7 +20600,7 @@
  {
   "annee": 1937,
   "titre": "Blanche-Neige et les Sept Nains",
-  "desc": "Walt Disney sort le premier long métrage d'animation de l'histoire du cinéma.",
+  "desc": "Walt Disney sort son tout premier long métrage d'animation : l'âge d'or du dessin animé commence.",
   "cat": "arts",
   "emoji": "🍎",
   "niveau": 1,
@@ -20930,7 +20898,7 @@
   "id": 1766
  },
  {
-  "annee": 1997,
+  "annee": 1996,
   "titre": "Fin du service militaire",
   "desc": "Jacques Chirac annonce la suspension de la conscription : les jeunes Français ne partiront plus « à l'armée ».",
   "cat": "quotidien",
@@ -20944,7 +20912,7 @@
  {
   "annee": 2000,
   "titre": "Le grand bug informatique",
-  "desc": "La planète retient son souffle : les ordinateurs sauront-ils passer de 99 à 00 ?",
+  "desc": "La planète retient son souffle : un vieux raccourci de programmation menace de dérégler les ordinateurs au passage à la nouvelle année.",
   "cat": "quotidien",
   "emoji": "💾",
   "niveau": 1,
@@ -21067,7 +21035,7 @@
  {
   "annee": 1965,
   "titre": "Mobutu prend le pouvoir",
-  "desc": "Le colonel Mobutu s'empare du Congo par un coup d'État ; il régnera plus de trente ans.",
+  "desc": "Le général Mobutu s'empare du Congo par un coup d'État ; il régnera plus de trente ans.",
   "cat": "pouvoir",
   "emoji": "🪖",
   "niveau": 3,
@@ -21169,7 +21137,7 @@
   "id": 1785
  },
  {
-  "annee": 1962,
+  "annee": 1960,
   "titre": "« Un vieillard qui meurt, c'est une bibliothèque qui brûle »",
   "desc": "À la tribune de l'UNESCO, l'écrivain malien Amadou Hampâté Bâ défend les traditions orales de l'Afrique.",
   "cat": "arts",

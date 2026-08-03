@@ -40,8 +40,10 @@ const List<Badge> badges = [
       'serie-3', 'Trois jours', '📅', 'Trois défis du jour d’affilée', _serie3),
   Badge(
       'serie-7', 'Une semaine', '🗓️', 'Sept défis du jour d’affilée', _serie7),
-  Badge('chrono-12', 'Éclair', '⚡', 'Douze événements en Chrono', _chrono12),
-  Badge('duel', 'Duelliste', '⚔️', 'Termine un duel', _duel),
+  Badge('chrono-6000', 'Éclair', '⚡', 'Marque 6 000 points en Chrono',
+      _chrono6000),
+  Badge('roulette', 'Globe-trotteur', '🎡', 'Termine une partie de Roulette',
+      _roulette),
   Badge('100-decouvertes', 'Collectionneur', '📚', 'Découvre 100 événements',
       _centDecouvertes),
   Badge(
@@ -67,10 +69,14 @@ bool _difficile(Store s, GameController? g) =>
     g != null && g.diff == Difficulty.difficile && g.total > 0;
 bool _serie3(Store s, GameController? g) => s.effectiveStreak >= 3;
 bool _serie7(Store s, GameController? g) => s.effectiveStreak >= 7;
-bool _chrono12(Store s, GameController? g) =>
-    g != null && g.mode == GameMode.chrono && g.results.length >= 12;
-bool _duel(Store s, GameController? g) =>
-    g != null && g.mode == GameMode.duel && g.results.isNotEmpty;
+// L'ancien « Éclair » exigeait 12 manches en Chrono — le mode n'en a que
+// 10 : succès mathématiquement inatteignable, tout comme « Duelliste »
+// (aucun écran ne lance GameMode.duel). Remplacés par deux objectifs
+// réels ; les clés changent, personne n'avait pu les débloquer.
+bool _chrono6000(Store s, GameController? g) =>
+    g != null && g.mode == GameMode.chrono && g.total >= 6000;
+bool _roulette(Store s, GameController? g) =>
+    g != null && g.mode == GameMode.roulette && g.results.length >= rounds;
 bool _centDecouvertes(Store s, GameController? g) => s.discovered.length >= 100;
 bool _niveau10(Store s, GameController? g) => levelFromXp(s.xp).level >= 10;
 

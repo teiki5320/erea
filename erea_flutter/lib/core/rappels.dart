@@ -68,12 +68,19 @@ class Rappels {
       await _plugin.cancelAll();
       // Sans série en cours, il n'y a rien à sauver : on ne dérange pas.
       if (serie <= 0) return;
-      final maintenant = tz.TZDateTime.now(tz.local);
+      // tz.local n'est jamais configurée (elle vaut UTC par défaut) : un
+      // « 18 h 30 » programmé ainsi sonnait à 8 h 30 à Papeete. On calcule
+      // donc l'INSTANT ABSOLU depuis l'heure locale de l'appareil
+      // (DateTime), puis on le convertit — le fuseau du libellé importe
+      // peu, seul l'instant compte.
+      final locale = DateTime.now();
+      final maintenant = tz.TZDateTime.now(tz.UTC);
       for (var j = 0; j < 7; j++) {
         // Le défi du jour déjà joué : pas de rappel ce soir-là.
         if (j == 0 && defiFaitAujourdhui) continue;
-        var quand = tz.TZDateTime(tz.local, maintenant.year, maintenant.month,
-            maintenant.day + j, heure, minute);
+        final cibleLocale = DateTime(
+            locale.year, locale.month, locale.day + j, heure, minute);
+        final quand = maintenant.add(cibleLocale.difference(locale));
         if (quand.isBefore(maintenant)) continue;
         await _plugin.zonedSchedule(
           id: j,

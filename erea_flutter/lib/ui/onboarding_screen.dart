@@ -99,6 +99,7 @@ const List<_Page> _pages = [
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _ctrl = PageController();
+  final ScrollController _listePays = ScrollController();
   int _page = 0;
 
   /// Pays sélectionné sur la dernière page (défaut : celui de l'appareil
@@ -109,15 +110,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
     final code = region.codePaysAppareil();
+    // Même règle que le bouton « Détecter mon pays » : un appareil réglé
+    // sur un pays hors liste présélectionne « Un autre pays », pas la
+    // France — les deux chemins doivent donner la même réponse.
     _pays = paysProposes.firstWhere(
       (p) => p.iso != null && p.iso == code,
-      orElse: () => paysProposes.first,
+      orElse: () => paysProposes.last,
     );
   }
 
   @override
   void dispose() {
     _ctrl.dispose();
+    _listePays.dispose();
     super.dispose();
   }
 
@@ -149,6 +154,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     setState(() {
       _pays = trouve.isNotEmpty ? trouve.first : paysProposes.last;
     });
+    // Faire défiler la liste jusqu'à la ligne choisie : sans ça, détecter
+    // un pays hors écran ne montrait rien — le bouton semblait mort.
+    final index = paysProposes.indexOf(_pays);
+    if (_listePays.hasClients) {
+      _listePays.animateTo(
+        (index * 61.0 - 120).clamp(0.0, _listePays.position.maxScrollExtent),
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOut,
+      );
+    }
     Sons.appui();
   }
 
@@ -256,6 +271,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 12),
             Expanded(
               child: ListView.separated(
+                controller: _listePays,
                 itemCount: paysProposes.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 8),
                 itemBuilder: (context, i) => _lignePays(paysProposes[i]),

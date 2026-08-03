@@ -26,6 +26,7 @@ App Store Connect → Erea → **Game Center** → Leaderboards.
 | `erea.classic.normal` | Classique | 0 – 11000 | Record en Normal |
 | `erea.classic.facile` | Classique | 0 – 11000 | Record en Facile |
 | `erea.classic.difficile` | Classique | 0 – 11000 | Record en Difficile |
+| `erea.chrono` | Classique | 0 – 10000 | Record du mode Chrono |
 
 Format : **Entier**, tri **décroissant** (le plus grand gagne).
 
