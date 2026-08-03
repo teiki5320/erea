@@ -59,6 +59,25 @@ class Store {
   int get games => _prefs.getInt('games') ?? 0;
   Future<void> incGames() => _put(() => _prefs.setInt('games', games + 1));
 
+  /// Parcours d'accueil (présentation + choix du pays) déjà vu ?
+  bool get onboardingVu => _prefs.getBool('onboardingVu') ?? false;
+  Future<void> setOnboardingVu() =>
+      _put(() => _prefs.setBool('onboardingVu', true));
+
+  /// Pays choisi à l'accueil (nom affichable + code ISO). Vide = laisser
+  /// l'appareil décider (réglage iOS/Android).
+  String? get paysChoisiNom => _prefs.getString('paysChoisiNom');
+  String? get paysChoisiIso => _prefs.getString('paysChoisiIso');
+  Future<void> setPaysChoisi({String? nom, String? iso}) async {
+    if (nom == null || iso == null) {
+      await _put(() => _prefs.remove('paysChoisiNom'));
+      await _put(() => _prefs.remove('paysChoisiIso'));
+    } else {
+      await _put(() => _prefs.setString('paysChoisiNom', nom));
+      await _put(() => _prefs.setString('paysChoisiIso', iso));
+    }
+  }
+
   /// Records par « catKey|difficulty ». Retourne true si record battu.
   int bestFor(String key) => _prefs.getInt('best.$key') ?? 0;
   Future<bool> submitScore(String key, int total) async {

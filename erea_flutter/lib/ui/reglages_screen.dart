@@ -2,10 +2,12 @@ import 'package:flutter/material.dart' hide Badge;
 
 import '../core/classement.dart';
 import '../core/rappels.dart';
+import '../core/region.dart' as region;
 import '../core/retour.dart';
 import '../core/sons.dart';
 import '../data/store.dart';
 import '../game/badges.dart';
+import 'onboarding_screen.dart' show PaysPropose, paysProposes, drapeauIso;
 import 'sticker_widgets.dart';
 
 /// Réglages et succès. Un seul écran : le jeu n'a pas de quoi en remplir
@@ -87,6 +89,22 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
               trailing: const Icon(Icons.emoji_events, color: yellowColor),
               onTap: () => Classement.afficher(tableau: Classement.defi),
             ),
+            ListTile(
+              title: const Text('Mon pays'),
+              subtitle:
+                  const Text('Le Classique met en avant l’histoire locale'),
+              trailing: Text(
+                widget.store.paysChoisiNom == null
+                    ? '🌐 Automatique'
+                    : '${drapeauIso(widget.store.paysChoisiIso)} '
+                        '${widget.store.paysChoisiNom}',
+                style: const TextStyle(
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              onTap: _choisirPays,
+            ),
           ]),
           const SizedBox(height: 16),
           Text(
@@ -137,6 +155,38 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         clipBehavior: Clip.antiAlias,
         child: Column(children: enfants),
       );
+
+  /// Changer de pays après coup : même liste qu'au premier lancement.
+  /// « Un autre pays » = automatique (le réglage de l'appareil décide).
+  Future<void> _choisirPays() async {
+    final choix = await showModalBottomSheet<PaysPropose>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => ListView(
+        children: [
+          for (final p in paysProposes)
+            ListTile(
+              leading: Text(drapeauIso(p.iso),
+                  style: const TextStyle(fontSize: 22)),
+              title: Text(p.nom),
+              trailing: (p.iso == widget.store.paysChoisiIso &&
+                      (p.iso != null || widget.store.paysChoisiIso == null))
+                  ? const Icon(Icons.check)
+                  : null,
+              onTap: () => Navigator.of(context).pop(p),
+            ),
+        ],
+      ),
+    );
+    if (choix == null) return;
+    Sons.appui();
+    await widget.store.setPaysChoisi(
+      nom: choix.iso == null ? null : choix.nom,
+      iso: choix.iso,
+    );
+    region.paysChoisiIso = choix.iso;
+    if (mounted) setState(() {});
+  }
 
   Widget _ligneSucces(Badge b, bool obtenu) => Opacity(
         opacity: obtenu ? 1 : 0.42,

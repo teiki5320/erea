@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'dart:async';
 
+import 'core/region.dart' as region;
 import 'core/retour.dart';
 import 'core/sons.dart';
 import 'data/events_repository.dart';
 import 'data/store.dart';
 import 'ui/home_screen.dart';
+import 'ui/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +26,9 @@ Future<void> main() async {
     }
     Retour.actif = store.hapticsOn;
     Sons.actif = store.soundOn;
+    // Le pays choisi au premier lancement nourrit le mélange régional du
+    // Classique — posé ici pour être prêt avant la première partie.
+    region.paysChoisiIso = store.paysChoisiIso;
     unawaited(Sons.preparer());
     runApp(EreaApp(repo: repo, store: store));
   } catch (e) {
@@ -94,11 +99,23 @@ class EreaColors {
   static const bg2 = Color(0xFFEAF4FF);
 }
 
-class EreaApp extends StatelessWidget {
+class EreaApp extends StatefulWidget {
   const EreaApp({super.key, required this.repo, required this.store});
 
   final EventsRepository repo;
   final Store store;
+
+  @override
+  State<EreaApp> createState() => _EreaAppState();
+}
+
+class _EreaAppState extends State<EreaApp> {
+  EventsRepository get repo => widget.repo;
+  Store get store => widget.store;
+
+  /// Premier lancement : la présentation puis le choix du pays, comme sur
+  /// Kultiva. Les lancements suivants vont droit à l'accueil.
+  late bool _onboarding = !store.onboardingVu;
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +143,12 @@ class EreaApp extends StatelessWidget {
       title: 'Erea',
       debugShowCheckedModeBanner: false,
       theme: base.copyWith(textTheme: _textTheme(base.textTheme)),
-      home: HomeScreen(repo: repo, store: store),
+      home: _onboarding
+          ? OnboardingScreen(
+              store: store,
+              onTermine: () => setState(() => _onboarding = false),
+            )
+          : HomeScreen(repo: repo, store: store),
     );
   }
 }

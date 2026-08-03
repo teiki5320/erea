@@ -25,7 +25,7 @@ void main() {
   });
 
   setUp(() {
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboardingVu': true});
   });
 
   Future<void> pumpApp(WidgetTester tester,
@@ -318,7 +318,7 @@ void main() {
     // On démarre AVEC les animations : la dérive d'époque tourne.
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures();
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboardingVu': true});
     await tester.pumpWidget(EreaApp(repo: repo, store: await Store.load()));
     await tester.pump();
     expect(tester.binding.hasScheduledFrame, isTrue,
@@ -348,7 +348,7 @@ void main() {
     addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     tester.platformDispatcher.accessibilityFeaturesTestValue =
         const FakeAccessibilityFeatures();
-    SharedPreferences.setMockInitialValues({});
+    SharedPreferences.setMockInitialValues({'onboardingVu': true});
     await tester.pumpWidget(EreaApp(repo: repo, store: await Store.load()));
     await tester.pump();
 

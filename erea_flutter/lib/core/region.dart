@@ -20,14 +20,24 @@ const Set<String> _paysAfricains = {
   'TZ', 'TG', 'TN', 'UG', 'ZM', 'ZW',
 };
 
+/// Pays CHOISI par le joueur dans le parcours d'accueil (code ISO), posé
+/// au démarrage depuis le Store puis mis à jour par l'écran de choix.
+/// Prioritaire sur le réglage de l'appareil : un choix explicite vaut
+/// toujours mieux qu'une déduction.
+String? paysChoisiIso;
+
 /// Forçage pour les tests : court-circuite la lecture de l'appareil.
 @visibleForTesting
 String? regionForcee;
 
-String? _codePays() =>
+/// Pays du RÉGLAGE de l'appareil, sans tenir compte du choix du joueur.
+/// Sert au bouton « Détecter mon pays » et à la présélection de l'accueil.
+String? codePaysAppareil() =>
     regionForcee ?? PlatformDispatcher.instance.locale.countryCode;
 
-/// Le joueur est-il (d'après le réglage de son appareil) en Afrique ?
+String? _codePays() => regionForcee ?? paysChoisiIso ?? codePaysAppareil();
+
+/// Le joueur est-il en Afrique (pays choisi, sinon réglage de l'appareil) ?
 bool get joueurEnAfrique {
   final code = _codePays();
   return code != null && _paysAfricains.contains(code.toUpperCase());
