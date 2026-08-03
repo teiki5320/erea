@@ -306,9 +306,19 @@ class _TapePainter extends CustomPainter {
         (1 - (bigFont * 1.5 + 10) / size.height).clamp(0.66, 0.84);
     for (var i = 0; i < eras.length; i++) {
       final e = eras[i];
-      final left = _px(e.from);
-      final right = _px(e.to);
-      if (!visible(left, right)) continue; // époque hors écran
+      // Bornes RÉELLES de l'époque sur le ruban : tout ce qui doit rester
+      // stable au défilement (tuiles, personnages, pastilles de nom) s'y
+      // ancre.
+      final bandLeft = _px(e.from);
+      final bandRight = _px(e.to);
+      if (!visible(bandLeft, bandRight)) continue; // époque hors écran
+      // Bornes DESSINÉES : aux deux bouts du ruban, la bande file jusqu'au
+      // bord de l'écran. Sur un écran large (iPad), on voyait sinon un
+      // vide sombre avant -3000 — comme si le temps s'arrêtait au pixel.
+      final left = i == 0 ? math.min(bandLeft, visLeft - 24) : bandLeft;
+      final right = i == eras.length - 1
+          ? math.max(bandRight, visRight + 24)
+          : bandRight;
       final rrect = RRect.fromRectAndRadius(
         Rect.fromLTRB(left, 0, right, size.height),
         const Radius.circular(16),
@@ -323,8 +333,15 @@ class _TapePainter extends CustomPainter {
         final tileW = bandBottom * src.width / src.height;
         final period = tileW * 2;
         final phase = (frac * tapeW * shift) % period;
+        // Origine ancrée au début RÉEL de l'époque (sinon les tuiles de la
+        // bande étendue « nageraient » avec l'écran), reculée de périodes
+        // entières pour couvrir l'extension — la parité miroir tient.
+        var x0 = bandLeft + phase - period;
+        while (x0 > left) {
+          x0 -= period;
+        }
         var j = 0;
-        for (var x = left + phase - period; x < right; x += tileW, j++) {
+        for (var x = x0; x < right; x += tileW, j++) {
           // `j` continue de compter : l'alternance miroir des tuiles ne
           // dépend pas de ce qui est à l'écran.
           if (!visible(x, x + tileW)) continue;
@@ -390,7 +407,7 @@ class _TapePainter extends CustomPainter {
           final fh = trav.height.toDouble();
           final sprH = bandBottom * 0.40;
           final sprW = sprH * fw / fh;
-          final bandW = right - left;
+          final bandW = bandRight - bandLeft;
           final n = math.max(1, bandW ~/ 640);
           final spacing = bandW / n;
           // Les personnages avancent réellement : ils traversent leur
@@ -400,7 +417,7 @@ class _TapePainter extends CustomPainter {
           final sprTop = bandBottom - sprH - 2 + sprH * spec.dyFrac;
           for (var k = 0; k < n; k++) {
             final off = (spacing * (k + 0.5) - drift) % bandW;
-            final x = left + off - sprW / 2;
+            final x = bandLeft + off - sprW / 2;
             var fi = 0;
             if (frames > 1) {
               fi = ((frac * tapeW / 24).floor() + k) % frames;
@@ -427,7 +444,8 @@ class _TapePainter extends CustomPainter {
             letterSpacing: 3);
         tp.paint(
           canvas,
-          Offset((left + right) / 2 - tp.width / 2, size.height * 0.14),
+          Offset((bandLeft + bandRight) / 2 - tp.width / 2,
+              size.height * 0.14),
         );
       }
 
@@ -436,11 +454,11 @@ class _TapePainter extends CustomPainter {
       if (bg != null || img != null) {
         final label = _text(e.name.toUpperCase(), 11, const Color(0xFF5F6890),
             letterSpacing: 1.5);
-        final bandW = right - left;
+        final bandW = bandRight - bandLeft;
         final n = math.max(1, bandW ~/ 560);
         final spacing = bandW / n;
         for (var k = 0; k < n; k++) {
-          final cx = left + spacing * (k + 0.5);
+          final cx = bandLeft + spacing * (k + 0.5);
           if (!visible(cx - label.width / 2 - 7, cx + label.width / 2 + 7)) {
             continue;
           }
@@ -462,11 +480,12 @@ class _TapePainter extends CustomPainter {
       }
     }
 
-    // Ligne de base (bornée à la fenêtre visible : même trait à l'écran)
+    // Ligne de base : toute la fenêtre visible, y compris sous les bandes
+    // de bord étendues — le trait ne doit pas s'arrêter avant l'écran.
     final baseY = bandBottom;
     canvas.drawLine(
-      Offset(math.max(0, visLeft), baseY),
-      Offset(math.min(tapeW, visRight), baseY),
+      Offset(visLeft, baseY),
+      Offset(visRight, baseY),
       Paint()
         ..color = const Color(0x8C35406B)
         ..strokeWidth = 3,
