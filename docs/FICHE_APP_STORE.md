@@ -1,82 +1,151 @@
-# Remplir la fiche App Store — mode d'emploi
+# Remplir la fiche App Store — Erea
 
-> Écrit le 4 août 2026. Tous les textes ci-dessous sont prêts à
-> copier-coller dans App Store Connect. Les limites de caractères
-> d'Apple sont respectées.
+> Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect
+> et la documentation Apple à jour. Les valeurs des blocs gris sont à
+> copier-coller telles quelles.
 
-L'ordre compte : certaines sections en débloquent d'autres. Suis les
-étapes dans l'ordre, coche au fur et à mesure.
+L'interface découpe la fiche en **deux pages différentes**, et c'est ce
+qui perd tout le monde :
+
+| Page | Ce qu'elle contient |
+|---|---|
+| **Informations sur l'app** | ce qui ne change jamais : nom, sous-titre, catégories, âge |
+| **iOS 1.0** *(colonne de gauche)* | ce qui appartient à cette version : captures, description, mots-clés, **droits d'auteur**, build |
+
+Suis l'ordre ci-dessous, il correspond à l'ordre des écrans.
 
 ---
 
-## Étape 1 — Informations sur l'app *(valable pour toutes les versions)*
+# PAGE 1 — Distribution → Informations sur l'app
 
-App Store Connect → **Erea** → Distribution → **Informations sur l'app**
+## Informations localisables *(sélecteur « Français » en haut à droite)*
 
-**Nom** (30 caractères max) :
+**Nom** — 30 caractères maximum
+
 ```
 Erea — Devine l'année !
 ```
 
-**Sous-titre** (30 caractères max) :
+*(Tu as saisi « Erea » tout court, ce qui est valable. Le nom est le
+champ le plus fortement indexé par la recherche App Store : la version
+longue te fait remonter sur « devine » et « année ». À toi de choisir
+entre visibilité et sobriété.)*
+
+**Sous-titre** — 30 caractères maximum ✅ déjà rempli
+
 ```
 Le jeu d'histoire en famille
 ```
 
-**Catégorie principale** : Jeux → sous-catégories **Quiz** et **Famille**
-**Catégorie secondaire** : Éducation
+## Informations générales
 
-**Droits d'auteur** :
-```
-2026 Teiki
-```
+**Catégorie principale** → **Jeux**
+Deux sous-catégories apparaissent alors, choisis :
+- **Quiz**
+- **Famille**
 
-**Classification par âge** : réponds **non** à toutes les questions du
-questionnaire → tu obtiendras **4+**. C'est exact : aucun contenu
-sensible, aucune interaction avec des inconnus (Game Center gère les
-classements sans chat), pas de pub, pas d'achat.
+**Catégorie secondaire** → **Éducation**
+
+**Droits relatifs au contenu** → clique sur « Configurer », puis réponds
+**non** : ton app ne contient aucun contenu appartenant à des tiers. Les
+textes, les dates et les visuels sont les tiens.
+
+**Contrat de licence** → laisse le contrat type d'Apple.
+
+## Classifications par âge
+
+Apple a refondu ce questionnaire : les paliers sont désormais 4+, 9+,
+**13+, 16+, 18+** (12+ et 17+ ont disparu), et les questions sont
+beaucoup plus détaillées. Clique sur « Configurer les classifications
+par âge » et réponds ainsi :
+
+| Catégorie | Réponse |
+|---|---|
+| Contrôles intégrés (contrôle parental, validation de l'âge) | Aucun |
+| Capacités (accès web libre, contenu généré par les utilisateurs, réseaux sociaux) | Aucune |
+| Thèmes matures (vulgarité, horreur, références à…) | Aucun |
+| Médical ou bien-être | Aucun |
+| Sexualité ou nudité | Aucune |
+| Violence | **Aucune** |
+| Activités basées sur le hasard | **Aucune** |
+
+Résultat attendu : **4+**.
+
+Deux réponses méritent une explication, au cas où tu hésiterais :
+
+- **Violence** — le jeu évoque des guerres et des batailles, mais la
+  question porte sur des *scènes* de violence, animées ou réalistes.
+  Erea n'affiche que du texte et une frise. Donc aucune.
+- **Activités basées sur le hasard** — la Roulette des drapeaux tire un
+  pays au sort, mais la question vise les jeux d'argent, les simulations
+  de casino et les coffres à butin. Rien de tout cela ici.
+
+## Documents sur le chiffrement des apps
+
+**Rien à faire.** C'est déjà déclaré dans le code de l'app
+(`ITSAppUsesNonExemptEncryption = false` dans `Info.plist`). Ne charge
+aucun document.
+
+## Réglementations et autorisations de l'App Store
+
+**Législation sur les services numériques (DSA)** — obligatoire, et sans
+elle **ton app ne sera pas distribuée dans l'Union européenne**.
+
+Tu dois déclarer si tu es « trader » (professionnel) ou non. Un
+développeur particulier qui publie une app **gratuite, sans publicité et
+sans achat intégré** peut se déclarer **non-trader**. C'est ton cas
+aujourd'hui.
+
+⚠️ Le jour où tu ajouteras « Erea + » (achat unique), tu deviendras
+trader et il faudra repasser la déclaration, avec adresse postale et
+téléphone qui seront **affichés publiquement** sur ta fiche dans l'UE.
+
+**Licence de jeu pour le Vietnam** — laisse vide, c'est facultatif.
+
+Clique sur **Enregistrer** en haut à droite.
 
 ---
 
-## Étape 2 — Confidentialité *(la section qui fait ta différence)*
+# PAGE 2 — Distribution → iOS 1.0
 
-App Store Connect → Erea → **Confidentialité de l'app**
+## Captures d'écran
 
-Réponds : **« Non, nous ne collectons pas de données de cette app. »**
+Deux tailles à fournir, les autres sont générées automatiquement par
+Apple :
 
-C'est la stricte vérité et c'est vérifiable : aucun analytics, aucun
-traceur, aucun serveur (voir `docs/INFRA.md`). Tu obtiens le badge
-« Aucune donnée collectée » sur ta fiche — rare dans les jeux, et
-rassurant pour les parents.
+| Appareil | Dimensions exactes | Nombre |
+|---|---|---|
+| **iPhone 6,9"** | 1320 × 2868 px (portrait) | 3 à 10 |
+| **iPad 13"** | 2064 × 2752 px (portrait) **ou** 2752 × 2064 px (paysage) | 3 à 10 |
 
-⚠️ Game Center ne change rien à cette réponse : c'est Apple qui gère
-l'identité et les scores, pas toi.
+Formats acceptés : PNG ou JPEG, **sans transparence**.
 
-**URL de politique de confidentialité** — champ **obligatoire**, même
-sans collecte. Il te faut une page en ligne. Voir l'étape 6.
+Tes captures iPad actuelles (2752 × 2064) sont donc **au bon format**.
 
----
+**Les 6 écrans à capturer, dans cet ordre** — les deux premiers sont les
+seuls visibles sans faire défiler, ce sont eux qui décident du
+téléchargement :
 
-## Étape 3 — Tarifs et disponibilité
+1. Une partie en cours, la frise bien visible
+2. Une révélation réussie, idéalement un **PERFECT 🎯**
+3. Le défi du jour
+4. L'écran de fin avec la grille de partage
+5. Le mode Chrono, chronomètre en vue
+6. La Roulette des drapeaux
 
-- **Prix** : Gratuit
-- **Disponibilité** : tous les pays (le jeu est en français, mais rien
-  n'empêche un francophone de l'étranger de le télécharger — et ça
-  compte pour le Sénégal, la Côte d'Ivoire, la Belgique, le Québec…)
-- **Distribution App Store** : cochée
+## Aperçu de l'app *(facultatif)*
 
----
+Une vidéo de 15 à 30 s. À garder pour plus tard — mais le geste de
+défilement de la frise s'y prêterait très bien.
 
-## Étape 4 — La version 1.0
+## Texte promotionnel — 170 caractères, modifiable sans mise à jour
 
-App Store Connect → Erea → **iOS 1.0** (colonne de gauche)
-
-### Texte promotionnel (170 caractères, modifiable sans mise à jour)
 ```
 Nouveau : le mode Chrono, 10 secondes par question. Et un classement mondial pour chaque difficulté.
 ```
 
-### Description (4000 caractères max)
+## Description — 4 000 caractères, texte brut
+
 ```
 Un événement s'affiche. Une frise du temps défile sous votre doigt. En quelle année ?
 
@@ -110,109 +179,140 @@ Erea ne collecte aucune donnée, n'affiche aucune publicité et ne demande aucun
 Bonne partie !
 ```
 
-### Mots-clés (100 caractères max, séparés par des virgules SANS espace)
+## Mots-clés — **100 octets**, séparés par des virgules sans espace
+
 ```
 quiz,frise,chronologie,date,culture,générale,brevet,éducatif,afrique,collège,révision,enfant
 ```
-*(92 caractères. Inutile d'y remettre « histoire », « jeu », « famille »
-ou « année » : Apple indexe déjà le nom et le sous-titre.)*
 
-### Nouveautés de cette version
-```
-Première version d'Erea. Bon voyage dans le temps !
-```
+⚠️ Apple compte en **octets**, pas en caractères : chaque lettre accentuée
+en vaut deux. Cette liste fait 92 caractères mais **97 octets** — elle
+passe de justesse, donc si tu la modifies, retire un mot avant d'en
+ajouter un. Inutile d'y remettre « histoire », « jeu », « famille » ou
+« année » : le nom et le sous-titre sont déjà indexés.
 
-### URL marketing
-```
-https://teiki5320.github.io/erea/
-```
+## URL d'assistance — obligatoire
 
-### URL de support
-Champ **obligatoire**. Voir l'étape 6.
-
----
-
-## Étape 5 — Captures d'écran
-
-Deux tailles seulement sont exigées aujourd'hui ; Apple dérive les
-autres automatiquement.
-
-| Appareil | Dimensions exactes | Nombre |
-|---|---|---|
-| iPhone 6,9" | 1320 × 2868 px (portrait) | 3 minimum, 10 max |
-| iPad 13" | 2064 × 2752 px (portrait) | 3 minimum, 10 max |
-
-**Les 6 captures à faire, dans cet ordre** (l'ordre compte : les deux
-premières sont les seules visibles sans faire défiler) :
-
-1. Une partie en cours, la frise bien visible
-2. Une révélation réussie — idéalement un **PERFECT 🎯**
-3. Le défi du jour avec une série en cours 🔥
-4. L'écran de fin avec la grille de partage
-5. Le mode Chrono, chronomètre en vue
-6. L'album de collection
-
-**Comment les prendre :** ouvre le simulateur (Xcode → Open Developer
-Tool → Simulator), choisis **iPhone 16 Pro Max** puis **iPad Pro 13"**,
-lance l'app, et fais **Cmd + S** à chaque écran (la capture atterrit sur
-le Bureau, déjà aux bonnes dimensions).
-
-💡 Je peux aussi te les générer automatiquement aux deux formats depuis
-le dépôt — dis-le-moi si tu préfères.
-
----
-
-## Étape 6 — Les deux pages web obligatoires ✅
-
-Apple exige une URL de **support** et une URL de **politique de
-confidentialité**. Les deux sont écrites, en ligne sur le GitHub Pages
-du dépôt, et affichent `erea.toa@gmail.com` comme contact :
-
-**URL d'assistance**
 ```
 https://teiki5320.github.io/erea/support.html
 ```
 
-**URL de politique de confidentialité**
+## URL marketing — facultative
+
+```
+https://teiki5320.github.io/erea/
+```
+
+## Version
+
+```
+1.0
+```
+
+## Informations générales sur l'app *(en bas de page)*
+
+**👉 C'est ici que se trouve « Droits d'auteur »**, et non sur la page
+précédente.
+
+```
+2026 Teiki
+```
+
+L'année d'abord, puis le nom du détenteur. **Ne mets pas le symbole ©** :
+App Store Connect l'ajoute lui-même à l'affichage.
+
+*(Si ton compte développeur est enregistré sous ton nom complet, mets
+plutôt celui-là : c'est ce qu'Apple affiche déjà comme vendeur.)*
+
+## Build
+
+Sélectionne la version envoyée par Xcode Cloud. Elle apparaît une fois
+le traitement d'Apple terminé, soit environ 15 minutes après la fin du
+build.
+
+## Game Center
+
+Clique sur **Configurer**, puis **ajoute les 6 classements** à cette
+version :
+
+```
+erea.daily · erea.streak · erea.classic.facile
+erea.classic.normal · erea.classic.difficile · erea.chrono
+```
+
+Sans cette étape, ils resteront en « Finaliser avant soumission » et ne
+seront jamais publiés.
+
+## Informations pour la revue *(non visibles du public)*
+
+Trois champs obligatoires : **ton nom**, **ton e-mail**, **ton numéro de
+téléphone**. Prépare-les, Apple les exige pour joindre le développeur
+pendant l'examen.
+
+Pas de compte de démonstration à fournir : l'app n'a pas de connexion.
+
+Dans **Notes**, ce texte évitera un aller-retour avec le testeur :
+
+```
+L'app fonctionne entièrement hors ligne, sans compte ni inscription.
+
+Les classements mondiaux passent par Game Center : la fenêtre de connexion apparaît à la fin de la première partie, jamais au lancement. Si Game Center est désactivé sur l'appareil de test, le jeu reste entièrement jouable — les classements sont simplement masqués.
+
+Le Défi du jour n'est jouable qu'une fois par jour (c'est le principe du mode : les mêmes 10 questions pour tous les joueurs). Pour tester plusieurs parties, utilisez le mode Classique.
+```
+
+## Publication de la version
+
+Choisis **Publier automatiquement** — l'app sortira dès qu'Apple l'aura
+validée.
+
+---
+
+# PAGE 3 — Tarifs et disponibilité
+
+- **Prix** : Gratuit
+- **Disponibilité** : tous les pays *(le jeu est en français, mais ça
+  couvre la Belgique, la Suisse, le Québec, le Sénégal, la Côte
+  d'Ivoire…)*
+
+---
+
+# PAGE 4 — Confidentialité de l'app
+
+Réponds : **« Non, nous ne collectons pas de données de cette app. »**
+
+C'est exact et vérifiable : aucun analytics, aucun traceur, aucun
+serveur. Tu obtiens le badge **« Aucune donnée collectée »**, rare dans
+les jeux et rassurant pour les parents.
+
+Game Center ne change rien à cette réponse : c'est Apple qui gère
+l'identité et les scores, pas toi.
+
+**URL de politique de confidentialité** :
+
 ```
 https://teiki5320.github.io/erea/confidentialite.html
 ```
 
-À coller telles quelles dans App Store Connect (la première dans la
-version 1.0, la seconde dans « Confidentialité de l'app »).
+---
+
+# Envoyer à la revue
+
+Quand tout est vert dans la colonne de gauche, clique sur **Ajouter à la
+revue**.
+
+Compte 24 à 48 heures. En cas de refus, Apple explique précisément quoi
+corriger — ce n'est jamais définitif, et un rejet au premier envoi est
+banal.
 
 ---
 
-## Étape 7 — Rattacher le build et Game Center
+# Ce qu'il reste à préparer
 
-1. Dans la version 1.0, section **Build** : choisis la version envoyée
-   par Xcode Cloud (elle apparaît une fois le traitement terminé,
-   environ 15 minutes après le build).
-2. Section **Game Center** : clique sur **Configurer**, puis **ajoute
-   les 6 classements** à cette version. Sans ça, ils resteront en
-   « Finaliser avant soumission » et ne seront pas publiés.
-
----
-
-## Étape 8 — Envoyer à la revue
-
-Vérifie une dernière fois que tout est vert dans la colonne de gauche,
-puis **Ajouter à la revue**.
-
-Réponds **non** à « Utilise-t-elle un chiffrement ? » (c'est déjà
-déclaré dans le code via `ITSAppUsesNonExemptEncryption`).
-
-Compte 24 à 48 heures de délai. En cas de refus, Apple explique
-précisément quoi corriger — ce n'est jamais définitif.
-
----
-
-## Récapitulatif : ce qui bloque, et par qui
-
-| Élément | Qui |
+| Élément | État |
 |---|---|
-| Textes de la fiche (nom, description, mots-clés) | ✅ prêts ci-dessus, à copier |
-| Captures d'écran | Toi (iPhone + iPad, après le build en cours) |
-| Pages support + confidentialité | ✅ en ligne, URL ci-dessus |
-| Classement par âge, prix, disponibilité | Toi (quelques clics) |
-| Rattacher build + classements | Toi |
+| Textes (nom, sous-titre, description, mots-clés, notes) | ✅ prêts ci-dessus |
+| URL d'assistance et de confidentialité | ✅ en ligne |
+| Captures iPhone 6,9" et iPad 13" | ⬜ **à refaire après le build en cours** |
+| Ton téléphone pour les infos de revue | ⬜ à saisir |
+| Catégories, âge, DSA, droits de contenu | ⬜ quelques clics |
