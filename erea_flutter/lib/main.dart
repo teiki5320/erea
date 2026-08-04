@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'dart:async';
 
@@ -12,6 +13,11 @@ import 'ui/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Heure et batterie en SOMBRE : tous les écrans d'Erea sont sur fond
+  // crème. Sans cette ligne, iOS gardait le blanc par défaut tant qu'aucun
+  // écran à AppBar n'avait été ouvert — l'heure était illisible sur toute
+  // la présentation du premier lancement.
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
   try {
     // Les deux chargements sont indépendants : les mener de front rogne
     // quelques dizaines de ms sur le premier affichage.
@@ -123,6 +129,11 @@ class _EreaAppState extends State<EreaApp> {
     // bouton principal marron au lieu du corail du design system.
     final base = ThemeData(
       useMaterial3: true,
+      // Un AppBar reprend la main sur la barre d'état à chaque montage :
+      // on lui impose le même style sombre qu'au démarrage.
+      appBarTheme: const AppBarTheme(
+        systemOverlayStyle: SystemUiOverlayStyle.dark,
+      ),
       colorScheme: const ColorScheme.light(
         primary: EreaColors.coral,
         onPrimary: Colors.white,
