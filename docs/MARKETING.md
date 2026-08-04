@@ -81,7 +81,7 @@ ou d'abonnement dans `pubspec.yaml`.
 |---|---|---|
 | Partage de grille (bouche-à-oreille) | Grille emoji sans spoiler + série 🔥, bouton « 📋 Copier ma grille » (`lib/ui/game_screen.dart`) | ✅ copie presse-papiers · ⬜ feuille de partage native (`share_plus`) avec lien App Store dans le texte |
 | Défi du jour + rappel | Mêmes questions pour tous, une tentative/jour, rappel local 18 h 30 (`lib/core/rappels.dart`) — le moteur de rétention qui alimente le partage | ✅ |
-| Classements mondiaux | Game Center : défi, série, Classique ×3, Chrono (`lib/core/classement.dart`) | ✅ code · ⬜ console App Store Connect (voir `ios/GAME_CENTER.md`) |
+| Classements mondiaux | Game Center : défi, série, Classique ×3, Chrono (`lib/core/classement.dart`) | ✅ actif depuis le 4 août 2026, vérifié sur appareil réel · ⬜ attacher les classements à la version avant soumission |
 | Prototype web comme vitrine | `teiki5320.github.io/erea` : jouable sans installer, balises OpenGraph/Twitter + schema.org déjà en place (`index.html`) | ✅ vitrine · ⬜ bandeau « Disponible sur l'App Store » + Smart App Banner une fois l'app publiée |
 | Enseignants & parents | Dossier d'une page « Erea en classe » (repères du brevet couverts, mode Facile, zéro pub/collecte) à envoyer aux profs d'histoire-géo, groupes Facebook de profs, La Salle des Maîtres | ⬜ |
 | Afrique de l'Ouest | Mise en avant du pack Afrique auprès des communautés éducatives francophones (Sénégal, Côte d'Ivoire…) ; presse tech locale ; créateurs de contenu éducation | ⬜ |
@@ -128,9 +128,9 @@ ferait perdre le « aucune donnée collectée » de la fiche.
 
 ## 7. Prochaines actions, dans l'ordre
 
-1. ⬜ **Finir Game Center côté console** (capacité App ID + 6 classements —
-   `ios/GAME_CENTER.md`) : le défi du jour mondial est le moteur de tout
-   le plan.
+1. ✅ **Game Center** (capacité App ID + 6 classements + entitlement) —
+   fait le 4 août 2026, vérifié sur appareil réel. Le défi du jour
+   mondial, moteur de tout le plan, est en service.
 2. ⬜ **Préparer la fiche App Store** : nom, sous-titre, mots-clés,
    description, captures (§3) + déclaration « aucune donnée collectée ».
 3. ⬜ **Passer le partage en feuille native** (`share_plus`) en gardant la

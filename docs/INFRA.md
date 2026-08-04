@@ -54,8 +54,8 @@ sont gérés automatiquement par Apple (Xcode / Xcode Cloud). Rien à
 sauvegarder dans le dépôt, rien à copier sur une machine neuve.
 
 **Reprise :** accès au compte Apple Developer (rôle Admin ou App Manager
-de la team `K597U7X3FZ`). Action en attente ici : **activer la capacité
-Game Center sur l'App ID** (voir `erea_flutter/ios/GAME_CENTER.md`).
+de la team `K597U7X3FZ`). La capacité **Game Center** est activée sur
+l'App ID depuis le 4 août 2026.
 
 ---
 
@@ -126,12 +126,16 @@ main ; les déclencheurs du workflow sont à vérifier dans la console.
 | `erea.classic.facile` / `.normal` / `.difficile` | Classique | 0–11000 | idem |
 | `erea.chrono` | Classique | 0–10000 | idem |
 
-**État actuel :** le code échoue en silence tant que Game Center n'est pas
-activé. `erea_flutter/ios/Runner/Runner.entitlements` existe mais n'est
-**volontairement pas** rattaché au `project.pbxproj` : l'ordre exact des
-opérations (capacité → classements → entitlement) est documenté dans
-`erea_flutter/ios/GAME_CENTER.md` — le rattacher trop tôt casse la
-signature.
+**État actuel : actif depuis le 4 août 2026.** Capacité cochée sur l'App
+ID, six classements créés, entitlement déclaré dans les trois
+configurations du target Runner, build vérifié sur appareil réel.
+L'ordre des opérations (capacité → classements → entitlement) reste
+documenté dans `erea_flutter/ios/GAME_CENTER.md` : le rattacher trop tôt
+casse la signature, ce qui compte si l'App ID est un jour recréé.
+
+Reste à faire avant la soumission : **attacher les classements à la
+version** dans App Store Connect (ils sont en « Finaliser avant
+soumission »).
 
 **Secrets :** aucun. Game Center n'utilise ni clé d'API ni jeton.
 
