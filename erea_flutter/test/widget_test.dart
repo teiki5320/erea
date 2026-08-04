@@ -3,6 +3,7 @@ import 'package:erea/data/events_repository.dart';
 import 'package:erea/data/store.dart';
 import 'package:erea/game/game_controller.dart';
 import 'package:erea/main.dart';
+import 'package:erea/ui/roulette_screen.dart';
 import 'package:erea/ui/sticker_widgets.dart';
 import 'package:erea/ui/tape_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,10 @@ const Size _iphone14 = Size(390, 844);
 
 /// iPhone SE (2e/3e génération) : le plus petit écran encore supporté.
 const Size _iphoneSE = Size(375, 667);
+
+/// iPad Pro 13" en paysage — le format des captures de l'App Store, et
+/// celui qui révélait les écrans étirés.
+const Size _ipadPaysage = Size(1366, 1024);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -493,6 +498,53 @@ void main() {
     await tester.tap(find.byIcon(Icons.close));
     await tester.pumpAndSettle();
     expect(find.textContaining('tentative du défi du jour'), findsOneWidget);
+  });
+
+  testWidgets('sur iPad, le contenu de l’accueil reste borné et centré',
+      (tester) async {
+    // L'app était dessinée pour l'iPhone et simplement étirée : sur une
+    // dalle d'iPad, les tuiles traversaient l'écran et un grand vide
+    // s'ouvrait sous le classement.
+    await pumpApp(tester, size: _ipadPaysage);
+
+    final largeurs = tester
+        .widgetList<Container>(find.descendant(
+          of: find.byType(SingleChildScrollView),
+          matching: find.byType(Container),
+        ))
+        .map((c) => tester.getSize(find.byWidget(c)).width)
+        .where((w) => w > 0);
+    expect(largeurs, isNotEmpty);
+    expect(largeurs.every((w) => w <= 620), isTrue,
+        reason: 'aucun bloc ne doit s’étaler sur toute la dalle');
+    // Un débordement ferait échouer le test tout seul (exception Flutter).
+    expect(find.text('Classique'), findsOneWidget);
+  });
+
+  testWidgets('les drapeaux de la roulette grandissent avec l’écran',
+      (tester) async {
+    Future<double> tailleDrapeau(Size ecran) async {
+      tester.view.physicalSize = ecran;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(MaterialApp(
+        home: RouletteScreen(repo: repo, seen: const {}),
+      ));
+      await tester.pump();
+      // Un drapeau = deux lettres régionales, donc deux runes.
+      final textes = tester.widgetList<Text>(find.byType(Text)).where(
+          (t) => (t.data ?? '').runes.length == 2 && t.style?.fontSize != null);
+      expect(textes, isNotEmpty, reason: 'des drapeaux sont affichés');
+      return textes.first.style!.fontSize!;
+    }
+
+    final surTelephone = await tailleDrapeau(_iphone14);
+    final surTablette = await tailleDrapeau(_ipadPaysage);
+
+    expect(surTelephone, greaterThan(70),
+        reason: 'à 52 px, les drapeaux étaient illisibles sur téléphone');
+    expect(surTablette, greaterThan(surTelephone),
+        reason: 'et perdus au milieu d’un iPad');
   });
 
   test('le contrôleur de partie enchaîne bien 10 manches', () async {

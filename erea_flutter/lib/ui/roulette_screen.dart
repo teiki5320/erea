@@ -30,8 +30,28 @@ class RouletteScreen extends StatefulWidget {
 
 class _RouletteScreenState extends State<RouletteScreen>
     with SingleTickerProviderStateMixin {
-  static const double _cellule = 92;
   static const int _tours = 4;
+
+  /// Largeur d'une case de la roue, donc taille des drapeaux. Elle suit
+  /// l'écran : à 92 px fixes, les drapeaux étaient minuscules sur
+  /// téléphone et carrément perdus au milieu d'un iPad.
+  ///
+  /// Elle est FIGÉE pendant que la roue tourne : `_distance` est calculée
+  /// une fois au lancement, et un changement de largeur en cours de route
+  /// (rotation de l'iPad) ferait s'arrêter la roue à côté du pays tiré.
+  double _cellule = 128;
+
+  void _mesurer(double largeurEcran) {
+    if (_lance) return;
+    _cellule = largeurEcran >= 700
+        ? 208
+        : largeurEcran >= 430
+            ? 148
+            : 128;
+  }
+
+  double get _drapeau => _cellule * .60;
+  double get _hauteurCase => _cellule * 1.02;
 
   late final List<String> _pays;
   late final AnimationController _ctrl;
@@ -114,6 +134,7 @@ class _RouletteScreenState extends State<RouletteScreen>
   @override
   Widget build(BuildContext context) {
     final termine = _termine;
+    _mesurer(MediaQuery.sizeOf(context).width);
     return Scaffold(
       backgroundColor: const Color(0xFFFDF6E9),
       body: SafeArea(
@@ -161,7 +182,7 @@ class _RouletteScreenState extends State<RouletteScreen>
   /// répétée à l'infini par modulo : inutile de construire des milliers
   /// de cellules pour quatre tours.
   Widget _roue() => SizedBox(
-        height: 130,
+        height: _hauteurCase + 12,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -196,11 +217,11 @@ class _RouletteScreenState extends State<RouletteScreen>
             ),
             IgnorePointer(
               child: Container(
-                width: _cellule - 8,
-                height: 118,
+                width: _cellule - 10,
+                height: _hauteurCase,
                 decoration: BoxDecoration(
                   border: Border.all(color: coralColor, width: 4),
-                  borderRadius: BorderRadius.circular(22),
+                  borderRadius: BorderRadius.circular(_cellule * .2),
                 ),
               ),
             ),
@@ -212,9 +233,9 @@ class _RouletteScreenState extends State<RouletteScreen>
     final pays = _pays[index % _pays.length];
     return SizedBox(
       width: _cellule,
-      height: 118,
+      height: _hauteurCase,
       child: Center(
-        child: Text(drapeauDe(pays), style: const TextStyle(fontSize: 52)),
+        child: Text(drapeauDe(pays), style: TextStyle(fontSize: _drapeau)),
       ),
     );
   }
@@ -236,8 +257,18 @@ class _RouletteScreenState extends State<RouletteScreen>
         ),
       );
 
-  Widget _actions(bool termine) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 26),
+  // Les boutons sont bornés : étirés sur toute la largeur d'un iPad, ils
+  // faisaient deux barres de 1 300 px pour trois mots.
+  Widget _actions(bool termine) => Center(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 560),
+          padding: const EdgeInsets.symmetric(horizontal: 26),
+          child: _boutons(termine),
+        ),
+      );
+
+  Widget _boutons(bool termine) => Padding(
+        padding: EdgeInsets.zero,
         child: termine
             ? Row(
                 children: [

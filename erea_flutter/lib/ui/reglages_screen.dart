@@ -169,6 +169,11 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
     final choix = await showModalBottomSheet<PaysPropose>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 640,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (context) => ListView(
         children: [
           for (final p in paysProposes)

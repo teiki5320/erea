@@ -341,6 +341,11 @@ class _HomeScreenState extends State<HomeScreen>
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 640,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (context) {
         return ListView(
           shrinkWrap: true,
@@ -374,6 +379,11 @@ class _HomeScreenState extends State<HomeScreen>
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 640,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (context) {
         return ListView(
           shrinkWrap: true,
@@ -404,6 +414,11 @@ class _HomeScreenState extends State<HomeScreen>
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 640,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (sheetContext) {
         return StatefulBuilder(
           builder: (sheetContext, setSheet) {
@@ -469,6 +484,11 @@ class _HomeScreenState extends State<HomeScreen>
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxWidth: 640,
+        maxHeight: MediaQuery.sizeOf(context).height * .85,
+      ),
       builder: (sheetContext) {
         return ListView(
           shrinkWrap: true,
@@ -521,12 +541,24 @@ class _HomeScreenState extends State<HomeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Sur iPad, le contenu s'étirait sur toute la dalle et
+                // laissait un grand vide sous le classement : il est
+                // désormais borné en largeur et centré dans l'espace
+                // disponible. Sur téléphone, rien ne change — l'écran
+                // fait moins que la largeur maximale.
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
+                  child: LayoutBuilder(
+                    builder: (context, box) => SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 22, 20, 10),
+                      child: ConstrainedBox(
+                        constraints:
+                            BoxConstraints(minHeight: box.maxHeight - 32),
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 620),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
                         // Barre du haut : profil + série. Le profil peut
                         // se réduire (texte agrandi par accessibilité) sans
                         // jamais déborder ; à taille normale, rendu identique.
@@ -618,13 +650,18 @@ class _HomeScreenState extends State<HomeScreen>
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
-                        // « X / Y découverts » : un objectif dès le premier
-                        // lancement, à la place d'un simple total mort.
-                        _collectionBar(),
-                        const SizedBox(height: 16),
-                        _classementMondial(),
-                      ],
+                                const SizedBox(height: 12),
+                                // « X / Y découverts » : un objectif dès le
+                                // premier lancement, à la place d'un simple
+                                // total mort.
+                                _collectionBar(),
+                                const SizedBox(height: 16),
+                                _classementMondial(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
