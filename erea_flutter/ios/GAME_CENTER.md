@@ -1,21 +1,26 @@
 # Activer le classement mondial (Game Center)
 
-Le code est en place et se tait tant que Game Center n'est pas activé :
-`lib/core/classement.dart` tente une connexion paresseuse, échoue en
-silence, et le jeu reste entièrement jouable. **Rien n'est branché dans la
-signature du projet** : les builds actuels passent exactement comme avant.
+> **Les trois étapes sont faites (4 août 2026).** Le classement est
+> branché de bout en bout : capacité activée sur l'App ID, six
+> classements créés, entitlement déclaré dans le projet. Ce document
+> reste comme mémoire de la configuration — l'ordre décrit ci-dessous
+> compte si l'App ID est un jour recréé.
+
+`lib/core/classement.dart` tente une connexion paresseuse et échoue en
+silence : même si Game Center est désactivé sur l'appareil, le jeu reste
+entièrement jouable.
 
 Trois étapes, dans cet ordre.
 
-## 1. Activer la capacité sur l'App ID *(portail développeur)*
+## 1. Activer la capacité sur l'App ID *(portail développeur)* ✅
 
 Certificates, Identifiers & Profiles → Identifiers → `com.teiki.erea` →
 cocher **Game Center** → Save.
 
-Tant que ce n'est pas fait, l'étape 3 fera **échouer la signature** du
+Tant que ce n'est pas fait, l'étape 3 fait **échouer la signature** du
 build. C'est pour ça qu'elle vient en dernier.
 
-## 2. Créer les trois classements *(App Store Connect)*
+## 2. Créer les classements *(App Store Connect)* ✅
 
 App Store Connect → Erea → **Game Center** → Leaderboards.
 
@@ -39,18 +44,20 @@ Un classement récurrent n'apparaît qu'après le premier score envoyé.
 Ne pas oublier d'**attacher** les classements à la version avant de la
 soumettre à la revue.
 
-## 3. Brancher l'entitlement *(une ligne, une fois l'étape 1 faite)*
+## 3. Brancher l'entitlement *(une ligne, une fois l'étape 1 faite)* ✅
 
-Le fichier `ios/Runner/Runner.entitlements` existe déjà. Il suffit de le
-déclarer dans les trois configurations du target Runner
-(`ios/Runner.xcodeproj/project.pbxproj`) :
+Le fichier `ios/Runner/Runner.entitlements` déclare la clé
+`com.apple.developer.game-center`, et cette ligne est présente dans les
+**trois** configurations du target Runner — Debug, Release et Profile —
+de `ios/Runner.xcodeproj/project.pbxproj` :
 
 ```
 CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 ```
 
-ou, dans Xcode : Runner → Signing & Capabilities → **+ Capability** →
-Game Center (Xcode écrit la même chose tout seul).
+Les trois, sinon le build de la configuration oubliée part sans droit
+Game Center. Dans Xcode, l'équivalent est Runner → Signing &
+Capabilities → **+ Capability** → Game Center.
 
 ## Vérifier
 
