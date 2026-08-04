@@ -167,18 +167,17 @@ class Store {
   Future<void> setRemindersOn(bool v) =>
       _put(() => _prefs.setBool('opt.reminders', v));
 
-  /// Remise à zéro complète (écran de réglages).
+  /// Remise à zéro complète (écran de réglages) : le pays choisi et le
+  /// parcours d'accueil repartent eux aussi, l'app redevient exactement
+  /// ce qu'elle est au premier lancement.
   ///
-  /// Trois choses survivent, à dessein :
+  /// Une seule chose survit, et pour une raison de triche :
   /// - le VERROU du défi du jour, dès qu'une tentative a été LANCÉE
   ///   aujourd'hui (terminée ou non) : la série étant déterministe par
   ///   date, une remise à zéro rendait sinon le défi rejouable avec les
   ///   réponses déjà vues — et le score partait au classement mondial ;
-  /// - le score et la grille du défi TERMINÉ : l'accueil affichait
-  ///   sinon « Déjà joué · 0 pts », un score jamais réalisé ;
-  /// - le pays choisi et le parcours d'accueil : remettre sa progression
-  ///   à zéro n'est pas déménager, et l'écran « Mon pays » aurait montré
-  ///   « Automatique » alors que l'ancien choix restait appliqué.
+  /// - avec, si le défi a été TERMINÉ, son score et sa grille : l'accueil
+  ///   affichait sinon « Déjà joué · 0 pts », un score jamais réalisé.
   Future<void> resetAll() async {
     _seenCache = null;
     _discoveredCache = null;
@@ -186,8 +185,6 @@ class Store {
     final defiTermineAujourdhui = dailyFinishedToday;
     final score = dailyLastScore;
     final grille = dailyGrid;
-    final pays = (nom: paysChoisiNom, iso: paysChoisiIso);
-    final accueilVu = onboardingVu;
     final jour = dayKey(_now);
     await _put(() => _prefs.clear());
     if (tentativeAujourdhui) {
@@ -198,8 +195,6 @@ class Store {
       await _put(() => _prefs.setInt('daily.lastScore', score));
       await _put(() => _prefs.setString('daily.grid', grille));
     }
-    if (accueilVu) await setOnboardingVu();
-    if (pays.iso != null) await setPaysChoisi(nom: pays.nom, iso: pays.iso);
   }
 
   // -------------------------------------------------------------- défi du jour

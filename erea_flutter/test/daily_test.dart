@@ -232,4 +232,19 @@ void main() {
     await s.resetAll();
     expect(s.dailyPlayedToday, isFalse);
   });
+
+  test('la remise à zéro fait revenir le parcours d’accueil', () async {
+    // La faille : le parcours de présentation et le pays étaient
+    // préservés « par gentillesse ». Résultat, plus aucun moyen de
+    // revoir les écrans du premier lancement, même en effaçant tout.
+    final s = await store();
+    await s.setOnboardingVu();
+    await s.setPaysChoisi(nom: 'Sénégal', iso: 'SN');
+    expect(s.onboardingVu, isTrue);
+
+    await s.resetAll();
+    expect(s.onboardingVu, isFalse, reason: 'la présentation revient');
+    expect(s.paysChoisiIso, isNull, reason: 'le pays aussi');
+    expect(s.paysChoisiNom, isNull);
+  });
 }
