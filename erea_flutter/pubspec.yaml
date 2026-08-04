@@ -1,7 +1,11 @@
 name: erea
 description: "Erea — devine l'année ! Jeu d'histoire pour toute la famille."
 publish_to: "none"
-version: 0.1.0+1 # 0.1.0 = CFBundleShortVersionString · 1 = CFBundleVersion
+version: 1.0.0+1 # 1.0.0 = CFBundleShortVersionString · 1 = CFBundleVersion
+# Le numéro de build (après le +) est écrasé par Xcode Cloud, qui
+# incrémente le sien à chaque compilation — d'où les builds 74 à 78.
+# Seul le 1.0.0 compte ici, et il doit être identique au numéro de
+# version saisi dans App Store Connect, sinon la soumission est refusée.
 
 environment:
   sdk: ">=3.6.0 <4.0.0"
