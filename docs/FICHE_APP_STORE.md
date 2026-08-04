@@ -162,18 +162,24 @@ le dépôt — dis-le-moi si tu préfères.
 
 ---
 
-## Étape 6 — Les deux pages web obligatoires
+## Étape 6 — Les deux pages web obligatoires ✅
 
 Apple exige une URL de **support** et une URL de **politique de
-confidentialité**. Elles doivent être en ligne et accessibles.
+confidentialité**. Les deux sont écrites, en ligne sur le GitHub Pages
+du dépôt, et affichent `erea.toa@gmail.com` comme contact :
 
-Le plus simple : deux pages statiques sur ton GitHub Pages existant,
-donc `https://teiki5320.github.io/erea/support.html` et
-`.../confidentialite.html`. Je peux les écrire et les publier en même
-temps que le reste du site — il me faut juste **l'adresse e-mail de
-contact** que tu veux afficher publiquement (Apple exige un moyen de te
-joindre ; certains créent une adresse dédiée type `erea.jeu@…` plutôt
-que leur adresse personnelle).
+**URL d'assistance**
+```
+https://teiki5320.github.io/erea/support.html
+```
+
+**URL de politique de confidentialité**
+```
+https://teiki5320.github.io/erea/confidentialite.html
+```
+
+À coller telles quelles dans App Store Connect (la première dans la
+version 1.0, la seconde dans « Confidentialité de l'app »).
 
 ---
 
@@ -206,7 +212,7 @@ précisément quoi corriger — ce n'est jamais définitif.
 | Élément | Qui |
 |---|---|
 | Textes de la fiche (nom, description, mots-clés) | ✅ prêts ci-dessus, à copier |
-| Captures d'écran | Toi (simulateur) — ou moi si tu veux |
-| Pages support + confidentialité | Moi, dès que tu me donnes l'e-mail de contact |
+| Captures d'écran | Toi (iPhone + iPad, après le build en cours) |
+| Pages support + confidentialité | ✅ en ligne, URL ci-dessus |
 | Classement par âge, prix, disponibilité | Toi (quelques clics) |
 | Rattacher build + classements | Toi |
