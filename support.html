@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Erea — Aide et contact</title>
-<meta name="description" content="Aide, questions fréquentes et contact pour le jeu Erea.">
+<meta name="description" content="Aide, questions fréquentes et contact pour Erea, le jeu qui te fait deviner l'année des grands événements.">
 <meta name="theme-color" content="#fff7e8">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,95 +12,117 @@
 <style>
   :root{
     --bg1:#fff7e8; --bg2:#eaf4ff; --ink:#35406b; --ink-soft:#5f6890;
-    --coral:#f25b4d; --white:#fff;
+    --coral:#f25b4d; --yellow:#ffc94d; --mint:#23a389; --white:#fff;
   }
   *{box-sizing:border-box}
   body{
-    margin:0; padding:0 20px 60px;
+    margin:0; padding:0 20px 56px;
     background:linear-gradient(160deg,var(--bg1),var(--bg2));
     min-height:100vh; color:var(--ink);
     font-family:Nunito,-apple-system,system-ui,sans-serif; font-size:17px; line-height:1.65;
   }
-  .page{max-width:680px; margin:0 auto}
-  header{text-align:center; padding:48px 0 8px}
-  h1{font-family:'Baloo 2',sans-serif; font-size:36px; margin:0 0 6px}
-  .sous{color:var(--ink-soft); margin:0}
-  h2{font-family:'Baloo 2',sans-serif; font-size:23px; margin:34px 0 10px}
-  .carte{background:var(--white); border-radius:18px; padding:22px 24px; margin-top:18px;
+  .page{max-width:660px; margin:0 auto}
+  .retour{display:inline-block; margin:22px 0 0; font-weight:700;
+    color:var(--coral); text-decoration:none}
+  .retour:hover{text-decoration:underline}
+  header{text-align:center; padding:26px 0 4px}
+  h1{font-family:'Baloo 2',sans-serif; font-size:38px; margin:0 0 4px}
+  .sous{color:var(--ink-soft); margin:0 0 4px; font-size:18px}
+  .bonjour{background:var(--white); border-radius:20px; padding:24px 26px; margin-top:26px;
+    box-shadow:0 5px 0 rgba(53,64,107,.09)}
+  .bonjour p:first-child{margin-top:0}
+  .mail{font-family:'Baloo 2',sans-serif; font-size:21px; margin:14px 0 0}
+  h2{font-family:'Baloo 2',sans-serif; font-size:24px; margin:36px 0 4px}
+  .q{background:var(--white); border-radius:18px; padding:20px 24px; margin-top:14px;
     box-shadow:0 4px 0 rgba(53,64,107,.08)}
+  .q h3{font-family:'Baloo 2',sans-serif; font-size:19px; margin:0 0 6px}
+  .q p{margin:8px 0 0}
   a{color:var(--coral); font-weight:700}
-  .contact{font-family:'Baloo 2',sans-serif; font-size:20px}
-  footer{text-align:center; color:var(--ink-soft); font-size:14px; margin-top:44px}
-  ul{padding-left:22px} li{margin:6px 0}
+  footer{text-align:center; color:var(--ink-soft); font-size:14px; margin-top:40px; line-height:1.9}
+  .signature{font-weight:700}
 </style>
 </head>
 <body>
 <div class="page">
 
+<a class="retour" href="./">← Retour à Erea</a>
+
 <header>
-  <h1>Erea ⏳</h1>
-  <p class="sous">Aide et contact</p>
+  <h1>Un souci ? ⏳</h1>
+  <p class="sous">Ou juste une envie de discuter d'histoire</p>
 </header>
 
-<div class="carte">
-  <h2 style="margin-top:0">Une question, un bug, une date fausse ?</h2>
-  <p>Écrivez-moi, je réponds à chaque message :</p>
-  <p class="contact"><a href="mailto:ADRESSE@EXEMPLE.COM">ADRESSE@EXEMPLE.COM</a></p>
-  <p>Si vous signalez une erreur de date, précisez si possible le titre
-  de l'événement concerné : cela me permet de corriger la base pour
-  tout le monde à la mise à jour suivante.</p>
+<div class="bonjour">
+  <p>Erea est fait par une seule personne, alors chaque message arrive
+  vraiment quelque part — et reçoit vraiment une réponse.</p>
+  <p>Que ce soit un bug, une date qui te paraît fausse, un événement que
+  tu aimerais voir dans le jeu ou une idée qui te trotte dans la tête :
+  écris-moi.</p>
+  <p class="mail">📧 <a href="mailto:ADRESSE@EXEMPLE.COM">ADRESSE@EXEMPLE.COM</a></p>
 </div>
 
-<h2>Questions fréquentes</h2>
+<h2>Les questions qu'on me pose</h2>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Comment on joue ?</h2>
-  <p>Un événement s'affiche sans sa date. Vous faites défiler la frise
-  du temps pour amener l'année de votre choix sous l'aiguille centrale,
-  puis vous validez. Plus vous êtes proche de la vraie date, plus vous
-  marquez de points — au-delà de 200 ans d'écart, la manche ne rapporte
-  rien.</p>
+<div class="q">
+  <h3>Comment on joue, au juste ?</h3>
+  <p>Un événement s'affiche, sans sa date. Tu fais défiler la frise du
+  temps jusqu'à amener l'année de ton choix sous l'aiguille, et tu
+  valides. Plus tu tombes juste, plus tu marques — et si tu trouves
+  l'année exacte, c'est un PERFECT 🎯. Au-delà de 200 ans d'écart, en
+  revanche, la manche ne rapporte rien du tout.</p>
 </div>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Pourquoi je ne peux jouer au défi du jour qu'une fois ?</h2>
-  <p>C'est le principe : tous les joueurs affrontent les 10 mêmes
-  questions le même jour, avec une seule tentative. Sans cela, le
-  classement n'aurait aucun sens. Un nouveau défi arrive chaque nuit à
-  minuit, heure de votre appareil.</p>
+<div class="q">
+  <h3>Pourquoi je ne peux jouer au défi du jour qu'une seule fois ?</h3>
+  <p>Parce que c'est tout l'intérêt : le même jour, tous les joueurs
+  affrontent exactement les mêmes 10 questions, avec une seule tentative
+  chacun. Si on pouvait recommencer, le classement ne voudrait plus rien
+  dire. Un nouveau défi arrive chaque nuit à minuit, à l'heure de ton
+  téléphone.</p>
 </div>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Mon classement mondial ne s'affiche pas</h2>
-  <p>Le classement passe par Game Center. Vérifiez dans
-  <em>Réglages → Game Center</em> que vous êtes bien connecté. Sur un
-  compte enfant, le contrôle parental peut le désactiver — le jeu reste
-  alors entièrement jouable, seuls les classements disparaissent.</p>
+<div class="q">
+  <h3>Le mode Facile reste trop dur pour mon enfant</h3>
+  <p>En Facile, le jeu ne pioche que dans une sélection d'événements très
+  connus, et il te laisse une marge d'erreur bien plus large qu'en
+  Normal. Si un événement te paraît quand même trop pointu pour ce
+  niveau, dis-le-moi : cette sélection est revue régulièrement, et c'est
+  souvent grâce à des retours comme le tien.</p>
 </div>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Le mode Facile est trop difficile pour mon enfant</h2>
-  <p>Le mode Facile ne tire que dans une sélection d'événements très
-  connus, et la tolérance d'erreur y est bien plus large qu'en Normal.
-  Si un événement vous paraît malgré tout trop pointu pour ce niveau,
-  signalez-le-moi : la sélection est revue régulièrement.</p>
+<div class="q">
+  <h3>Mon classement mondial ne s'affiche pas</h3>
+  <p>Le classement passe par Game Center. Fais un tour dans
+  <em>Réglages → Game Center</em> pour vérifier que tu es bien connecté.
+  Sur un compte enfant, le contrôle parental peut le désactiver : dans
+  ce cas le jeu reste entièrement jouable, seuls les classements
+  disparaissent.</p>
 </div>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Comment repartir de zéro ?</h2>
-  <p>Dans <em>Réglages</em> du jeu, l'option de remise à zéro efface vos
-  scores, votre XP et votre collection. Le défi du jour déjà joué reste
-  verrouillé jusqu'au lendemain — sinon il suffirait de tout effacer
+<div class="q">
+  <h3>Je crois qu'une date est fausse</h3>
+  <p>Ça arrive, et ça m'intéresse beaucoup. Envoie-moi le titre de
+  l'événement concerné : si l'erreur est confirmée, elle est corrigée
+  pour tout le monde à la mise à jour suivante.</p>
+</div>
+
+<div class="q">
+  <h3>Comment repartir de zéro ?</h3>
+  <p>Dans les <em>Réglages</em> du jeu, la remise à zéro efface tes
+  scores, ton XP, ta collection et jusqu'au pays choisi : l'app redevient
+  celle du premier jour. Seule exception, le défi du jour déjà entamé
+  reste verrouillé jusqu'à demain — sinon il suffirait de tout effacer
   pour le rejouer en connaissant les réponses.</p>
 </div>
 
-<div class="carte">
-  <h2 style="margin-top:0;font-size:19px">Est-ce que mes données sont envoyées quelque part ?</h2>
-  <p>Non. Tout reste sur votre appareil. Voir la
-  <a href="confidentialite.html">politique de confidentialité</a>.</p>
+<div class="q">
+  <h3>Est-ce que mes données partent quelque part ?</h3>
+  <p>Non. Rien, jamais. Tout reste sur ton téléphone, et tu peux lire le
+  détail sur la <a href="confidentialite.html">page confidentialité</a>.</p>
 </div>
 
 <footer>
+  <p class="signature">Erea — une app de Teiki 🌊</p>
   <p><a href="./">Jouer à Erea</a> · <a href="confidentialite.html">Confidentialité</a></p>
 </footer>
 
