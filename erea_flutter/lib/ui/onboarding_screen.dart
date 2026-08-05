@@ -73,26 +73,31 @@ String drapeauIso(String? iso) => iso == null
         iso.toUpperCase().codeUnits.map((c) => 0x1F1A5 + c));
 
 class _Page {
-  final String emoji;
+  final String image;
   final Color fond;
   final String titre;
   final String texte;
-  const _Page(this.emoji, this.fond, this.titre, this.texte);
+  const _Page(this.image, this.fond, this.titre, this.texte);
 }
 
+/// Illustrations maison plutôt que des emojis système : les emojis
+/// changent d'un iOS à l'autre et n'ont rien à voir avec l'identité du
+/// jeu. Toutes en 512 px, fond transparent, même trait d'encre.
+const String _dossier = 'assets/img/onboarding';
+
 const List<_Page> _pages = [
-  _Page('⏳', Color(0xFFFFE9C7), 'Bienvenue sur Erea',
+  _Page('$_dossier/bienvenue.png', Color(0xFFFFE9C7), 'Bienvenue sur Erea',
       'Un événement, une frise du temps : à toi de deviner l’année. '
           'Plus tu vises juste, plus tu marques de points.'),
-  _Page('👆', Color(0xFFDDF3EC), 'Fais glisser la frise',
+  _Page('$_dossier/geste.png', Color(0xFFDDF3EC), 'Fais glisser la frise',
       'De 3000 av. J.-C. à demain : approche-toi au doigt, ajuste à '
           'l’année près avec − et +, puis valide. La frise révèle la '
           'vraie date.'),
-  _Page('🎯', Color(0xFFE3ECFF), 'Cinq façons de jouer',
+  _Page('$_dossier/modes.png', Color(0xFFE3ECFF), 'Cinq façons de jouer',
       'Le Défi du jour (le même pour le monde entier), le Classique, le '
           'Chrono 10 s par question, la Roulette des drapeaux et les '
           'Packs à thème.'),
-  _Page('🏆', Color(0xFFF6E3FF), 'Progresse',
+  _Page('$_dossier/progresse.png', Color(0xFFF6E3FF), 'Progresse',
       'Gagne de l’XP, débloque des succès et grimpe au classement '
           'mondial. Chaque partie enrichit ta collection d’événements.'),
 ];
@@ -210,9 +215,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   BoxShadow(offset: Offset(0, 5), color: inkColor),
                 ],
               ),
-              child: Center(
-                child: Text(p.emoji, style: const TextStyle(fontSize: 84)),
-              ),
+              // Une marge intérieure généreuse : l'illustration ne doit
+              // pas venir toucher le trait d'encre du cadre.
+              padding: const EdgeInsets.all(18),
+              child: Image.asset(p.image, fit: BoxFit.contain),
             ),
             const SizedBox(height: 30),
             Text(
@@ -246,7 +252,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             const SizedBox(height: 14),
-            const Text('🌍', style: TextStyle(fontSize: 54)),
+            Image.asset('$_dossier/pays.png', width: 76, height: 76),
             const SizedBox(height: 6),
             const Text(
               'Où joues-tu ?',

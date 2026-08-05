@@ -32,6 +32,10 @@ flutter:
   assets:
     - assets/events.json
     - assets/img/
+    # Flutter ne descend pas dans les sous-dossiers : celui-ci se
+    # déclare à part, sinon les illustrations d'accueil manquent à
+    # l'appel une fois l'app compilée.
+    - assets/img/onboarding/
     - assets/sfx/
   # Polices embarquées (Baloo 2 pour les titres, Nunito pour l'interface).
   # Volontairement en local plutôt que via google_fonts : l'app doit
