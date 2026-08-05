@@ -852,6 +852,13 @@ class _HomeScreenState extends State<HomeScreen>
     // Cas courant : on défile entre les difficultés.
     final diff = Difficulty.values[_diffAffichee % Difficulty.values.length];
     final rang = _rangs[diff];
+    // Le score qui a valu ce rang. Le tableau mondial d'une difficulté
+    // reçoit les parties de TOUTES les catégories (sauf les packs) : le
+    // meilleur d'entre elles est donc le score effectivement envoyé. Lu
+    // en local, affiché sans attendre le réseau.
+    final scoreClassement = categories
+        .map((c) => widget.store.bestFor('${c.key}|${diff.name}'))
+        .fold<int>(0, (a, b) => b > a ? b : a);
     final Widget valeur = rang != null
         ? Text(
             _ordinal(rang),
@@ -885,16 +892,37 @@ class _HomeScreenState extends State<HomeScreen>
         Expanded(
           child: AnimatedSwitcher(
             duration: duree,
-            child: Text(
-              '${diff.emoji} ${diff.label}',
+            child: Column(
               key: ValueKey('lbl$_diffAffichee'),
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 15,
-                color: inkColor,
-              ),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '${diff.emoji} ${diff.label}',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: inkColor,
+                  ),
+                ),
+                // Le rang seul ne dit pas grand-chose : « 1er » sans
+                // score laissait le joueur deviner AVEC QUOI il est
+                // premier. C'est le score envoyé à ce tableau.
+                Text(
+                  scoreClassement > 0
+                      ? '$scoreClassement pts'
+                      : 'aucun score envoyé',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    color: inkPaleColor,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
