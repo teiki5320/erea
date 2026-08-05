@@ -110,17 +110,23 @@ Clique sur **Enregistrer** en haut à droite.
 
 ## Captures d'écran
 
-Deux tailles à fournir, les autres sont générées automatiquement par
-Apple :
+⚠️ **Fie-toi aux dimensions affichées dans le cadre de dépôt**, elles
+varient selon les appareils que l'app déclare supporter. Pour Erea,
+App Store Connect demande :
 
-| Appareil | Dimensions exactes | Nombre |
+| Onglet | Dimensions acceptées | Nombre |
 |---|---|---|
-| **iPhone 6,9"** | 1320 × 2868 px (portrait) | 3 à 10 |
-| **iPad 13"** | 2064 × 2752 px (portrait) **ou** 2752 × 2064 px (paysage) | 3 à 10 |
+| **iPhone** — écran de 6,5" | 1242 × 2688 ou 1284 × 2778 px (portrait) · 2688 × 1242 ou 2778 × 1284 px (paysage) | 1 à 10 |
+| **iPad** | voir les dimensions indiquées dans l'onglet iPad | 1 à 10 |
 
 Formats acceptés : PNG ou JPEG, **sans transparence**.
 
-Tes captures iPad actuelles (2752 × 2064) sont donc **au bon format**.
+Seules les **trois premières** captures apparaissent sur les fiches
+d'installation — ce sont elles qui décident du téléchargement.
+
+Le lien « Afficher toutes les tailles dans le gestionnaire des visuels »
+permet de déposer d'autres formats, mais les tailles ci-dessus
+suffisent : Apple dérive les autres.
 
 **Les 6 écrans à capturer, dans cet ordre** — les deux premiers sont les
 seuls visibles sans faire défiler, ce sont eux qui décident du
