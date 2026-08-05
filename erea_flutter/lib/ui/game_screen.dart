@@ -3,9 +3,11 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter/services.dart' show Clipboard, ClipboardData;
+import 'package:share_plus/share_plus.dart';
 
 import '../core/progression.dart';
 import '../core/accessibilite.dart';
+import '../core/avis.dart';
 import '../core/classement.dart';
 import '../core/rappels.dart';
 import '../core/retour.dart';
@@ -431,8 +433,21 @@ class _GameScreenState extends State<GameScreen>
         Sons.badge();
       }
       await _envoyerAuClassement();
+      await _proposerNote();
       if (mounted) setState(() {});
     }
+  }
+
+  /// La note se demande à un moment de fierté, jamais à froid : un
+  /// PERFECT dans la partie, un nouveau record, ou trois défis du jour
+  /// d'affilée. Un joueur qui vient de rater n'a aucune raison de mettre
+  /// cinq étoiles, et iOS ne laisse que trois invitations par an.
+  Future<void> _proposerNote() async {
+    final perfect = game.results.any((r) => r.base == maxScore);
+    final serieBelle =
+        game.mode == GameMode.daily && widget.store.effectiveStreak >= 3;
+    await Avis.proposer(widget.store,
+        merite: perfect || serieBelle || (_record && game.total > 0));
   }
 
   /// Classement mondial : le défi du jour est le seul vraiment comparable
@@ -1612,7 +1627,7 @@ class _GameScreenState extends State<GameScreen>
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: PushButton(
-            onPressed: _copierGrille,
+            onPressed: _partagerGrille,
             color: Colors.white,
             shadowColor: const Color(0xFFD8DDEF),
             shadowHeight: 4,
@@ -1620,7 +1635,7 @@ class _GameScreenState extends State<GameScreen>
             padding: const EdgeInsets.symmetric(vertical: 11),
             child: Center(
               child: Text(
-                _grilleCopiee ? '✅ Copié !' : '📋 Copier ma grille',
+                _grilleCopiee ? '✅ Partagé !' : '📤 Partager ma grille',
                 style: const TextStyle(
                   fontFamily: 'Baloo2',
                   fontWeight: FontWeight.w800,
@@ -1770,13 +1785,35 @@ class _GameScreenState extends State<GameScreen>
             ? '\n🔥 ${widget.store.effectiveStreak} jours d’affilée'
             : '';
     return 'Erea ⏳ $quoi\n${game.total} / $max\n'
-        '${game.emojiGrid()}$serie';
+        '${game.emojiGrid()}$serie\n\n$lienAppStore';
   }
 
-  Future<void> _copierGrille() async {
-    await Clipboard.setData(ClipboardData(text: _texteGrille()));
-    if (!mounted) return;
-    setState(() => _grilleCopiee = true);
+  /// Feuille de partage native : un tap suffit pour envoyer la grille
+  /// vers Messages, WhatsApp ou ailleurs. Le presse-papiers reste le
+  /// filet de sécurité — sur un appareil où la feuille ne s'ouvre pas
+  /// (simulateur, iPad sans position d'ancrage), le texte est au moins
+  /// copié et le bouton le dit.
+  Future<void> _partagerGrille() async {
+    final texte = _texteGrille();
+    // L'iPad ancre la feuille à un rectangle d'origine : sans lui, le
+    // partage lève une exception au lieu de s'afficher. Mesuré AVANT le
+    // premier await — après, le contexte peut avoir disparu.
+    final boite = context.findRenderObject() as RenderBox?;
+    final ancrage = boite == null
+        ? null
+        : boite.localToGlobal(Offset.zero) & boite.size;
+    await Clipboard.setData(ClipboardData(text: texte));
+    if (mounted) setState(() => _grilleCopiee = true);
+    try {
+      await Share.share(
+        texte,
+        subject: 'Erea ⏳',
+        sharePositionOrigin: ancrage,
+      );
+    } catch (e) {
+      // Partage indisponible : la grille est déjà dans le presse-papiers.
+      debugPrint('Partage impossible : $e');
+    }
   }
 
   Future<void> _confirmQuit(BuildContext context) async {

@@ -64,6 +64,14 @@ class Store {
   Future<void> setOnboardingVu() =>
       _put(() => _prefs.setBool('onboardingVu', true));
 
+  /// La note a déjà été demandée : on ne relance jamais un joueur qui a
+  /// refusé. Survit à la remise à zéro serait discutable — non : elle
+  /// part avec le reste, un joueur qui repart de zéro est rare et
+  /// l'invitation reste plafonnée par iOS de toute façon.
+  bool get avisDemande => _prefs.getBool('avisDemande') ?? false;
+  Future<void> marquerAvisDemande() =>
+      _put(() => _prefs.setBool('avisDemande', true));
+
   /// Pays choisi à l'accueil (nom affichable + code ISO). Vide = laisser
   /// l'appareil décider (réglage iOS/Android).
   String? get paysChoisiNom => _prefs.getString('paysChoisiNom');
