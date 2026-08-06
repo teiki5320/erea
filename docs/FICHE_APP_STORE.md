@@ -1,8 +1,12 @@
 # Remplir la fiche App Store — Erea
 
-> Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect
-> et la documentation Apple à jour. Les valeurs des blocs gris sont à
-> copier-coller telles quelles.
+> Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
+> mis à jour le 5 août 2026 avec l'état réel de la saisie.
+>
+> **Où on en est : tout est rempli sauf les captures d'écran.** Il reste
+> à les déposer, à sélectionner le build, puis à cliquer sur « Ajouter
+> pour vérification ». Les valeurs des blocs gris ci-dessous sont celles
+> qui ont été saisies.
 
 L'interface découpe la fiche en **deux pages différentes**, et c'est ce
 qui perd tout le monde :
@@ -52,7 +56,15 @@ textes, les dates et les visuels sont les tiens.
 
 **Contrat de licence** → laisse le contrat type d'Apple.
 
-## Classifications par âge
+## Classifications par âge ✅ *(4+ obtenu)*
+
+⚠️ Ce n'est pas une page de cases à cocher mais un **assistant en sept
+étapes**, chacune avec des questions oui/non. Pour Erea, la réponse est
+**NON partout**. La septième étape affiche la classification calculée et
+propose un remplacement : **garder « Non applicable »** — cocher
+« Conçue pour les enfants » ferait basculer l'app dans la catégorie
+Enfants de l'App Store, dont les règles interdisent notamment les
+fonctionnalités tierces sans barrière parentale, Game Center compris.
 
 Apple a refondu ce questionnaire : les paliers sont désormais 4+, 9+,
 **13+, 16+, 18+** (12+ et 17+ ont disparu), et les questions sont
@@ -88,8 +100,10 @@ aucun document.
 
 ## Réglementations et autorisations de l'App Store
 
-**Législation sur les services numériques (DSA)** — obligatoire, et sans
-elle **ton app ne sera pas distribuée dans l'Union européenne**.
+**Législation sur les services numériques (DSA)** ✅ *(déclaré non-trader
+le 4 août 2026)* — obligatoire, et sans elle l'app n'est pas distribuée
+dans l'Union européenne. La déclaration se fait au niveau du **compte**
+(App Store Connect → Business), pas de l'app.
 
 Tu dois déclarer si tu es « trader » (professionnel) ou non. Un
 développeur particulier qui publie une app **gratuite, sans publicité et
@@ -108,7 +122,7 @@ Clique sur **Enregistrer** en haut à droite.
 
 # PAGE 2 — Distribution → iOS 1.0
 
-## Captures d'écran
+## Captures d'écran ⬜ **← la seule chose qui manque**
 
 ⚠️ **Fie-toi aux dimensions affichées dans le cadre de dépôt**, elles
 varient selon les appareils que l'app déclare supporter. Pour Erea,
@@ -144,13 +158,13 @@ téléchargement :
 Une vidéo de 15 à 30 s. À garder pour plus tard — mais le geste de
 défilement de la frise s'y prêterait très bien.
 
-## Texte promotionnel — 170 caractères, modifiable sans mise à jour
+## Texte promotionnel ✅ — 170 caractères, modifiable sans mise à jour
 
 ```
 Nouveau : le mode Chrono, 10 secondes par question. Et un classement mondial pour chaque difficulté.
 ```
 
-## Description — 4 000 caractères, texte brut
+## Description ✅ — 4 000 caractères, texte brut
 
 ```
 Un événement s'affiche. Une frise du temps défile sous votre doigt. En quelle année ?
@@ -185,7 +199,7 @@ Erea ne collecte aucune donnée, n'affiche aucune publicité et ne demande aucun
 Bonne partie !
 ```
 
-## Mots-clés — **100 octets**, séparés par des virgules sans espace
+## Mots-clés ✅ — **100 octets**, séparés par des virgules sans espace
 
 ```
 quiz,frise,chronologie,date,culture,générale,brevet,éducatif,afrique,collège,révision,enfant
@@ -197,13 +211,13 @@ passe de justesse, donc si tu la modifies, retire un mot avant d'en
 ajouter un. Inutile d'y remettre « histoire », « jeu », « famille » ou
 « année » : le nom et le sous-titre sont déjà indexés.
 
-## URL d'assistance — obligatoire
+## URL d'assistance ✅ — obligatoire
 
 ```
 https://teiki5320.github.io/erea/support.html
 ```
 
-## URL marketing — facultative
+## URL marketing ✅ — facultative
 
 ```
 https://teiki5320.github.io/erea/
@@ -215,13 +229,13 @@ https://teiki5320.github.io/erea/
 1.0
 ```
 
-## Informations générales sur l'app *(en bas de page)*
+## Informations générales sur l'app ✅ *(en bas de page)*
 
 **👉 C'est ici que se trouve « Droits d'auteur »**, et non sur la page
 précédente.
 
 ```
-2026 Teiki
+2026 Toa
 ```
 
 L'année d'abord, puis le nom du détenteur. **Ne mets pas le symbole ©** :
@@ -230,11 +244,19 @@ App Store Connect l'ajoute lui-même à l'affichage.
 *(Si ton compte développeur est enregistré sous ton nom complet, mets
 plutôt celui-là : c'est ce qu'Apple affiche déjà comme vendeur.)*
 
-## Build
+## Build ⬜
 
-Sélectionne la version envoyée par Xcode Cloud. Elle apparaît une fois
-le traitement d'Apple terminé, soit environ 15 minutes après la fin du
-build.
+Sélectionne la version envoyée par Xcode Cloud, qui apparaît une
+quinzaine de minutes après la fin du build.
+
+⚠️ **Deux pièges qui rendent un build non sélectionnable**, tous deux
+rencontrés :
+
+1. Le workflow Xcode Cloud était réglé sur « TestFlight (tests internes
+   uniquement) » dans son action *Archiver*. Il faut **« App Store
+   Connect »**, sinon les builds n'apparaissent jamais dans la liste.
+2. Le numéro de version du build doit être **identique** à celui de la
+   fiche : un build en `0.1.0` ne peut pas servir à une version `1.0.0`.
 
 ## Game Center
 
@@ -249,7 +271,7 @@ erea.classic.normal · erea.classic.difficile · erea.chrono
 Sans cette étape, ils resteront en « Finaliser avant soumission » et ne
 seront jamais publiés.
 
-## Informations pour la revue *(non visibles du public)*
+## Informations pour la revue ✅ *(non visibles du public)*
 
 Trois champs obligatoires : **ton nom**, **ton e-mail**, **ton numéro de
 téléphone**. Prépare-les, Apple les exige pour joindre le développeur
@@ -267,14 +289,14 @@ Les classements mondiaux passent par Game Center : la fenêtre de connexion appa
 Le Défi du jour n'est jouable qu'une fois par jour (c'est le principe du mode : les mêmes 10 questions pour tous les joueurs). Pour tester plusieurs parties, utilisez le mode Classique.
 ```
 
-## Publication de la version
+## Publication de la version ✅
 
 Choisis **Publier automatiquement** — l'app sortira dès qu'Apple l'aura
 validée.
 
 ---
 
-# PAGE 3 — Tarifs et disponibilité
+# PAGE 3 — Tarifs et disponibilité ✅
 
 - **Prix** : Gratuit
 - **Disponibilité** : tous les pays *(le jeu est en français, mais ça
@@ -283,7 +305,7 @@ validée.
 
 ---
 
-# PAGE 4 — Confidentialité de l'app
+# PAGE 4 — Confidentialité de l'app ✅
 
 Réponds : **« Non, nous ne collectons pas de données de cette app. »**
 
@@ -317,8 +339,13 @@ banal.
 
 | Élément | État |
 |---|---|
-| Textes (nom, sous-titre, description, mots-clés, notes) | ✅ prêts ci-dessus |
-| URL d'assistance et de confidentialité | ✅ en ligne |
-| Captures iPhone 6,9" et iPad 13" | ⬜ **à refaire après le build en cours** |
-| Ton téléphone pour les infos de revue | ⬜ à saisir |
-| Catégories, âge, DSA, droits de contenu | ⬜ quelques clics |
+| Nom, sous-titre, catégories | ✅ saisis |
+| Classification par âge (4+), droits de contenu, DSA | ✅ faits |
+| Texte promotionnel, description, mots-clés | ✅ saisis |
+| URL d'assistance et de confidentialité | ✅ en ligne et saisies |
+| Droits d'auteur, coordonnées de revue, remarques | ✅ saisis |
+| Prix (gratuit), disponibilité (175 pays) | ✅ |
+| Confidentialité « aucune donnée collectée » | ✅ publiée |
+| Game Center attaché à la version | ✅ |
+| **Captures d'écran iPhone + iPad** | ⬜ **il ne manque que ça** |
+| Sélection du build | ⬜ après le prochain build |
