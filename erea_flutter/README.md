@@ -91,9 +91,12 @@ qui coûte facilement une demi-journée.
 
 ## Ce qui n'est pas fait
 
-- **Android** : le projet compile, mais la release est signée avec les
-  clés de debug et Play Games n'est pas configuré. Une keystore sera
-  nécessaire avant toute publication.
+- **Android** : la signature de release est câblée sur une clé qui vit
+  hors du dépôt (`android/key.properties`), mais **la clé reste à
+  créer** — sans elle le build retombe sur les clés de debug, donc
+  compile sans être publiable. Play Games n'est pas configuré : les
+  classements sont muets, le jeu reste jouable. Tout le chemin jusqu'au
+  Play Store est dans `docs/FICHE_PLAY_STORE.md`.
 - **Achats intégrés** : rien n'est branché. Le plan (« Erea + », achat
   unique) est décrit dans `docs/MARKETING.md`.
 - Débordement possible de l'écran de révélation sur iPhone SE avec la

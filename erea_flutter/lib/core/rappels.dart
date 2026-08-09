@@ -46,8 +46,16 @@ class Rappels {
     try {
       final ios = _plugin.resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>();
-      final ok = await ios?.requestPermissions(alert: true, sound: true);
-      return ok ?? false;
+      if (ios != null) {
+        return await ios.requestPermissions(alert: true, sound: true) ?? false;
+      }
+      // Android 13 réclame la même autorisation à l'exécution. Sans elle,
+      // la programmation réussit sans lever d'erreur et rien n'est jamais
+      // délivré : le rappel du soir serait muet sans qu'on le voie. Avant
+      // 13, l'appel ne fait rien et l'autorisation est déjà acquise.
+      final android = _plugin.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      return await android?.requestNotificationsPermission() ?? false;
     } catch (e) {
       debugPrint('Autorisation refusée ou indisponible : $e');
       return false;

@@ -40,6 +40,24 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+        <!-- Classements Play Games — à activer le jour où le projet existe
+             côté Google Play Console. Les deux meta-data ci-dessous sont
+             exigées par games_services sur Android ; sans elles l'appel
+             échoue en silence et le jeu reste jouable, classements masqués.
+
+             Ne les décommente QU'UNE FOIS l'identifiant obtenu : une valeur
+             absente ou vide fait planter l'app au démarrage de Play Games.
+             L'identifiant est numérique, donc il passe obligatoirement par
+             une ressource string, jamais en dur dans android:value.
+
+             <meta-data
+                 android:name="com.google.android.gms.games.APP_ID"
+                 android:value="@string/play_games_app_id" />
+             <meta-data
+                 android:name="com.google.android.gms.version"
+                 android:value="@integer/google_play_services_version" />
+        -->
+
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
