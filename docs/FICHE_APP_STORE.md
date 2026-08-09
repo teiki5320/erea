@@ -3,10 +3,11 @@
 > Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
 > mis à jour le 5 août 2026 avec l'état réel de la saisie.
 >
-> **Où on en est : tout est rempli sauf les captures d'écran.** Il reste
-> à les déposer, à sélectionner le build, puis à cliquer sur « Ajouter
-> pour vérification ». Les valeurs des blocs gris ci-dessous sont celles
-> qui ont été saisies.
+> **Où on en est : la fiche est complète, captures comprises** — six en
+> iPhone 6,9", sept en iPad 13", déposées le 9 août 2026. Il ne reste
+> qu'à sélectionner le build, puis à cliquer sur « Ajouter pour
+> vérification ». Les valeurs des blocs gris ci-dessous sont celles qui
+> ont été saisies.
 
 L'interface découpe la fiche en **deux pages différentes**, et c'est ce
 qui perd tout le monde :
@@ -122,7 +123,7 @@ Clique sur **Enregistrer** en haut à droite.
 
 # PAGE 2 — Distribution → iOS 1.0
 
-## Captures d'écran ⬜ **← la seule chose qui manque**
+## Captures d'écran ✅ *(déposées le 9 août 2026)*
 
 ⚠️ **Fie-toi aux dimensions affichées dans le cadre de dépôt**, elles
 varient selon les appareils que l'app déclare supporter. Pour Erea,
@@ -130,17 +131,23 @@ App Store Connect demande :
 
 | Onglet | Dimensions acceptées | Nombre |
 |---|---|---|
-| **iPhone** — écran de 6,5" | 1242 × 2688 ou 1284 × 2778 px (portrait) · 2688 × 1242 ou 2778 × 1284 px (paysage) | 1 à 10 |
-| **iPad** | voir les dimensions indiquées dans l'onglet iPad | 1 à 10 |
+| **iPhone** — écran de 6,9" | 1260 × 2736 px (portrait) · 2736 × 1260 px (paysage) | 1 à 10 |
+| **iPad** — écran de 13" | 2064 × 2752 px (portrait) · 2752 × 2064 px (paysage) | 1 à 10 |
 
 Formats acceptés : PNG ou JPEG, **sans transparence**.
 
+Ces **deux tailles sont les seules obligatoires**, et elles suffisent :
+App Store Connect dérive tout le reste. Les 6,5", 6,3", 12,9", 11" et
+10,5" affichent alors « Illustrations utilisées : écran de 6,9 pouces »
+et n'ont pas à être remplies. Un onglet replié n'est pas un oubli.
+
+⚠️ Ce sont les tailles de 2026 : Apple demandait auparavant le 6,5"
+(1242 × 2688). Le tableau ci-dessus a déjà été périmé une fois — vérifie
+la page « Screenshot specifications » de l'aide App Store Connect avant
+de t'y fier.
+
 Seules les **trois premières** captures apparaissent sur les fiches
 d'installation — ce sont elles qui décident du téléchargement.
-
-Le lien « Afficher toutes les tailles dans le gestionnaire des visuels »
-permet de déposer d'autres formats, mais les tailles ci-dessus
-suffisent : Apple dérive les autres.
 
 **Les 6 écrans à capturer, dans cet ordre** — les deux premiers sont les
 seuls visibles sans faire défiler, ce sont eux qui décident du
@@ -347,5 +354,5 @@ banal.
 | Prix (gratuit), disponibilité (175 pays) | ✅ |
 | Confidentialité « aucune donnée collectée » | ✅ publiée |
 | Game Center attaché à la version | ✅ |
-| **Captures d'écran iPhone + iPad** | ⬜ **il ne manque que ça** |
-| Sélection du build | ⬜ après le prochain build |
+| Captures d'écran iPhone 6,9" + iPad 13" | ✅ déposées |
+| **Sélection du build** | ⬜ **il ne manque que ça** |
