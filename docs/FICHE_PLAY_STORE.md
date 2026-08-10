@@ -127,19 +127,41 @@ classement absent est le genre de détail qui vaut un signalement.
 |---|---|---|
 | Icône | PNG 32 bits **avec** alpha, 512 × 512, moins de 1024 Ko | ✅ `docs/play/icone-512.png` (92 Ko) |
 | Graphique de mise en avant | JPEG ou PNG 24 bits **sans** alpha, 1024 × 500 | ✅ `docs/play/bandeau-1024x500.png` |
-| Captures téléphone | au moins 2, entre 320 et 3840 px | ⬜ |
+| Captures téléphone | au moins 2, entre 320 et 3840 px | ✅ six dans `docs/play/captures/` |
 
 ⚠️ **Les captures iOS ne se recyclent pas telles quelles.** Google
 impose que la plus grande dimension ne dépasse pas le double de la plus
 petite. Les captures iPhone 6,9" font 1260 × 2736, soit un rapport de
-2,17 : hors clou. Il faut des captures prises sur un appareil ou un
-émulateur Android — et viser **au moins quatre captures d'au moins
-1080 px** en 16:9 ou 9:16, seuil d'éligibilité aux mises en avant.
+2,17 : hors clou. Celles de `docs/play/captures/` font 1080 × 2160,
+rapport exactement 2,000 — et dépassent les 1080 px qui ouvrent droit
+aux mises en avant.
 
-Les six écrans à montrer sont les mêmes que sur l'App Store : partie en
-cours avec la frise, révélation réussie, défi du jour, écran de fin,
-Chrono, Roulette des drapeaux. Les captures se réordonnent après coup,
-sans nouvelle version.
+### Les refaire
+
+`erea_flutter/tool/captures_play.js` pilote la **version web** de l'app
+dans Chromium et capture les six écrans :
+
+```bash
+cd erea_flutter
+flutter build web --release
+cd build/web && python3 -m http.server 8099 &
+node ../../tool/captures_play.js
+```
+
+Pourquoi le web plutôt qu'un émulateur : aucune installation d'Android
+Studio, et le rendu est celui de Flutter. Le script règle au passage
+cinq pièges — CanvasKit servi depuis le SDK plutôt que depuis Google,
+police de secours servie depuis le système (sans elle, tous les emoji du
+jeu sont des rectangles et la roulette est illisible), arbre de
+sémantique ouvert pour pouvoir cliquer les textes, service worker bloqué
+pour ne pas resservir un cache, et une densité choisie pour tomber sur
+1080 × 2160 pile.
+
+⚠️ **La capture de révélation est la seule faible.** La frise part de
+1580 et le script ne sait pas viser : il enchaîne les manches et retient
+le meilleur score rencontré, ce qui plafonne à quelques dizaines de
+points. Une révélation vraiment réussie — un **PERFECT 🎯** — vaudrait
+bien mieux en vitrine : à prendre à la main, en jouant, sur un appareil.
 
 ## 5. Les trois questionnaires
 
