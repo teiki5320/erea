@@ -26,6 +26,36 @@ class Classement {
   static const String chrono = 'erea.chrono';
   static String classique(String difficulte) => 'erea.classic.$difficulte';
 
+  /// Play Games ne laisse PAS choisir ses identifiants : la Play Console
+  /// en génère un par classement, opaque et immuable. Les nôtres, ci-dessus,
+  /// restent donc la clé du code — cette table les traduit pour Android.
+  ///
+  /// Tant qu'elle est vide, Android n'envoie rien et n'affiche rien : le
+  /// jeu reste entièrement jouable, classements masqués, exactement comme
+  /// sur un appareil où Game Center est désactivé.
+  ///
+  /// À remplir en recopiant les identifiants de la Play Console, une fois
+  /// les six classements créés (voir docs/FICHE_PLAY_STORE.md §7).
+  static const Map<String, String> _playGames = {
+    // defi:                    'CgkI...',
+    // serie:                   'CgkI...',
+    // chrono:                  'CgkI...',
+    // 'erea.classic.facile':   'CgkI...',
+    // 'erea.classic.normal':   'CgkI...',
+    // 'erea.classic.difficile':'CgkI...',
+  };
+
+  static bool get _surAndroid =>
+      defaultTargetPlatform == TargetPlatform.android;
+
+  /// L'identifiant à donner au plugin pour Android, ou null s'il manque.
+  static String? _pourAndroid(String tableau) => _playGames[tableau];
+
+  /// Vrai quand la plateforme courante ne sait pas nommer ce tableau :
+  /// on s'abstient alors, plutôt que d'envoyer un identifiant vide.
+  static bool _sansTableau(String tableau) =>
+      _surAndroid && _pourAndroid(tableau) == null;
+
   static bool _connecte = false;
 
   /// Connexion EN COURS, partagée : les trois requêtes de rang du bloc
@@ -77,11 +107,12 @@ class Classement {
       {int max = 11000}) async {
     // Garde-fou anti-absurde : un score hors barème ne part pas.
     if (valeur < 0 || valeur > max) return;
+    if (_sansTableau(tableau)) return;
     if (!await connecter()) return;
     try {
       await Leaderboards.submitScore(
         score: Score(
-          androidLeaderboardID: tableau,
+          androidLeaderboardID: _pourAndroid(tableau) ?? '',
           iOSLeaderboardID: tableau,
           value: valeur,
         ),
@@ -92,10 +123,12 @@ class Classement {
   }
 
   static Future<void> afficher({String? tableau}) async {
+    if (tableau != null && _sansTableau(tableau)) return;
     if (!await connecter()) return;
     try {
       await Leaderboards.showLeaderboards(
-        androidLeaderboardID: tableau ?? '',
+        androidLeaderboardID:
+            tableau == null ? '' : (_pourAndroid(tableau) ?? ''),
         iOSLeaderboardID: tableau ?? '',
       );
     } catch (e) {
@@ -114,11 +147,12 @@ class Classement {
   /// il existe dès que la difficulté a été jouée, contrairement au défi du
   /// jour qui repart de zéro chaque nuit.
   static Future<int?> rang(String tableau) async {
+    if (_sansTableau(tableau)) return null;
     if (!await connecter()) return null;
     try {
       final data = await Leaderboards.getPlayerScoreObject(
         iOSLeaderboardID: tableau,
-        androidLeaderboardID: tableau,
+        androidLeaderboardID: _pourAndroid(tableau) ?? '',
         scope: PlayerScope.global,
         timeScope: TimeScope.allTime,
       );

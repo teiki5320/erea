@@ -236,14 +236,32 @@ aucun projet côté Google, et la `meta-data APP_ID` est commentée dans
 silence et le jeu reste entièrement jouable, classements masqués — c'est
 le comportement voulu par `lib/core/classement.dart`.
 
-Pour les activer : créer le projet Play Games dans la Play Console,
-recréer les six classements avec les mêmes identifiants qu'iOS
-(`erea.daily`, `erea.streak`, `erea.classic.facile` / `.normal` /
-`.difficile`, `erea.chrono`), puis décommenter les deux `meta-data` en y
-mettant l'identifiant numérique obtenu.
+⚠️ **Piège principal : les identifiants ne se choisissent pas.** Là où
+Game Center accepte les nôtres (`erea.daily`…), la Play Console **génère**
+un identifiant opaque et immuable par classement, du genre
+`CgkI8ZaR1c4XEAIQAQ`. Réutiliser les identifiants iOS ne produit aucune
+erreur visible : les scores partent dans le vide et les classements
+restent vides sans que rien ne le signale.
 
-⚠️ Décommenter avec un identifiant vide ou faux **fait planter l'app au
-démarrage de Play Games**. C'est tout ou rien.
+`lib/core/classement.dart` porte donc une table `_playGames` qui traduit
+nos identifiants vers ceux de Google. Tant qu'elle est vide, Android
+n'envoie ni n'affiche rien — le jeu reste jouable, classements masqués.
+
+Les étapes, dans l'ordre :
+
+1. Créer le projet Play Games dans la Play Console et y créer les **six
+   classements** (mêmes types et plages que sur Game Center, voir
+   `erea_flutter/ios/GAME_CENTER.md`) ; `erea.daily` doit y être
+   **récurrent sur 24 h**.
+2. Recopier les six identifiants générés dans la table `_playGames`.
+3. Décommenter les deux `meta-data` de `AndroidManifest.xml` en y mettant
+   l'identifiant **numérique du projet** (différent de ceux des
+   classements), via une ressource string.
+4. Remettre le paragraphe « classements » dans la description longue.
+
+⚠️ Décommenter les `meta-data` avec un identifiant vide ou faux **fait
+planter l'app au démarrage de Play Games**. C'est tout ou rien — d'où
+l'étape 3 en dernier.
 
 ## Les pièges, résumés
 
