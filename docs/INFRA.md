@@ -202,7 +202,7 @@ Le dépôt peut être public sans risque : il ne contient aucun secret.
 - `K597U7X3FZ` — Team ID Apple (visible dans toute app signée)
 - `erea.daily`, `erea.streak`, `erea.classic.*`, `erea.chrono` — ID de classements Game Center
 - `https://teiki5320.github.io/erea/` — URL publique du prototype web
-- Version `0.1.0+1` dans `pubspec.yaml`
+- Version `1.0.0+1` dans `pubspec.yaml`
 
 ## Checklist « reprise du projet sur une machine neuve »
 
