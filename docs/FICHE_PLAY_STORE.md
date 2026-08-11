@@ -127,7 +127,7 @@ classement absent est le genre de détail qui vaut un signalement.
 |---|---|---|
 | Icône | PNG 32 bits **avec** alpha, 512 × 512, moins de 1024 Ko | ✅ `docs/play/icone-512.png` (92 Ko) |
 | Graphique de mise en avant | JPEG ou PNG 24 bits **sans** alpha, 1024 × 500 | ✅ `docs/play/bandeau-1024x500.png` |
-| Captures téléphone | au moins 2, entre 320 et 3840 px | ✅ six dans `docs/play/captures/` |
+| Captures téléphone | au moins 2, entre 320 et 3840 px | ✅ sept dans `docs/play/captures/` |
 
 ⚠️ **Les captures iOS ne se recyclent pas telles quelles.** Google
 impose que la plus grande dimension ne dépasse pas le double de la plus
@@ -144,8 +144,9 @@ dans Chromium et capture les six écrans :
 ```bash
 cd erea_flutter
 flutter build web --release
-cd build/web && python3 -m http.server 8099 &
-node ../../tool/captures_play.js
+(cd build/web && python3 -m http.server 8099 &)
+node tool/captures_play.js            # les sept
+node tool/captures_play.js 7-fin      # ou une seule
 ```
 
 Pourquoi le web plutôt qu'un émulateur : aucune installation d'Android
@@ -162,6 +163,37 @@ pour ne pas resservir un cache, et une densité choisie pour tomber sur
 le meilleur score rencontré, ce qui plafonne à quelques dizaines de
 points. Une révélation vraiment réussie — un **PERFECT 🎯** — vaudrait
 bien mieux en vitrine : à prendre à la main, en jouant, sur un appareil.
+
+## 4 bis. Ce que contient réellement le build
+
+Mesuré sur l'APK produit le 11 août 2026, pas déduit du code :
+
+| | |
+|---|---|
+| Poids téléchargé | **~20 Mo** (APK arm64 ; 17,5 Mo en armeabi-v7a). Très loin des seuils de Google |
+| `targetSdk` / `compileSdk` | 36 · `minSdk` 24 (Android 7) |
+| `versionName` | 1.0.0, comme iOS |
+
+**Permissions réellement embarquées**, plugins compris :
+
+```
+POST_NOTIFICATIONS · RECEIVE_BOOT_COMPLETED · VIBRATE
++ DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION (interne à AndroidX)
+```
+
+Les deux premières servent au rappel du soir, `VIBRATE` est ajoutée par
+le plugin de notifications. Aucune n'est sensible au sens de Google :
+rien à justifier dans la console.
+
+⚠️ Le fait marquant : **il n'y a pas de permission `INTERNET`**. L'app est
+techniquement incapable d'accéder au réseau — « aucune donnée collectée »
+n'est donc pas une promesse mais une propriété vérifiable du paquet, et
+ça se dit dans la fiche.
+
+Le jour où Play Games est branché (§7), `INTERNET` apparaîtra : la
+déclaration « Sécurité des données » reste bonne — Google gère l'identité
+et les scores, comme Apple avec Game Center — mais l'argument « pas même
+la permission réseau » tombe.
 
 ## 5. Les trois questionnaires
 

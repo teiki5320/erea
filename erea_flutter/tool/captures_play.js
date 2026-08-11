@@ -19,11 +19,13 @@ const { chromium } = require('playwright');
 const path = require('path');
 const fs = require('fs');
 
-const WEB = '/home/user/erea/erea_flutter/build/web';
-const SORTIE = '/home/user/erea/docs/play/captures';
+// Chemins déduits de l'emplacement du script : il doit tourner sur
+// n'importe quelle machine, pas seulement celle qui l'a écrit.
+const APP = path.resolve(__dirname, '..');
+const WEB = path.join(APP, 'build', 'web');
+const SORTIE = path.resolve(APP, '..', 'docs', 'play', 'captures');
 const ADRESSE = 'http://localhost:8099/index.html';
 
-// 1080 x 2160 : rapport exactement 2:1, la limite que Google impose.
 // 400 x 800 points a 2,7 : exactement 1080 x 2160 pixels. Le compte doit
 // tomber juste — a 411 points la largeur donnait 1079, soit un rapport de
 // 2,002 que Google refuse.
@@ -73,7 +75,20 @@ async function attendrePrete(page) {
 
 async function cliquer(page, texte, attente = 1800) {
   const cible = page.getByText(texte, { exact: false }).first();
-  await cible.waitFor({ state: 'attached', timeout: 15000 });
+  // Un événement à longue description repousse les commandes sous la
+  // ligne de flottaison. Flutter ne construit pas les widgets hors écran,
+  // donc leur nœud de sémantique n'existe pas non plus : attendre ne sert
+  // à rien, il faut faire défiler pour les faire naître.
+  for (let essai = 0; essai < 8 && !(await cible.count()); essai++) {
+    await page.mouse.move(VUE.width / 2, VUE.height / 2);
+    await page.mouse.wheel(0, 260);
+    await pause(600);
+  }
+  try {
+    await cible.waitFor({ state: 'attached', timeout: 15000 });
+  } catch (e) {
+    throw new Error('introuvable : « ' + texte + ' »');
+  }
   const boite = await cible.boundingBox();
   if (boite) {
     await page.mouse.click(boite.x + boite.width / 2, boite.y + boite.height / 2);
@@ -167,9 +182,29 @@ async function passerOnboarding(page) {
     ['6-packs', async (p) => {
       await cliquer(p, 'Packs', 2500);
     }],
+    // L'écran de fin porte la grille emoji qu'on partage : c'est le
+    // ressort viral du jeu, il mérite sa capture. Seul moyen d'y arriver :
+    // jouer les dix manches.
+    ['7-fin', async (p) => {
+      await cliquer(p, 'Classique');
+      await cliquer(p, 'est parti', 2500);
+      for (let manche = 1; manche <= 10; manche++) {
+        await cliquer(p, '+', 900);
+        await cliquer(p, 'Je place ici', 3000);
+        await cliquer(p, manche < 10 ? 'Manche suivante' : 'Voir mes résultats',
+                      manche < 10 ? 2400 : 4000);
+      }
+    }],
   ];
 
-  for (const [nom, parcours] of scenarios) {
+  // Un argument ne rejoue que les captures dont le nom le contient :
+  //   node tool/captures_play.js 7-fin
+  const filtre = process.argv[2];
+  const aFaire = filtre
+    ? scenarios.filter(([nom]) => nom.includes(filtre))
+    : scenarios;
+
+  for (const [nom, parcours] of aFaire) {
     try {
       await page.reload({ waitUntil: 'load', timeout: 60000 });
       await attendrePrete(page);
