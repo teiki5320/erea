@@ -3,11 +3,13 @@
 > Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
 > mis à jour le 5 août 2026 avec l'état réel de la saisie.
 >
-> **Où on en est : la fiche est complète, captures comprises** — six en
-> iPhone 6,9", sept en iPad 13", déposées le 9 août 2026. Il ne reste
-> qu'à sélectionner le build, puis à cliquer sur « Ajouter pour
-> vérification ». Les valeurs des blocs gris ci-dessous sont celles qui
-> ont été saisies.
+> **Où on en est : la version 1.0.0 est partie à la revue le 14 août
+> 2026 à 11 h 42**, avec le build **90**. Il n'y a plus rien à saisir :
+> les valeurs des blocs gris ci-dessous sont celles qui l'ont été.
+>
+> Reste à attendre la réponse d'Apple, puis à publier — la sortie est
+> réglée sur *manuelle*, pour pouvoir la faire coïncider avec celle du
+> Play Store.
 
 L'interface découpe la fiche en **deux pages différentes**, et c'est ce
 qui perd tout le monde :
@@ -51,9 +53,15 @@ Deux sous-catégories apparaissent alors, choisis :
 
 **Catégorie secondaire** → **Éducation**
 
-**Droits relatifs au contenu** → clique sur « Configurer », puis réponds
-**non** : ton app ne contient aucun contenu appartenant à des tiers. Les
-textes, les dates et les visuels sont les tiens.
+**Droits relatifs au contenu** ✅ → clique sur « Configurer », puis
+réponds **non** : ton app ne contient aucun contenu appartenant à des
+tiers. Les textes, les dates et les visuels sont les tiens.
+
+⚠️ **Sans ce champ, le bouton « Ajouter pour vérification » reste
+inerte** et l'erreur renvoie ici. Il vit sur la page *Informations sur
+l'app*, loin de la page de version où l'on croit tout remplir — ce
+document l'a d'ailleurs longtemps donné pour fait alors qu'il ne l'était
+pas, et c'est ce qui a bloqué l'envoi du 14 août.
 
 **Contrat de licence** → laisse le contrat type d'Apple.
 
@@ -355,4 +363,5 @@ banal.
 | Confidentialité « aucune donnée collectée » | ✅ publiée |
 | Game Center attaché à la version | ✅ |
 | Captures d'écran iPhone 6,9" + iPad 13" | ✅ déposées |
-| **Sélection du build** | ⬜ **il ne manque que ça** |
+| Sélection du build | ✅ build 90 |
+| **Envoi à la revue** | ✅ **le 14 août 2026 à 11 h 42** |
