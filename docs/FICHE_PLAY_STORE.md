@@ -57,8 +57,30 @@ filet de sécurité qui rattrape une perte de clé — le seul.
 
 ## 2. Le compte Google Play Console
 
-25 $ une seule fois, puis une **vérification d'identité** qui prend
-plusieurs jours. À lancer tôt : tout le reste peut avancer pendant.
+⚠️⚠️ **À LIRE AVANT DE CRÉER LE COMPTE — le choix du type est
+irréversible en pratique et commande tout le reste.**
+
+| | Compte **personnel** | Compte **organisation** |
+|---|---|---|
+| Ce qu'il faut | une pièce d'identité | une société active **et** un numéro D-U-N-S |
+| Test avant publication | **12 testeurs pendant 14 jours consécutifs** | aucun |
+| Coordonnées publiques | nom du développeur | nom, e-mail et téléphone de la société |
+
+Les 12 testeurs ne sont pas une formalité : il faut douze **personnes
+distinctes**, avec un compte Google et un appareil Android, inscrites
+sans interruption pendant quatorze jours. Sans elles, l'app ne peut pas
+passer en production — jamais. Cette obligation ne pèse que sur les
+comptes personnels créés après le 13 novembre 2023 ; les comptes
+d'organisation en sont exemptés.
+
+Google ne documente aucune conversion d'un type vers l'autre : se
+tromper, c'est repayer 25 $ et tout resaisir. **Si une société existe,
+prendre le compte organisation, sans hésiter.**
+
+Le reste : 25 $ une seule fois, puis une **vérification d'identité** de
+plusieurs jours, une **validation depuis un appareil Android physique**
+(l'émulateur ne passe pas l'attestation) et un numéro de téléphone à
+confirmer par SMS. À lancer tôt : tout le reste peut avancer pendant.
 
 La déclaration de statut professionnel s'y refait, comme le DSA côté
 Apple. Une app gratuite, sans publicité ni achat, se déclare en
