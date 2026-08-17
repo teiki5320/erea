@@ -80,11 +80,50 @@ class Pub {
           } catch (e) {
             debugPrint('Consentement non recueilli : $e');
           }
+          await _releverOptions();
         },
         (erreur) => debugPrint('Consentement indisponible : ${erreur.message}'),
       );
     } catch (e) {
       debugPrint('Consentement impossible : $e');
+    }
+  }
+
+  /// Vrai quand Google réclame un point d'entrée permanent vers ses
+  /// « options de confidentialité » — en pratique, partout où le
+  /// formulaire de consentement s'est affiché.
+  ///
+  /// Ce n'est pas une politesse : un joueur qui a accepté la publicité
+  /// personnalisée doit pouvoir revenir sur son choix à tout moment, sinon
+  /// le consentement n'en est pas un. Les réglages n'affichent donc la
+  /// ligne que lorsque Google la demande, et jamais chez un acheteur qui
+  /// ne voit plus une seule publicité.
+  static bool optionsRequises = false;
+
+  static Future<void> _releverOptions() async {
+    try {
+      final statut =
+          await ConsentInformation.instance.getPrivacyOptionsRequirementStatus();
+      optionsRequises = statut == PrivacyOptionsRequirementStatus.required;
+    } catch (e) {
+      optionsRequises = false;
+      debugPrint('Options de confidentialité indisponibles : $e');
+    }
+  }
+
+  /// Rouvre le formulaire de Google pour que le joueur révise son choix.
+  ///
+  /// Rend la main dans tous les cas, y compris si le formulaire refuse de
+  /// s'ouvrir : l'écran de réglages ne doit jamais rester bloqué.
+  static Future<void> ouvrirOptions() async {
+    try {
+      await ConsentForm.showPrivacyOptionsForm((erreur) {
+        if (erreur != null) {
+          debugPrint('Options de confidentialité : ${erreur.message}');
+        }
+      });
+    } catch (e) {
+      debugPrint('Options de confidentialité impossibles : $e');
     }
   }
 

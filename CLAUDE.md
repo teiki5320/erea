@@ -24,7 +24,7 @@ prototype d'origine, conservé comme vitrine.
   changent plusieurs fois par an : consulte la documentation d'Apple ou
   de Google, ou demande une capture, plutôt que de guider de mémoire.
 - **Avant tout commit** : `flutter analyze` et `flutter test` doivent
-  passer (152 tests).
+  passer (154 tests).
 - **Aucun test ne couvre la compilation iOS.** `analyze`, les tests et
   même un build Android peuvent tous passer sur un projet qui n'archive
   pas. Toucher à `ios/`, au `Podfile` ou à une dépendance native, c'est

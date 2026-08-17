@@ -5,7 +5,7 @@ racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
 État : **version 1.0.0** soumise à l'App Store le 14 août (build 90),
 publicité et achat intégré branchés pour la 1.1.
-152 tests, `flutter analyze` propre.
+154 tests, `flutter analyze` propre.
 
 ## Démarrer
 
@@ -95,7 +95,7 @@ Cloud (builds 94 et 95).
   partagée, six tableaux, échec silencieux.
 - **`lib/core/avis.dart`** — demande de note, une seule fois et après une
   réussite.
-- **`test/`** — 152 tests : règles du jeu, intégrité des 1 738
+- **`test/`** — 154 tests : règles du jeu, intégrité des 1 738
   événements, persistance et défi du jour, interface jusqu'à une partie
   complète, mise en page iPad et iPhone SE en très grande police, règle
   d'affichage de la publicité, promesse de l'achat.
@@ -129,6 +129,17 @@ Le consentement européen passe par le formulaire UMP de Google, réclamé
 avant tout chargement. Sur iOS, `NSUserTrackingUsageDescription` porte le
 texte d'App Tracking Transparency : sans lui, la publicité reste non
 personnalisée.
+
+Le joueur doit pouvoir **revenir sur ce choix** : Google réclame un point
+d'entrée permanent là où son formulaire s'est affiché, sans quoi le
+consentement n'est pas révocable. La ligne « Publicité personnalisée »
+apparaît donc dans les réglages quand `Pub.optionsRequises` est vrai —
+jamais ailleurs, et jamais chez un acheteur.
+
+⚠️ **Ce qui manque encore** : `tagForChildDirectedTreatment` /
+`tagForUnderAgeOfConsent` ne sont pas posés. Ils deviennent obligatoires
+si la fiche Play déclare une tranche d'âge incluant les moins de 13 ans
+(politique Familles) — voir `docs/FICHE_PLAY_STORE.md` §5.
 
 ## L'achat « Erea sans pub »
 

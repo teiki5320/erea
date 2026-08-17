@@ -1,15 +1,26 @@
 # Remplir la fiche App Store — Erea
 
 > Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
-> mis à jour le 5 août 2026 avec l'état réel de la saisie.
+> mis à jour le 17 août 2026 pour la version 1.1.
 >
-> **Où on en est : la version 1.0.0 est partie à la revue le 14 août
-> 2026 à 11 h 42**, avec le build **90**. Il n'y a plus rien à saisir :
-> les valeurs des blocs gris ci-dessous sont celles qui l'ont été.
+> **Où on en est.** La version **1.0.0** est partie à la revue le 14 août
+> 2026 à 11 h 42 avec le build **90** ; la sortie est réglée sur
+> *manuelle*, pour pouvoir la faire coïncider avec celle du Play Store.
 >
-> Reste à attendre la réponse d'Apple, puis à publier — la sortie est
-> réglée sur *manuelle*, pour pouvoir la faire coïncider avec celle du
-> Play Store.
+> La version **1.1** apporte la publicité et l'achat qui l'enlève. Elle
+> change **quatre choses** dans cette fiche, et aucune n'est cosmétique :
+>
+> | Ce qui change | Où |
+> |---|---|
+> | La description ne peut plus promettre « sans publicité » | [Description](#description--4-000-caractères-texte-brut) |
+> | La confidentialité passe de « aucune donnée » à une déclaration en règle | [Page 4](#page-4--confidentialité-de-lapp) |
+> | La déclaration DSA passe de non-trader à **trader** | [Réglementations](#réglementations-et-autorisations-de-lapp-store) |
+> | Un achat intégré à créer, et un accord à signer avant tout | [Page 3](#page-3--tarifs-et-disponibilité) |
+>
+> ⚠️ **Rien ne peut être testé avant la signature de l'accord
+> « Applications payantes ».** Sans lui, la boutique reste muette,
+> `Achat.disponible` reste faux, et l'offre ne s'affiche même pas dans
+> l'app. C'est la première marche, pas la dernière.
 
 L'interface découpe la fiche en **deux pages différentes**, et c'est ce
 qui perd tout le monde :
@@ -109,19 +120,42 @@ aucun document.
 
 ## Réglementations et autorisations de l'App Store
 
-**Législation sur les services numériques (DSA)** ✅ *(déclaré non-trader
-le 4 août 2026)* — obligatoire, et sans elle l'app n'est pas distribuée
-dans l'Union européenne. La déclaration se fait au niveau du **compte**
-(App Store Connect → Business), pas de l'app.
+**Législation sur les services numériques (DSA)** ⬜ **à refaire pour la
+1.1** — obligatoire, et sans elle l'app n'est pas distribuée dans l'Union
+européenne. La déclaration se fait au niveau du **compte** (App Store
+Connect → Business), pas de l'app.
 
-Tu dois déclarer si tu es « trader » (professionnel) ou non. Un
-développeur particulier qui publie une app **gratuite, sans publicité et
-sans achat intégré** peut se déclarer **non-trader**. C'est ton cas
-aujourd'hui.
+Tu t'es déclaré **non-trader** le 4 août 2026, ce qui était juste : l'app
+était gratuite, sans publicité et sans achat intégré.
 
-⚠️ Le jour où tu ajouteras « Erea + » (achat unique), tu deviendras
-trader et il faudra repasser la déclaration, avec adresse postale et
-téléphone qui seront **affichés publiquement** sur ta fiche dans l'UE.
+⚠️ **Ce n'est plus vrai avec la 1.1**, et il faut reprendre la
+déclaration. Apple ne dit pas que monétiser fait *automatiquement* de toi
+un trader : elle dit que le fait de tirer un revenu de l'app — achat
+intégré, app payante ou **financée par la publicité** — est l'un des
+facteurs qui l'établissent, avec le volume d'activité. Erea cumule
+désormais publicité *et* achat intégré : le faisceau penche clairement du
+côté trader, et se déclarer non-trader en encaissant de l'argent est le
+genre de déclaration qu'on ne veut pas avoir à défendre.
+
+Ce que le statut trader implique, et qu'il vaut mieux savoir **avant** de
+cliquer :
+
+- **adresse postale, téléphone et e-mail sont publiés sur ta fiche App
+  Store** dans les 27 pays de l'UE. Ce n'est pas un effet de bord, c'est
+  l'objet des articles 30 et 31 du DSA : permettre au public de joindre
+  un professionnel. Pas d'option pour les masquer ;
+- Apple **vérifie** ces coordonnées avant de les publier ;
+- **les apps sans statut trader vérifié sont retirées de l'App Store
+  européen** — Apple l'applique depuis le 17 février 2025. Ce n'est pas
+  un avertissement théorique ;
+- si tu ne veux pas exposer ton adresse personnelle, c'est **ici** que la
+  question d'une structure ou d'une adresse de domiciliation se pose, et
+  non après la déclaration.
+
+📎 [Apple — Manage European Union Digital Services Act trader
+requirements](https://developer.apple.com/help/app-store-connect/manage-compliance-information/manage-european-union-digital-services-act-trader-requirements/)
+· [Apps without trader status will be removed from the App Store in the
+EU](https://developer.apple.com/news/?id=einwn76m)
 
 **Licence de jeu pour le Vietnam** — laisse vide, c'est facultatif.
 
@@ -207,12 +241,21 @@ CLASSEMENTS ET PROGRESSION
 
 Comparez-vous au monde entier via Game Center, gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
 
-SANS PUBLICITÉ, SANS COMPTE, SANS INTERNET
+SANS COMPTE, SANS INTERNET
 
-Erea ne collecte aucune donnée, n'affiche aucune publicité et ne demande aucune inscription. Le jeu fonctionne entièrement hors ligne — en voiture, dans le train, partout.
+Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — en voiture, dans le train, partout.
+
+UNE PUBLICITÉ, UNE PARTIE SUR DEUX
+
+Erea est gratuit et complet : tous les modes, tous les événements, rien de réservé à ceux qui paient. Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Si elle vous gêne, un achat unique la retire pour toujours.
 
 Bonne partie !
 ```
+
+⚠️ **La 1.1 doit remplacer les deux derniers paragraphes**, faute de quoi
+la fiche promet une app sans publicité en en affichant une : contradiction
+que la revue relève, et qui vaut un rejet au titre de la règle 2.3
+(*Accurate Metadata*). Le bloc ci-dessus est déjà la version corrigée.
 
 ## Mots-clés ✅ — **100 octets**, séparés par des virgules sans espace
 
@@ -304,38 +347,123 @@ Les classements mondiaux passent par Game Center : la fenêtre de connexion appa
 Le Défi du jour n'est jouable qu'une fois par jour (c'est le principe du mode : les mêmes 10 questions pour tous les joueurs). Pour tester plusieurs parties, utilisez le mode Classique.
 ```
 
-## Publication de la version ✅
+## Publication de la version ✅ *(réglée sur manuelle)*
 
-Choisis **Publier automatiquement** — l'app sortira dès qu'Apple l'aura
-validée.
+Deux choix : **Publier automatiquement**, et l'app sort dès qu'Apple l'a
+validée, ou **Publier manuellement**, et tu déclenches la sortie toi-même.
+
+C'est **manuelle** qui a été choisie pour la 1.0, afin de pouvoir faire
+coïncider la sortie avec celle du Play Store. Conséquence à ne pas
+oublier : une fois l'app validée par Apple, **elle ne sort pas toute
+seule** — il faut revenir cliquer.
 
 ---
 
-# PAGE 3 — Tarifs et disponibilité ✅
+# PAGE 3 — Tarifs et disponibilité
 
-- **Prix** : Gratuit
-- **Disponibilité** : tous les pays *(le jeu est en français, mais ça
+- **Prix** : Gratuit ✅ *(et ça ne change pas : c'est la publicité qui
+  paie)*
+- **Disponibilité** : tous les pays ✅ *(le jeu est en français, mais ça
   couvre la Belgique, la Suisse, le Québec, le Sénégal, la Côte
   d'Ivoire…)*
 
+## L'accord « Applications payantes » ⬜ — **la première marche**
+
+**Business → Accords**, puis signer *Paid Applications Agreement*. Il
+réclame, en plus de la signature :
+
+- les **coordonnées bancaires** de réception des paiements ;
+- les **informations fiscales** (pour la France, le formulaire fiscal
+  américain W-8BEN, à remplir en ligne) ;
+- une adresse de facturation.
+
+⚠️ **Tant qu'il n'est pas actif, aucun achat n'existe** : le produit ne
+peut pas être créé, la boutique ne répond pas, `Achat.disponible` reste
+faux et l'app n'affiche même pas l'offre — le code est déjà écrit pour ne
+jamais montrer un bouton mort. Compte plusieurs jours de validation, et
+attaque-le en premier.
+
+## L'achat intégré ⬜
+
+**Monétisation → Achats intégrés → +**, puis :
+
+| Champ | Valeur |
+|---|---|
+| Type | **Non consommable** *(il s'achète une fois, pour toujours)* |
+| Nom de référence | `Erea sans publicité` *(interne, jamais affiché)* |
+| ID de produit | `com.teiki.erea.sanspub` |
+| Prix | **3,99 €** *(choisis le prix, App Store Connect déduit les 174 autres pays)* |
+| Nom affiché (FR) | `Erea sans publicité` |
+| Description (FR) | `Retire définitivement les publicités. Le jeu reste entier : rien ne se débloque, il n'y a rien à débloquer.` |
+
+⚠️ **L'ID de produit doit être saisi au caractère près** : il est écrit en
+dur dans `lib/core/achat.dart` (`Achat.idSansPub`), et un test le vérifie.
+Une faute de frappe rend l'achat introuvable **sans aucun message
+d'erreur** côté joueur.
+
+Il faut aussi joindre une **capture de l'écran de réglages** montrant
+l'offre, et l'achat doit être **soumis avec la version 1.1** (case à
+cocher dans la page de la version) — sinon il reste en « Prêt à
+soumettre » et n'est jamais examiné.
+
 ---
 
-# PAGE 4 — Confidentialité de l'app ✅
+# PAGE 4 — Confidentialité de l'app ⬜ **à refaire entièrement**
 
-Réponds : **« Non, nous ne collectons pas de données de cette app. »**
+⚠️ **C'est le changement le plus lourd de la 1.1, et le plus risqué.** La
+réponse actuelle — « Non, nous ne collectons pas de données de cette
+app. » — était exacte pour la 1.0. Avec AdMob elle devient **fausse**, et
+une déclaration de confidentialité fausse est un motif de rejet immédiat
+(règle 5.1.1), voire de retrait après publication.
 
-C'est exact et vérifiable : aucun analytics, aucun traceur, aucun
-serveur. Tu obtiens le badge **« Aucune donnée collectée »**, rare dans
-les jeux et rassurant pour les parents.
+**Tu perds le badge « Aucune donnée collectée ».** C'était un argument
+réel auprès des parents ; c'est le prix de la monétisation, et il n'y a
+pas de moyen de le garder tout en affichant de la publicité.
 
-Game Center ne change rien à cette réponse : c'est Apple qui gère
-l'identité et les scores, pas toi.
+Réponds donc **« Oui, nous collectons des données de cette app »**, puis
+déclare ce que le SDK de Google recueille. Google le publie lui-même :
+
+| Catégorie Apple | Type | Usage | Lié à l'identité | Suivi |
+|---|---|---|---|---|
+| Identifiants | **ID d'appareil** | Publicité tierce | oui | **oui** |
+| Données d'utilisation | **Données publicitaires** | Publicité tierce | oui | **oui** |
+| Données d'utilisation | **Interactions avec le produit** | Publicité tierce | oui | **oui** |
+| Localisation | **Localisation approximative** | Publicité tierce | oui | non |
+| Diagnostic | **Données de performance** | Fonctionnalité de l'app | oui | non |
+| Diagnostic | **Données de plantage** | Diagnostic | non | non |
+
+Ce tableau vient de la page de Google, qui décrit en prose ce que le SDK
+« peut recueillir » : adresse IP *(d'où la localisation approximative)*,
+journaux de plantage non rattachés à l'utilisateur, données de
+performance rattachées à l'utilisateur, identifiant publicitaire de
+l'appareil, publicités vues, et interactions.
+
+⚠️ **Vérifie case à case sur la page de Google au moment de remplir** :
+c'est elle qui fait foi, elle change avec les versions du SDK, et Google
+rappelle que la déclaration reste la responsabilité du développeur. Les
+intitulés exacts d'App Store Connect peuvent différer de ma traduction.
+
+📎 [Google — App Store data disclosure
+(iOS)](https://developers.google.com/admob/ios/privacy/data-disclosure)
+
+Deux choses qui ne changent pas :
+
+- **Game Center** n'entre pas dans cette déclaration : c'est Apple qui
+  gère l'identité et les scores, pas toi.
+- **Tes propres données restent nulles** : pas de serveur, pas
+  d'analytics, pas de rapport d'erreurs. Tout ce qui est déclaré
+  ci-dessus est collecté *par Google*, et tu ne le vois jamais.
 
 **URL de politique de confidentialité** :
 
 ```
 https://teiki5320.github.io/erea/confidentialite.html
 ```
+
+✅ La page a été mise à jour le 17 août 2026 : elle décrit la publicité,
+les données que Google recueille, le consentement européen révocable et
+l'achat qui supprime tout. Elle doit être **en ligne avant** l'envoi de
+la 1.1 — la revue la lit.
 
 ---
 
@@ -350,18 +478,56 @@ banal.
 
 ---
 
-# Ce qu'il reste à préparer
+# Sortir la version 1.1
 
-| Élément | État |
-|---|---|
-| Nom, sous-titre, catégories | ✅ saisis |
-| Classification par âge (4+), droits de contenu, DSA | ✅ faits |
-| Texte promotionnel, description, mots-clés | ✅ saisis |
-| URL d'assistance et de confidentialité | ✅ en ligne et saisies |
-| Droits d'auteur, coordonnées de revue, remarques | ✅ saisis |
-| Prix (gratuit), disponibilité (175 pays) | ✅ |
-| Confidentialité « aucune donnée collectée » | ✅ publiée |
-| Game Center attaché à la version | ✅ |
-| Captures d'écran iPhone 6,9" + iPad 13" | ✅ déposées |
-| Sélection du build | ✅ build 90 |
-| **Envoi à la revue** | ✅ **le 14 août 2026 à 11 h 42** |
+L'ordre compte : chaque étape dépend de la précédente.
+
+1. **Signer l'accord « Applications payantes »** *(page 3)*. Plusieurs
+   jours de validation — c'est le chemin critique, rien d'autre n'avance
+   sans lui.
+2. **Repasser la déclaration DSA en trader** *(page 1)*, en ayant décidé
+   quelle adresse sera publique.
+3. **Créer l'achat** `com.teiki.erea.sanspub` à 3,99 € *(page 3)*.
+4. **Créer le bloc interstitiel iOS** dans AdMob — fait ✅, et les quatre
+   identifiants réels sont déjà dans le code.
+5. **Passer `pubspec.yaml` en `1.1.0`** et pousser sur `main` : Xcode
+   Cloud produit le build.
+6. **Créer la version 1.1** dans App Store Connect *(le numéro doit être
+   identique à celui de `pubspec.yaml`, sinon le build est
+   non-sélectionnable)*.
+7. **Réécrire la description** *(page 2)* et **refaire la déclaration de
+   confidentialité** *(page 4)*. Les textes sont prêts ci-dessus.
+8. **Attacher l'achat intégré à la version**, avec sa capture d'écran.
+9. **Tester sur un iPhone réel** : l'offre apparaît-elle ? l'achat
+   passe-t-il en Sandbox ? « Restaurer mes achats » retrouve-t-il l'achat
+   après réinstallation ? le formulaire de consentement s'affiche-t-il, et
+   la ligne « Publicité personnalisée » permet-elle d'y revenir ?
+10. **Envoyer à la revue.**
+
+⚠️ La 1.0 doit être **publiée** avant que la 1.1 puisse partir : App
+Store Connect n'accepte qu'une version en cours d'examen à la fois.
+
+---
+
+# Où en est chaque champ
+
+| Élément | 1.0 | 1.1 |
+|---|---|---|
+| Nom, sous-titre, catégories | ✅ | inchangé |
+| Classification par âge (4+), droits de contenu | ✅ | inchangé |
+| Déclaration DSA | ✅ non-trader | ⬜ **à repasser en trader** |
+| Texte promotionnel, mots-clés | ✅ | inchangés |
+| Description | ✅ | ⬜ **à réécrire** (texte prêt) |
+| URL d'assistance et de confidentialité | ✅ | inchangées |
+| Politique de confidentialité en ligne | ✅ | ✅ refaite le 17 août |
+| Droits d'auteur, coordonnées de revue, remarques | ✅ | inchangés |
+| Prix (gratuit), disponibilité (175 pays) | ✅ | inchangés |
+| Accord « Applications payantes » | — | ⬜ **à signer d'abord** |
+| Achat `com.teiki.erea.sanspub` | — | ⬜ **à créer** |
+| Déclaration de confidentialité | ✅ « aucune donnée » | ⬜ **à refaire** |
+| Game Center attaché à la version | ✅ | ⬜ à vérifier sur la 1.1 |
+| Captures d'écran iPhone 6,9" + iPad 13" | ✅ | inchangées |
+| Version dans `pubspec.yaml` | ✅ 1.0.0 | ⬜ **à passer en 1.1.0** |
+| Sélection du build | ✅ build 90 | ⬜ |
+| **Envoi à la revue** | ✅ **14 août 2026, 11 h 42** | ⬜ |
+| **Publication** | ⬜ manuelle, en attente d'Apple | ⬜ |

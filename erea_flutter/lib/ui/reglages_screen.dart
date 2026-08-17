@@ -2,6 +2,7 @@ import 'package:flutter/material.dart' hide Badge;
 
 import '../core/achat.dart';
 import '../core/classement.dart';
+import '../core/pub.dart';
 import '../core/rappels.dart';
 import '../core/region.dart' as region;
 import '../core/retour.dart';
@@ -44,6 +45,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
         children: [
           _carteSansPub(),
+          _cartePublicite(),
           _carte([
             SwitchListTile(
               value: widget.store.hapticsOn,
@@ -206,6 +208,31 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
     ]);
   }
 
+  /// Le retour sur le consentement publicitaire.
+  ///
+  /// Google exige ce point d'entrée permanent partout où son formulaire
+  /// s'est affiché : un accord qu'on ne peut plus retirer n'est pas un
+  /// accord. Le SDK dit lui-même s'il le réclame (`optionsRequises`) —
+  /// hors d'Europe, la ligne n'apparaît pas, et un acheteur ne la voit
+  /// jamais puisqu'il n'a plus de publicité du tout.
+  Widget _cartePublicite() {
+    if (widget.store.sansPub || !Pub.optionsRequises) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: _carte([
+        const ListTile(
+          title: Text('Publicité personnalisée'),
+          subtitle: Text('Revenir sur le choix fait au premier lancement'),
+          trailing:
+              Icon(Icons.privacy_tip_outlined, color: inkSoftColor),
+          onTap: Pub.ouvrirOptions,
+        ),
+      ]),
+    );
+  }
+
   Future<void> _acheter() async {
     final ouvert = await Achat.acheter();
     if (!mounted) return;
@@ -235,14 +262,21 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
     );
   }
 
-  Widget _carte(List<Widget> enfants) => Container(
+  /// Le fond blanc est porté par un [Material], pas par une décoration :
+  /// un `Container` coloré autour d'un `ListTile` avale l'effet de
+  /// pression, qui se peint sur le Material le plus proche. Les lignes
+  /// tapables des réglages ne réagissaient donc pas au doigt.
+  Widget _carte(List<Widget> enfants) => DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           boxShadow: const [softShadow],
         ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(children: enfants),
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          clipBehavior: Clip.antiAlias,
+          child: Column(children: enfants),
+        ),
       );
 
   /// Changer de pays après coup : même liste qu'au premier lancement.

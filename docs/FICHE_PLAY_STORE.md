@@ -84,8 +84,11 @@ confirmer par SMS. À lancer tôt : tout le reste peut avancer pendant.
 
 La déclaration de statut professionnel s'y refait, comme le DSA côté
 Apple. Une app gratuite, sans publicité ni achat, se déclare en
-particulier. Le jour où « Erea + » arrive, il faut repasser la
-déclaration.
+particulier — **ce n'est plus le cas d'Erea** : la publicité et l'achat
+« sans publicité » orientent vers le statut professionnel, avec les
+coordonnées publiques que ça implique. À trancher en même temps que la
+déclaration DSA côté Apple, pour ne pas se contredire d'une boutique à
+l'autre.
 
 ## 3. Le texte de la fiche
 
@@ -130,9 +133,13 @@ PROGRESSION
 
 Gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
 
-SANS PUBLICITÉ, SANS COMPTE, SANS INTERNET
+SANS COMPTE, SANS INTERNET
 
-Erea ne collecte aucune donnée, n'affiche aucune publicité et ne demande aucune inscription. Le jeu fonctionne entièrement hors ligne — en voiture, dans le train, partout.
+Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — en voiture, dans le train, partout.
+
+UNE PUBLICITÉ, UNE PARTIE SUR DEUX
+
+Erea est gratuit et complet : tous les modes, tous les événements, rien de réservé à ceux qui paient. Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Si elle vous gêne, un achat unique la retire pour toujours.
 
 Bonne partie !
 ```
@@ -227,16 +234,33 @@ deviner.
    La Roulette des drapeaux tire un pays au sort, ce n'est pas un jeu de
    hasard au sens de la question, qui vise les casinos et les coffres à
    butin.
-2. **Sécurité des données** — l'équivalent de la fiche Confidentialité.
-   Réponse identique et vérifiable : **aucune donnée collectée, aucune
-   donnée partagée**. Ni analytics, ni traceur, ni serveur.
+2. **Sécurité des données** — l'équivalent de la fiche Confidentialité
+   d'Apple, et **plus rien à voir avec ce qu'il aurait fallu déclarer en
+   1.0**. Il faut désormais cocher *données collectées* et *données
+   partagées avec des tiers* (Google), pour les mêmes catégories que côté
+   Apple : identifiant publicitaire, interactions dans l'app, position
+   approximative dérivée de l'IP, diagnostics. La liste à déclarer pour
+   AdMob est publiée par Google — s'y référer plutôt que de deviner, et
+   remplir les deux questionnaires (Apple et Google) **le même jour**,
+   pour ne pas se contredire.
 3. **Public cible et contenu** — c'est celui qui n'a pas d'équivalent
-   Apple, et le seul à prendre au sérieux. Déclarer une tranche d'âge
-   incluant les moins de 13 ans fait entrer l'app dans la **politique
-   Familles**, avec ses obligations propres (contenu, publicité, SDK
-   tiers, lien de confidentialité obligatoire). Erea n'a ni pub ni
-   collecte, donc rien ne coince — mais la déclaration engage, et Google
-   vérifie.
+   Apple, et **le plus dangereux des trois maintenant qu'il y a de la
+   publicité**. Déclarer une tranche d'âge incluant les moins de 13 ans
+   fait entrer l'app dans la **politique Familles**, qui impose alors :
+   - de n'utiliser que des SDK publicitaires **auto-certifiés** par
+     Google pour les familles *(AdMob l'est, mais il faut le déclarer)* ;
+   - de **désactiver la publicité personnalisée** pour ces utilisateurs —
+     côté code, c'est `tagForChildDirectedTreatment` ou
+     `tagForUnderAgeOfConsent` dans la requête AdMob, et **ce n'est pas
+     encore posé dans `lib/core/pub.dart`** ;
+   - un lien de politique de confidentialité, déjà en place.
+
+   ⚠️ Deux chemins, à trancher avant de remplir : soit **cibler 13 ans et
+   plus** et rester hors de la politique Familles *(le mode Facile
+   « pensé pour les plus jeunes » devient alors un argument gênant à
+   tenir)*, soit **assumer les moins de 13 ans** et brider la publicité
+   dans le code. Le second est plus honnête vis-à-vis de ce que le jeu
+   raconte de lui-même, et coûte quelques lignes.
 
 ## 6. Le build
 

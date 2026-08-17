@@ -1,6 +1,8 @@
 import 'package:erea/core/achat.dart';
 import 'package:erea/core/pub.dart';
 import 'package:erea/data/store.dart';
+import 'package:erea/ui/reglages_screen.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -57,6 +59,37 @@ void main() {
           partiesJouees: 2),
       isFalse,
     );
+  });
+
+  /// Google exige un point d'entrée permanent vers ses options de
+  /// confidentialité là où son formulaire s'est affiché. Sans lui, le
+  /// consentement européen n'est pas révocable — motif de rejet, et à
+  /// raison.
+  testWidgets('le retour sur le consentement n’apparaît que si Google le '
+      'réclame', (tester) async {
+    final store = await Store.load();
+    Pub.optionsRequises = false;
+    await tester.pumpWidget(MaterialApp(
+      home: ReglagesScreen(key: const ValueKey('sans'), store: store),
+    ));
+    expect(find.text('Publicité personnalisée'), findsNothing);
+
+    Pub.optionsRequises = true;
+    await tester.pumpWidget(MaterialApp(
+      home: ReglagesScreen(key: const ValueKey('avec'), store: store),
+    ));
+    expect(find.text('Publicité personnalisée'), findsOneWidget);
+  });
+
+  testWidgets('qui a payé ne voit ni offre ni consentement publicitaire',
+      (tester) async {
+    final store = await Store.load();
+    await store.setSansPub(true);
+    Pub.optionsRequises = true;
+    await tester.pumpWidget(MaterialApp(home: ReglagesScreen(store: store)));
+    expect(find.text('Publicité personnalisée'), findsNothing);
+    expect(find.text('Erea sans publicité'), findsNothing);
+    expect(find.text('Merci !'), findsOneWidget);
   });
 
   test('l’achat n’ouvre rien d’autre : il ne touche ni XP ni records',
