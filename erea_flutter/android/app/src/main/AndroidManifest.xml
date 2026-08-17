@@ -40,6 +40,19 @@
                 <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
             </intent-filter>
         </receiver>
+        <!-- AdMob. Le SDK lit cet identifiant au démarrage du processus et
+             fait PLANTER l'app s'il est absent : il n'est donc pas
+             commentable tant que google_mobile_ads est une dépendance.
+
+             ⚠️ La valeur ci-dessous est l'app de démonstration de Google :
+             elle sert au développement et ne rapporte rien. À remplacer
+             par l'identifiant du compte AdMob d'Erea avant publication,
+             en même temps que les blocs dans lib/core/pub.dart et le
+             GADApplicationIdentifier de ios/Runner/Info.plist. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <!-- Classements Play Games — à activer le jour où le projet existe
              côté Google Play Console. Les deux meta-data ci-dessous sont
              exigées par games_services sur Android ; sans elles l'appel

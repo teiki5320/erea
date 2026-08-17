@@ -9,6 +9,7 @@ import '../core/progression.dart';
 import '../core/accessibilite.dart';
 import '../core/avis.dart';
 import '../core/classement.dart';
+import '../core/pub.dart';
 import '../core/rappels.dart';
 import '../core/retour.dart';
 import '../core/sons.dart';
@@ -1661,7 +1662,7 @@ class _GameScreenState extends State<GameScreen>
               if (game.mode != GameMode.daily) ...[
                 Expanded(
                   child: PushButton(
-                    onPressed: () => Navigator.of(context).pop(true),
+                    onPressed: () => _quitter(rejouer: true),
                     color: inkColor,
                     shadowColor: navyShadowColor,
                     radius: 16,
@@ -1683,7 +1684,7 @@ class _GameScreenState extends State<GameScreen>
               ],
               Expanded(
                 child: PushButton(
-                  onPressed: () => Navigator.of(context).pop(false),
+                  onPressed: () => _quitter(rejouer: false),
                   son: SonBouton.retour,
                   color: Colors.white,
                   shadowColor: const Color(0xFFD8DDEF),
@@ -1707,6 +1708,23 @@ class _GameScreenState extends State<GameScreen>
         ),
       ],
     );
+  }
+
+  /// Sortie de l'écran de fin : la publicité s'intercale ICI, jamais
+  /// avant. Le joueur a vu son score, son XP et son bilan ; il quitte de
+  /// son plein gré. C'est le seul moment où une réclame ne coupe rien.
+  ///
+  /// Le Défi du jour en est exempté (voir `Pub`), et l'affichage échoue en
+  /// silence : la navigation part de toute façon.
+  Future<void> _quitter({required bool rejouer}) async {
+    final navigateur = Navigator.of(context);
+    await Pub.montrerSiDue(
+      sansPub: widget.store.sansPub,
+      defiDuJour: game.mode == GameMode.daily,
+      partiesJouees: widget.store.games,
+    );
+    if (!mounted) return;
+    navigateur.pop(rejouer);
   }
 
   Widget _ligneBilan(RoundResult r) {

@@ -28,6 +28,19 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<!-- AdMob : identifiant de l'app, exigé par le SDK au démarrage.
+	     Celui-ci est l'app de démonstration de Google — il sert au
+	     développement et ne rapporte rien. À remplacer par l'identifiant
+	     du compte AdMob d'Erea avant publication, en même temps que les
+	     blocs de lib/core/pub.dart et l'APPLICATION_ID du manifeste
+	     Android. -->
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-3940256099942544~3347511713</string>
+	<!-- Texte de la demande de suivi publicitaire (App Tracking
+	     Transparency). Sans lui, iOS refuse d'afficher la demande, et la
+	     publicité reste non personnalisée — donc bien moins rémunératrice. -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Pour vous proposer des publicités adaptées plutôt que des publicités au hasard. Refuser ne change rien au jeu.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LSRequiresIPhoneOS</key>

@@ -89,6 +89,36 @@ qui coûte facilement une demi-journée.
   événements, persistance et défi du jour, interface jusqu'à une partie
   complète, mise en page iPad.
 
+## Publicité (AdMob)
+
+Une **interstitielle à la sortie de l'écran de fin**, une partie sur
+deux. Jamais pendant une manche, jamais entre deux manches, jamais avant
+que le joueur ait vu son score — et **jamais dans le Défi du jour**, qui
+est le rituel de rétention. La règle vit dans `lib/core/pub.dart`, isolée
+du SDK pour être testable (`test/pub_test.dart`).
+
+⚠️ **Les identifiants sont ceux de démonstration de Google : ils ne
+rapportent rien.** Trois endroits à changer ensemble, avec le même compte
+AdMob :
+
+| Quoi | Où |
+|---|---|
+| Blocs interstitiels (Android et iOS) | `lib/core/pub.dart` |
+| `APPLICATION_ID` | `android/app/src/main/AndroidManifest.xml` |
+| `GADApplicationIdentifier` | `ios/Runner/Info.plist` |
+
+⚠️ Le SDK lit l'identifiant d'app au démarrage du processus et **fait
+planter l'app s'il est absent** : ces deux clés natives ne sont donc pas
+commentables tant que `google_mobile_ads` est une dépendance.
+
+Le consentement européen passe par le formulaire UMP de Google, réclamé
+avant tout chargement. Sur iOS, `NSUserTrackingUsageDescription` porte le
+texte d'App Tracking Transparency : sans lui, la publicité reste non
+personnalisée.
+
+L'achat « Erea sans pub » n'est pas encore branché — `Store.sansPub`
+existe et coupe déjà tout, il ne reste qu'à le relier à la boutique.
+
 ## Ce qui n'est pas fait
 
 - **Android** : la signature de release est câblée sur une clé qui vit

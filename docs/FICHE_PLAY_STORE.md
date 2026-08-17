@@ -196,26 +196,29 @@ Mesuré sur l'APK produit le 11 août 2026, pas déduit du code :
 | `targetSdk` / `compileSdk` | 36 · `minSdk` 24 (Android 7) |
 | `versionName` | 1.0.0, comme iOS |
 
-**Permissions réellement embarquées**, plugins compris :
+**Permissions réellement embarquées**, plugins compris, relevées sur le
+manifeste fusionné :
 
 ```
 POST_NOTIFICATIONS · RECEIVE_BOOT_COMPLETED · VIBRATE
+INTERNET · ACCESS_NETWORK_STATE · WAKE_LOCK · FOREGROUND_SERVICE
+ACCESS_ADSERVICES_AD_ID · ACCESS_ADSERVICES_ATTRIBUTION
+ACCESS_ADSERVICES_TOPICS
 + DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION (interne à AndroidX)
 ```
 
-Les deux premières servent au rappel du soir, `VIBRATE` est ajoutée par
-le plugin de notifications. Aucune n'est sensible au sens de Google :
-rien à justifier dans la console.
+Les trois premières servent au rappel du soir. **Les sept suivantes
+viennent d'AdMob**, et trois d'entre elles — les `ADSERVICES` — sont
+explicitement du ciblage publicitaire.
 
-⚠️ Le fait marquant : **il n'y a pas de permission `INTERNET`**. L'app est
-techniquement incapable d'accéder au réseau — « aucune donnée collectée »
-n'est donc pas une promesse mais une propriété vérifiable du paquet, et
-ça se dit dans la fiche.
-
-Le jour où Play Games est branché (§7), `INTERNET` apparaîtra : la
-déclaration « Sécurité des données » reste bonne — Google gère l'identité
-et les scores, comme Apple avec Game Center — mais l'argument « pas même
-la permission réseau » tombe.
+⚠️ **Ce que la publicité a coûté, en une ligne : jusqu'au 15 août 2026,
+l'app n'avait même pas la permission `INTERNET`.** « Aucune donnée
+collectée » n'était pas une promesse mais une propriété vérifiable du
+paquet. Ce n'est plus vrai, et la déclaration « Sécurité des données »
+doit désormais décrire ce que collecte la régie : identifiants
+publicitaires, données d'utilisation approximatives, diagnostics. Google
+publie la liste à déclarer pour AdMob — s'y référer plutôt que de
+deviner.
 
 ## 5. Les trois questionnaires
 

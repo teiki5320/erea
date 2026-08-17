@@ -175,6 +175,16 @@ class Store {
   Future<void> setRemindersOn(bool v) =>
       _put(() => _prefs.setBool('opt.reminders', v));
 
+  /// « Erea sans pub » : achat unique, non consommable, définitif.
+  ///
+  /// Conservé en local parce que la source de vérité reste la boutique —
+  /// c'est elle qu'on interroge au lancement et sur « Restaurer mes
+  /// achats ». Ce drapeau évite d'attendre sa réponse pour savoir s'il
+  /// faut préparer une régie publicitaire.
+  bool get sansPub => _prefs.getBool('opt.sansPub') ?? false;
+  Future<void> setSansPub(bool v) =>
+      _put(() => _prefs.setBool('opt.sansPub', v));
+
   /// Remise à zéro complète (écran de réglages) : le pays choisi et le
   /// parcours d'accueil repartent eux aussi, l'app redevient exactement
   /// ce qu'elle est au premier lancement.
