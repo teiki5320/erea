@@ -108,18 +108,18 @@ que le joueur ait vu son score — et **jamais dans le Défi du jour**, qui
 est le rituel de rétention. La règle vit dans `lib/core/pub.dart`, isolée
 du SDK pour être testable (`test/pub_test.dart`).
 
-Les identifiants du compte AdMob vivent à trois endroits, à changer
-ensemble :
+Les quatre identifiants du compte AdMob d'Erea (éditeur
+`ca-app-pub-2680784147246798`) sont en place, et doivent rester du même
+compte — sinon la régie refuse de servir :
 
-| Quoi | Où | État |
-|---|---|---|
-| Bloc interstitiel Android | `lib/core/pub.dart` | réel |
-| Bloc interstitiel iOS | `lib/core/pub.dart` | ⚠️ **démonstration** |
-| `APPLICATION_ID` | `android/app/src/main/AndroidManifest.xml` | réel |
-| `GADApplicationIdentifier` | `ios/Runner/Info.plist` | ⚠️ **démonstration** |
+| Quoi | Où |
+|---|---|
+| Blocs interstitiels Android et iOS | `lib/core/pub.dart` |
+| `APPLICATION_ID` | `android/app/src/main/AndroidManifest.xml` |
+| `GADApplicationIdentifier` | `ios/Runner/Info.plist` |
 
-⚠️ **Les deux lignes iOS ne rapportent donc rien** : le bloc
-interstitiel iOS reste à créer dans AdMob, puis à reporter ici.
+Chaque plateforme est une **app distincte** chez AdMob : deux
+identifiants d'app, deux blocs, jamais interchangeables.
 
 ⚠️ Le SDK lit l'identifiant d'app au démarrage du processus et **fait
 planter l'app s'il est absent** : ces deux clés natives ne sont donc pas
