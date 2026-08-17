@@ -21,21 +21,21 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 class Pub {
   Pub._();
 
-  /// ⚠️ IDENTIFIANTS DE DÉMONSTRATION DE GOOGLE.
+  /// Blocs interstitiels du compte AdMob d'Erea (éditeur
+  /// `ca-app-pub-2680784147246798`), créés le 17 août 2026 sous le nom
+  /// « Fin de partie ».
   ///
-  /// Ils renvoient toujours une publicité de test et **ne rapportent
-  /// rien**. À remplacer par ceux du compte AdMob d'Erea avant la
-  /// publication, aux trois endroits suivants :
+  /// Chaque plateforme est une app distincte chez AdMob, avec son propre
+  /// identifiant d'app et son propre bloc. Les identifiants d'app, eux,
+  /// vivent côté natif :
+  /// - `android/app/src/main/AndroidManifest.xml` (APPLICATION_ID) ;
+  /// - `ios/Runner/Info.plist` (GADApplicationIdentifier).
   ///
-  /// 1. ici, `_blocAndroid` et `_blocIOS` (les blocs interstitiels) ;
-  /// 2. `android/app/src/main/AndroidManifest.xml` (APPLICATION_ID) ;
-  /// 3. `ios/Runner/Info.plist` (GADApplicationIdentifier).
-  ///
-  /// Les trois doivent appartenir au même compte AdMob, sinon la régie
+  /// Les quatre valeurs doivent appartenir au même compte, sinon la régie
   /// refuse de servir.
   static const String _blocAndroid =
-      'ca-app-pub-3940256099942544/1033173712';
-  static const String _blocIOS = 'ca-app-pub-3940256099942544/4411468910';
+      'ca-app-pub-2680784147246798/7670278436';
+  static const String _blocIOS = 'ca-app-pub-2680784147246798/6744159246';
 
   static String get _bloc => Platform.isAndroid ? _blocAndroid : _blocIOS;
 

@@ -28,14 +28,11 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<!-- AdMob : identifiant de l'app, exigé par le SDK au démarrage.
-	     Celui-ci est l'app de démonstration de Google — il sert au
-	     développement et ne rapporte rien. À remplacer par l'identifiant
-	     du compte AdMob d'Erea avant publication, en même temps que les
-	     blocs de lib/core/pub.dart et l'APPLICATION_ID du manifeste
-	     Android. -->
+	<!-- AdMob : app « Erea iOS » du compte d'Erea. Exigé par le SDK au
+	     démarrage. Le bloc interstitiel correspondant vit dans
+	     lib/core/pub.dart. -->
 	<key>GADApplicationIdentifier</key>
-	<string>ca-app-pub-3940256099942544~3347511713</string>
+	<string>ca-app-pub-2680784147246798~7462344540</string>
 	<!-- Texte de la demande de suivi publicitaire (App Tracking
 	     Transparency). Sans lui, iOS refuse d'afficher la demande, et la
 	     publicité reste non personnalisée — donc bien moins rémunératrice. -->
