@@ -3,8 +3,9 @@
 L'application Erea, en Flutter — **c'est le produit**. Le jeu web à la
 racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
-État : **version 1.0.0**, en cours de soumission à l'App Store.
-142 tests, `flutter analyze` propre.
+État : **version 1.0.0** soumise à l'App Store le 14 août (build 90),
+publicité et achat intégré branchés pour la 1.1.
+152 tests, `flutter analyze` propre.
 
 ## Démarrer
 
@@ -59,6 +60,15 @@ uniquement) », les builds partent bien sur TestFlight mais restent
 invisibles au moment de sélectionner un build pour une version — piège
 qui coûte facilement une demi-journée.
 
+⚠️ Le `post_install` du `Podfile` lève
+`CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES` sur toutes les
+cibles de pods. Sans lui, `google_mobile_ads` 9.1.0 ne compile pas :
+deux de ses en-têtes publics importent `GoogleMobileAds_Beta.h`, qui vit
+dans les `PrivateHeaders/` du xcframework de Google, donc hors du module
+map. Rien ne le montre ici — ni `flutter analyze`, ni les tests, ni le
+build Android : seule l'archive iOS échoue, et on l'apprend par Xcode
+Cloud (builds 94 et 95).
+
 ## Ce qui est déjà implémenté
 
 - **`assets/events.json`** — toute la base d'événements vérifiée (dates,
@@ -85,9 +95,10 @@ qui coûte facilement une demi-journée.
   partagée, six tableaux, échec silencieux.
 - **`lib/core/avis.dart`** — demande de note, une seule fois et après une
   réussite.
-- **`test/`** — 142 tests : règles du jeu, intégrité des 1 738
+- **`test/`** — 152 tests : règles du jeu, intégrité des 1 738
   événements, persistance et défi du jour, interface jusqu'à une partie
-  complète, mise en page iPad.
+  complète, mise en page iPad et iPhone SE en très grande police, règle
+  d'affichage de la publicité, promesse de l'achat.
 
 ## Publicité (AdMob)
 
@@ -97,15 +108,18 @@ que le joueur ait vu son score — et **jamais dans le Défi du jour**, qui
 est le rituel de rétention. La règle vit dans `lib/core/pub.dart`, isolée
 du SDK pour être testable (`test/pub_test.dart`).
 
-⚠️ **Les identifiants sont ceux de démonstration de Google : ils ne
-rapportent rien.** Trois endroits à changer ensemble, avec le même compte
-AdMob :
+Les identifiants du compte AdMob vivent à trois endroits, à changer
+ensemble :
 
-| Quoi | Où |
-|---|---|
-| Blocs interstitiels (Android et iOS) | `lib/core/pub.dart` |
-| `APPLICATION_ID` | `android/app/src/main/AndroidManifest.xml` |
-| `GADApplicationIdentifier` | `ios/Runner/Info.plist` |
+| Quoi | Où | État |
+|---|---|---|
+| Bloc interstitiel Android | `lib/core/pub.dart` | réel |
+| Bloc interstitiel iOS | `lib/core/pub.dart` | ⚠️ **démonstration** |
+| `APPLICATION_ID` | `android/app/src/main/AndroidManifest.xml` | réel |
+| `GADApplicationIdentifier` | `ios/Runner/Info.plist` | ⚠️ **démonstration** |
+
+⚠️ **Les deux lignes iOS ne rapportent donc rien** : le bloc
+interstitiel iOS reste à créer dans AdMob, puis à reporter ici.
 
 ⚠️ Le SDK lit l'identifiant d'app au démarrage du processus et **fait
 planter l'app s'il est absent** : ces deux clés natives ne sont donc pas
@@ -137,16 +151,16 @@ comprises.
 
 ## Ce qui n'est pas fait
 
-- **Android** : la signature de release est câblée sur une clé qui vit
-  hors du dépôt (`android/key.properties`), mais **la clé reste à
-  créer** — sans elle le build retombe sur les clés de debug, donc
-  compile sans être publiable. Play Games n'est pas configuré : les
-  classements sont muets, le jeu reste jouable. Tout le chemin jusqu'au
-  Play Store est dans `docs/FICHE_PLAY_STORE.md`.
-- **Achats intégrés** : rien n'est branché. Le plan (« Erea + », achat
-  unique) est décrit dans `docs/MARKETING.md`.
-- Débordement possible de l'écran de révélation sur iPhone SE avec la
-  police système en très grand.
+- **Android** : l'App Bundle se signe et se construit (la clé vit hors
+  du dépôt, dans `android/key.properties`), mais la publication est
+  suspendue à deux questions ouvertes : les 12 testeurs pendant 14 jours
+  exigés d'un compte personnel, et l'absence d'appareil physique. Play
+  Games n'est pas configuré : les classements sont muets, le jeu reste
+  jouable — la table d'identifiants attend dans `lib/core/classement.dart`.
+  Tout le chemin est dans `docs/FICHE_PLAY_STORE.md`.
+- **L'achat n'a jamais été exécuté** : l'accord « Applications payantes »
+  n'est pas signé et le produit n'existe pas encore dans App Store
+  Connect, donc la boutique reste muette et l'offre ne s'affiche pas.
 
 `SPEC.md` est la spécification de référence : toutes les formules et
 règles validées par le prototype web y sont consignées.

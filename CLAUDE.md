@@ -24,7 +24,11 @@ prototype d'origine, conservé comme vitrine.
   changent plusieurs fois par an : consulte la documentation d'Apple ou
   de Google, ou demande une capture, plutôt que de guider de mémoire.
 - **Avant tout commit** : `flutter analyze` et `flutter test` doivent
-  passer (142 tests).
+  passer (152 tests).
+- **Aucun test ne couvre la compilation iOS.** `analyze`, les tests et
+  même un build Android peuvent tous passer sur un projet qui n'archive
+  pas. Toucher à `ios/`, au `Podfile` ou à une dépendance native, c'est
+  s'engager à surveiller le build Xcode Cloud qui suit.
 
 ⚠️ Chaque poussée sur `main` déclenche un build Xcode Cloud, sans filtre
 de fichiers — même pour un document. Groupe les commits quand c'est
@@ -40,6 +44,11 @@ possible.
   dans App Store Connect, sinon le build est non sélectionnable.
 - **Les mots-clés App Store se comptent en octets**, pas en caractères :
   chaque accent en vaut deux.
+- **`google_mobile_ads` ne compile pas sur iOS sans réglage du
+  `Podfile`** : ses en-têtes publics importent un header privé du SDK de
+  Google. Le `post_install` pose
+  `CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES` ; ne le
+  retire pas.
 - **Flutter ne descend pas dans les sous-dossiers d'assets** : chaque
   sous-dossier se déclare à part dans `pubspec.yaml`.
 - **Le dépôt a contenu deux histoires git sans ancêtre commun**, nées
