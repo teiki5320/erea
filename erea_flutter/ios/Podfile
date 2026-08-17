@@ -45,9 +45,10 @@ post_install do |installer|
       # FLTAd_Internal.h:23), or ce fichier vit dans `PrivateHeaders/` du
       # xcframework de Google : il est hors du module map. Clang le trouve
       # mais refuse de l'inclure depuis un module, et l'archive Xcode Cloud
-      # échoue (builds 94 et 95). Le défaut est chez Google ; en attendant
-      # sa correction, on lève la règle — c'est le contournement que Google
-      # documente pour son propre SDK.
+      # échoue (builds 94 à 99). Ici pour les cibles Pods ; la cible Runner
+      # — où le diagnostic se lève réellement quand elle importe le module —
+      # reçoit le même réglage par `Flutter/{Debug,Release}.xcconfig`. Les
+      # deux moitiés sont nécessaires.
       config.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
     end
   end

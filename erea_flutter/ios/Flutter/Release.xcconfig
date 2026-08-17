@@ -1,2 +1,8 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+// Voir Debug.xcconfig : indispensable à la compilation de
+// google_mobile_ads, dont les en-têtes publics importent un header privé
+// du SDK de Google. Release sert aussi de base à Profile — les trois
+// configurations de Runner sont couvertes.
+CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES

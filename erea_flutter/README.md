@@ -60,14 +60,18 @@ uniquement) », les builds partent bien sur TestFlight mais restent
 invisibles au moment de sélectionner un build pour une version — piège
 qui coûte facilement une demi-journée.
 
-⚠️ Le `post_install` du `Podfile` lève
-`CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES` sur toutes les
-cibles de pods. Sans lui, `google_mobile_ads` 9.1.0 ne compile pas :
-deux de ses en-têtes publics importent `GoogleMobileAds_Beta.h`, qui vit
-dans les `PrivateHeaders/` du xcframework de Google, donc hors du module
-map. Rien ne le montre ici — ni `flutter analyze`, ni les tests, ni le
-build Android : seule l'archive iOS échoue, et on l'apprend par Xcode
-Cloud (builds 94 et 95).
+⚠️ `CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES` est posé
+à **deux** endroits, tous deux nécessaires : le `post_install` du
+`Podfile` pour les cibles Pods, et `Flutter/Debug.xcconfig` +
+`Flutter/Release.xcconfig` pour la cible Runner. Sans lui,
+`google_mobile_ads` 9.1.0 ne compile pas : deux de ses en-têtes publics
+importent `GoogleMobileAds_Beta.h`, qui vit dans les `PrivateHeaders/`
+du xcframework de Google, donc hors du module map. Le diagnostic se lève
+dans la compilation qui construit le module — celle de Runner — d'où la
+moitié xcconfig : les builds 96 à 99 ont échoué avec le réglage posé sur
+les seuls Pods. Rien ne le montre ici — ni `flutter analyze`, ni les
+tests, ni le build Android : seule l'archive iOS échoue, et on l'apprend
+par Xcode Cloud.
 
 ## Ce qui est déjà implémenté
 
