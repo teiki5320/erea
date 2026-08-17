@@ -78,6 +78,27 @@ class _GameScreenState extends State<GameScreen>
   static const double _revealTopPad = 44;
   static const double _revealBottomPad = 46;
 
+  /// Au-delà de ce facteur, le bandeau de verdict cesse de grossir.
+  ///
+  /// Le badge, les points et la ligne d'écart sont déjà énormes : les
+  /// laisser doubler poussait la frise et le bouton hors de l'écran sur
+  /// iPhone SE. L'anecdote, elle — le seul texte qui apprend quelque
+  /// chose — garde l'échelle réglée par le système, sans plafond.
+  static const double _maxEchelleVerdict = 1.3;
+
+  /// Hauteur de la frise de révélation, bornée par la place réelle.
+  ///
+  /// Sur petit écran ET en grande police, les blocs fixes du haut
+  /// gonflent : une frise de hauteur constante faisait alors déborder la
+  /// colonne de 280 px, et le bouton « Manche suivante » disparaissait.
+  static double _revealTapeHeightFor(double available) {
+    final voulu = available < 620 ? 190.0 : _revealTapeH;
+    // Les pastilles ont besoin de leurs marges hautes et basses : c'est la
+    // frise elle-même qui cède, jamais elles.
+    final place = available * 0.34 - _revealTopPad - _revealBottomPad;
+    return math.min(voulu, math.max(110.0, place));
+  }
+
   /// Jingle du verdict, mis de côté à la validation et joué à la fin du
   /// voyage du ruban — au moment où le badge apparaît.
   void Function()? _jingleVerdict;
@@ -628,8 +649,13 @@ class _GameScreenState extends State<GameScreen>
             },
           ),
         ),
-        // Bouton principal
-        Padding(
+        // Bouton principal. Son libellé est plafonné comme le bandeau de
+        // verdict : c'est un contrôle, pas un texte à lire, et le laisser
+        // doubler de taille le poussait hors de l'écran sur iPhone SE en
+        // « texte plus grand » — le joueur ne pouvait plus avancer.
+        MediaQuery.withClampedTextScaling(
+          maxScaleFactor: _maxEchelleVerdict,
+          child: Padding(
           padding: const EdgeInsets.fromLTRB(18, 8, 18, 16),
           child: guessing
               ? PushButton(
@@ -677,6 +703,7 @@ class _GameScreenState extends State<GameScreen>
                   ),
                 ),
         ),
+        )
       ],
     );
   }
@@ -952,11 +979,18 @@ class _GameScreenState extends State<GameScreen>
     // Petit écran : on resserre pour que l'anecdote ne passe pas sous la
     // ligne de flottaison — c'est la partie qui apprend quelque chose.
     final serre = available < 620;
-    final tapeH = serre ? 190.0 : _revealTapeH;
+    final tapeH = _revealTapeHeightFor(available);
     final ptsSize = serre ? 44.0 : 56.0;
     final badgeSize = serre ? 18.0 : 22.0;
     return Column(
       children: [
+        // Le bandeau de verdict — badge, points, écart — cesse de grossir
+        // au-delà de _maxEchelleVerdict. Sans ce plafond, il chassait la
+        // frise et le bouton de l'écran en « texte plus grand ».
+        MediaQuery.withClampedTextScaling(
+          maxScaleFactor: _maxEchelleVerdict,
+          child: Column(
+            children: [
         const SizedBox(height: 12),
         ScaleTransition(
           key: const ValueKey('badge-verdict'),
@@ -1047,7 +1081,10 @@ class _GameScreenState extends State<GameScreen>
             color: inkSoftColor,
           ),
         ),
-        const SizedBox(height: 12),
+              const SizedBox(height: 12),
+            ],
+          ),
+        ),
         // La frise figée porte les deux épingles et le trait de l'écart
         LayoutBuilder(
           builder: (context, constraints) {

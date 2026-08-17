@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Badge;
 
+import '../core/achat.dart';
 import '../core/classement.dart';
 import '../core/rappels.dart';
 import '../core/region.dart' as region;
@@ -42,6 +43,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
         children: [
+          _carteSansPub(),
           _carte([
             SwitchListTile(
               value: widget.store.hapticsOn,
@@ -137,9 +139,13 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
             ),
           ]),
           const SizedBox(height: 12),
+          // ⚠️ Ne pas remettre « aucune donnée ne quitte cet appareil » :
+          // c'était vrai jusqu'à l'arrivée de la publicité, la régie
+          // collecte. Ta progression, elle, reste bien locale — et c'est
+          // ce que dit désormais cette ligne, sans mentir sur le reste.
           const Center(
             child: Text(
-              'Erea — aucune donnée ne quitte cet appareil.',
+              'Erea — ta progression reste sur cet appareil.',
               style: TextStyle(
                 fontFamily: 'Nunito',
                 fontWeight: FontWeight.w700,
@@ -150,6 +156,82 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  /// L'achat « sans pub », en tête des réglages.
+  ///
+  /// Trois états, et jamais de bouton mort : rien du tout si la boutique
+  /// est muette (avion, restrictions parentales, produit pas encore
+  /// validé), un remerciement si c'est déjà payé, l'offre sinon.
+  ///
+  /// Le prix vient de la boutique, jamais d'une constante : il change avec
+  /// le pays, la devise et les taxes.
+  Widget _carteSansPub() {
+    if (widget.store.sansPub) {
+      return _carte([
+        const ListTile(
+          title: Text('Merci !'),
+          subtitle: Text('Erea est sans publicité sur cet appareil, pour '
+              'toujours'),
+          trailing: Text('💛', style: TextStyle(fontSize: 22)),
+        ),
+      ]);
+    }
+    if (!Achat.disponible) return const SizedBox.shrink();
+    return _carte([
+      ListTile(
+        title: const Text('Erea sans publicité'),
+        subtitle: const Text('Un achat unique. Le jeu reste entier : c’est '
+            'la publicité qui disparaît, rien ne se débloque'),
+        trailing: Text(
+          Achat.prix ?? '',
+          style: const TextStyle(
+            fontFamily: 'Baloo2',
+            fontWeight: FontWeight.w800,
+            fontSize: 17,
+            color: coralColor,
+          ),
+        ),
+        onTap: _acheter,
+      ),
+      // Obligatoire : Apple refuse une app qui ne permet pas de retrouver
+      // un achat après changement d'appareil ou réinstallation.
+      ListTile(
+        dense: true,
+        title: const Text('Restaurer mes achats'),
+        trailing: const Icon(Icons.refresh, color: inkSoftColor),
+        onTap: _restaurer,
+      ),
+    ]);
+  }
+
+  Future<void> _acheter() async {
+    final ouvert = await Achat.acheter();
+    if (!mounted) return;
+    if (!ouvert) {
+      _dire('La boutique n’a pas répondu. Réessaie plus tard.');
+      return;
+    }
+    // Le résultat arrive par le flux de la boutique, pas ici : on laisse
+    // le temps à la transaction d'aboutir avant de redessiner.
+    await Future<void>.delayed(const Duration(seconds: 1));
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _restaurer() async {
+    await Achat.restaurer();
+    await Future<void>.delayed(const Duration(seconds: 1));
+    if (!mounted) return;
+    setState(() {});
+    _dire(widget.store.sansPub
+        ? 'Achat retrouvé, merci !'
+        : 'Aucun achat à restaurer sur ce compte.');
+  }
+
+  void _dire(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 

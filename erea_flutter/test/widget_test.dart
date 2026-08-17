@@ -282,6 +282,42 @@ void main() {
     await tapVisible(tester, find.text('Manche suivante →'));
   });
 
+  testWidgets(
+      'la révélation tient sur iPhone SE en très grande police',
+      (tester) async {
+    // Le plus petit écran supporté ET le réglage iOS « texte plus grand »
+    // au maximum : la combinaison que ni le test de grande police (mené
+    // sur iPhone 14) ni celui de la révélation (mené en police normale) ne
+    // couvraient. C'est là que l'écran de révélation débordait par le bas.
+    await pumpApp(tester, size: _iphoneSE);
+    await startClassique(tester);
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.text('Je place ici !'));
+    // On capture les erreurs À LA SOURCE : takeException() les agrège en
+    // une seule (« Multiple exceptions (3) were detected »), dont le texte
+    // ne dit plus lesquelles — un filtre posé dessus ne voit rien passer.
+    final erreurs = <String>[];
+    final signale = FlutterError.onError;
+    FlutterError.onError = (details) => erreurs.add(details.exceptionAsString());
+    tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    FlutterError.onError = signale;
+
+    // On ne tolère que les débordements HORIZONTAUX, cosmétiques sur des
+    // pastilles. Un débordement par le bas, lui, chasse de l'écran le
+    // bouton qui fait avancer la partie : le joueur reste coincé.
+    final verticaux = erreurs
+        .where((e) => e.contains('overflowed') && e.contains('bottom'))
+        .toList();
+    expect(verticaux, isEmpty, reason: 'la révélation déborde par le bas');
+
+    final ecran = tester.getSize(find.byType(MaterialApp));
+    final bouton = tester.getRect(find.text('Manche suivante →'));
+    expect(bouton.bottom, lessThanOrEqualTo(ecran.height),
+        reason: 'le bouton de manche suivante passe sous l’écran');
+  });
+
   // Le réglage fin et la mini-carte ne doivent JAMAIS passer sous la ligne
   // de flottaison : c'est la carte de l'événement qui défile sur elle-même.
   for (final format in [('iPhone 14', _iphone14), ('iPhone SE', _iphoneSE)]) {

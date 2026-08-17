@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import 'dart:async';
 
+import 'core/achat.dart';
+import 'core/pub.dart';
 import 'core/region.dart' as region;
 import 'core/retour.dart';
 import 'core/sons.dart';
@@ -36,6 +38,12 @@ Future<void> main() async {
     // Classique — posé ici pour être prêt avant la première partie.
     region.paysChoisiIso = store.paysChoisiIso;
     unawaited(Sons.preparer());
+    // Boutique et régie, en tâche de fond : ni l'une ni l'autre ne doit
+    // retarder l'affichage du jeu d'une milliseconde. La boutique en
+    // premier — c'est elle qui dit s'il faut une régie du tout, et un
+    // acheteur ne doit pas voir passer une publicité au lancement.
+    unawaited(Achat.demarrer(store)
+        .then((_) => Pub.demarrer(sansPub: store.sansPub)));
     runApp(EreaApp(repo: repo, store: store));
   } catch (e) {
     // Sans ce filet, la moindre défaillance laissait l'écran de lancement

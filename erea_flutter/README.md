@@ -116,8 +116,24 @@ avant tout chargement. Sur iOS, `NSUserTrackingUsageDescription` porte le
 texte d'App Tracking Transparency : sans lui, la publicité reste non
 personnalisée.
 
-L'achat « Erea sans pub » n'est pas encore branché — `Store.sansPub`
-existe et coupe déjà tout, il ne reste qu'à le relier à la boutique.
+## L'achat « Erea sans pub »
+
+Un produit **non consommable**, `com.teiki.erea.sanspub`, à créer à
+l'identique dans App Store Connect et dans la Play Console. Il n'ouvre
+rien : il enlève la publicité, et c'est tout — aucun événement, aucun
+mode, aucune fonction n'est réservé à ceux qui paient.
+
+`lib/core/achat.dart` écoute la boutique et met `Store.sansPub` à jour,
+y compris pour un achat fait sur un autre appareil. L'offre et le bouton
+**« Restaurer mes achats »** vivent en tête des réglages ; ce bouton est
+obligatoire, Apple refuse les apps qui n'en ont pas.
+
+⚠️ Le prix affiché vient toujours de la boutique, jamais d'une constante
+du code : il dépend du pays, de la devise et des taxes.
+
+⚠️ Rien n'est testable avant que l'accord **« Applications payantes »**
+soit signé dans App Store Connect, coordonnées bancaires et fiscales
+comprises.
 
 ## Ce qui n'est pas fait
 
