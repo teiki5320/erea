@@ -132,10 +132,14 @@ aucun document.
 
 ## Réglementations et autorisations de l'App Store
 
-**Législation sur les services numériques (DSA)** ⬜ **à refaire pour la
-1.1** — obligatoire, et sans elle l'app n'est pas distribuée dans l'Union
-européenne. La déclaration se fait au niveau du **compte** (App Store
-Connect → Business), pas de l'app.
+**Législation sur les services numériques (DSA)** ✅ *(repassée en
+**trader** le 18 août 2026, vérification Apple en cours)* — coordonnées
+déclarées, qui seront **publiques** sur la fiche UE : e-mail
+`erea.toa@gmail.com`, téléphone perso, adresse postale réelle. La
+déclaration se fait au niveau du **compte** (Business → Contrats →
+Conformité), pas de l'app. Le même jour, le questionnaire **DAC7**
+(« Directive relative à la coopération administrative, 7e révision »,
+même page) a été rempli : Erea ne fournit pas de services personnels.
 
 Tu t'es déclaré **non-trader** le 4 août 2026, ce qui était juste : l'app
 était gratuite, sans publicité et sans achat intégré.
@@ -406,9 +410,12 @@ pour la prochaine fois :
 créé et la boutique reste muette (`Achat.disponible` faux) : l'app
 n'affiche aucune offre, c'est voulu.
 
-## L'achat intégré ⬜
+## L'achat intégré ✅ *(créé le 18 août 2026, identifiant Apple 6802621891)*
 
-**Monétisation → Achats intégrés → +**, puis :
+État « Finaliser avant soumission » : il attend seulement sa **capture
+d'écran de vérification** (à faire quand l'offre s'affichera dans l'app,
+au test de la 1.1) et son rattachement à la version 1.1 — ne pas cliquer
+« Ajouter pour vérification » avant. Les valeurs saisies :
 
 | Champ | Valeur |
 |---|---|
@@ -508,9 +515,10 @@ L'ordre compte : chaque étape dépend de la précédente.
 1. ✅ **Signer l'accord « Applications payantes »** *(page 3)* — fait le
    18 août ; reste à attendre que la vérification bancaire le passe à
    « Actif », sous 24 h environ.
-2. **Repasser la déclaration DSA en trader** *(page 1)*, en ayant décidé
-   quelle adresse sera publique.
-3. **Créer l'achat** `com.teiki.erea.sanspub` à 3,99 € *(page 3)*.
+2. ✅ **Repasser la déclaration DSA en trader** *(page 1)* — fait le
+   18 août, vérification Apple en cours.
+3. ✅ **Créer l'achat** `com.teiki.erea.sanspub` à 3,99 € *(page 3)* —
+   fait le 18 août ; sa capture de vérification attend le test 1.1.
 4. **Créer le bloc interstitiel iOS** dans AdMob — fait ✅, et les quatre
    identifiants réels sont déjà dans le code.
 5. **Passer `pubspec.yaml` en `1.1.0`** et pousser sur `main` : Xcode
@@ -538,7 +546,7 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 |---|---|---|
 | Nom, sous-titre, catégories | ✅ | inchangé |
 | Classification par âge (4+), droits de contenu | ✅ | inchangé |
-| Déclaration DSA | ✅ non-trader | ⬜ **à repasser en trader** |
+| Déclaration DSA | ✅ non-trader | ✅ trader le 18 août, vérification en cours |
 | Texte promotionnel, mots-clés | ✅ | inchangés |
 | Description | ✅ | ⬜ **à réécrire** (texte prêt) |
 | URL d'assistance et de confidentialité | ✅ | inchangées |
@@ -546,7 +554,7 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 | Droits d'auteur, coordonnées de revue, remarques | ✅ | inchangés |
 | Prix (gratuit), disponibilité (175 pays) | ✅ | inchangés |
 | Accord « Applications payantes » | — | ✅ signé le 18 août, activation en cours |
-| Achat `com.teiki.erea.sanspub` | — | ⬜ **à créer** |
+| Achat `com.teiki.erea.sanspub` | — | ✅ créé le 18 août, capture au test 1.1 |
 | Déclaration de confidentialité | ✅ « aucune donnée » | ⬜ **à refaire** |
 | Game Center attaché à la version | ✅ | ⬜ à vérifier sur la 1.1 |
 | Captures d'écran iPhone 6,9" + iPad 13" | ✅ | inchangées |
