@@ -65,8 +65,10 @@ africaine.
 
 ## Confidentialité
 
-Aucune donnée collectée : ni compte, ni publicité, ni traceur, ni
-serveur. Le jeu fonctionne entièrement hors ligne. Voir
+Ni compte, ni serveur : la progression reste sur l'appareil et le jeu
+fonctionne entièrement hors ligne. L'app est financée par une publicité
+(Google AdMob) qu'un achat unique retire — c'est le seul tiers qui
+collecte quoi que ce soit. Voir
 [`confidentialite.html`](https://teiki5320.github.io/erea/confidentialite.html).
 
 ## Organisation du dépôt

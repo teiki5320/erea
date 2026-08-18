@@ -13,24 +13,26 @@
 | | |
 |---|---|
 | Identifiant `com.teiki.erea`, identique à iOS | ✅ dans `android/app/build.gradle.kts` |
-| Signature de release câblée sur une clé hors dépôt | ✅ prête, **la clé reste à créer** |
+| Clé de signature | ✅ créée le 15 août 2026 (`~/erea-upload.jks` + `key.properties`, hors dépôt) — **à sauvegarder ailleurs que sur le Mac** |
+| App Bundle signé qui se construit | ✅ vérifié le 15 août (57,7 Mo) |
 | Autorisation de notification Android 13 demandée | ✅ dans `lib/core/rappels.dart` |
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
+| Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
 | Titre, descriptions | ✅ rédigés plus bas |
-| Clé de signature | ⬜ **à créer, c'est le premier verrou** |
-| Compte Google Play Console | ⬜ |
-| Captures d'écran Android | ⬜ |
-| Trois questionnaires | ⬜ |
+| Compte Google Play Console | ⬜ **le premier verrou : type personnel/organisation à trancher** |
+| Appareil Android physique (exigé par la validation) | ⬜ |
+| Trois questionnaires | ⬜ *(et le §5 a changé : la pub impose des réponses nouvelles)* |
 | Classements Play Games | ⬜ *(facultatif, voir §7)* |
 
 ---
 
-## 1. La clé de signature — à faire en premier
+## 1. La clé de signature ✅ *(créée le 15 août 2026)*
 
-`android/app/build.gradle.kts` lit `android/key.properties`, que git
-ignore. Tant que ce fichier n'existe pas, la release est signée avec les
-clés de debug : l'app se lance, mais Google la refuse. C'est voulu — un
-build publiable exige la vraie clé.
+Fait — la marche ci-dessous reste pour mémoire, au cas où il faudrait la
+recréer sur une autre machine. `android/app/build.gradle.kts` lit
+`android/key.properties`, que git ignore. Tant que ce fichier n'existe
+pas, la release est signée avec les clés de debug : l'app se lance, mais
+Google la refuse. C'est voulu — un build publiable exige la vraie clé.
 
 ```bash
 keytool -genkey -v -keystore ~/erea-upload.jks \

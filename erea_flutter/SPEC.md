@@ -137,11 +137,18 @@ Grille emoji par manche sur les points de base : 🎯 =1000 · 🟩 ≥700 ·
 - Écran de jeu : carte en haut, frise grande et centrale, explications sous la
   frise, bouton en bas. Respecter « réduire les animations » du système.
 
-## 9. Monétisation envisagée
+## 9. Monétisation (choisie en août 2026)
 
-Les packs (`pack` dans les données) sont l'unité de vente naturelle en
-achats intégrés. Le socle (catégories) reste gratuit ; les packs à thèmes
-peuvent être payants ou débloqués par le niveau.
+**Le jeu est complet et gratuit pour tous — rien n'est jamais bloqué.**
+Une interstitielle s'affiche en quittant l'écran de fin, une partie sur
+deux, jamais dans le Défi du jour (règle dans `lib/core/pub.dart`,
+testée). Un achat unique non consommable, `com.teiki.erea.sanspub`
+(3,99 €), retire la publicité et ne débloque rien d'autre
+(`lib/core/achat.dart`).
+
+L'idée antérieure de vendre les packs à l'unité est **écartée** : elle
+contredirait la promesse « rien ne se débloque, il n'y a rien à
+débloquer » affichée dans la description de l'achat.
 
 ## 10. Fondu d'époque & habillage « Sticker Arcade »
 

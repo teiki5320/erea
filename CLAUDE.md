@@ -44,11 +44,12 @@ possible.
   dans App Store Connect, sinon le build est non sélectionnable.
 - **Les mots-clés App Store se comptent en octets**, pas en caractères :
   chaque accent en vaut deux.
-- **`google_mobile_ads` ne compile pas sur iOS sans réglage du
-  `Podfile`** : ses en-têtes publics importent un header privé du SDK de
-  Google. Le `post_install` pose
-  `CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES` ; ne le
-  retire pas.
+- **`google_mobile_ads` ne compile pas sur iOS sans
+  `CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES`, posé à
+  DEUX endroits** : le `post_install` du `Podfile` (cibles Pods) **et**
+  `ios/Flutter/{Debug,Release}.xcconfig` (cible Runner — c'est elle qui
+  construit le module et lève le diagnostic ; quatre builds ont échoué
+  avec la moitié Pods seule). Ne retire ni l'un ni l'autre.
 - **Flutter ne descend pas dans les sous-dossiers d'assets** : chaque
   sous-dossier se déclare à part dans `pubspec.yaml`.
 - **Le dépôt a contenu deux histoires git sans ancêtre commun**, nées
