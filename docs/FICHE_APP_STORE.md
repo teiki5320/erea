@@ -379,21 +379,32 @@ seule** — il faut revenir cliquer.
   couvre la Belgique, la Suisse, le Québec, le Sénégal, la Côte
   d'Ivoire…)*
 
-## L'accord « Applications payantes » ⬜ — **la première marche**
+## L'accord « Applications payantes » ✅ *(signé le 18 août 2026)*
 
-**Business → Accords**, puis signer *Paid Applications Agreement*. Il
-réclame, en plus de la signature :
+Fait le 18 août, en une demi-heure, dans cet ordre — le chemin réel,
+pour la prochaine fois :
 
-- les **coordonnées bancaires** de réception des paiements ;
-- les **informations fiscales** (pour la France, le formulaire fiscal
-  américain W-8BEN, à remplir en ligne) ;
-- une adresse de facturation.
+1. **Business → Contrats** : un bandeau exige d'abord de confirmer
+   l'**entité juridique** (nom, type « Particulier », adresse) ;
+2. ligne « Contrat relatif aux applications payantes » →
+   **accepter les conditions** ;
+3. **Comptes bancaires** : le RIB (les champs « code banque/guichet »
+   et « numéro de compte » se lisent dans l'IBAN : FR76 + 5 + 5 + 11 +
+   clé) — vérification par Apple sous 24 h ;
+4. **Formulaires fiscaux** : deux formulaires distincts, tous deux
+   remplis en ligne — l'attestation de statut étranger (champ « Title » :
+   `Individual`) puis le **W-8BEN** (numéro fiscal français en 6.a,
+   date de naissance au format américain MM-JJ-AAAA, et la convention
+   France–USA en partie II : article 12, 0 %, « Income from the sale of
+   applications »). Aucun des deux n'est modifiable après envoi.
 
-⚠️ **Tant qu'il n'est pas actif, aucun achat n'existe** : le produit ne
-peut pas être créé, la boutique ne répond pas, `Achat.disponible` reste
-faux et l'app n'affiche même pas l'offre — le code est déjà écrit pour ne
-jamais montrer un bouton mort. Compte plusieurs jours de validation, et
-attaque-le en premier.
+État au 18 août à midi : fiscal **Actif**, banque et contrat
+**« Traitement en cours »** — le contrat passe à « Actif » seul, sous
+24 h environ.
+
+⚠️ Tant que le contrat n'est pas « Actif », le produit ne peut pas être
+créé et la boutique reste muette (`Achat.disponible` faux) : l'app
+n'affiche aucune offre, c'est voulu.
 
 ## L'achat intégré ⬜
 
@@ -494,9 +505,9 @@ banal.
 
 L'ordre compte : chaque étape dépend de la précédente.
 
-1. **Signer l'accord « Applications payantes »** *(page 3)*. Plusieurs
-   jours de validation — c'est le chemin critique, rien d'autre n'avance
-   sans lui.
+1. ✅ **Signer l'accord « Applications payantes »** *(page 3)* — fait le
+   18 août ; reste à attendre que la vérification bancaire le passe à
+   « Actif », sous 24 h environ.
 2. **Repasser la déclaration DSA en trader** *(page 1)*, en ayant décidé
    quelle adresse sera publique.
 3. **Créer l'achat** `com.teiki.erea.sanspub` à 3,99 € *(page 3)*.
@@ -534,7 +545,7 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 | Politique de confidentialité en ligne | ✅ | ✅ refaite le 17 août |
 | Droits d'auteur, coordonnées de revue, remarques | ✅ | inchangés |
 | Prix (gratuit), disponibilité (175 pays) | ✅ | inchangés |
-| Accord « Applications payantes » | — | ⬜ **à signer d'abord** |
+| Accord « Applications payantes » | — | ✅ signé le 18 août, activation en cours |
 | Achat `com.teiki.erea.sanspub` | — | ⬜ **à créer** |
 | Déclaration de confidentialité | ✅ « aucune donnée » | ⬜ **à refaire** |
 | Game Center attaché à la version | ✅ | ⬜ à vérifier sur la 1.1 |
