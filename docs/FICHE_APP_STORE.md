@@ -7,6 +7,16 @@
 > 2026 à 11 h 42 avec le build **90** ; la sortie est réglée sur
 > *manuelle*, pour pouvoir la faire coïncider avec celle du Play Store.
 >
+> Le 15 août, Apple a demandé un complément (**Guideline 2.1 —
+> Information Needed**) : une capture vidéo du parcours type, filmée sur
+> un iPhone physique. Réponse envoyée le **18 août à 11 h 39** dans le
+> fil de la soumission, avec `Erea.mov` en pièce jointe — l'examen
+> reprend de là. Au passage, deux leçons sur ce fil de messages :
+> l'envoi échoue sans message utile en navigation privée et à travers un
+> VPN, et une pièce jointe trop lourde reste en « Traitement en cours »
+> pour toujours — un export QuickTime en 720p (Fichier → Exporter en)
+> a réglé la question.
+>
 > La version **1.1** apporte la publicité et l'achat qui l'enlève. Elle
 > change **quatre choses** dans cette fiche, et aucune n'est cosmétique :
 >
@@ -530,4 +540,5 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 | Version dans `pubspec.yaml` | ✅ 1.0.0 | ⬜ **à passer en 1.1.0** |
 | Sélection du build | ✅ build 90 | ⬜ |
 | **Envoi à la revue** | ✅ **14 août 2026, 11 h 42** | ⬜ |
+| Complément 2.1 (vidéo du parcours) | ✅ envoyé le 18 août, 11 h 39 | — |
 | **Publication** | ⬜ manuelle, en attente d'Apple | ⬜ |
