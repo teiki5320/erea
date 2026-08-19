@@ -14,13 +14,13 @@ Tableau d'objets :
 | `annee` | int | Année de l'événement, négatif = av. J.-C. Bornes : −3000 à 2025 (la frise, elle, va jusqu'à 2026 = maxYear). |
 | `titre` | string | Court, sans l'année ni indice de date. |
 | `desc` | string | Une ligne, SANS indice chronologique (affichée pendant la manche). |
-| `cat` | string | `france` \| `monde` \| `sciences` \| `arts` \| `quotidien`. |
+| `cat` | string | `pouvoir` \| `sciences` \| `arts` \| `quotidien` (voir `categories` dans `lib/data/events_repository.dart`). |
 | `emoji` | string | Un emoji. |
 | `niveau` | int | 1 = connu des enfants · 2 = culture générale · 3 = pointu. |
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
 | `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack tient au moins 15 parties (150 événements)** : c'est l'unité de vente, elle ne doit pas s'épuiser en quatre parties. Verrouillé par un test. |
 | `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. Réservé aux futures catégories géographiques. |
-| `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 93 pays couverts, dont 42 avec au moins 10 faits. |
+| `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 113 pays couverts, dont 52 avec au moins 10 faits. |
 
 Toutes les dates ont été vérifiées par relecture croisée (génération puis
 vérification adversariale). Ne pas modifier une date sans re-vérification.
@@ -57,7 +57,9 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
   était inatteignable. Les multiplicateurs d'XP compensent le barème :
   sans ça, Difficile rapportait autant que Facile malgré sa promesse.
 - Composition d'une partie (QUOTAS par niveau, `EventsRepository._quotas`) :
-  Facile 7×N1 + 3×N2 · Normal 3×N1 + 5×N2 + 2×N3 · Difficile 4×N2 + 6×N3.
+  Facile 10×N1 · Normal 3×N1 + 5×N2 + 2×N3 · Difficile 4×N2 + 6×N3.
+  Facile ne vise QUE le niveau 1 : le niveau 2 n'y est qu'un repli, ouvert
+  seulement si une sélection étroite manque de faits niveau 1.
   Des quotas, pas des tranches à épuiser : une tranche prioritaire plus
   grande que la partie rendrait le reste de la base inatteignable.
   Places non pourvues (petit pack) : report sur les niveaux de la
@@ -81,7 +83,7 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   par partie : aucun pays n'a de quoi tenir dix manches à lui seul.
 - **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
   série pour tous les joueurs de l'app à une date donnée. La parité avec le
-  prototype web n'est plus tenable (1 642 événements contre 613) et n'est pas
+  prototype web n'est plus tenable (1 738 événements contre 613) et n'est pas
   un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
   jour** : le verrou est posé au lancement (abandonner consomme la tentative),
   mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
@@ -115,7 +117,7 @@ APRÈS l'enregistrement de la partie (sinon « niveau 10 » et « 100
 découvertes » manqueraient toujours d'une manche).
 
 premiers pas (1 partie) · PERFECT · 3 PERFECT en une partie · 8000 pts ·
-jouer les 5 catégories · 10 parties · 50 parties · marquer en Difficile ·
+jouer les 4 catégories · 10 parties · 50 parties · marquer en Difficile ·
 série quotidienne de 3 · de 7 · 12 évts en Chrono · terminer un duel ·
 100 événements découverts · niveau 10.
 

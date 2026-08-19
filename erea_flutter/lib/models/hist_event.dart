@@ -9,7 +9,7 @@ class HistEvent {
   /// Description SANS indice de date (affichée pendant la manche).
   final String desc;
 
-  /// Catégorie : france | monde | sciences | arts | quotidien.
+  /// Catégorie : pouvoir | sciences | arts | quotidien.
   final String cat;
   final String emoji;
 
