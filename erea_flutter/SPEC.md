@@ -78,9 +78,12 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
 - **Classique** : 10 manches, catégorie + difficulté choisies, anti-répétition
   (mémoriser les ~300 derniers ids joués, épuiser TOUT le jamais-vu — tous
   niveaux confondus — avant de resservir quoi que ce soit).
-- **Tour du monde** : 10 manches, 10 pays différents, deux par continent
-  quand la base le permet. La roue tourne à CHAQUE manche et non une fois
-  par partie : aucun pays n'a de quoi tenir dix manches à lui seul.
+- **Tour du monde** : la roue s'arrête sur UN drapeau et les 10 manches
+  portent toutes sur ce pays (`tirerPays` puis `partiePays`). Elle tournait
+  autrefois à chaque manche, pour dix pays par partie ; d'où le seuil relevé
+  à 10 faits par pays (`minFaitsParPays`) : à 6, le tirage ne pouvait plus se
+  remplir. Difficulté FIXE à Normal, comme le défi du jour — le flux de la
+  roulette n'en propose aucune.
 - **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
   série pour tous les joueurs de l'app à une date donnée. La parité avec le
   prototype web n'est plus tenable (1 738 événements contre 613) et n'est pas
