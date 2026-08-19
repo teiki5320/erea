@@ -21,7 +21,7 @@
 | Titre, descriptions | ✅ rédigés plus bas |
 | Compte Google Play Console | ⬜ **le premier verrou : type personnel/organisation à trancher** |
 | Appareil Android physique (exigé par la validation) | ⬜ |
-| Trois questionnaires | ⬜ *(et le §5 a changé : la pub impose des réponses nouvelles)* |
+| Trois questionnaires | ⬜ *(le §5 a changé avec la pub ; le public cible est tranché : 13 ans et plus)* |
 | Classements Play Games | ⬜ *(facultatif, voir §7)* |
 
 ---
@@ -152,6 +152,14 @@ Play Games n'est pas branché (§7). Si tu l'actives, remets le paragraphe
 en remplaçant « Game Center » par « Google Play Jeux ». Annoncer un
 classement absent est le genre de détail qui vaut un signalement.
 
+⚠️ **Une phrase à retirer avant d'envoyer cette fiche à Google** : « votre
+enfant de 8 ans ne tombera pas sur la bataille de Bouvines », dans le
+paragraphe « PLUS DE 1700 ÉVÉNEMENTS VÉRIFIÉS ». Le public cible déclaré
+est **13 ans et plus** (§5) ; une fiche qui s'adresse aux enfants de
+8 ans contredit cette déclaration, et c'est la fiche que Google lit pour
+vérifier. Côté App Store la phrase reste : Apple ne pose pas cette
+question.
+
 ## 4. Les visuels
 
 | Élément | Exigence Google | État |
@@ -245,24 +253,27 @@ deviner.
    AdMob est publiée par Google — s'y référer plutôt que de deviner, et
    remplir les deux questionnaires (Apple et Google) **le même jour**,
    pour ne pas se contredire.
-3. **Public cible et contenu** — c'est celui qui n'a pas d'équivalent
-   Apple, et **le plus dangereux des trois maintenant qu'il y a de la
-   publicité**. Déclarer une tranche d'âge incluant les moins de 13 ans
-   fait entrer l'app dans la **politique Familles**, qui impose alors :
-   - de n'utiliser que des SDK publicitaires **auto-certifiés** par
-     Google pour les familles *(AdMob l'est, mais il faut le déclarer)* ;
-   - de **désactiver la publicité personnalisée** pour ces utilisateurs —
-     côté code, c'est `tagForChildDirectedTreatment` ou
-     `tagForUnderAgeOfConsent` dans la requête AdMob, et **ce n'est pas
-     encore posé dans `lib/core/pub.dart`** ;
-   - un lien de politique de confidentialité, déjà en place.
+3. **Public cible et contenu** ✅ *(tranché le 19 août 2026 :
+   **13 ans et plus**)* — c'est celui qui n'a pas d'équivalent Apple, et
+   le plus engageant des trois. Déclarer une tranche incluant les moins
+   de 13 ans ferait entrer l'app dans la **politique Familles**, qui
+   imposerait de désactiver la publicité personnalisée
+   (`tagForChildDirectedTreatment` / `tagForUnderAgeOfConsent` dans la
+   requête AdMob) — pour un revenu publicitaire nettement moindre.
 
-   ⚠️ Deux chemins, à trancher avant de remplir : soit **cibler 13 ans et
-   plus** et rester hors de la politique Familles *(le mode Facile
-   « pensé pour les plus jeunes » devient alors un argument gênant à
-   tenir)*, soit **assumer les moins de 13 ans** et brider la publicité
-   dans le code. Le second est plus honnête vis-à-vis de ce que le jeu
-   raconte de lui-même, et coûte quelques lignes.
+   **Le choix est donc 13 ans et plus**, hors politique Familles. Rien à
+   changer dans `lib/core/pub.dart` : la publicité reste personnalisée,
+   sous consentement UMP. Ne pas revenir sur ce choix sans mesurer ce
+   qu'il coûte en code ET en recettes.
+
+   ⚠️ **Ce que ce choix oblige à faire ailleurs.** Google recoupe la
+   déclaration avec la fiche : titre, description et visuels ne doivent
+   pas donner l'impression de viser les enfants, sans quoi la Play
+   Console requalifie l'app d'office. Or la description longue du §3 dit
+   « votre enfant de 8 ans ne tombera pas sur la bataille de Bouvines ».
+   ⬜ **Cette phrase est à retirer de la version Play** avant d'envoyer
+   la fiche — la version App Store, elle, peut la garder : Apple ne pose
+   pas cette question et le 4+ est déjà obtenu.
 
 ## 6. Le build
 

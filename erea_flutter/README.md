@@ -140,10 +140,13 @@ consentement n'est pas révocable. La ligne « Publicité personnalisée »
 apparaît donc dans les réglages quand `Pub.optionsRequises` est vrai —
 jamais ailleurs, et jamais chez un acheteur.
 
-⚠️ **Ce qui manque encore** : `tagForChildDirectedTreatment` /
-`tagForUnderAgeOfConsent` ne sont pas posés. Ils deviennent obligatoires
-si la fiche Play déclare une tranche d'âge incluant les moins de 13 ans
-(politique Familles) — voir `docs/FICHE_PLAY_STORE.md` §5.
+`tagForChildDirectedTreatment` / `tagForUnderAgeOfConsent` ne sont pas
+posés, et n'ont pas à l'être : le public cible déclaré sur le Play Store
+est **13 ans et plus** (décidé le 19 août 2026), ce qui laisse l'app hors
+de la politique Familles de Google. Les poser briderait la publicité en
+non personnalisée, pour un revenu nettement moindre. Ce choix engage la
+fiche Play, qui ne doit pas s'adresser aux enfants — voir
+`docs/FICHE_PLAY_STORE.md` §5.
 
 ## L'achat « Erea sans pub »
 
@@ -160,9 +163,9 @@ obligatoire, Apple refuse les apps qui n'en ont pas.
 ⚠️ Le prix affiché vient toujours de la boutique, jamais d'une constante
 du code : il dépend du pays, de la devise et des taxes.
 
-⚠️ Rien n'est testable avant que l'accord **« Applications payantes »**
-soit signé dans App Store Connect, coordonnées bancaires et fiscales
-comprises.
+L'accord **« Applications payantes »** est actif depuis le 18 août 2026
+(coordonnées bancaires et fiscales comprises) : sans lui, la boutique
+serait restée muette et l'offre invisible.
 
 ## Ce qui n'est pas fait
 
@@ -173,9 +176,12 @@ comprises.
   Games n'est pas configuré : les classements sont muets, le jeu reste
   jouable — la table d'identifiants attend dans `lib/core/classement.dart`.
   Tout le chemin est dans `docs/FICHE_PLAY_STORE.md`.
-- **L'achat n'a jamais été exécuté** : l'accord « Applications payantes »
-  n'est pas signé et le produit n'existe pas encore dans App Store
-  Connect, donc la boutique reste muette et l'offre ne s'affiche pas.
+- **L'achat n'a jamais été exécuté sur un appareil** : l'accord
+  « Applications payantes » est actif et le produit existe dans App Store
+  Connect depuis le 18 août 2026, mais personne n'a encore vu l'offre
+  s'afficher, payé en Sandbox, ni vérifié « Restaurer mes achats » après
+  réinstallation. C'est l'étape 9 de la sortie 1.1
+  (`docs/FICHE_APP_STORE.md`).
 
 `SPEC.md` est la spécification de référence : toutes les formules et
 règles validées par le prototype web y sont consignées.
