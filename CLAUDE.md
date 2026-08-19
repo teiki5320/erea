@@ -61,6 +61,7 @@ possible.
 
 | Fichier | Contenu |
 |---|---|
+| **`docs/FICHE_APP_STORE.md` (en-tête)** | **l'état d'avancement à jour : où en sont la 1.0, la 1.1 et chaque démarche** |
 | `erea_flutter/SPEC.md` | la spécification de référence : formules, barème, règles |
 | `erea_flutter/README.md` | développer, builder, les pièges Xcode Cloud |
 | `docs/FICHE_APP_STORE.md` | la fiche App Store, champ par champ |

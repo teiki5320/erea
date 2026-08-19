@@ -415,7 +415,15 @@ n'affiche aucune offre, c'est voulu.
 État « Finaliser avant soumission » : il attend seulement sa **capture
 d'écran de vérification** (à faire quand l'offre s'affichera dans l'app,
 au test de la 1.1) et son rattachement à la version 1.1 — ne pas cliquer
-« Ajouter pour vérification » avant. Les valeurs saisies :
+« Ajouter pour vérification » avant.
+
+⬜ **Décision en suspens : le « Partage familial »** (interrupteur en
+haut de la page du produit). L'activer permet à six membres d'une
+famille de profiter de l'achat sans repayer — cohérent avec « le jeu
+d'histoire en famille », mais moins de ventes par foyer. Vérifier la
+réversibilité du choix chez Apple avant d'activer.
+
+Les valeurs saisies :
 
 | Champ | Valeur |
 |---|---|
