@@ -47,8 +47,10 @@ soumission. Pas de manipulation à l'aveugle.
 
 ## §1 — Réponse aux sept points *(à coller telle quelle)*
 
-> ⚠️ **Une seule valeur à compléter avant l'envoi** : la liste des
-> appareils du point 2. Le reste est vérifié sur le dépôt.
+> **Envoyé le 20 août 2026.** Le point 2 est parti incomplet — un message
+> de suivi, reproduit après le bloc, a fourni la liste des appareils. Le
+> texte ci-dessous est la version corrigée, à reprendre telle quelle pour
+> la 1.1.
 
 ```
 Hello,
@@ -65,8 +67,9 @@ None of the four listed cases exist in this version:
 - No prompt requesting sensitive data. The app never requests location, contacts, camera, photos or App Tracking Transparency. The only two system prompts are the optional Game Center sign-in (for leaderboards) and the optional notification permission for the evening reminder. Both are optional: declining either leaves the app fully playable.
 
 2. DEVICES AND OS TESTED
-[À COMPLÉTER — modèles et versions, par exemple : iPhone 14 (iOS 18.6), iPad Air 5th generation (iPadOS 18.6)]
-Minimum deployment target: iOS 15.0. The app supports both iPhone and iPad.
+- iPhone 16 Plus (physical device) — this is the device used for the attached screen recording (Erea.mov)
+- iPad Pro 13-inch (M4) (physical device)
+Both running the latest public release of iOS and iPadOS. Minimum deployment target: iOS 15.0. The app supports both iPhone and iPad.
 
 3. FUNCTION, TARGET AUDIENCE AND VALUE
 Erea is a single-player history quiz. An historical event is shown without its date; the player drags a timeline running from 3000 BC to today to guess the year, and scores according to how close the guess is. The database holds 1,738 verified events across four themes (power and wars, sciences and exploration, culture and beliefs, daily life and sport), each graded by difficulty so that younger players meet well-known facts first.
@@ -91,6 +94,28 @@ Neither. The app does not operate in a regulated industry. The event texts were 
 
 Thank you for your time reviewing Erea.
 ```
+
+### Message de suivi du 20 août *(point 2 manquant)*
+
+```
+Hello,
+
+Following up on my previous reply: point 2 was accidentally left incomplete. Here is the full list.
+
+2. DEVICES AND OS TESTED
+- iPhone 16 Plus (physical device) — this is the device used for the attached screen recording (Erea.mov)
+- iPad Pro 13-inch (M4) (physical device)
+
+Both running the latest public release of iOS and iPadOS. Minimum deployment target: iOS 15.0. The app supports both iPhone and iPad.
+
+Every other point of my previous reply stands unchanged.
+
+Thank you.
+```
+
+> **Leçon pour la 1.1** : le fil accepte autant de messages qu'on veut et
+> un envoi ne consomme pas l'édition unique de l'élément refusé — mais
+> relire avant d'envoyer coûte moins cher qu'un aller-retour.
 
 ---
 
