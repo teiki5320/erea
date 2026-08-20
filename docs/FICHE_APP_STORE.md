@@ -7,11 +7,16 @@
 > 2026 à 11 h 42 avec le build **90** ; la sortie est réglée sur
 > *manuelle*, pour pouvoir la faire coïncider avec celle du Play Store.
 >
-> Le 15 août, Apple a demandé un complément (**Guideline 2.1 —
-> Information Needed**) : une capture vidéo du parcours type, filmée sur
-> un iPhone physique. Réponse envoyée le **18 août à 11 h 39** dans le
-> fil de la soumission, avec `Erea.mov` en pièce jointe — l'examen
-> reprend de là. Au passage, deux leçons sur ce fil de messages, payées
+> Le 15 août, Apple a **refusé** la version (**Guideline 2.1 —
+> Information Needed**, état *2.1.0 Performance: App Completeness*).
+> Aucun bug n'est reproché : c'est la demande d'information standard des
+> nouvelles apps, en **sept points**. La réponse du **18 août à 11 h 39**,
+> avec `Erea.mov` en pièce jointe, n'en couvrait qu'un — et surtout,
+> **répondre ne relance pas l'examen** : tant que l'élément refusé n'est
+> pas modifié puis re-soumis, la soumission reste bloquée et le bouton
+> *Soumettre à nouveau* est grisé. La réponse complète aux sept points,
+> le texte du champ *Notes* et la marche à suivre sont dans
+> **`docs/APP_REVIEW.md`**. Au passage, deux leçons sur ce fil de messages, payées
 > en deux jours : depuis l'iPad (navigation privée, VPN), l'envoi
 > échouait avec un « Une erreur s'est produite » sans détail ; depuis le
 > Mac, en fenêtre Safari normale, **le même fichier est passé tel
@@ -570,4 +575,6 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 | Sélection du build | ✅ build 90 | ⬜ |
 | **Envoi à la revue** | ✅ **14 août 2026, 11 h 42** | ⬜ |
 | Complément 2.1 (vidéo du parcours) | ✅ envoyé le 18 août, 11 h 39 | — |
-| **Publication** | ⬜ manuelle, en attente d'Apple | ⬜ |
+| **Réponse aux 7 points + champ Notes** | ⬜ **texte prêt dans `docs/APP_REVIEW.md`** | ⬜ à reprendre |
+| **Re-soumission** (Modifier → Ajouter pour vérification → Soumettre à nouveau) | ⬜ **c'est elle qui débloque tout** | ⬜ |
+| **Publication** | ⬜ manuelle, après re-soumission et validation | ⬜ |
