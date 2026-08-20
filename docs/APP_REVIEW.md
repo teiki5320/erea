@@ -27,11 +27,13 @@ issues](https://developer.apple.com/help/app-store-connect/manage-submissions-to
    caractères), en rejoignant `Erea.mov` si le fil ne le conserve pas.
    C'est la page **« Vérification de l'app »**, celle des messages, bouton
    *Répondre à l'équipe de vérification des apps*.
-2. Coller le texte du §2 dans **Distribution → iOS 1.0 → Informations pour
-   la revue → Notes**, tout en bas de la page de la version. C'est ce
-   qu'Apple appelle « App Review Information » dans son message anglais —
-   à ne pas confondre avec la page « Vérification de l'app » de l'étape 1.
-   Le champ contient déjà un texte court : le §2 le **remplace**.
+2. Coller le texte du §2 dans **Distribution → App iOS Version 1.0.0 →
+   champ « Remarques »**, tout en bas de la page de la version (4 000
+   caractères ; le §2 en fait environ 1 400). C'est ce qu'Apple appelle
+   « App Review Information → Notes » dans son message anglais — à ne pas
+   confondre avec la page « Vérification de l'app » de l'étape 1. Le champ
+   contient déjà un texte court : le §2 le **remplace**. Puis
+   **Enregistrer**.
 3. Cliquer **Modifier** en face de l'élément refusé, puis **Ajouter pour
    vérification**.
 4. Cliquer **Soumettre à nouveau à l'équipe de vérification** : le bouton
@@ -92,10 +94,10 @@ Thank you for your time reviewing Erea.
 
 ---
 
-## §2 — Champ *Notes*, dans « Informations pour la revue » *(à coller, et à garder pour la 1.1)*
+## §2 — Champ « Remarques » de la page de version *(à coller, et à garder pour la 1.1)*
 
-*Distribution → iOS 1.0 → tout en bas de la page. Remplace le texte court
-qui s'y trouve déjà.*
+*Distribution → App iOS Version 1.0.0 → tout en bas, sous les coordonnées
+de contact. Remplace le texte court qui s'y trouve déjà.*
 
 ```
 Erea is a single-player, offline history quiz in French. An event is shown without its date and the player drags a timeline (3000 BC to today) to guess the year.
