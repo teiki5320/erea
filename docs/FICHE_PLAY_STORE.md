@@ -19,9 +19,11 @@
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
 | Titre, descriptions | ✅ rédigés plus bas |
-| Compte Google Play Console | ⬜ **le premier verrou : type personnel/organisation à trancher** |
-| Appareil Android physique (exigé par la validation) | ⬜ |
+| Compte Google Play Console | ✅ créé le 20 août 2026, type **personnel** — voir §2 |
+| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : rien ne l'accélère, à lancer en premier** |
+| Appareil Android physique (exigé par la validation) | ✅ Pixel 8a commandé le 20 août 2026 |
 | Trois questionnaires | ⬜ *(le §5 a changé avec la pub ; le public cible est tranché : 13 ans et plus)* |
+| Phrase « votre enfant de 8 ans » à retirer de la description Play | ⬜ *(voir §5)* |
 | Classements Play Games | ⬜ *(facultatif, voir §7)* |
 
 ---
@@ -57,10 +59,11 @@ Active **Play App Signing** au premier envoi : Google conserve alors la
 clé de distribution et celle-ci ne sert plus qu'à l'envoi. C'est le
 filet de sécurité qui rattrape une perte de clé — le seul.
 
-## 2. Le compte Google Play Console
+## 2. Le compte Google Play Console ✅ *(personnel, créé le 20 août 2026)*
 
-⚠️⚠️ **À LIRE AVANT DE CRÉER LE COMPTE — le choix du type est
-irréversible en pratique et commande tout le reste.**
+Le choix est fait : **compte personnel**, en connaissance de la
+contrepartie — les 12 testeurs ci-dessous. Le tableau reste pour mémoire,
+le choix étant irréversible en pratique.
 
 | | Compte **personnel** | Compte **organisation** |
 |---|---|---|
@@ -68,21 +71,20 @@ irréversible en pratique et commande tout le reste.**
 | Test avant publication | **12 testeurs pendant 14 jours consécutifs** | aucun |
 | Coordonnées publiques | nom du développeur | nom, e-mail et téléphone de la société |
 
-Les 12 testeurs ne sont pas une formalité : il faut douze **personnes
-distinctes**, avec un compte Google et un appareil Android, inscrites
-sans interruption pendant quatorze jours. Sans elles, l'app ne peut pas
-passer en production — jamais. Cette obligation ne pèse que sur les
-comptes personnels créés après le 13 novembre 2023 ; les comptes
-d'organisation en sont exemptés.
+**Les 12 testeurs sont donc le chemin critique du Play Store**, et le
+seul délai que rien n'accélère : douze **personnes distinctes**, chacune
+avec un compte Google et un appareil Android, inscrites au test fermé
+**sans interruption pendant quatorze jours**. Une interruption remet le
+compteur à zéro. Sans elles, l'app ne peut pas passer en production —
+jamais. L'obligation ne pèse que sur les comptes personnels créés après
+le 13 novembre 2023. À lancer avant tout le reste : tout le reste peut
+avancer pendant.
 
-Google ne documente aucune conversion d'un type vers l'autre : se
-tromper, c'est repayer 25 $ et tout resaisir. **Si une société existe,
-prendre le compte organisation, sans hésiter.**
-
-Le reste : 25 $ une seule fois, puis une **vérification d'identité** de
-plusieurs jours, une **validation depuis un appareil Android physique**
-(l'émulateur ne passe pas l'attestation) et un numéro de téléphone à
-confirmer par SMS. À lancer tôt : tout le reste peut avancer pendant.
+La **validation depuis un appareil Android physique** est couverte : un
+Pixel 8a a été commandé le 20 août 2026 (l'émulateur ne passe pas
+l'attestation). Restent, si ce n'est pas déjà fait à la création du
+compte, la **vérification d'identité** — plusieurs jours — et le numéro
+de téléphone à confirmer par SMS.
 
 La déclaration de statut professionnel s'y refait, comme le DSA côté
 Apple. Une app gratuite, sans publicité ni achat, se déclare en
