@@ -14,7 +14,7 @@
 |---|---|
 | Identifiant `com.teiki.erea`, identique à iOS | ✅ dans `android/app/build.gradle.kts` |
 | Clé de signature | ✅ créée le 15 août 2026 (`~/erea-upload.jks` + `key.properties`, hors dépôt) — **à sauvegarder ailleurs que sur le Mac** |
-| App Bundle signé qui se construit | ✅ vérifié le 15 août (57,7 Mo) |
+| App Bundle signé qui se construit | ✅ revérifié le 20 août 2026 (58,5 Mo, signé avec la vraie clé) |
 | Autorisation de notification Android 13 demandée | ✅ dans `lib/core/rappels.dart` |
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
@@ -80,11 +80,29 @@ jamais. L'obligation ne pèse que sur les comptes personnels créés après
 le 13 novembre 2023. À lancer avant tout le reste : tout le reste peut
 avancer pendant.
 
-La **validation depuis un appareil Android physique** est couverte : un
-Pixel 8a a été commandé le 20 août 2026 (l'émulateur ne passe pas
-l'attestation). Restent, si ce n'est pas déjà fait à la création du
-compte, la **vérification d'identité** — plusieurs jours — et le numéro
-de téléphone à confirmer par SMS.
+### La vérification d'appareil, concrètement
+
+Depuis 2024, tout compte **personnel** doit prouver l'accès à un appareil
+Android **physique** avant de pouvoir publier. Un émulateur ne passe pas :
+c'est le but de la règle — Google veut que le développeur puisse tester
+son app en vrai.
+
+| Ce qu'il faut | Détail |
+|---|---|
+| L'appareil | physique, **non rooté**, **Android 10** minimum |
+| L'outil | l'app **Play Console** installée sur ce téléphone, connectée au compte développeur |
+| La durée | moins d'une minute |
+| Réutilisable | le même appareil peut vérifier plusieurs comptes |
+
+Le **Pixel 8a**, commandé le 20 août 2026, coche tout. Il servira aussi à
+tester la publicité et l'achat de la 1.1, que l'émulateur rend mal.
+
+📎 [Device verification requirements for new developer
+accounts](https://support.google.com/googleplay/android-developer/answer/14316361?hl=en)
+
+Restent, si ce n'est pas déjà fait à la création du compte, la
+**vérification d'identité** — plusieurs jours — et le numéro de téléphone
+à confirmer par SMS.
 
 La déclaration de statut professionnel s'y refait, comme le DSA côté
 Apple. Une app gratuite, sans publicité ni achat, se déclare en
