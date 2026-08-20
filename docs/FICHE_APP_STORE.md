@@ -7,7 +7,10 @@
 > 2026 à 11 h 42 avec le build **90** ; la sortie est réglée sur
 > *manuelle*, pour pouvoir la faire coïncider avec celle du Play Store.
 >
-> Le 15 août, Apple a **refusé** la version (**Guideline 2.1 —
+> **Le 20 août, la soumission est repartie** : état « En attente de
+> vérification », build **90 inchangé**. Voici ce qui s'était passé.
+>
+> Le 15 août, Apple avait **refusé** la version (**Guideline 2.1 —
 > Information Needed**, état *2.1.0 Performance: App Completeness*).
 > Aucun bug n'est reproché : c'est la demande d'information standard des
 > nouvelles apps, en **sept points**. La réponse du **18 août à 11 h 39**,
@@ -575,6 +578,6 @@ Store Connect n'accepte qu'une version en cours d'examen à la fois.
 | Sélection du build | ✅ build 90 | ⬜ |
 | **Envoi à la revue** | ✅ **14 août 2026, 11 h 42** | ⬜ |
 | Complément 2.1 (vidéo du parcours) | ✅ envoyé le 18 août, 11 h 39 | — |
-| **Réponse aux 7 points + champ Notes** | ⬜ **texte prêt dans `docs/APP_REVIEW.md`** | ⬜ à reprendre |
-| **Re-soumission** (Modifier → Ajouter pour vérification → Soumettre à nouveau) | ⬜ **c'est elle qui débloque tout** | ⬜ |
-| **Publication** | ⬜ manuelle, après re-soumission et validation | ⬜ |
+| **Réponse aux 7 points + champ Remarques** | ✅ 20 août (texte conservé dans `docs/APP_REVIEW.md`) | ⬜ à reprendre |
+| **Re-soumission** | ✅ **20 août 2026 — « En attente de vérification », build 90 inchangé** | ⬜ |
+| **Publication** | ⬜ manuelle, en attente d'Apple | ⬜ |

@@ -5,10 +5,15 @@
 
 ## Où on en est, exactement
 
+> ✅ **Réglé le 20 août 2026.** La soumission est repassée « **En attente
+> de vérification** », build **90 inchangé**. Ce qui suit reste la mémoire
+> de l'épisode — et la marche à suivre si la 1.1 recevait la même demande.
+
 La version **1.0.0 (build 90)**, soumise le 14 août 2026 à 11 h 42
-(identifiant `ac15df9e-b4e0-40e6-8834-6cb24d3fbc0d`), est **refusée** —
-état affiché *2.1.0 Performance: App Completeness*, message
-**Guideline 2.1 – Information Needed – New App Submission**.
+(identifiant `ac15df9e-b4e0-40e6-8834-6cb24d3fbc0d`), avait été
+**refusée** le 15 août — état affiché *2.1.0 Performance: App
+Completeness*, message **Guideline 2.1 – Information Needed – New App
+Submission**.
 
 Il n'y a **aucun bug reproché** : c'est la demande d'information standard
 adressée aux nouvelles apps. Apple réclame **sept éléments**. La réponse
@@ -115,7 +120,9 @@ Thank you.
 
 > **Leçon pour la 1.1** : le fil accepte autant de messages qu'on veut et
 > un envoi ne consomme pas l'édition unique de l'élément refusé — mais
-> relire avant d'envoyer coûte moins cher qu'un aller-retour.
+> relire avant d'envoyer coûte moins cher qu'un aller-retour. Ce
+> message-ci est d'ailleurs parti collé trois fois : sans conséquence, et
+> surtout sans message d'excuse derrière.
 
 ---
 
