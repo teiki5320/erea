@@ -7,8 +7,8 @@
 
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
 > inchangé), puis **deuxième demande d'informations le 21 août**, portant
-> cette fois sur une seule question — les flammes. Réponse au §3. La
-> soumission n'est pas refusée : l'examen se poursuit.
+> cette fois sur une seule question — les flammes. Réponse au §3, avec le
+> critère qui dit s'il faut re-soumettre ou non.
 
 La version **1.0.0 (build 90)**, soumise le 14 août 2026 à 11 h 42
 (identifiant `ac15df9e-b4e0-40e6-8834-6cb24d3fbc0d`), avait été
@@ -138,10 +138,20 @@ C'est le contrôle habituel sur les **monnaies virtuelles** : tout ce qui
 ressemble à une devise doit s'expliquer, et s'il s'achète, passer par
 l'achat intégré.
 
-⚠️ **Différence avec le 15 août : la soumission n'est PAS refusée.** Le
-message dit « before we can *continue* our review » et la soumission
-reste ouverte. Ici, **répondre dans le fil suffit** — il n'y a aucun
-élément à modifier ni à re-soumettre.
+⚠️ **Répondre suffit-il, ou faut-il re-soumettre ?** Le texte du message
+ne le dit pas : le 15 août, une demande d'informations formulée de la même
+façon s'accompagnait pourtant d'un **refus**. Seul l'**état affiché en
+haut de la page « Soumission iOS »** tranche :
+
+| État en haut de page | Ce qu'il faut faire |
+|---|---|
+| 🟡 « En attente de vérification » | répondre dans le fil suffit |
+| 🔴 « Problèmes non résolus » + élément « Refusé » | répondre, **puis** Modifier → Ajouter pour vérification → Soumettre à nouveau |
+
+Le signe décisif : un bouton *Soumettre à nouveau* **grisé** signale un
+élément refusé à débloquer ; un lien *Annuler la soumission* signale au
+contraire une soumission active. Dans tous les cas, répondre d'abord — la
+réponse est demandée explicitement et ne consomme aucune édition.
 
 La flamme apparaît à **trois** endroits du code, d'où une réponse qui les
 couvre tous plutôt que le seul qui vient à l'esprit :
