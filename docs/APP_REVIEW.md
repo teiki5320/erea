@@ -174,28 +174,46 @@ couvre tous plutôt que le seul qui vient à l'esprit :
 | Bandeau en partie | Combo : 3 réponses ≥ 700 points d'affilée → ×1,5 d'**XP** sur la manche suivante, jamais sur les points | `lib/ui/game_screen.dart` · `GameController.combo` |
 | Étiquette de difficulté | Emoji décoratif de « Difficile », et icône du badge « Tête brûlée » | `lib/core/scoring.dart` · `lib/game/badges.dart` |
 
+**La capture jointe désigne la première**, d'une flèche rouge : la
+pastille jaune de l'accueil, affichant **« 🔥 0 »** sur une installation
+neuve. D'où la réponse ci-dessous, centrée sur celle-là — les deux autres
+n'y figurent qu'en une phrase, pour éviter une troisième question.
+
 ```
 Hello,
 
-Certainly. Flames (🔥) appear in three different places in Erea, and none of them is a virtual currency: they cannot be bought, obtained through any payment, traded, gifted or spent. This version contains no in-app purchase at all, and nothing in the app can be unlocked with them.
+Thank you for the screenshot — it points at the flame counter on the home screen, so here is precisely what it is and how it is obtained.
 
-1. THE DAILY STREAK — "🔥 N" on the home screen
-This is the number of consecutive days on which the player has FINISHED the Daily Challenge. There is exactly one way to obtain it: open the app and complete the Daily Challenge, once per day.
-- +1 each day the challenge is played to the end. Starting a challenge and abandoning it consumes the daily attempt but does not increase the streak.
-- The counter resets to 0 as soon as one day is skipped.
-- It is stored locally on the device and can optionally be posted to the Game Center leaderboard "erea.streak".
-To reproduce: home screen → "Défi du jour" → play the 10 rounds to the end. The badge then reads 🔥 1. The following day, same thing → 🔥 2.
+WHAT IT IS
+"🔥 0" is the Daily Challenge streak counter: the number of consecutive days on which the player has finished the Daily Challenge. It reads 0 in your screenshot because the app had just been installed and no Daily Challenge had been completed yet.
 
-2. THE IN-GAME COMBO — flame banner shown during a game
-A bonus banner that appears after 3 consecutive answers scoring at least 700 base points. It multiplies the EXPERIENCE POINTS of the next round by 1.5, and never affects the score itself. It is obtained only by answering accurately three times in a row, and it is lost as soon as one answer falls below that threshold.
+HOW IT IS OBTAINED
+Only by playing, and in one single way. From the home screen, tap "Défi du jour", then "Jouer !", and play the 10 rounds through to the end:
+- the counter turns to 🔥 1 as soon as that day's challenge is finished;
+- it increases by 1 for each further consecutive day;
+- starting a challenge and quitting it uses up that day's single attempt, but does not increase the counter;
+- it resets to 0 as soon as one day is skipped.
 
-3. THE DIFFICULTY LABEL — 🔥 next to "Difficile"
-Decorative only: the flame is the emoji of the "Difficile" difficulty in the mode picker, alongside 😌 for "Facile" and 🙂 for "Normal". One achievement badge ("Tête brûlée") also uses 🔥 as its icon; it is unlocked by scoring points in Difficile.
+WHAT IT IS NOT
+It is not a virtual currency and has no monetary value. Flames cannot be bought, obtained through any payment, traded, gifted, converted or spent, and they unlock nothing — the entire game is available from the first launch. This version contains no in-app purchase of any kind. The count is stored locally on the device, and may optionally be submitted to the Game Center leaderboard "erea.streak".
 
-In short: every flame in Erea is earned by playing, is stored on the device, and has no monetary value of any kind.
+For completeness, the same emoji appears in two unrelated, decorative places: a bonus banner shown during a game after three consecutive accurate answers, which multiplies that round's experience points by 1.5 and never the score; and as the icon of the "Difficile" difficulty level and of the "Tête brûlée" achievement badge. Neither can be purchased either.
 
 Thank you for your time reviewing Erea.
 ```
+
+### Ce que la capture apprend sur le produit
+
+À l'installation, l'accueil affiche une pastille dorée portant **« 🔥 0 »**
+et rien d'autre. Aucune légende, aucune info-bulle, et un compteur à zéro
+qui n'indique ni ce qu'il compte ni comment le faire monter — c'est-à-dire
+exactement la silhouette d'un solde de jetons. Un examinateur d'Apple s'y
+est trompé ; un joueur qui installe le jeu se pose la même question.
+
+⬜ **Piste pour la 1.1** (aucun changement dans la 1.0, dont le build 90
+est en examen) : masquer la pastille tant que la série vaut 0, ou lui
+donner une légende explicite. Le gain est double — une question de moins à
+chaque soumission, et un accueil qui s'explique tout seul.
 
 > **Leçon pour la 1.1** : ajouter d'emblée aux Remarques une ligne sur
 > tout élément qui pourrait passer pour une devise — flammes, XP, niveaux,
