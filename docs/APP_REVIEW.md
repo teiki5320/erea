@@ -7,8 +7,8 @@
 
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
 > inchangé), puis **deuxième demande d'informations le 21 août**, portant
-> cette fois sur une seule question — les flammes. Réponse au §3, avec le
-> critère qui dit s'il faut re-soumettre ou non.
+> cette fois sur une seule question — les flammes. Réponse au §3. Comme le
+> 15 août, c'est un **refus formel** : répondre, puis re-soumettre.
 
 La version **1.0.0 (build 90)**, soumise le 14 août 2026 à 11 h 42
 (identifiant `ac15df9e-b4e0-40e6-8834-6cb24d3fbc0d`), avait été
@@ -149,9 +149,21 @@ haut de la page « Soumission iOS »** tranche :
 | 🔴 « Problèmes non résolus » + élément « Refusé » | répondre, **puis** Modifier → Ajouter pour vérification → Soumettre à nouveau |
 
 Le signe décisif : un bouton *Soumettre à nouveau* **grisé** signale un
-élément refusé à débloquer ; un lien *Annuler la soumission* signale au
-contraire une soumission active. Dans tous les cas, répondre d'abord — la
+élément refusé à débloquer. Dans tous les cas, répondre d'abord — la
 réponse est demandée explicitement et ne consomme aucune édition.
+
+**Vérifié le 21 août : c'est bien un refus.** État « Problèmes non
+résolus », élément *Refusé — 2.1.0 Performance: App Completeness*, bouton
+grisé. Le « before we can *continue* our review » du message ne dit donc
+**rien** de l'état réel : les deux demandes d'informations, celle du
+15 août comme celle du 21, sont des refus formels qui exigent la
+re-soumission. **Ne jamais déduire l'état du texte du message.**
+
+À noter : Apple a joint à l'élément refusé une **capture d'écran**
+(`Screenshot-0821-134031.png`, téléchargeable depuis la ligne de
+l'élément) montrant l'écran qui a motivé la question. Le réflexe utile :
+la télécharger avant de rédiger, elle désigne précisément ce que
+l'examinateur avait sous les yeux.
 
 La flamme apparaît à **trois** endroits du code, d'où une réponse qui les
 couvre tous plutôt que le seul qui vient à l'esprit :
