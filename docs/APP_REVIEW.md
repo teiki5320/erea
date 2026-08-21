@@ -5,9 +5,10 @@
 
 ## Où on en est, exactement
 
-> ✅ **Réglé le 20 août 2026.** La soumission est repassée « **En attente
-> de vérification** », build **90 inchangé**. Ce qui suit reste la mémoire
-> de l'épisode — et la marche à suivre si la 1.1 recevait la même demande.
+> **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
+> inchangé), puis **deuxième demande d'informations le 21 août**, portant
+> cette fois sur une seule question — les flammes. Réponse au §3. La
+> soumission n'est pas refusée : l'examen se poursuit.
 
 La version **1.0.0 (build 90)**, soumise le 14 août 2026 à 11 h 42
 (identifiant `ac15df9e-b4e0-40e6-8834-6cb24d3fbc0d`), avait été
@@ -123,6 +124,61 @@ Thank you.
 > relire avant d'envoyer coûte moins cher qu'un aller-retour. Ce
 > message-ci est d'ailleurs parti collé trois fois : sans conséquence, et
 > surtout sans message d'excuse derrière.
+
+---
+
+## §3 — Deuxième demande, 21 août 2026 : « comment obtient-on les flammes ? »
+
+Examinée sur **iPad Air 11 pouces (M3)**, version 1.0.0 (90). Une seule
+question, sous *Guideline 2.1 — Information Needed* :
+
+> *Would it be possible to confirm how users can obtain flames?*
+
+C'est le contrôle habituel sur les **monnaies virtuelles** : tout ce qui
+ressemble à une devise doit s'expliquer, et s'il s'achète, passer par
+l'achat intégré.
+
+⚠️ **Différence avec le 15 août : la soumission n'est PAS refusée.** Le
+message dit « before we can *continue* our review » et la soumission
+reste ouverte. Ici, **répondre dans le fil suffit** — il n'y a aucun
+élément à modifier ni à re-soumettre.
+
+La flamme apparaît à **trois** endroits du code, d'où une réponse qui les
+couvre tous plutôt que le seul qui vient à l'esprit :
+
+| Où | Quoi | Fichier |
+|---|---|---|
+| Accueil, « 🔥 N » | Série de jours consécutifs avec un Défi du jour **terminé** | `lib/ui/home_screen.dart` · `Store.effectiveStreak` |
+| Bandeau en partie | Combo : 3 réponses ≥ 700 points d'affilée → ×1,5 d'**XP** sur la manche suivante, jamais sur les points | `lib/ui/game_screen.dart` · `GameController.combo` |
+| Étiquette de difficulté | Emoji décoratif de « Difficile », et icône du badge « Tête brûlée » | `lib/core/scoring.dart` · `lib/game/badges.dart` |
+
+```
+Hello,
+
+Certainly. Flames (🔥) appear in three different places in Erea, and none of them is a virtual currency: they cannot be bought, obtained through any payment, traded, gifted or spent. This version contains no in-app purchase at all, and nothing in the app can be unlocked with them.
+
+1. THE DAILY STREAK — "🔥 N" on the home screen
+This is the number of consecutive days on which the player has FINISHED the Daily Challenge. There is exactly one way to obtain it: open the app and complete the Daily Challenge, once per day.
+- +1 each day the challenge is played to the end. Starting a challenge and abandoning it consumes the daily attempt but does not increase the streak.
+- The counter resets to 0 as soon as one day is skipped.
+- It is stored locally on the device and can optionally be posted to the Game Center leaderboard "erea.streak".
+To reproduce: home screen → "Défi du jour" → play the 10 rounds to the end. The badge then reads 🔥 1. The following day, same thing → 🔥 2.
+
+2. THE IN-GAME COMBO — flame banner shown during a game
+A bonus banner that appears after 3 consecutive answers scoring at least 700 base points. It multiplies the EXPERIENCE POINTS of the next round by 1.5, and never affects the score itself. It is obtained only by answering accurately three times in a row, and it is lost as soon as one answer falls below that threshold.
+
+3. THE DIFFICULTY LABEL — 🔥 next to "Difficile"
+Decorative only: the flame is the emoji of the "Difficile" difficulty in the mode picker, alongside 😌 for "Facile" and 🙂 for "Normal". One achievement badge ("Tête brûlée") also uses 🔥 as its icon; it is unlocked by scoring points in Difficile.
+
+In short: every flame in Erea is earned by playing, is stored on the device, and has no monetary value of any kind.
+
+Thank you for your time reviewing Erea.
+```
+
+> **Leçon pour la 1.1** : ajouter d'emblée aux Remarques une ligne sur
+> tout élément qui pourrait passer pour une devise — flammes, XP, niveaux,
+> badges. La question tombera de toute façon, et elle coûte un jour
+> d'examen à chaque fois.
 
 ---
 
