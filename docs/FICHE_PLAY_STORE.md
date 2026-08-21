@@ -13,8 +13,8 @@
 | | |
 |---|---|
 | Identifiant `com.teiki.erea`, identique à iOS | ✅ dans `android/app/build.gradle.kts` |
-| Clé de signature | ✅ créée le 15 août 2026 (`~/erea-upload.jks` + `key.properties`, hors dépôt) — **à sauvegarder ailleurs que sur le Mac** |
-| App Bundle signé qui se construit | ✅ revérifié le 20 août 2026 (58,5 Mo, signé avec la vraie clé) |
+| Clé de signature | ✅ créée le 14 août 2026 (`~/erea-upload.jks` + `key.properties`, hors dépôt) — **à sauvegarder ailleurs que sur le Mac** |
+| App Bundle signé qui se construit | ✅ reconstruit le 20 août 2026 : 58,5 Mo, certificat `CN=Toa` — voir §1 |
 | Autorisation de notification Android 13 demandée | ✅ dans `lib/core/rappels.dart` |
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
@@ -28,7 +28,7 @@
 
 ---
 
-## 1. La clé de signature ✅ *(créée le 15 août 2026)*
+## 1. La clé de signature ✅ *(créée le 14 août 2026)*
 
 Fait — la marche ci-dessous reste pour mémoire, au cas où il faudrait la
 recréer sur une autre machine. `android/app/build.gradle.kts` lit
@@ -40,6 +40,22 @@ Google la refuse. C'est voulu — un build publiable exige la vraie clé.
 keytool -genkey -v -keystore ~/erea-upload.jks \
   -keyalg RSA -keysize 2048 -validity 10000 -alias erea
 ```
+
+**Vérifier qu'un bundle est signé avec elle**, et non avec la clé de
+debug — le contrôle qui évite un refus au téléversement :
+
+```bash
+keytool -J-Duser.language=en -printcert -jarfile build/app/outputs/bundle/release/app-release.aab
+```
+
+Doit répondre `Owner: CN=Toa, O=Toa, L=Paris, C=FR`, empreinte SHA‑1
+`5A:8A:57:C8:47:67:CB:B3:1B:78:33:98:C4:18:F8:14:98:9B:BA:E0`, valide
+jusqu'en 2053. Si le propriétaire est `CN=Android Debug`, c'est que
+`key.properties` n'a pas été lu et Google refusera l'envoi.
+
+*(L'option `-J-Duser.language=en` n'est pas un caprice : en français,
+`keytool` plante sur un défaut de formatage au lieu d'afficher le
+certificat.)*
 
 Puis `erea_flutter/android/key.properties`, **jamais commité** :
 
