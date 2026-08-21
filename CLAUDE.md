@@ -66,6 +66,7 @@ possible.
 | `erea_flutter/README.md` | développer, builder, les pièges Xcode Cloud |
 | `docs/FICHE_APP_STORE.md` | la fiche App Store, champ par champ |
 | `docs/FICHE_PLAY_STORE.md` | le chemin jusqu'au Play Store |
+| `docs/APP_REVIEW.md` | répondre à l'App Review : ses sept questions, les textes déjà envoyés, et comment re-soumettre (une demande d'infos EST un refus) |
 | `docs/INFRA.md` | les services externes et où vit chaque secret |
 | `docs/MARKETING.md` | positionnement, monétisation, ASO |
 | `erea_flutter/ios/GAME_CENTER.md` | les six classements |
