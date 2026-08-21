@@ -40,10 +40,19 @@ issues](https://developer.apple.com/help/app-store-connect/manage-submissions-to
    confondre avec la page « Vérification de l'app » de l'étape 1. Le champ
    contient déjà un texte court : le §2 le **remplace**. Puis
    **Enregistrer**.
-3. Cliquer **Modifier** en face de l'élément refusé, puis **Ajouter pour
-   vérification**.
-4. Cliquer **Soumettre à nouveau à l'équipe de vérification** : le bouton
-   se dégrise une fois l'étape 3 faite.
+3. Cliquer **Modifier** en face de l'élément refusé. Contrairement à ce
+   que laisse croire la documentation anglaise (*Edit* → *Add for Review*
+   → *Resubmit to App Review*), ce lien ouvre simplement **la page de la
+   version** : il n'y a ni « Ajouter pour vérification », ni « Soumettre à
+   nouveau » à cet endroit.
+4. Sur cette page, apporter la modification — typiquement le champ
+   **Remarques** — puis **Enregistrer**, et enfin cliquer le bouton bleu
+   **« Mettre à jour la vérification »** en haut à droite. C'est **lui**
+   qui renvoie l'élément à l'examen.
+
+Sur la page de soumission, le bouton *Soumettre à nouveau à l'équipe de
+vérification* reste grisé du début à la fin : ce n'est pas par lui que
+passe la re-soumission, malgré son nom.
 
 ⚠️ **Un élément ne peut être édité qu'une seule fois avant
 re-soumission**, et un élément retiré ne peut plus être réajouté à la même
