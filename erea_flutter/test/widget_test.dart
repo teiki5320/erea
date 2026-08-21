@@ -557,6 +557,24 @@ void main() {
     expect(find.text('Classique'), findsOneWidget);
   });
 
+  testWidgets('la pastille de série explique ce qu’elle compte',
+      (tester) async {
+    // Sur une installation neuve, l’accueil affiche « 🔥 0 » sans légende :
+    // un compteur doré à zéro a la silhouette d’un solde de jetons.
+    // L’App Review d’Apple s’y est trompée le 21 août 2026 et a demandé
+    // « how users can obtain flames ». Un tap doit répondre à la question.
+    await pumpApp(tester);
+
+    await tester.tap(find.textContaining('🔥'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Ta série 🔥'), findsOneWidget);
+    expect(find.textContaining('Défi du jour'), findsWidgets,
+        reason: 'l’explication doit dire d’où vient la série');
+    expect(find.textContaining('repart à zéro'), findsOneWidget,
+        reason: 'et ce qui l’éteint');
+  });
+
   testWidgets('les drapeaux de la roulette grandissent avec l’écran',
       (tester) async {
     Future<double> tailleDrapeau(Size ecran) async {

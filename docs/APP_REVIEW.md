@@ -210,10 +210,13 @@ qui n'indique ni ce qu'il compte ni comment le faire monter — c'est-à-dire
 exactement la silhouette d'un solde de jetons. Un examinateur d'Apple s'y
 est trompé ; un joueur qui installe le jeu se pose la même question.
 
-⬜ **Piste pour la 1.1** (aucun changement dans la 1.0, dont le build 90
-est en examen) : masquer la pastille tant que la série vaut 0, ou lui
-donner une légende explicite. Le gain est double — une question de moins à
-chaque soumission, et un accueil qui s'explique tout seul.
+✅ **Corrigé pour la 1.1** le 21 août 2026 : la pastille répond au tap.
+Une feuille « Ta série 🔥 » dit ce qu'elle compte, comment la faire monter
+et ce qui l'éteint, et l'étiquette d'accessibilité annonce un bouton.
+Aucun changement dans la 1.0, dont le build 90 est en examen — la
+correction part avec la 1.1 (`_expliquerSerie`, verrouillé par un test).
+Le gain est double : une question de moins à chaque soumission, et un
+accueil qui s'explique tout seul.
 
 > **Leçon pour la 1.1** : ajouter d'emblée aux Remarques une ligne sur
 > tout élément qui pourrait passer pour une devise — flammes, XP, niveaux,

@@ -90,7 +90,9 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
   jour** : le verrou est posé au lancement (abandonner consomme la tentative),
   mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
-  éteinte dès qu'un jour est sauté (`Store.effectiveStreak`).
+  éteinte dès qu'un jour est sauté (`Store.effectiveStreak`). La pastille
+  de l'accueil s'explique au tap : à 0 et sans légende, un compteur doré
+  se lit comme un solde de jetons — l'App Review d'Apple s'y est trompée.
 - **Chrono** : 90 s au total, décompte uniquement pendant la phase de choix,
   +5 s si points de base ≥ 700, événements illimités, pas de manche ×2.
 - **Duel local** : 2 joueurs sur le même appareil, même série. Par manche :

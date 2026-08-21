@@ -1005,25 +1005,67 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  /// Ce que compte la pastille, en une feuille.
+  ///
+  /// Elle n'affichait qu'un nombre. À l'installation, « 🔥 0 » sur fond
+  /// doré, sans légende ni moyen de savoir ce qui le fait monter : la
+  /// silhouette exacte d'un solde de jetons. L'App Review d'Apple s'y est
+  /// trompée le 21 août 2026 et a demandé comment on « obtient des
+  /// flammes ». Un joueur qui découvre le jeu se pose la même question.
+  Future<void> _expliquerSerie() async {
+    Sons.appui();
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      constraints: const BoxConstraints(maxWidth: 640),
+      builder: (context) {
+        return ListView(
+          shrinkWrap: true,
+          children: const [
+            _SheetTitle('Ta série 🔥'),
+            Padding(
+              padding: EdgeInsets.fromLTRB(16, 4, 16, 28),
+              child: Text(
+                'Le nombre de jours d’affilée où tu as terminé le Défi du '
+                'jour.\n\nTermine celui d’aujourd’hui et elle monte d’un '
+                'cran. Saute un jour, et elle repart à zéro.',
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _streakPill() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: yellowColor,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: inkColor, width: 2.5),
-        boxShadow: const [
-          BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
-        ],
-      ),
-      child: Text(
-        // Série RÉELLE : une série interrompue ne doit plus s'afficher.
-        '🔥 ${widget.store.effectiveStreak}',
-        style: const TextStyle(
-          fontFamily: 'Baloo2',
-          fontWeight: FontWeight.w800,
-          fontSize: 14,
-          color: inkColor,
+    final serie = widget.store.effectiveStreak;
+    return Semantics(
+      button: true,
+      excludeSemantics: true,
+      label: 'Série de $serie jour${serie > 1 ? 's' : ''}. '
+          'Toucher pour savoir comment elle monte.',
+      child: GestureDetector(
+        onTap: _expliquerSerie,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: yellowColor,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: inkColor, width: 2.5),
+            boxShadow: const [
+              BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
+            ],
+          ),
+          child: Text(
+            // Série RÉELLE : une série interrompue ne doit plus s'afficher.
+            '🔥 $serie',
+            style: const TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 14,
+              color: inkColor,
+            ),
+          ),
         ),
       ),
     );
