@@ -18,12 +18,19 @@ Tableau d'objets :
 | `emoji` | string | Un emoji. |
 | `niveau` | int | 1 = connu des enfants · 2 = culture générale · 3 = pointu. |
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
-| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack tient au moins 15 parties (150 événements)** : c'est l'unité de vente, elle ne doit pas s'épuiser en quatre parties. Verrouillé par un test. |
+| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack doit tenir au moins 8 parties COMPOSABLES** (des parties conformes aux quotas §3, pas un volume de faits — 150 faits dont 116 pointus n'en composent que 8). C'est l'unité de vente. Verrouillé par un test ; cible : 15, à mesure que les faits de niveau 1–2 manquants sont écrits. |
 | `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. Réservé aux futures catégories géographiques. |
 | `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 113 pays couverts, dont 52 avec au moins 10 faits. |
 
 Toutes les dates ont été vérifiées par relecture croisée (génération puis
 vérification adversariale). Ne pas modifier une date sans re-vérification.
+
+**Règle d'écriture pour tout nouveau lot de faits** : au moins la moitié
+avant 1900 (priorité Antiquité et Moyen Âge) et au moins la moitié hors
+d'Europe. La base penche déjà vers l'Europe (46 %) et l'après-1945 (23 %) :
+un joueur attentif apprend sinon à parier « récent » plutôt qu'à raisonner.
+Et en priorité des niveaux 1 et 2 — 191 faits de niveau 1 seulement, le
+mode Facile n'a presque rien à jouer hors de la catégorie Pouvoir.
 
 ## 2. Frise à échelle non linéaire
 

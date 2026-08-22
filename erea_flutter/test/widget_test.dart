@@ -7,6 +7,7 @@ import 'package:erea/ui/roulette_screen.dart';
 import 'package:erea/ui/sticker_widgets.dart';
 import 'package:erea/ui/tape_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -431,6 +432,65 @@ void main() {
         .widget<ScaleTransition>(find.byKey(const ValueKey('badge-verdict')));
     expect(badge.scale.value, 1.0,
         reason: 'le ressort du badge a joué malgré le réglage');
+  });
+
+  testWidgets('la frise se pilote sans les yeux', (tester) async {
+    // La frise est le geste central du jeu, et elle était muette : sans
+    // annotation, un lecteur d'écran n'a ni l'année sous l'aiguille, ni
+    // le moyen de la déplacer (audit du 21 août 2026). Balayage vertical
+    // VoiceOver = ± 10 ans.
+    final semantics = tester.ensureSemantics();
+    await pumpApp(tester);
+    await startClassique(tester);
+
+    final noeud = tester.getSemantics(find.byType(TapeWidget));
+    expect(noeud.getSemanticsData().hasAction(SemanticsAction.increase),
+        isTrue,
+        reason: 'la frise doit être un curseur pilotable');
+    // Un SemanticsNode est un objet VIVANT : sa valeur lue après l'action
+    // serait déjà la nouvelle. On copie la chaîne avant d'agir.
+    final valeurAvant = noeud.getSemanticsData().value;
+    expect(valeurAvant, isNotEmpty, reason: 'l’année doit être annoncée');
+
+    noeud.owner!.performAction(noeud.id, SemanticsAction.increase);
+    await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.byType(TapeWidget)).value,
+        isNot(valeurAvant),
+        reason: 'le balayage doit déplacer l’année');
+    semantics.dispose();
+  });
+
+  testWidgets('le verdict est lu d’une traite par le lecteur d’écran',
+      (tester) async {
+    // La révélation est le moment le plus important d'une manche ; elle
+    // n'était portée que par des couleurs et une animation.
+    final semantics = tester.ensureSemantics();
+    await pumpApp(tester);
+    await startClassique(tester);
+    // « Je place ici ! » reste désactivé tant que la frise n'a pas été
+    // touchée : on place une réponse avant de valider.
+    tester.widget<TapeWidget>(find.byType(TapeWidget)).onFracChanged(0.3);
+    await tester.pumpAndSettle();
+    await tapVisible(tester, find.text('Je place ici !'));
+    // Le badge apparaît en grossissant : tant que l'animation n'est pas
+    // finie, sa taille est nulle et son nœud sémantique est élagué.
+    await tester.pumpAndSettle();
+
+    expect(find.bySemanticsLabel(RegExp('La bonne année était')),
+        findsOneWidget);
+    semantics.dispose();
+  });
+
+  testWidgets('les boutons de réglage fin ont un nom', (tester) async {
+    // « − » et « + » sont des glyphes dessinés : sans étiquette, VoiceOver
+    // n'annonce rien d'utile.
+    final semantics = tester.ensureSemantics();
+    await pumpApp(tester);
+    await startClassique(tester);
+
+    expect(find.bySemanticsLabel('Recule d’un an'), findsOneWidget);
+    expect(find.bySemanticsLabel('Avance d’un an'), findsOneWidget);
+    semantics.dispose();
   });
 
   testWidgets('la révélation raconte l’écart SUR la frise', (tester) async {

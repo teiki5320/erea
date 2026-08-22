@@ -178,53 +178,79 @@ class _TapeWidgetState extends State<TapeWidget>
       _facingLeft = widget.frac > _lastFrac;
     }
     _lastFrac = widget.frac;
-    return GestureDetector(
-      onHorizontalDragStart: _onDragStart,
-      onHorizontalDragUpdate: _onDragUpdate,
-      onHorizontalDragEnd: _onDragEnd,
-      child: SizedBox(
-        height: widget.height,
-        child: Stack(
-          children: [
-            // Couche isolée : le ruban se repeint à chaque pixel de
-            // glissement (jusqu'à 120 Hz) sans entraîner la carte, les
-            // boutons et leurs ombres floues dans la re-rastérisation.
-            Positioned.fill(
-              child: RepaintBoundary(
-                child: ClipRect(
-                  child: CustomPaint(
-                    isComplex: true,
-                    willChange: true,
-                    painter: _TapePainter(
-                      frac: widget.frac,
-                      tapeW: tapeW,
-                      frise: EraArt.frise,
-                      artVersion: EraArt.version,
-                      facingLeft: _facingLeft,
+    // VoiceOver : la frise est un CURSEUR — l'année sous l'aiguille est
+    // annoncée, le balayage vertical la déplace de dix ans. Sans ces
+    // lignes, le geste central du jeu n'existait pas pour le lecteur
+    // d'écran (audit du 21 août 2026). Le réglage à l'année près reste
+    // aux boutons − / +, qui portent leur propre étiquette.
+    final annee = fracToYear(widget.frac);
+    return Semantics(
+      slider: true,
+      label: 'Frise du temps',
+      value: formatYear(annee),
+      increasedValue: formatYear(_anneeApresSaut(10)),
+      decreasedValue: formatYear(_anneeApresSaut(-10)),
+      onIncrease: widget.locked ? null : () => _sauter(10),
+      onDecrease: widget.locked ? null : () => _sauter(-10),
+      child: GestureDetector(
+        onHorizontalDragStart: _onDragStart,
+        onHorizontalDragUpdate: _onDragUpdate,
+        onHorizontalDragEnd: _onDragEnd,
+        child: SizedBox(
+          height: widget.height,
+          child: Stack(
+            children: [
+              // Couche isolée : le ruban se repeint à chaque pixel de
+              // glissement (jusqu'à 120 Hz) sans entraîner la carte, les
+              // boutons et leurs ombres floues dans la re-rastérisation.
+              Positioned.fill(
+                child: RepaintBoundary(
+                  child: ClipRect(
+                    child: CustomPaint(
+                      isComplex: true,
+                      willChange: true,
+                      painter: _TapePainter(
+                        frac: widget.frac,
+                        tapeW: tapeW,
+                        frise: EraArt.frise,
+                        artVersion: EraArt.version,
+                        facingLeft: _facingLeft,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            // Aiguille fixe au centre
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: 4,
-                height: widget.height,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF25B4D),
-                  borderRadius: BorderRadius.circular(4),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.white70, spreadRadius: 2),
-                  ],
+              // Aiguille fixe au centre
+              Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 4,
+                  height: widget.height,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF25B4D),
+                    borderRadius: BorderRadius.circular(4),
+                    boxShadow: const [
+                      BoxShadow(color: Colors.white70, spreadRadius: 2),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  /// L'année où atterrirait un balayage VoiceOver de [delta] ans, bornée
+  /// aux extrémités du ruban.
+  int _anneeApresSaut(int delta) => fracToYear(
+      yearToFrac(fracToYear(widget.frac) + delta).clamp(0.0, 1.0).toDouble());
+
+  void _sauter(int delta) {
+    widget.onFracChanged(yearToFrac(fracToYear(widget.frac) + delta)
+        .clamp(0.0, 1.0)
+        .toDouble());
   }
 }
 

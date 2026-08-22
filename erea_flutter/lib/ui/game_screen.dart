@@ -526,6 +526,19 @@ class _GameScreenState extends State<GameScreen>
     return 'Trop loin !';
   }
 
+  /// La phrase que VoiceOver lit d'une traite à la révélation. Le badge,
+  /// les points et le trait d'écart racontent le verdict aux yeux ; sans
+  /// elle, le moment le plus important d'une manche était muet.
+  String _resumeVocal(RoundResult r) {
+    final ecart = r.ecart == 0
+        ? 'Année exacte !'
+        : '${r.ecart} ${r.ecart == 1 ? 'an' : 'ans'} '
+            '${r.guess < r.event.annee ? 'trop tôt' : 'trop tard'}.';
+    return '${_reaction(r)} La bonne année était '
+        '${formatYear(r.event.annee)}. Ta réponse : ${formatYear(r.guess)}. '
+        '$ecart ${r.pts} points.';
+  }
+
   String _direction(RoundResult r) {
     // Temps écoulé avec le curseur pile dessus : le dire, sinon l'écran
     // afficherait « Année exacte ! » à côté de zéro point.
@@ -905,7 +918,7 @@ class _GameScreenState extends State<GameScreen>
           padding: const EdgeInsets.symmetric(horizontal: 18),
           child: Row(
             children: [
-              _fineButton('−',
+              _fineButton('−', 'Recule d’un an',
                   guessing ? () => game.setYear(game.guessYear - 1) : null),
               const SizedBox(width: 12),
               Expanded(
@@ -917,7 +930,7 @@ class _GameScreenState extends State<GameScreen>
                 ),
               ),
               const SizedBox(width: 12),
-              _fineButton('+',
+              _fineButton('+', 'Avance d’un an',
                   guessing ? () => game.setYear(game.guessYear + 1) : null),
             ],
           ),
@@ -929,34 +942,41 @@ class _GameScreenState extends State<GameScreen>
 
   /// Bouton de réglage fin 46 × 46 : glyphe « − » / « + » en Baloo,
   /// blanc, ombre douce (0, 6, 14).
-  Widget _fineButton(String glyph, VoidCallback? onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Opacity(
-        opacity: onTap != null ? 1 : 0.45,
-        child: Container(
-          width: 46,
-          height: 46,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(15),
-            boxShadow: const [
-              BoxShadow(
-                offset: Offset(0, 6),
-                blurRadius: 14,
-                color: Color(0x1F35406B),
+  Widget _fineButton(String glyph, String label, VoidCallback? onTap) {
+    // Le glyphe est un dessin : sans étiquette, VoiceOver n'annonce rien.
+    return Semantics(
+      button: true,
+      enabled: onTap != null,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Opacity(
+          opacity: onTap != null ? 1 : 0.45,
+          child: Container(
+            width: 46,
+            height: 46,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: const [
+                BoxShadow(
+                  offset: Offset(0, 6),
+                  blurRadius: 14,
+                  color: Color(0x1F35406B),
+                ),
+              ],
+            ),
+            child: Text(
+              glyph,
+              style: const TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 23,
+                height: 1.0,
+                color: inkColor,
               ),
-            ],
-          ),
-          child: Text(
-            glyph,
-            style: const TextStyle(
-              fontFamily: 'Baloo2',
-              fontWeight: FontWeight.w800,
-              fontSize: 23,
-              height: 1.0,
-              color: inkColor,
             ),
           ),
         ),
@@ -992,31 +1012,41 @@ class _GameScreenState extends State<GameScreen>
           child: Column(
             children: [
         const SizedBox(height: 12),
-        ScaleTransition(
-          key: const ValueKey('badge-verdict'),
-          scale: _popBadge,
-          child: Transform.rotate(
-            angle: dansLaCible ? -0.035 : 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
-              decoration: BoxDecoration(
-                // Menthe / jaune / blanc : les mêmes couleurs que la
-                // pastille de manche. Jamais de rouge, on ne punit pas.
-                color: switch (verdict) {
-                  Verdict.reussi => verdictMintColor,
-                  Verdict.moyen => yellowColor,
-                  Verdict.rate => Colors.white,
-                },
-                borderRadius: BorderRadius.circular(999),
-                boxShadow: const [pillShadow],
-              ),
-              child: Text(
-                '${_reaction(r)} ${dansLaCible ? '🎯' : '😅'}',
-                style: TextStyle(
-                  fontFamily: 'Baloo2',
-                  fontWeight: FontWeight.w800,
-                  fontSize: badgeSize,
-                  color: dansLaCible ? Colors.white : inkColor,
+        // liveRegion : VoiceOver lit la phrase dès qu'elle apparaît.
+        // excludeSemantics : le résumé complet remplace le seul
+        // « Incroyable ! » du badge, qui ne donnait ni l'année ni l'écart.
+        Semantics(
+          liveRegion: true,
+          container: true,
+          excludeSemantics: true,
+          label: _resumeVocal(r),
+          child:
+          ScaleTransition(
+            key: const ValueKey('badge-verdict'),
+            scale: _popBadge,
+            child: Transform.rotate(
+              angle: dansLaCible ? -0.035 : 0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
+                decoration: BoxDecoration(
+                  // Menthe / jaune / blanc : les mêmes couleurs que la
+                  // pastille de manche. Jamais de rouge, on ne punit pas.
+                  color: switch (verdict) {
+                    Verdict.reussi => verdictMintColor,
+                    Verdict.moyen => yellowColor,
+                    Verdict.rate => Colors.white,
+                  },
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: const [pillShadow],
+                ),
+                child: Text(
+                  '${_reaction(r)} ${dansLaCible ? '🎯' : '😅'}',
+                  style: TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: badgeSize,
+                    color: dansLaCible ? Colors.white : inkColor,
+                  ),
                 ),
               ),
             ),

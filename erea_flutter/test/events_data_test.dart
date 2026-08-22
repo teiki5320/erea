@@ -110,11 +110,46 @@ void main() {
     }
   });
 
-  test('chaque pack à thème tient au moins 15 parties sans redite', () {
+  test('chaque pack à thème tient au moins 8 parties composables', () {
     // Un pack est l'unité de vente : en vendre un qui s'épuise en quatre
     // parties (c'était le cas de « Conquête de l'espace ») n'est pas tenable.
+    //
+    // L'ancien verrou comptait des FAITS (>= 150) : un volume, pas une
+    // faisabilité. Or une partie ne pioche pas dans le volume, elle
+    // remplit des quotas par niveau (SPEC §3) — et à ce compte, aucun
+    // pack ne tenait les « 15 parties » promises : le meilleur en donnait
+    // 14 (Amériques, en Difficile), le pire 8 (Asie, dont 116 faits sur
+    // 150 sont de niveau 3). Constat de l'audit du 21 août 2026.
+    //
+    // Le seuil est posé à l'état réel du pire pack : il interdit toute
+    // régression. À remonter vers 15 à mesure que les faits de niveau 1
+    // et 2 manquants seront écrits (docs/propositions/).
+    const quotas = {
+      // Copie assumée de EventsRepository._quotas (SPEC §3) : les dériver
+      // du code testé reviendrait à vérifier le code avec lui-même.
+      Difficulty.facile: {1: 10},
+      Difficulty.normal: {1: 3, 2: 5, 3: 2},
+      Difficulty.difficile: {2: 4, 3: 6},
+    };
+    int partiesComposables(String key) {
+      final parNiveau = <int, int>{};
+      for (final e in repo.pool(key)) {
+        parNiveau[e.niveau] = (parNiveau[e.niveau] ?? 0) + 1;
+      }
+      var meilleur = 0;
+      for (final q in quotas.values) {
+        var parties = 1 << 30;
+        q.forEach((niveau, parPartie) {
+          final possibles = (parNiveau[niveau] ?? 0) ~/ parPartie;
+          if (possibles < parties) parties = possibles;
+        });
+        if (parties > meilleur) meilleur = parties;
+      }
+      return meilleur;
+    }
+
     for (final p in packs) {
-      expect(repo.pool(p.key).length, greaterThanOrEqualTo(15 * rounds),
+      expect(partiesComposables(p.key), greaterThanOrEqualTo(8),
           reason: p.label);
     }
   });
