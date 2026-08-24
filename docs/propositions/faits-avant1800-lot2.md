@@ -1,4 +1,7 @@
-# Lot 2 — 40 faits d'avant 1800, dont 24 avant J.-C.
+# Lot 2 — 40 faits d'avant 1800 · **traité le 24 août 2026**
+
+> **Résultat : 25 intégrés** (ids 1844–1868), 14 écartés, 1 en attente.
+> L'avant J.-C. passe de 147 à 161 faits, et de 6 à 9 faits de niveau 1.
 
 > Écrit le 24 août 2026. L'audit a montré que **70 % de la frise ne porte
 > que 11 % des faits** : ce lot vise la moitié gauche du ruban.
@@ -30,7 +33,7 @@
 | niveau | 2 |
 | fun | Des tablettes d'argile sumériennes livrent la recette : c'est le plus vieux détergent connu. Il servait surtout à laver la laine avant teinture. |
 | cat | pouvoir · pays | Irak · continent | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B2 · -2500 — Les premières serrures
 | | |
@@ -41,7 +44,7 @@
 | niveau | 2 |
 | fun | Le principe des chevilles qui retombent est exactement celui de nos serrures modernes — il a traversé 4 500 ans sans changer d'idée. |
 | cat | quotidien · pays | Égypte · continent | afrique · pack | egypte |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B3 · -2400 — Le fromage entre au menu
 | | |
@@ -52,7 +55,7 @@
 | niveau | 1 |
 | fun | Le plus vieux fromage jamais analysé a été retrouvé dans une tombe égyptienne. Il était encore identifiable après plus de quatre millénaires. |
 | cat | quotidien · pays | Égypte · continent | afrique · pack | egypte |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B4 · -2000 — Les miroirs de bronze
 | | |
@@ -63,7 +66,7 @@
 | niveau | 2 |
 | fun | Les miroirs égyptiens avaient la forme du disque solaire. Le verre argenté que nous utilisons n'arrivera que bien plus tard. |
 | cat | quotidien · pays | Égypte · continent | afrique · pack | egypte |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B5 · -1500 — La pourpre des Phéniciens
 | | |
@@ -74,7 +77,7 @@
 | niveau | 3 |
 | fun | Il fallait environ 10 000 murex pour un seul gramme de pourpre. Elle valait plus cher que l'or, d'où sa réservation aux rois. |
 | cat | quotidien · pays | Liban · continent | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B6 · -1400 — La clepsydre égyptienne
 | | |
@@ -85,7 +88,7 @@
 | niveau | 2 |
 | fun | Les parois étaient inclinées pour compenser la baisse de pression. Les tribunaux grecs s'en serviront pour limiter le temps de parole des avocats. |
 | cat | sciences · pays | Égypte · continent | afrique · pack | egypte |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B7 · -1200 — Les premiers cerfs-volants
 | | |
@@ -96,7 +99,7 @@
 | niveau | 2 |
 | fun | Les cerfs-volants ont d'abord servi à mesurer des distances et à envoyer des signaux militaires avant de devenir un jeu. |
 | cat | quotidien · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B8 · -800 — Homère compose l'Iliade et l'Odyssée
 | | |
@@ -107,7 +110,7 @@
 | niveau | 2 |
 | fun | On ignore si Homère a existé ou si le nom recouvre plusieurs conteurs. Ses vers ont été appris par cœur pendant des siècles avant d'être écrits. |
 | cat | arts · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B9 · -700 — Le premier pigeon messager
 | | |
@@ -118,7 +121,7 @@
 | niveau | 2 |
 | fun | Les Grecs annonçaient ainsi les vainqueurs olympiques. Le pigeon a encore servi pendant les deux guerres mondiales. |
 | cat | quotidien · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B10 · -600 — La chirurgie du nez en Inde
 | | |
@@ -129,7 +132,7 @@
 | niveau | 3 |
 | fun | La technique de Sushruta est toujours enseignée sous le nom de « lambeau frontal indien ». Elle a été redécouverte par les chirurgiens européens bien plus tard. |
 | cat | sciences · pays | Inde · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B11 · -530 — Le théorème de Pythagore
 | | |
@@ -140,7 +143,7 @@
 | niveau | 2 |
 | fun | Les Babyloniens connaissaient la relation mille ans plus tôt, mais Pythagore en donne une démonstration — la différence entre constater et prouver. |
 | cat | sciences · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B12 · -500 — Les terres cuites de Nok
 | | |
@@ -151,7 +154,7 @@
 | niveau | 3 |
 | fun | La culture Nok, au Nigeria, est la plus ancienne civilisation de sculpteurs connue en Afrique subsaharienne — et elle travaillait déjà le fer. |
 | cat | arts · pays | Nigeria · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B13 · -500 — Sun Tzu écrit L'Art de la guerre
 | | |
@@ -162,7 +165,7 @@
 | niveau | 2 |
 | fun | Toujours enseigné dans les écoles militaires, le traité est aussi lu par des chefs d'entreprise. « Vaincre sans combattre » en est la maxime centrale. |
 | cat | pouvoir · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B14 · -450 — Hérodote invente l'enquête historique
 | | |
@@ -173,7 +176,7 @@
 | niveau | 2 |
 | fun | Cicéron l'a surnommé « le père de l'Histoire ». Le mot grec qu'il emploie, historia, signifiait simplement « enquête ». |
 | cat | sciences · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B15 · -400 — Les jeux d'osselets des enfants
 | | |
@@ -184,7 +187,7 @@
 | niveau | 2 |
 | fun | Les osselets servaient aussi à tirer au sort et à prédire l'avenir. On en a retrouvé dans des tombes d'enfants, posés près de la main. |
 | cat | quotidien · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B16 · -350 — Aristote décrit les animaux
 | | |
@@ -195,7 +198,7 @@
 | niveau | 2 |
 | fun | Il avait remarqué que le dauphin met bas et allaite. Il faudra attendre plus de deux mille ans pour qu'on lui donne définitivement raison. |
 | cat | sciences · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B17 · -221 — Le chantier de la Grande Muraille
 | | |
@@ -206,7 +209,7 @@
 | niveau | 1 |
 | fun | Le tracé qu'on visite aujourd'hui date surtout des Ming, bien plus tard. Bout à bout, l'ensemble des murailles dépasse 20 000 kilomètres. |
 | cat | pouvoir · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B18 · -200 — Le parchemin de Pergame
 | | |
@@ -217,7 +220,7 @@
 | niveau | 2 |
 | fun | Le mot « parchemin » vient du nom de la ville, Pergame. Contrairement au papyrus, il se plie sans casser : c'est lui qui rendra le livre possible. |
 | cat | sciences · pays | Turquie · continent | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B19 · -200 — La brouette chinoise
 | | |
@@ -228,7 +231,7 @@
 | niveau | 2 |
 | fun | L'armée chinoise en équipait ses convois. L'Europe ne connaîtra la brouette que mille ans plus tard. |
 | cat | quotidien · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B20 · -200 — Le boulier chinois
 | | |
@@ -239,7 +242,7 @@
 | niveau | 1 |
 | fun | Un bon utilisateur de boulier bat encore une calculatrice sur les additions. Il est resté en usage dans les commerces asiatiques jusqu'aux années 1980. |
 | cat | sciences · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B21 · -100 — La machine d'Anticythère
 | | |
@@ -250,7 +253,7 @@
 | niveau | 3 |
 | fun | Repêchée dans une épave en 1901, elle est restée incomprise pendant un siècle. Aucun mécanisme d'une telle finesse ne réapparaîtra avant l'horlogerie médiévale. |
 | cat | sciences · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B22 · -100 — Le moulin à eau
 | | |
@@ -261,7 +264,7 @@
 | niveau | 2 |
 | fun | C'est la première source d'énergie non animale largement utilisée. Un seul moulin abattait le travail de quarante esclaves. |
 | cat | sciences · pays | Grèce · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B23 · -50 — Le verre soufflé
 | | |
@@ -272,7 +275,7 @@
 | niveau | 2 |
 | fun | Avant cette trouvaille, le verre était un luxe réservé aux rois. En une génération, tout le monde romain boit dans du verre. |
 | cat | quotidien · pays | Syrie · continent | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### B24 · -30 — La bibliothèque d'Alexandrie brûle
 | | |
@@ -283,7 +286,7 @@
 | niveau | 2 |
 | fun | La bibliothèque n'a pas disparu d'un coup : elle a décliné pendant des siècles, entre incendies, coupes budgétaires et départs de savants. |
 | cat | arts · pays | Égypte · continent | afrique · pack | egypte |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### B25 · -5 — Les premières lampes à huile de série
 | | |
@@ -294,7 +297,7 @@
 | niveau | 3 |
 | fun | Chaque lampe était signée par son atelier, ce qui permet aujourd'hui de dater les fouilles à quelques années près. |
 | cat | quotidien · pays | Italie · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ---
 
@@ -309,7 +312,7 @@
 | niveau | 1 |
 | fun | L'aqueduc descend de 12 mètres en 50 kilomètres, soit une pente de 25 centimètres par kilomètre — une précision inégalée avant l'époque moderne. |
 | cat | sciences · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C2 · 79 — Les courses de chars remplissent le Circus Maximus
 | | |
@@ -320,7 +323,7 @@
 | niveau | 2 |
 | fun | Les meilleurs auriges étaient plus riches que des sénateurs. L'un d'eux, Dioclès, aurait gagné l'équivalent de plusieurs milliards d'euros actuels. |
 | cat | quotidien · pays | Italie · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### C3 · 300 — Les Mayas écrivent leur histoire
 | | |
@@ -331,7 +334,7 @@
 | niveau | 2 |
 | fun | Le déchiffrement n'a vraiment abouti que dans les années 1980, grâce à un adolescent russe puis à une équipe internationale. |
 | cat | arts · pays | Mexique · continent | ameriques · pack | ameriques |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C4 · 610 — La première porcelaine
 | | |
@@ -342,7 +345,7 @@
 | niveau | 2 |
 | fun | L'Europe cherchera la recette pendant mille ans et ne la percera qu'au XVIIIe siècle — d'où le nom de « chine » donné à la vaisselle fine. |
 | cat | arts · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C5 · 650 — Le Coran mis par écrit
 | | |
@@ -353,7 +356,7 @@
 | niveau | 2 |
 | fun | Un des plus anciens manuscrits connus est conservé à Birmingham : son parchemin a été daté des toutes premières décennies de l'islam. |
 | cat | arts · pays | Arabie saoudite · continent | asie · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C6 · 700 — Le jeu d'échecs arrive en Perse
 | | |
@@ -364,7 +367,7 @@
 | niveau | 2 |
 | fun | « Échec et mat » vient du persan shah mat, « le roi est démuni ». Les éléphants indiens sont devenus nos fous, les chars nos tours. |
 | cat | quotidien · pays | Iran · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ⬜ en attente — la question portait sur l’arrivée en Perse, pas la création |
 
 ### C7 · 800 — L'astrolabe des astronomes arabes
 | | |
@@ -375,7 +378,7 @@
 | niveau | 2 |
 | fun | L'astrolabe servait aussi à déterminer la direction de La Mecque et les heures de prière. Les marins européens s'en serviront jusqu'au sextant. |
 | cat | sciences · pays | Irak · continent | asie · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C8 · 850 — La légende du berger et du café
 | | |
@@ -386,7 +389,7 @@
 | niveau | 2 |
 | fun | L'histoire de Kaldi est probablement inventée, mais le caféier vient bien des hauts plateaux éthiopiens. La boisson ne sera préparée qu'au Yémen, des siècles plus tard. |
 | cat | quotidien · pays | Éthiopie · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### C9 · 1000 — Les premiers feux d'artifice
 | | |
@@ -397,7 +400,7 @@
 | niveau | 1 |
 | fun | Les pétards servaient d'abord à faire fuir les mauvais esprits au Nouvel An. Les couleurs vives n'arriveront qu'au XIXe siècle, avec la chimie des métaux. |
 | cat | quotidien · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C10 · 1370 — Le savon de Marseille
 | | |
@@ -408,7 +411,7 @@
 | niveau | 2 |
 | fun | La règle des 72 % d'huile date de Colbert, trois siècles plus tard. Le vrai savon de Marseille ne contient ni parfum ni colorant. |
 | cat | quotidien · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C11 · 1440 — Le premier jardin botanique du Nouveau Monde
 | | |
@@ -419,7 +422,7 @@
 | niveau | 3 |
 | fun | Les conquistadors décriront ces jardins de Huaxtepec comme supérieurs à tout ce qu'ils connaissaient en Europe — où les jardins botaniques n'existaient pas encore. |
 | cat | sciences · pays | Mexique · continent | ameriques · pack | ameriques |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### C12 · 1533 — La fourchette arrive à la cour de France
 | | |
@@ -430,7 +433,7 @@
 | niveau | 2 |
 | fun | Catherine de Médicis fut moquée pour cette manie. Il faudra plus d'un siècle pour que la fourchette s'impose vraiment à table. |
 | cat | quotidien · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C13 · 1602 — Le thé arrive en Europe
 | | |
@@ -441,7 +444,7 @@
 | niveau | 2 |
 | fun | Le thé coûtait alors plus cher que l'argent. Les Anglais ne s'y mettront qu'après, mais avec la constance qu'on leur connaît. |
 | cat | quotidien · pays | Pays-Bas · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C14 · 1608 — La lunette astronomique
 | | |
@@ -452,7 +455,7 @@
 | niveau | 2 |
 | fun | Hans Lippershey dépose la demande de brevet ; elle lui est refusée, l'idée étant jugée trop facile à copier. Galilée en entend parler l'année suivante. |
 | cat | sciences · pays | Pays-Bas · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### C15 · 1653 — Le Taj Mahal achevé
 | | |
@@ -463,4 +466,4 @@
 | niveau | 1 |
 | fun | Vingt mille ouvriers et un millier d'éléphants y ont travaillé. Le marbre change de teinte selon l'heure : rose à l'aube, blanc à midi, doré sous la lune. |
 | cat | arts · pays | Inde · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
