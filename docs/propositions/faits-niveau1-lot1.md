@@ -1,4 +1,16 @@
-# Lot 1 — 40 faits proposés (rien n'entre en base sans un « oui »)
+# Lot 1 — 40 faits proposés · **traité le 24 août 2026**
+
+> **Résultat : 25 faits intégrés** (ids 1819–1843), 8 écartés par toi,
+> **6 retirés pour doublon**, 1 non tranché (E1, le « Lever de Terre »).
+>
+> ⚠️ **Les six doublons sont une erreur de ma vérification préalable** :
+> j'avais cherché des expressions exactes (« musée du Louvre ») là où la
+> base dit autrement (« Le Louvre devient un musée »). Le contrôle du lot 2
+> compare désormais titre par titre, mot à mot, sur toute la base, et
+> signale les faits de la même année.
+>
+> La base passe de 1 738 à **1 763 faits**, dont **202 de niveau 1**
+> (191 avant).
 
 > Écrit le 22 août 2026, à la suite de l'audit : la base n'a que 191
 > faits de niveau 1, Sciences n'en a que 24, le pack Asie 2, le pack
@@ -34,7 +46,7 @@
 | niveau | 2 |
 | fun | Inauguré en 752, le Daibutsu du temple Tōdai-ji pèse environ 250 tonnes. La cérémonie d'ouverture de ses yeux réunit des moines venus de toute l'Asie. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A2 · 1856 — L'Everest déclaré toit du monde
 | | |
@@ -42,10 +54,10 @@
 | annee | 1856 |
 | desc | Après des années de calculs, des géomètres annoncent qu'un sommet de l'Himalaya dépasse tous les autres au monde. |
 | emoji | 🏔️ |
-| niveau | 2 |
+| niveau | 2 → **1** (ta correction) |
 | fun | Le Grand Levé trigonométrique de l'Inde annonce le résultat en 1856 : 8 840 mètres, à 8 mètres de la mesure actuelle — calculés sans jamais poser le pied sur la montagne. |
 | cat | sciences · pays | Inde · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A3 · 1869 — Le panda géant révélé au monde
 | | |
@@ -56,7 +68,7 @@
 | niveau | 2 |
 | fun | C'est le père Armand David qui décrit le panda en 1869. Il faudra près de cinquante ans pour qu'un Occidental en voie un vivant. |
 | cat | sciences · pays | Chine · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### A4 · 1882 — Jigoro Kano invente le judo
 | | |
@@ -67,7 +79,7 @@
 | niveau | 1 |
 | fun | Le Kōdōkan de 1882 tenait sur douze tatamis. Le judo est aujourd'hui l'un des sports les plus pratiqués par les enfants français. |
 | cat | quotidien · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### A5 · 1952 — Astro, le petit robot de Tezuka
 | | |
@@ -78,7 +90,7 @@
 | niveau | 2 |
 | fun | Astro Boy paraît en 1952 sous le crayon d'Osamu Tezuka, surnommé « le dieu du manga ». Son adaptation de 1963 est considérée comme la première grande série animée japonaise. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A6 · 1954 — Godzilla surgit des flots
 | | |
@@ -89,7 +101,7 @@
 | niveau | 2 |
 | fun | Sorti en 1954, neuf ans après Hiroshima, Godzilla est une métaphore du feu atomique. C'est la plus longue saga du cinéma : plus de trente films. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A7 · 1958 — Les sushis se mettent à tourner
 | | |
@@ -100,7 +112,7 @@
 | niveau | 1 |
 | fun | Yoshiaki Shiraishi ouvre le premier restaurant de sushis tournants en 1958 : il manquait de serveurs, le tapis roulant les a remplacés. |
 | cat | quotidien · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A8 · 1964 — Les Jeux olympiques arrivent en Asie
 | | |
@@ -111,7 +123,7 @@
 | niveau | 2 |
 | fun | Pour Tokyo 1964, le Japon inaugure aussi le Shinkansen, premier train à grande vitesse du monde. Le dernier porteur de la flamme était né à Hiroshima le jour de la bombe. |
 | cat | quotidien · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A9 · 1971 — L'invention du karaoké
 | | |
@@ -122,7 +134,7 @@
 | niveau | 2 |
 | fun | Daisuke Inoue fabrique sa « Juke-8 » en 1971 pour les clients qui voulaient chanter sans orchestre. Il n'a jamais déposé le brevet. |
 | cat | quotidien · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A10 · 1988 — Mon voisin Totoro au cinéma
 | | |
@@ -133,7 +145,7 @@
 | niveau | 1 |
 | fun | Totoro sort en 1988 et devient l'emblème du studio Ghibli, fondé par Hayao Miyazaki — il figure sur son logo. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### A11 · 1997 — Le grand voyage de One Piece commence
 | | |
@@ -144,7 +156,7 @@
 | niveau | 1 |
 | fun | Lancé en 1997, One Piece d'Eiichiro Oda est la bande dessinée la plus vendue de l'histoire : plus de 500 millions d'exemplaires. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### A12 · 1999 — Naruto entre en scène
 | | |
@@ -155,7 +167,7 @@
 | niveau | 1 |
 | fun | Naruto démarre en 1999 sous la plume de Masashi Kishimoto. Son prénom vient d'une garniture de ramen en spirale. |
 | cat | arts · pays | Japon · continent | asie · pack | asie |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ---
 
@@ -170,7 +182,7 @@
 | niveau | 2 |
 | fun | Al-Qāhira, « la Victorieuse », est fondée en 969 par les Fatimides. Le Caire dépasse aujourd'hui les 20 millions d'habitants. |
 | cat | pouvoir · pays | Égypte · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #629 « Fondation du Caire » |
 
 ### F2 · 1704 — Les Mille et Une Nuits arrivent en Europe
 | | |
@@ -182,7 +194,7 @@
 | fun | Antoine Galland publie le premier tome en 1704. Aladdin et Ali Baba ne figuraient pas dans les manuscrits arabes : il les a ajoutés d'après un conteur d'Alep. |
 | cat | arts · pays | France · continent | europe · pack | afrique |
 | ⚠️ | pays France mais pack afrique (l'œuvre est du Moyen-Orient) : dis-moi si ce mélange te va, sinon je retire le pack. |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### F3 · 1827 — Une girafe traverse la France
 | | |
@@ -193,7 +205,7 @@
 | niveau | 2 |
 | fun | Zarafa, cadeau de Méhémet Ali à Charles X, marche 41 jours jusqu'à Paris en 1827. La mode « girafe » saisit la France entière, des coiffures aux tissus. |
 | cat | quotidien · pays | Égypte · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### F4 · 1841 — Un garçon de douze ans perce le secret de la vanille
 | | |
@@ -204,7 +216,7 @@
 | niveau | 2 |
 | fun | Edmond Albius invente la pollinisation manuelle de la vanille en 1841. Son geste est toujours utilisé : c'est lui qui a fait de Madagascar et de La Réunion les terres de la vanille. |
 | cat | sciences · pays | France · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### F5 · 1992 — Naissance de Nollywood
 | | |
@@ -215,7 +227,7 @@
 | niveau | 2 |
 | fun | Living in Bondage (1992) lance Nollywood, qui produit aujourd'hui plus de films par an que Hollywood — deuxième industrie mondiale derrière l'Inde. |
 | cat | arts · pays | Nigeria · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #1523 « Naissance du cinéma nigérian populaire » |
 
 ### F6 · 1995 — George Weah, Ballon d'or
 | | |
@@ -226,7 +238,7 @@
 | niveau | 2 |
 | fun | Ballon d'or 1995, George Weah sera élu président du Liberia en 2017 — l'unique Ballon d'or devenu chef d'État. |
 | cat | quotidien · pays | Liberia · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### F7 · 2010 — La Coupe du monde se joue en Afrique
 | | |
@@ -237,7 +249,7 @@
 | niveau | 1 |
 | fun | L'Afrique du Sud accueille le Mondial 2010, remporté par l'Espagne. Le bourdonnement des vuvuzelas restera le son de cette Coupe du monde. |
 | cat | quotidien · pays | Afrique du Sud · continent | afrique · pack | afrique |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ---
 
@@ -252,7 +264,7 @@
 | niveau | 2 |
 | fun | Publié en 1876, Tom Sawyer s'inspire de l'enfance de Mark Twain à Hannibal, au bord du Mississippi. |
 | cat | arts · pays | États-Unis · continent | ameriques · pack | ameriques |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### M2 · 1902 — Le premier squelette de T. rex
 | | |
@@ -263,7 +275,7 @@
 | niveau | 1 |
 | fun | Barnum Brown découvre le premier Tyrannosaurus rex en 1902 à Hell Creek. Le nom, donné en 1905, signifie « roi des lézards tyrans ». |
 | cat | sciences · pays | États-Unis · continent | ameriques · pack | ameriques |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ---
 
@@ -278,7 +290,7 @@
 | niveau | 2 |
 | fun | « Lever de Terre », prise par Apollo 8 à Noël 1968, est l'une des photos les plus reproduites de l'histoire — on lui attribue l'essor de l'écologie moderne. |
 | cat | sciences · pays | États-Unis · continent | ameriques · pack | espace |
-| **Verdict** | |
+| **Verdict** | ⬜ non tranché |
 
 ---
 
@@ -293,7 +305,7 @@
 | niveau | 2 |
 | fun | Chantier ouvert en 1163 sous l'évêque Maurice de Sully. Huit siècles et demi plus tard, le monde entier pleurera son incendie — puis fêtera sa réouverture. |
 | cat | arts · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #128 « Première pierre de Notre-Dame » |
 
 ### S2 · 1202 — Fibonacci apporte les chiffres indo-arabes
 | | |
@@ -304,7 +316,7 @@
 | niveau | 2 |
 | fun | Le Liber Abaci de Fibonacci (1202) popularise les chiffres 0 à 9, venus d'Inde par les savants arabes. Sa fameuse suite y décrit… des lapins qui se multiplient. |
 | cat | sciences · pays | Italie · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S3 · 1768 — Le premier cirque moderne
 | | |
@@ -315,7 +327,7 @@
 | niveau | 2 |
 | fun | La piste de Philip Astley (1768) mesurait 13 mètres de diamètre — c'est resté la taille standard des pistes de cirque du monde entier. |
 | cat | quotidien · pays | Royaume-Uni · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S4 · 1793 — Le Louvre ouvre ses portes au public
 | | |
@@ -326,7 +338,7 @@
 | niveau | 2 |
 | fun | Le Muséum central des arts ouvre en 1793 avec 537 tableaux. Le Louvre est aujourd'hui le musée le plus visité du monde. |
 | cat | arts · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #1738 « Le Louvre devient un musée » |
 
 ### S5 · 1795 — La France invente le mètre
 | | |
@@ -337,7 +349,7 @@
 | niveau | 2 |
 | fun | La loi de 1795 définit le mètre comme la dix-millionième partie du quart du méridien terrestre. Presque toute la planète l'utilise aujourd'hui — sauf trois pays. |
 | cat | sciences · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #1659 « La France invente le mètre » |
 
 ### S6 · 1795 — Le crayon moderne de Conté
 | | |
@@ -348,7 +360,7 @@
 | niveau | 2 |
 | fun | Le brevet de Nicolas-Jacques Conté date de 1795. Doser l'argile permet de faire des mines plus ou moins grasses — le HB des trousses d'écoliers vient de là. |
 | cat | quotidien · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### S7 · 1846 — Une opération sans douleur
 | | |
@@ -359,7 +371,7 @@
 | niveau | 2 |
 | fun | La démonstration publique de l'anesthésie à l'éther a lieu en 1846. L'amphithéâtre du Massachusetts General Hospital s'appelle depuis « Ether Dome ». |
 | cat | sciences · pays | États-Unis · continent | ameriques |
-| **Verdict** | |
+| **Verdict** | ❌ DOUBLON de #352 « La première opération sans douleur » |
 
 ### S8 · 1859 — Big Ben sonne pour la première fois
 | | |
@@ -370,7 +382,7 @@
 | niveau | 1 |
 | fun | Big Ben sonne depuis 1859. Le nom désigne la cloche, pas la tour — celle-ci s'appelle officiellement Elizabeth Tower depuis 2012. |
 | cat | quotidien · pays | Royaume-Uni · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S9 · 1863 — Le football fixe ses règles
 | | |
@@ -381,7 +393,7 @@
 | niveau | 2 |
 | fun | La Football Association naît en 1863. C'est ce refus du jeu à la main qui sépare définitivement le football du rugby. |
 | cat | quotidien · pays | Royaume-Uni · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S10 · 1870 — Vingt Mille Lieues sous les mers
 | | |
@@ -392,7 +404,7 @@
 | niveau | 2 |
 | fun | Publié en 1870, le roman décrit un sous-marin électrique… vingt ans avant les premiers vrais submersibles électriques. Le Nautilus a donné son nom à plusieurs navires réels. |
 | cat | arts · pays | France · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S11 · 1883 — Les Aventures de Pinocchio
 | | |
@@ -403,7 +415,7 @@
 | niveau | 1 |
 | fun | Carlo Collodi publie le livre en 1883. Dans la version d'origine, il avait d'abord fait mourir Pinocchio pendu — ses jeunes lecteurs ont exigé une suite. |
 | cat | arts · pays | Italie · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S12 · 1889 — La pizza Margherita
 | | |
@@ -414,7 +426,7 @@
 | niveau | 1 |
 | fun | La tradition attribue la Margherita à Raffaele Esposito, en 1889, en l'honneur de la reine Marguerite de Savoie. L'art du pizzaïolo napolitain est classé à l'UNESCO. |
 | cat | quotidien · pays | Italie · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S13 · 1894 — Le Livre de la jungle
 | | |
@@ -425,7 +437,7 @@
 | niveau | 1 |
 | fun | Rudyard Kipling publie Le Livre de la jungle en 1894. Mowgli, Bagheera et Baloo inspireront scouts du monde entier et studios Disney. |
 | cat | arts · pays | Royaume-Uni · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S14 · 1899 — L'aspirine mise en vente
 | | |
@@ -436,7 +448,7 @@
 | niveau | 2 |
 | fun | Bayer dépose la marque Aspirin en 1899. Le saule était déjà utilisé contre la fièvre dans l'Antiquité — la chimie moderne n'a fait que stabiliser son principe actif. |
 | cat | sciences · pays | Allemagne · continent | europe |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S15 · 1914 — Le premier feu tricolore électrique
 | | |
@@ -447,7 +459,7 @@
 | niveau | 2 |
 | fun | Le premier feu électrique s'allume à Cleveland en 1914 — rouge et vert seulement, l'orange viendra plus tard. Paris attendra 1923. |
 | cat | quotidien · pays | États-Unis · continent | ameriques |
-| **Verdict** | |
+| **Verdict** | ❌ écarté |
 
 ### S16 · 1931 — Le Père Noël prend son habit rouge
 | | |
@@ -455,10 +467,10 @@
 | annee | 1931 |
 | desc | Un dessinateur donne au Père Noël le visage qu'on lui connaît partout : barbe blanche, gros ventre, habit rouge et blanc, sourire débonnaire. |
 | emoji | 🎅 |
-| niveau | 1 |
+| niveau | 1 → **3** (ta correction) |
 | fun | C'est la campagne Coca-Cola de 1931, dessinée par Haddon Sundblom, qui fixe cette image — sans l'inventer : le Père Noël en rouge existait déjà, elle l'a rendue universelle. |
 | cat | quotidien · pays | États-Unis · continent | ameriques |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S17 · 1935 — L'échelle de Richter
 | | |
@@ -469,7 +481,7 @@
 | niveau | 2 |
 | fun | Charles Richter publie son échelle en 1935. Chaque degré multiplie l'énergie par environ 30 : un séisme de magnitude 7 est 900 fois plus puissant qu'un 5. |
 | cat | sciences · pays | États-Unis · continent | ameriques |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ### S18 · 1998 — Kirikou et la Sorcière
 | | |
@@ -481,7 +493,7 @@
 | fun | Le film de Michel Ocelot sort en 1998 et relance le cinéma d'animation français. « Kirikou n'est pas grand, mais il est vaillant » — la chanson est de Youssou N'Dour. |
 | cat | arts · pays | France · continent | europe |
 | ⚠️ | Œuvre française sur l'Afrique de l'Ouest : je propose SANS pack. Dis-moi si tu le veux dans le pack afrique. |
-| **Verdict** | |
+| **Verdict** | ✅ intégré |
 
 ---
 
