@@ -22192,5 +22192,18 @@
   "pack": "asie",
   "pays": "Inde",
   "continent": "asie"
+ },
+ {
+  "id": 1869,
+  "annee": 550,
+  "titre": "L'invention du jeu d'échecs",
+  "desc": "En Inde, on joue sur un damier de soixante-quatre cases avec quatre corps d'armée : fantassins, cavaliers, éléphants et chars.",
+  "cat": "quotidien",
+  "emoji": "♟️",
+  "niveau": 2,
+  "fun": "Le chaturanga indien est l'ancêtre de tous les échecs du monde. Les éléphants sont devenus nos fous, les chars nos tours, et le vizir la reine.",
+  "pack": "asie",
+  "pays": "Inde",
+  "continent": "asie"
  }
 ]
