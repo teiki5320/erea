@@ -215,6 +215,30 @@ class EventsRepository {
     Difficulty.difficile: {2: 4, 3: 6},
   };
 
+  /// Les quatre âges de la frise. Le découpage suit ce qu'un joueur
+  /// distingue à l'œil sur le ruban, pas une périodisation savante.
+  static int _epoque(int annee) {
+    if (annee < 500) return 0; // Antiquité
+    if (annee < 1500) return 1; // Moyen Âge
+    if (annee < 1900) return 2; // époque moderne
+    return 3; // époque contemporaine
+  }
+
+  /// Un poids par époque, inversement proportionnel à sa densité dans la
+  /// sélection : une époque deux fois moins fournie voit chacun de ses
+  /// faits tiré deux fois plus souvent. Les époques absentes d'une
+  /// sélection ne pèsent rien — un pack sans Antiquité n'en invente pas.
+  static Map<int, double> _poidsEpoque(List<HistEvent> pool) {
+    final compte = <int, int>{};
+    for (final e in pool) {
+      final ep = _epoque(e.annee);
+      compte[ep] = (compte[ep] ?? 0) + 1;
+    }
+    return {
+      for (var ep = 0; ep < 4; ep++) ep: compte[ep] == null ? 1.0 : 1 / compte[ep]!,
+    };
+  }
+
   /// Tirage d'une partie : quotas par niveau selon la difficulté, priorité
   /// au jamais-vu, mélange (RNG fourni pour le défi du jour).
   List<HistEvent> pick(
@@ -231,6 +255,15 @@ class EventsRepository {
     final random = rng ?? _defaultRng();
     final quotas = _quotas[diff]!;
 
+    // Poids d'époque : l'inverse de la densité. Les trois quarts de la
+    // frise couvrent l'Antiquité et le Moyen Âge, mais moins d'un quart
+    // des faits s'y trouvent — un mélange uniforme apprenait donc au
+    // joueur à parier « après 1900 », stratégie gagnante qui abîme le
+    // jeu. Chaque fait d'une époque peu peuplée reçoit ici plusieurs
+    // billets de tombola, si bien que les époques sortent à parts plus
+    // proches sans qu'aucun fait ne devienne inatteignable.
+    final poids = _poidsEpoque(p);
+
     // Deux piles par niveau : le jamais-vu et le déjà-vu, mélangées
     // séparément. Le déjà-vu n'est servi qu'en tout dernier recours —
     // sinon, dans une petite catégorie, un niveau à court de frais
@@ -240,10 +273,14 @@ class EventsRepository {
     final vus = <int, List<HistEvent>>{};
     for (var niveau = 1; niveau <= 3; niveau++) {
       final tier = p.where((e) => e.niveau == niveau);
-      frais[niveau] =
-          shuffled(tier.where((e) => !seen.contains(e.id)).toList(), random);
-      vus[niveau] =
-          shuffled(tier.where((e) => seen.contains(e.id)).toList(), random);
+      frais[niveau] = shuffledWeighted(
+          tier.where((e) => !seen.contains(e.id)).toList(),
+          (e) => poids[_epoque(e.annee)]!,
+          random);
+      vus[niveau] = shuffledWeighted(
+          tier.where((e) => seen.contains(e.id)).toList(),
+          (e) => poids[_epoque(e.annee)]!,
+          random);
     }
 
     final picked = <HistEvent>[];

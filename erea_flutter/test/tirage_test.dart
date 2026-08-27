@@ -4,6 +4,7 @@ import 'package:erea/core/rng.dart';
 import 'package:erea/core/scoring.dart';
 import 'package:erea/data/events_repository.dart';
 import 'package:erea/game/game_controller.dart';
+import 'package:erea/models/hist_event.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Composition d'une partie : les quotas par niveau doivent rendre TOUTE
@@ -282,6 +283,37 @@ void main() {
       ..pays = repo.paysJouables.first;
     expect(c.start(GameMode.roulette), isTrue);
     expect(c.diff, Difficulty.normal);
+  });
+
+  test('le tirage fait voyager dans le temps, pas seulement au XXe siècle',
+      () {
+    // La base penche à droite : les trois quarts de la frise couvrent
+    // l'Antiquité et le Moyen Âge, mais moins d'un quart des faits s'y
+    // trouvent. Un tirage uniforme apprenait donc au joueur à parier
+    // « après 1900 » — une stratégie gagnante qui abîme le jeu (audit du
+    // 21 août 2026).
+    //
+    // Le tirage pondère à l'inverse de la densité de chaque époque : une
+    // époque peu peuplée voit chacun de ses faits sortir plus souvent.
+    int avant1500(List<HistEvent> ev) => ev.where((e) => e.annee < 1500).length;
+
+    final partBase = avant1500(repo.events) / repo.events.length;
+    var tires = 0, total = 0;
+    for (var i = 0; i < 60; i++) {
+      final ev = repo.pick('tout', Difficulty.normal, rng: mulberry32(i));
+      tires += avant1500(ev);
+      total += ev.length;
+    }
+    final partTirage = tires / total;
+
+    // Une pondération parfaite donnerait 50 % (deux époques sur quatre),
+    // mais les quotas par niveau bornent le résultat : l'Antiquité et le
+    // Moyen Âge n'ont pas assez de faits de niveau 1 et 2 pour remplir
+    // toutes les places qui leur reviendraient. On obtient 40 % contre
+    // 21 % sans pondération — le seuil interdit le retour en arrière.
+    expect(partTirage, greaterThan(partBase * 1.35),
+        reason: 'avant 1500 : ${(partBase * 100).round()} % de la base, '
+            '${(partTirage * 100).round()} % des tirages');
   });
 
   test('Roulette : un seul drapeau, dix manches sur ce pays', () {

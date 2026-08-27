@@ -10,6 +10,8 @@
 /// tirages différentes. La parité avec le site n'est pas un objectif.
 library;
 
+import 'dart:math' as math;
+
 const int _mask32 = 0xFFFFFFFF;
 
 /// Équivalent de Math.imul de JavaScript (multiplication 32 bits),
@@ -49,4 +51,29 @@ List<T> shuffled<T>(List<T> list, double Function() rng) {
     a[j] = tmp;
   }
   return a;
+}
+
+/// Mélange PONDÉRÉ : plus le poids d'un élément est grand, plus il a de
+/// chances de se retrouver en tête.
+///
+/// Algorithme d'Efraimidis et Spirakis : on tire une clé `u^(1/poids)`
+/// pour chaque élément et on trie dessus. Un poids double vaut exactement
+/// deux billets de tombola, et l'ordre reste entièrement déterminé par le
+/// RNG fourni — le défi du jour, qui rejoue la même graine pour tout le
+/// monde, sort donc la même série partout.
+List<T> shuffledWeighted<T>(
+  List<T> list,
+  double Function(T) poids,
+  double Function() rng,
+) {
+  final cles = <(double, int)>[];
+  for (var i = 0; i < list.length; i++) {
+    final w = poids(list[i]);
+    // Un poids nul sortirait toujours en dernier ; on garde un plancher
+    // pour qu'aucun fait ne devienne inatteignable.
+    final u = rng().clamp(1e-9, 1.0).toDouble();
+    cles.add((math.pow(u, 1 / math.max(w, 1e-6)).toDouble(), i));
+  }
+  cles.sort((a, b) => b.$1.compareTo(a.$1));
+  return [for (final c in cles) list[c.$2]];
 }

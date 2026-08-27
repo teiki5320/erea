@@ -63,6 +63,14 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
   en Difficile sur un fait récent exigeait l'ANNÉE EXACTE et le combo y
   était inatteignable. Les multiplicateurs d'XP compensent le barème :
   sans ça, Difficile rapportait autant que Facile malgré sa promesse.
+- **Pondération d'époque** : à l'intérieur de chaque niveau, le tirage
+  favorise les époques peu peuplées, à l'inverse de leur densité
+  (`shuffledWeighted`, quatre âges : avant 500, 500-1500, 1500-1900,
+  après 1900). Sans elle, 21 % seulement des faits tirés étaient
+  antérieurs à 1500 alors que la frise leur consacre les trois quarts de
+  sa longueur — le joueur apprenait à parier « après 1900 ». Avec, on
+  monte à 40 %. Le tirage reste entièrement déterminé par le RNG fourni :
+  le défi du jour sort la même série pour tout le monde.
 - Composition d'une partie (QUOTAS par niveau, `EventsRepository._quotas`) :
   Facile 10×N1 · Normal 3×N1 + 5×N2 + 2×N3 · Difficile 4×N2 + 6×N3.
   Facile ne vise QUE le niveau 1 : le niveau 2 n'y est qu'un repli, ouvert

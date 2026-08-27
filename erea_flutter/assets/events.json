@@ -22641,5 +22641,78 @@
   "fun": "Leurs navires ne calaient qu'un mètre d'eau : ils pouvaient remonter les fleuves jusqu'au cœur des terres, et être portés à bras d'homme.",
   "pays": "Norvège",
   "continent": "europe"
+ },
+ {
+  "id": 1906,
+  "annee": -1000,
+  "titre": "Les premiers jeux de billes",
+  "desc": "Des enfants font rouler de petites boules d'argile et de pierre polie, dans un jeu qu'on retrouvera sur tous les continents.",
+  "cat": "quotidien",
+  "emoji": "🔵",
+  "niveau": 2,
+  "fun": "On en a trouvé dans les tombes égyptiennes et sur les sites de la vallée de l'Indus. Le jeu a traversé cinq mille ans sans changer de règles.",
+  "pack": "egypte",
+  "pays": "Égypte",
+  "continent": "afrique"
+ },
+ {
+  "id": 1907,
+  "annee": -500,
+  "titre": "Les premiers dés à six faces",
+  "desc": "Des joueurs taillent des cubes d'os marqués de points, dont les faces opposées additionnées font toujours sept.",
+  "cat": "quotidien",
+  "emoji": "🎲",
+  "niveau": 2,
+  "fun": "Cette règle du sept vaut encore sur les dés d'aujourd'hui. Les Romains jouaient tant aux dés qu'il fallut l'interdire, sauf pendant les fêtes.",
+  "pays": "Italie",
+  "continent": "europe"
+ },
+ {
+  "id": 1908,
+  "annee": -450,
+  "titre": "Hérodote invente l'histoire",
+  "desc": "Un voyageur grec parcourt le monde connu et écrit ce qu'il voit et entend, pour que le souvenir des hommes ne s'efface pas.",
+  "cat": "arts",
+  "emoji": "📜",
+  "niveau": 2,
+  "fun": "Cicéron l'a surnommé « le père de l'histoire ». Il fut aussi le premier à décrire les crocodiles du Nil et les pyramides pour des lecteurs qui ne les verraient jamais.",
+  "pays": "Grèce",
+  "continent": "europe"
+ },
+ {
+  "id": 1909,
+  "annee": -100,
+  "titre": "Les premiers livres reliés",
+  "desc": "On cesse d'enrouler les textes et on empile des feuillets cousus entre deux couvertures : le livre prend la forme qu'on lui connaît.",
+  "cat": "arts",
+  "emoji": "📖",
+  "niveau": 2,
+  "fun": "Le codex romain permet enfin d'ouvrir directement à la bonne page, ce qu'un rouleau de six mètres interdisait.",
+  "pays": "Italie",
+  "continent": "europe"
+ },
+ {
+  "id": 1910,
+  "annee": 79,
+  "titre": "Les graffitis de Pompéi",
+  "desc": "Une ville ensevelie sous les cendres conserve les mots que ses habitants avaient griffonnés sur les murs : insultes, déclarations d'amour et publicités.",
+  "cat": "quotidien",
+  "emoji": "✍️",
+  "niveau": 2,
+  "fun": "« Marcus aime Spendusa », « ici j'ai bien mangé » : plus de onze mille inscriptions ont été relevées.",
+  "pays": "Italie",
+  "continent": "europe"
+ },
+ {
+  "id": 1911,
+  "annee": 1450,
+  "titre": "Les premiers boutons de vêtement",
+  "desc": "On coud sur les habits de petites pièces qui se glissent dans une fente : les vêtements épousent enfin le corps.",
+  "cat": "quotidien",
+  "emoji": "🧵",
+  "niveau": 2,
+  "fun": "Avant eux, on s'habillait de tissus drapés ou lacés. Le bouton fut d'abord un luxe, parfois en or et en pierres précieuses.",
+  "pays": "France",
+  "continent": "europe"
  }
 ]
