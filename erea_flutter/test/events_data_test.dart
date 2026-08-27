@@ -110,7 +110,8 @@ void main() {
     }
   });
 
-  test('chaque pack à thème tient au moins 8 parties composables', () {
+  test('chaque pack à thème tient au moins 13 parties, difficultés cumulées',
+      () {
     // Un pack est l'unité de vente : en vendre un qui s'épuise en quatre
     // parties (c'était le cas de « Conquête de l'espace ») n'est pas tenable.
     //
@@ -121,9 +122,16 @@ void main() {
     // 14 (Amériques, en Difficile), le pire 8 (Asie, dont 116 faits sur
     // 150 sont de niveau 3). Constat de l'audit du 21 août 2026.
     //
-    // Le seuil est posé à l'état réel du pire pack : il interdit toute
-    // régression. À remonter vers 15 à mesure que les faits de niveau 1
-    // et 2 manquants seront écrits (docs/propositions/).
+    // Le seuil comptait d'abord la MEILLEURE difficulté seule. Le
+    // reclassement du 26 août l'a montré trop étroit : le pack Égypte,
+    // dont Sphinx, Toutânkhamon et hiéroglyphes sont passés en niveau 1,
+    // gagnait le mode Facile (1 → 3 parties) mais perdait du niveau 2,
+    // donc du Difficile (12 → 7). Il devenait le seul pack jouable dans
+    // les trois modes, et le test le déclarait en régression.
+    //
+    // On somme donc les trois difficultés : c'est ce dont dispose
+    // réellement celui qui achète le pack. Seuil posé à l'état du pire
+    // pack (Ciel & espace, 13), cible 20.
     const quotas = {
       // Copie assumée de EventsRepository._quotas (SPEC §3) : les dériver
       // du code testé reviendrait à vérifier le code avec lui-même.
@@ -136,20 +144,20 @@ void main() {
       for (final e in repo.pool(key)) {
         parNiveau[e.niveau] = (parNiveau[e.niveau] ?? 0) + 1;
       }
-      var meilleur = 0;
+      var total = 0;
       for (final q in quotas.values) {
         var parties = 1 << 30;
         q.forEach((niveau, parPartie) {
           final possibles = (parNiveau[niveau] ?? 0) ~/ parPartie;
           if (possibles < parties) parties = possibles;
         });
-        if (parties > meilleur) meilleur = parties;
+        total += parties;
       }
-      return meilleur;
+      return total;
     }
 
     for (final p in packs) {
-      expect(partiesComposables(p.key), greaterThanOrEqualTo(8),
+      expect(partiesComposables(p.key), greaterThanOrEqualTo(13),
           reason: p.label);
     }
   });

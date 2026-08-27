@@ -18,7 +18,7 @@ Tableau d'objets :
 | `emoji` | string | Un emoji. |
 | `niveau` | int | 1 = connu des enfants · 2 = culture générale · 3 = pointu. |
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
-| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack doit tenir au moins 8 parties COMPOSABLES** (des parties conformes aux quotas §3, pas un volume de faits — 150 faits dont 116 pointus n'en composent que 8). C'est l'unité de vente. Verrouillé par un test ; cible : 15, à mesure que les faits de niveau 1–2 manquants sont écrits. |
+| `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack doit tenir au moins 13 parties COMPOSABLES, difficultés cumulées** (des parties conformes aux quotas §3, pas un volume de faits). On somme Facile, Normal et Difficile : c'est ce dont dispose vraiment l'acheteur, et cela récompense un pack équilibré plutôt qu'un pack fourni dans une seule difficulté. C'est l'unité de vente. Verrouillé par un test ; cible : 20. |
 | `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. Réservé aux futures catégories géographiques. |
 | `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 113 pays couverts, dont 52 avec au moins 10 faits. |
 
