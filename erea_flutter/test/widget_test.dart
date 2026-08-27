@@ -5,6 +5,7 @@ import 'package:erea/game/game_controller.dart';
 import 'package:erea/main.dart';
 import 'package:erea/ui/roulette_screen.dart';
 import 'package:erea/ui/sticker_widgets.dart';
+import 'package:erea/ui/game/gap_line_painter.dart';
 import 'package:erea/ui/tape_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -509,7 +510,7 @@ void main() {
     expect(
       find.byWidgetPredicate((w) =>
           w is CustomPaint &&
-          w.painter.runtimeType.toString() == '_GapLinePainter'),
+          w.painter is GapLinePainter),
       findsOneWidget,
       reason: 'la longueur du trait EST l’erreur',
     );
