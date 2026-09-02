@@ -78,13 +78,33 @@ filet de sécurité qui rattrape une perte de clé — le seul.
 ## 2. Le compte Google Play Console ✅ *(personnel, créé le 20 août 2026)*
 
 Le choix est fait : **compte personnel**, en connaissance de la
-contrepartie — les 12 testeurs ci-dessous. Le tableau reste pour mémoire,
-le choix étant irréversible en pratique.
+contrepartie — les 12 testeurs ci-dessous. Le tableau reste pour mémoire.
+
+**La conversion vers un compte d'organisation existe** (vérifié le
+2 septembre 2026 ; cette fiche a longtemps prétendu le contraire) : le
+propriétaire crée un profil de paiement de type organisation, le fait
+vérifier, puis le rattache au compte — *Compte développeur → À propos de
+vous → Modifier les détails → Créer ou sélectionner un profil de
+paiement*. Il faut une société immatriculée, un numéro D-U-N-S et un
+**site web officiel** à son nom. L'inverse, lui, n'existe pas : d'une
+organisation on ne revient pas à un compte personnel.
+
+⚠️ **Mais convertir ne dispense probablement pas des douze testeurs.**
+L'exigence vise « les comptes **personnels créés après le 13 novembre
+2023** » : elle tient au type ET à la date de création, et la conversion
+ne change que le type. Ce qui advient après conversion n'est documenté
+nulle part — ni levée, ni maintien. Monter une société pour gagner
+quatorze jours reviendrait donc à payer un coût certain contre un
+résultat que personne ne garantit.
+
+📎 [Choose a developer account type](https://support.google.com/googleplay/android-developer/answer/13634885)
+· [Keeping your developer account information up to date](https://support.google.com/googleplay/android-developer/answer/13634888)
 
 | | Compte **personnel** | Compte **organisation** |
 |---|---|---|
 | Ce qu'il faut | une pièce d'identité | une société active **et** un numéro D-U-N-S |
 | Test avant publication | **12 testeurs pendant 14 jours consécutifs** | aucun |
+| Retour en arrière | conversion possible vers organisation | impossible |
 | Coordonnées publiques | nom du développeur | nom, e-mail et téléphone de la société |
 
 **Les 12 testeurs sont donc le chemin critique du Play Store**, et le
