@@ -20,6 +20,7 @@
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
 | Titre, descriptions | ✅ rédigés plus bas |
 | Compte Google Play Console | ✅ créé le 20 août 2026, type **personnel** — voir §2 |
+| Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
 | **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : rien ne l'accélère, à lancer en premier** |
 | Appareil Android physique (exigé par la validation) | ✅ Pixel 8a commandé le 20 août 2026 |
 | Trois questionnaires | ⬜ *(le §5 a changé avec la pub ; le public cible est tranché : 13 ans et plus)* |
