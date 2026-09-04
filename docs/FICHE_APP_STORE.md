@@ -1,5 +1,29 @@
 # Remplir la fiche App Store — Erea
 
+> **État au 3 septembre 2026.** La **1.0.0 est approuvée depuis le
+> 21 août** avec le build **90**, et n'a jamais été publiée : elle est
+> « Prête pour la distribution », tous ses champs verrouillés, sans autre
+> action offerte que *Publier*. Elle est dépassée — cinq commits de code
+> lui sont postérieurs. Le build du **3 septembre** porte, lui, les 1831
+> faits, le mode Facile corrigé, VoiceOver, le découpage de l'écran de jeu
+> et les cinquante identifiants SKAdNetwork.
+>
+> Côté AdMob, les deux messages sont publiés le 3 septembre : consentement
+> RGPD (les deux plateformes) et explication IDFA (iOS seul). Le code
+> n'avait besoin d'aucune modification : `loadAndShowConsentFormIfRequired`
+> présente les deux.
+>
+> **Ce qui reste, dans l'ordre.** Vérifier au bas de la page de version si
+> la 1.0.0 est supprimable — sinon la publier et enchaîner aussitôt sur une
+> **1.0.1**, personne ne l'ayant jamais vue. Mettre **Confidentialité de
+> l'app** à jour : le nouveau build contient la publicité. Puis soumettre
+> en sélectionnant le build du 3 septembre.
+>
+> Une **demande de changement de nom de développeur** a été déposée le
+> 3 septembre — le compte étant individuel, Apple y affiche le nom légal.
+> On ignore si une telle demande gèle les soumissions ; on le saura en
+> tentant la suivante.
+
 > Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
 > mis à jour le 17 août 2026 pour la version 1.1.
 >

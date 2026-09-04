@@ -20,10 +20,14 @@
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
 | Titre, descriptions | ✅ rédigés plus bas |
 | Compte Google Play Console | ✅ créé le 20 août 2026, type **personnel** — voir §2 |
+| Fiche Play Store française, visuels compris | ✅ 3 septembre 2026 |
+| Déclaration « identifiant publicitaire » | ✅ 3 septembre 2026 — oui, trois finalités : publicité, analyse, prévention des fraudes |
+| Message de consentement RGPD (AdMob) | ✅ publié le 3 septembre 2026 — la console était vide, aucune annonce n'aurait été servie en Europe |
+| Release en test fermé | ✅ bundle `1 (1.0.0)` téléversé, 14 modifications envoyées pour examen le 3 septembre 2026 |
 | Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
-| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : rien ne l'accélère, à lancer en premier** |
+| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : la liste « Perso » existe, le décompte ne démarre qu'au douzième inscrit** |
 | Appareil Android physique (exigé par la validation) | ✅ Pixel 8a commandé le 20 août 2026 |
-| Trois questionnaires | ⬜ *(le §5 a changé avec la pub ; le public cible est tranché : 13 ans et plus)* |
+| Trois questionnaires | ✅ remplis le 3 septembre 2026 — public cible 13 ans et plus |
 | Phrase « votre enfant de 8 ans » à retirer de la description Play | ⬜ *(voir §5)* |
 | Classements Play Games | ⬜ *(facultatif, voir §7)* |
 
