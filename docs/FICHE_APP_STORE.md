@@ -164,12 +164,13 @@ aucun document.
 
 ## Réglementations et autorisations de l'App Store
 
-**Législation sur les services numériques (DSA)** ✅ *(repassée en
-**trader** le 18 août 2026, vérification Apple en cours)* — coordonnées
-déclarées, qui seront **publiques** sur la fiche UE : e-mail
-`erea.toa@gmail.com`, téléphone perso, adresse postale réelle. La
-déclaration se fait au niveau du **compte** (Business → Contrats →
-Conformité), pas de l'app. Le même jour, le questionnaire **DAC7**
+**Législation sur les services numériques (DSA)** ⬜ **toujours
+non-trader au 7 septembre 2026.** Cette fiche a longtemps annoncé le
+contraire — « repassée en trader le 18 août, vérification en cours » —
+c'était faux, et vérifié dans la console le 7 septembre. La déclaration
+se fait à deux endroits : au niveau du **compte** (Business →
+Conformité) et au niveau de l'app (Informations sur l'app →
+Réglementations → DSA). Le même jour, le questionnaire **DAC7**
 (« Directive relative à la coopération administrative, 7e révision »,
 même page) a été rempli : Erea ne fournit pas de services personnels.
 
@@ -189,13 +190,22 @@ Ce que le statut trader implique, et qu'il vaut mieux savoir **avant** de
 cliquer :
 
 - **adresse postale, téléphone et e-mail sont publiés sur ta fiche App
-  Store** dans les 27 pays de l'UE. Ce n'est pas un effet de bord, c'est
+  Store** dans les 27 pays de l'UE. ⚠️ **TOA CORP n'est que le nom
+  d'affichage du compte**, obtenu en septembre 2026 : le compte reste
+  individuel, donc Apple publierait l'adresse postale du titulaire, et
+  non celle d'une société. Son complément d'adresse porte encore
+  « SARL GROUPE MATEVIE » — à nettoyer avant toute déclaration trader,
+  sous peine de le voir sur la fiche App Store de 27 pays. Ce n'est pas un effet de bord, c'est
   l'objet des articles 30 et 31 du DSA : permettre au public de joindre
   un professionnel. Pas d'option pour les masquer ;
 - Apple **vérifie** ces coordonnées avant de les publier ;
-- **les apps sans statut trader vérifié sont retirées de l'App Store
-  européen** — Apple l'applique depuis le 17 février 2025. Ce n'est pas
-  un avertissement théorique ;
+- ⚠️ cette fiche a longtemps affirmé que « les apps sans statut trader
+  vérifié sont retirées de l'App Store européen depuis le 17 février
+  2025 ». **La page d'Apple ne dit pas cela.** Elle indique seulement
+  qu'un développeur déclaré non-trader voit ses acheteurs européens
+  informés que les droits du consommateur ne s'appliquent pas. Le risque
+  réel — retrait ou simple mention — n'est pas établi ; ne pas le
+  réaffirmer sans source ;
 - si tu ne veux pas exposer ton adresse personnelle, c'est **ici** que la
   question d'une structure ou d'une adresse de domiciliation se pose, et
   non après la déclaration.
@@ -478,7 +488,14 @@ soumettre » et n'est jamais examiné.
 
 ---
 
-# PAGE 4 — Confidentialité de l'app ⬜ **à refaire entièrement**
+# PAGE 4 — Confidentialité de l'app ✅ *(refaite et publiée le 7 septembre 2026)*
+
+> Six types déclarés : identifiant de l'appareil, interaction avec le
+> produit, données publicitaires, emplacement approximatif, données sur
+> les pannes, données de performance. L'app affiche désormais « Données
+> utilisées pour vous suivre » sur sa page produit. Le reste de cette
+> section garde le détail des réponses, au cas où il faudrait les
+> refaire.
 
 ⚠️ **C'est le changement le plus lourd de la 1.1, et le plus risqué.** La
 réponse actuelle — « Non, nous ne collectons pas de données de cette
