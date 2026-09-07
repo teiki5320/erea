@@ -10,7 +10,7 @@
 
 ## Vue d'ensemble
 
-- **iOS** : 1.0.0 approuvée le 21 août 2026, jamais publiée — son build `90` est périmé
+- **iOS** : **1.0.0 publiée le 3 septembre 2026** · 1.0.1 en attente de vérification depuis le 7 septembre
 - **Android** : test fermé envoyé pour examen le 3 septembre 2026
 - **Chemin critique** : 12 testeurs pendant 14 jours consécutifs, imposés par le compte Play personnel
 - **Version commune** : `1.0.0` (`pubspec.yaml`) — versionCode Android `1`, build iOS du 3 septembre
@@ -28,11 +28,11 @@ place de celle qui la vaut.
 
 | | |
 |---|---|
-| État | **Bloqué sur une décision, pas sur un travail** |
+| État | **1.0.1 en attente de vérification depuis le 7 septembre 2026** |
 | Console | <https://appstoreconnect.apple.com> |
-| Version publiée | aucune — l'app n'est jamais sortie |
-| Version approuvée | `1.0.0`, build `90`, acceptée le 21 août 2026, sortie *manuelle* jamais déclenchée |
-| Build à soumettre | celui du 3 septembre 2026, produit par Xcode Cloud |
+| Version publiée | `1.0.0`, build `90`, en ligne depuis le 3 septembre 2026 à 23 h 57 |
+| Version soumise | `1.0.1`, build `143`, envoyée le 7 septembre 2026 — publication manuelle |
+| Achat intégré | `com.teiki.erea.sanspub` — dans le code, **absent des deux consoles** |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
 **Pourquoi le build 90 ne convient plus.** Cinq commits de code lui sont
@@ -41,11 +41,15 @@ d'être un mode « XXᵉ siècle », VoiceOver sur la frise, le découpage de
 l'écran de jeu et la pondération d'époque. Le build du 3 septembre les
 porte tous, plus les cinquante identifiants `SKAdNetworkItems`.
 
-**Ce qui bloque.** Une version « Prête pour la distribution » a tous ses
-champs verrouillés et n'offre que *Publier* : ni suppression de build, ni
-modification. Deux issues — trouver un lien de suppression au bas de sa
-page, ou la publier et enchaîner sur une `1.0.1`, personne ne l'ayant
-jamais vue.
+**Ce qui s'est passé.** La 1.0.0 a été publiée le 3 septembre au soir,
+avec le build 90 d'août. Une version approuvée ne se supprimant pas, la
+seule issue était une 1.0.1 — soumise le 7 septembre avec le build 143.
+
+**Ce qui a failli la faire refuser.** La description en ligne promettait
+« SANS PUBLICITÉ » et « ne collecte aucune donnée », alors que ce build
+affiche des interstitielles ; elle annonçait aussi un **mode Duel qui
+n'existe pas** dans le code. Les deux sont des motifs de refus classiques.
+Corrigé avant l'envoi.
 
 **Avant toute soumission.** La section *Confidentialité de l'app* doit
 déclarer les collectes du SDK de Google : le nouveau build contient la

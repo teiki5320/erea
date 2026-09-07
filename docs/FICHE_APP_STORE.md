@@ -284,10 +284,9 @@ LES MODES DE JEU
 • Défi du jour — les 10 mêmes questions pour tous les joueurs, une seule tentative par jour. Enchaînez les jours pour faire grandir votre série.
 • Chrono — 10 secondes par question, pas une de plus.
 • Roulette des drapeaux — un pays tiré au sort, une partie entière consacrée à son histoire.
-• Duel à deux — sur un seul téléphone, chacun son tour.
 • Packs à thèmes — Égypte et Orient ancien, Asie, Amériques, Afrique, Conquête de l'espace.
 
-PLUS DE 1700 ÉVÉNEMENTS VÉRIFIÉS
+PLUS DE 1800 ÉVÉNEMENTS VÉRIFIÉS
 
 De la construction des pyramides à la première photo d'un trou noir, chaque fait est daté avec soin et accompagné d'une anecdote « Le savais-tu ? ». Les événements accessibles aux enfants sont identifiés un par un : en mode Facile, votre enfant de 8 ans ne tombera pas sur la bataille de Bouvines.
 
@@ -299,9 +298,13 @@ CLASSEMENTS ET PROGRESSION
 
 Comparez-vous au monde entier via Game Center, gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
 
+ACCESSIBLE À TOUS
+
+La frise se lit à VoiceOver : l'année est annoncée à chaque déplacement, et le résultat de chaque manche est lu en entier.
+
 SANS COMPTE, SANS INTERNET
 
-Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — en voiture, dans le train, partout.
+Erea ne demande aucune inscription et fonctionne entièrement hors ligne — en voiture, dans le train, partout. Une publicité s'affiche à la sortie d'une partie sur deux : jamais pendant une manche, jamais sur le Défi du jour.
 
 UNE PUBLICITÉ, UNE PARTIE SUR DEUX
 

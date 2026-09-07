@@ -181,12 +181,11 @@ LES MODES DE JEU
 • Défi du jour — les 10 mêmes questions pour tous les joueurs, une seule tentative par jour. Enchaînez les jours pour faire grandir votre série.
 • Chrono — 10 secondes par question, pas une de plus.
 • Roulette des drapeaux — un pays tiré au sort, une partie entière consacrée à son histoire.
-• Duel à deux — sur un seul téléphone, chacun son tour.
 • Packs à thèmes — Égypte et Orient ancien, Asie, Amériques, Afrique, Conquête de l'espace.
 
-PLUS DE 1700 ÉVÉNEMENTS VÉRIFIÉS
+PLUS DE 1800 ÉVÉNEMENTS VÉRIFIÉS
 
-De la construction des pyramides à la première photo d'un trou noir, chaque fait est daté avec soin et accompagné d'une anecdote « Le savais-tu ? ». Les événements accessibles aux enfants sont identifiés un par un : en mode Facile, votre enfant de 8 ans ne tombera pas sur la bataille de Bouvines.
+De la construction des pyramides à la première photo d'un trou noir, chaque fait est daté avec soin et accompagné d'une anecdote « Le savais-tu ? ». Les événements accessibles aux plus jeunes sont identifiés un par un : en mode Facile, on ne tombe pas sur la bataille de Bouvines.
 
 UN JEU QUI PARLE DE VOUS
 
@@ -202,7 +201,7 @@ Aucune inscription, aucun serveur : votre progression reste sur votre appareil, 
 
 UNE PUBLICITÉ, UNE PARTIE SUR DEUX
 
-Erea est gratuit et complet : tous les modes, tous les événements, rien de réservé à ceux qui paient. Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Si elle vous gêne, un achat unique la retire pour toujours.
+Erea est gratuit et complet : tous les modes, tous les événements, rien de réservé à ceux qui paient. Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour.
 
 Bonne partie !
 ```
@@ -213,13 +212,21 @@ Play Games n'est pas branché (§7). Si tu l'actives, remets le paragraphe
 en remplaçant « Game Center » par « Google Play Jeux ». Annoncer un
 classement absent est le genre de détail qui vaut un signalement.
 
-⚠️ **Une phrase à retirer avant d'envoyer cette fiche à Google** : « votre
-enfant de 8 ans ne tombera pas sur la bataille de Bouvines », dans le
-paragraphe « PLUS DE 1700 ÉVÉNEMENTS VÉRIFIÉS ». Le public cible déclaré
-est **13 ans et plus** (§5) ; une fiche qui s'adresse aux enfants de
-8 ans contredit cette déclaration, et c'est la fiche que Google lit pour
-vérifier. Côté App Store la phrase reste : Apple ne pose pas cette
-question.
+⚠️ **Trois corrections faites le 7 septembre 2026, après le refus évité
+de justesse côté App Store.** La description annonçait un **mode Duel qui
+n'existe pas** — plus une ligne de code ne le lance, seulement un
+commentaire qui constate son absence dans `lib/game/badges.dart`. Elle
+annonçait **1700 événements** au lieu de 1831, et **un achat unique qui
+retire la publicité**, alors que `com.teiki.erea.sanspub` n'existe dans
+aucune des deux consoles. Annoncer une fonctionnalité absente est le
+motif de refus le plus courant après les métadonnées trompeuses.
+
+La phrase « votre enfant de 8 ans » est retirée par la même occasion : le
+public cible déclaré est **13 ans et plus** (§5), et c'est cette fiche que
+Google lit pour vérifier la cohérence.
+
+⚠️ **Ces corrections ne sont pas reportées dans la Play Console.** La
+fiche envoyée à Google le 3 septembre porte encore les trois erreurs.
 
 ## 4. Les visuels
 
