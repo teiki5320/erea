@@ -32,7 +32,7 @@ la remplace est partie le 7 septembre.
 | Console | <https://appstoreconnect.apple.com> |
 | Version publiée | `1.0.0`, build `90`, en ligne depuis le 3 septembre 2026 à 23 h 57 |
 | Version soumise | `1.0.1`, build `143`, envoyée le 7 septembre 2026 — publication **automatique** dès approbation |
-| Achat intégré | `com.teiki.erea.sanspub` — dans le code, **absent des deux consoles** |
+| Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable — **brouillon** dans App Store Connect, à finaliser ; absent de la Play Console |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
 **Pourquoi le build 90 ne convenait plus.** Cinq commits de code lui
@@ -113,9 +113,9 @@ la liste.
 5. **Les deux** — se déclarer **trader** au titre du DSA, après avoir
    nettoyé le complément d'adresse du compte, qui porte encore le nom
    d'une SARL sans rapport et deviendrait public.
-6. **Les deux** — créer `com.teiki.erea.sanspub` dans les deux consoles.
-   Côté Apple, un premier achat intégré doit accompagner une version : ce
-   sera donc la 1.0.2 au plus tôt.
+6. **iOS** — finaliser le brouillon `com.teiki.erea.sanspub` et le
+   joindre à une version : Apple exige qu'un premier achat intégré parte
+   avec une soumission. **Android** — le créer dans la Play Console.
 7. **Les deux** — vérifier sur appareil que le formulaire de consentement
    s'affiche et que le journal ne dit plus
    `no form(s) configured for the input app ID`.
