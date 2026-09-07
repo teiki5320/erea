@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
@@ -172,11 +173,16 @@ class Pub {
     return partiesJouees % 2 == 0;
   }
 
-  /// Montre l'interstitielle si c'est le moment, puis rend la main.
+  /// Montre l'interstitielle si c'est le moment, attend qu'elle soit
+  /// refermée, puis rend la main.
   ///
-  /// Retourne toujours, même en cas d'échec : l'appelant enchaîne sur sa
-  /// navigation sans avoir à s'en soucier.
-  static Future<void> montrerSiDue({
+  /// Retourne `true` seulement si le joueur a réellement vu une publicité
+  /// jusqu'au bout : c'est ce qui autorise l'appelant à lui proposer de
+  /// s'en débarrasser. Retourne toujours, même en cas d'échec —
+  /// l'appelant enchaîne sur sa navigation sans avoir à s'en soucier. Une
+  /// pub qui ne se refermerait jamais ne bloque pas le joueur : deux
+  /// minutes, et on rend la main quoi qu'il arrive.
+  static Future<bool> montrerSiDue({
     required bool sansPub,
     required bool defiDuJour,
     required int partiesJouees,
@@ -186,32 +192,40 @@ class Pub {
       defiDuJour: defiDuJour,
       partiesJouees: partiesJouees,
     )) {
-      return;
+      return false;
     }
-    if (!await _preparer()) return;
+    if (!await _preparer()) return false;
 
     final ad = _prete;
     if (ad == null) {
       _precharger(); // pour la prochaine fois
-      return;
+      return false;
     }
     _prete = null;
+    final fermee = Completer<bool>();
     try {
       ad.fullScreenContentCallback = FullScreenContentCallback(
         onAdDismissedFullScreenContent: (ad) {
           ad.dispose();
           _precharger();
+          if (!fermee.isCompleted) fermee.complete(true);
         },
         onAdFailedToShowFullScreenContent: (ad, erreur) {
           ad.dispose();
           debugPrint('Interstitielle non affichée : ${erreur.message}');
           _precharger();
+          if (!fermee.isCompleted) fermee.complete(false);
         },
       );
       await ad.show();
     } catch (e) {
       debugPrint('Affichage de la publicité impossible : $e');
       await ad.dispose();
+      return false;
     }
+    return fermee.future.timeout(
+      const Duration(minutes: 2),
+      onTimeout: () => false,
+    );
   }
 }

@@ -8,6 +8,7 @@ import '../../data/store.dart';
 import '../../game/badges.dart';
 import '../../game/game_controller.dart';
 import '../../core/sons.dart';
+import '../offre_sans_pub.dart';
 import '../sticker_widgets.dart';
 
 /// L'écran de fin de partie : ce que la partie a RAPPORTÉ.
@@ -281,6 +282,12 @@ class EndView extends StatelessWidget {
             itemCount: controller.results.length,
             itemBuilder: (context, i) => _ligneBilan(controller.results[i]),
           ),
+        ),
+        // L'offre là où la pub va tomber : sous le bilan, avant les
+        // boutons. Rien ne s'affiche chez un acheteur ni boutique muette.
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: OffreSansPubChip(store: store),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(18, 4, 18, 16),

@@ -9,8 +9,7 @@ import '../core/retour.dart';
 import '../core/sons.dart';
 import '../data/store.dart';
 import '../game/badges.dart';
-import 'onboarding_screen.dart'
-    show OnboardingScreen, PaysPropose, paysProposes, drapeauIso;
+import 'onboarding_screen.dart' show PaysPropose, paysProposes, drapeauIso;
 import 'sticker_widgets.dart';
 
 /// Réglages et succès. Un seul écran : le jeu n'a pas de quoi en remplir
@@ -124,21 +123,6 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
           const SizedBox(height: 8),
           _carte([
             for (final b in badges) _ligneSucces(b, obtenus.contains(b.cle)),
-          ]),
-          const SizedBox(height: 16),
-          _carte([
-            ListTile(
-              title: const Text('Revoir la présentation'),
-              subtitle: const Text('Les écrans du premier lancement'),
-              trailing: const Icon(Icons.slideshow, color: skyColor),
-              onTap: _revoirPresentation,
-            ),
-            ListTile(
-              title: const Text('Tout remettre à zéro'),
-              subtitle: const Text('Progression, records, collection et série'),
-              trailing: const Icon(Icons.restart_alt, color: coralColor),
-              onTap: _confirmerRAZ,
-            ),
           ]),
           const SizedBox(height: 12),
           // ⚠️ Ne pas remettre « aucune donnée ne quitte cet appareil » :
@@ -343,58 +327,4 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
           ),
         ),
       );
-
-  /// Rejouer le parcours d'accueil sans rien effacer : on revient aux
-  /// réglages à la fin, et le pays éventuellement rechoisi est appliqué.
-  Future<void> _revoirPresentation() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute<void>(
-        builder: (context) => OnboardingScreen(
-          store: widget.store,
-          onTermine: () => Navigator.of(context).pop(),
-        ),
-      ),
-    );
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _confirmerRAZ() async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Tout remettre à zéro ?'),
-        content: const Text(
-          'Niveau, XP, records, collection, succès, série et pays choisi '
-          'seront effacés : l’app redeviendra comme au premier jour. '
-          'C’est irréversible.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Effacer'),
-          ),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    await widget.store.resetAll();
-    // Les réglages son/vibration sont des champs statiques chargés au
-    // démarrage : après un clear(), le magasin repasse à « activé » par
-    // défaut et l'interrupteur l'affiche, mais les statiques gardaient
-    // l'ancienne valeur — bascule sans effet jusqu'au redémarrage. On les
-    // resynchronise. Et les rappels du soir déjà programmés dans iOS
-    // survivaient au reset, interrupteur pourtant éteint : on les annule.
-    Sons.actif = widget.store.soundOn;
-    Retour.actif = widget.store.hapticsOn;
-    // Même piège pour le pays : la variable de `region` est chargée au
-    // démarrage. Sans cette ligne, le Classique continuait de mettre en
-    // avant l'ancien pays alors que l'écran affichait « Automatique ».
-    region.paysChoisiIso = null;
-    await Rappels.toutAnnuler();
-    if (mounted) setState(() {});
-  }
 }

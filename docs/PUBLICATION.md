@@ -13,7 +13,7 @@
 - **iOS** : **1.0.0 publiée le 3 septembre 2026** · 1.0.1 en attente de vérification depuis le 7 septembre
 - **Android** : test fermé envoyé pour examen le 3 septembre 2026
 - **Chemin critique** : 12 testeurs pendant 14 jours consécutifs, imposés par le compte Play personnel
-- **Version commune** : `1.0.1+2` (`pubspec.yaml`) — versionCode Android `2`, build iOS `143`
+- **Version commune** : `1.0.2+3` (`pubspec.yaml`) — la 1.0.1 (build `143`) est en examen, la 1.0.2 se construit
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Monétisation** : interstitielle AdMob, consentement RGPD publié le 3 septembre 2026
 
@@ -109,7 +109,10 @@ la liste.
    description : le mode Duel, les « 1700 événements » et l'achat unique
    y figurent encore.
 4. **iOS** — attendre l'App Review de la 1.0.1, envoyée le 7 septembre.
-   Publication automatique : elle sort dès qu'Apple approuve.
+   Publication automatique : elle sort dès qu'Apple approuve. Dès qu'elle
+   est passée, soumettre la **1.0.2** avec l'achat intégré joint : elle
+   porte l'offre « sans pub » là où la pub se voit (après la pub, écran de
+   fin, accueil) et les réglages allégés de leurs outils de mise au point.
 5. **Les deux** — se déclarer **trader** au titre du DSA, après avoir
    nettoyé le complément d'adresse du compte, qui porte encore le nom
    d'une SARL sans rapport et deviendrait public.

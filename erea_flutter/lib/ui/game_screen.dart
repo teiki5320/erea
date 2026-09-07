@@ -7,6 +7,8 @@ import 'package:share_plus/share_plus.dart';
 import '../core/accessibilite.dart';
 import '../core/avis.dart';
 import '../core/classement.dart';
+import '../core/achat.dart';
+import '../core/offre.dart';
 import '../core/pub.dart';
 import '../core/rappels.dart';
 import '../core/retour.dart';
@@ -14,6 +16,7 @@ import '../core/sons.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
 import 'game/end_view.dart';
+import 'offre_sans_pub.dart';
 import 'game/guess_view.dart';
 import 'game/reveal_view.dart';
 import 'game/verdict_textes.dart';
@@ -681,14 +684,32 @@ class _GameScreenState extends State<GameScreen>
     widget.store.setTutoSeen();
   }
 
+  /// Quitter l'écran de fin : la pub si c'est son tour, puis — une pub
+  /// sur trois — la proposition de s'en passer, au moment où la gêne est
+  /// fraîche. C'est le seul moment qui convertit ; les réglages, où
+  /// l'offre vivait seule jusqu'ici, ne sont jamais visités.
   Future<void> _quitter({required bool rejouer}) async {
     final navigateur = Navigator.of(context);
-    await Pub.montrerSiDue(
+    final vue = await Pub.montrerSiDue(
       sansPub: widget.store.sansPub,
       defiDuJour: game.mode == GameMode.daily,
       partiesJouees: widget.store.games,
     );
     if (!mounted) return;
+    if (vue) {
+      await widget.store.incPubsVues();
+      if (!mounted) return;
+      if (doitProposerOffre(
+        sansPub: widget.store.sansPub,
+        boutiqueDisponible: Achat.disponible,
+        pubsVues: widget.store.pubsVues,
+        refuseeLe: widget.store.offreRefuseeLe,
+        maintenant: DateTime.now(),
+      )) {
+        await OffreSansPub.proposer(context, widget.store, apresPub: true);
+        if (!mounted) return;
+      }
+    }
     navigateur.pop(rejouer);
   }
 

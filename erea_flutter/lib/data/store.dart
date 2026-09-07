@@ -185,6 +185,18 @@ class Store {
   Future<void> setSansPub(bool v) =>
       _put(() => _prefs.setBool('opt.sansPub', v));
 
+  /// Publicités réellement affichées et refermées — pas les tentatives.
+  /// Sert à ne proposer l'achat qu'une pub sur trois (`core/offre.dart`).
+  int get pubsVues => _prefs.getInt('pub.vues') ?? 0;
+  Future<void> incPubsVues() =>
+      _put(() => _prefs.setInt('pub.vues', pubsVues + 1));
+
+  /// Clé de jour du dernier « Non merci » à l'offre sans pub : l'offre se
+  /// tait jusqu'au lendemain.
+  String? get offreRefuseeLe => _prefs.getString('pub.offreRefuseeLe');
+  Future<void> setOffreRefuseeLe(String jour) =>
+      _put(() => _prefs.setString('pub.offreRefuseeLe', jour));
+
   /// Remise à zéro complète (écran de réglages) : le pays choisi et le
   /// parcours d'accueil repartent eux aussi, l'app redevient exactement
   /// ce qu'elle est au premier lancement.

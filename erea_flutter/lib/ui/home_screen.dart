@@ -13,6 +13,7 @@ import '../data/store.dart';
 import '../game/game_controller.dart';
 import 'era_art.dart';
 import 'game_screen.dart';
+import 'offre_sans_pub.dart';
 import 'reglages_screen.dart';
 import 'roulette_screen.dart';
 import 'sticker_widgets.dart';
@@ -584,6 +585,12 @@ class _HomeScreenState extends State<HomeScreen>
                         const Center(child: _Logo()),
                         const SizedBox(height: 6),
                         EraPillPair(frac: homeFrac),
+                        // Toujours à portée, jamais insistante : la
+                        // pastille ne se dessine pas chez un acheteur.
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: OffreSansPubChip(store: widget.store),
+                        ),
                         const SizedBox(height: 15),
                         _dailyPanel(dailyUsed, dailyDone, now),
                         const SizedBox(height: 15),

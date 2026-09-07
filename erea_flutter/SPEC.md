@@ -168,6 +168,21 @@ testée). Un achat unique non consommable, `com.teiki.erea.sanspub`
 (3,99 €), retire la publicité et ne débloque rien d'autre
 (`lib/core/achat.dart`).
 
+**Où l'achat se propose (1.0.2).** Trois endroits, une seule source de
+vérité (`lib/ui/offre_sans_pub.dart`) :
+- **après la pub**, une pub sur trois en commençant par la première, via
+  une feuille « Cette pub vous a gêné ? » ; un « Non merci » la fait taire
+  jusqu'au lendemain (règle dans `lib/core/offre.dart`, testée) ;
+- une **pastille** sur l'écran de fin, sous le bilan ;
+- la même pastille sur l'**accueil**, sous le logo.
+Les réglages gardent la ligne d'achat et « Restaurer mes achats » — ce
+dernier est exigé par Apple. Rien de tout cela ne s'affiche chez un
+acheteur, ni quand la boutique ne répond pas.
+
+**Retirés des réglages en 1.0.2** : « Revoir la présentation » et « Tout
+remettre à zéro », deux outils de mise au point sans valeur pour un
+joueur — le second effaçait toute la progression en deux touches.
+
 L'idée antérieure de vendre les packs à l'unité est **écartée** : elle
 contredirait la promesse « rien ne se débloque, il n'y a rien à
 débloquer » affichée dans la description de l'achat.
