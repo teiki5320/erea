@@ -31,7 +31,7 @@ la remplace est partie le 7 septembre.
 | État | **1.0.1 en attente de vérification depuis le 7 septembre 2026** |
 | Console | <https://appstoreconnect.apple.com> |
 | Version publiée | `1.0.0`, build `90`, en ligne depuis le 3 septembre 2026 à 23 h 57 |
-| Version soumise | `1.0.1`, build `143`, envoyée le 7 septembre 2026 — publication manuelle |
+| Version soumise | `1.0.1`, build `143`, envoyée le 7 septembre 2026 — publication **automatique** dès approbation |
 | Achat intégré | `com.teiki.erea.sanspub` — dans le code, **absent des deux consoles** |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
@@ -109,7 +109,7 @@ la liste.
    description : le mode Duel, les « 1700 événements » et l'achat unique
    y figurent encore.
 4. **iOS** — attendre l'App Review de la 1.0.1, envoyée le 7 septembre.
-   Publication réglée sur *manuelle* : il faudra cliquer.
+   Publication automatique : elle sort dès qu'Apple approuve.
 5. **Les deux** — se déclarer **trader** au titre du DSA, après avoir
    nettoyé le complément d'adresse du compte, qui porte encore le nom
    d'une SARL sans rapport et deviendrait public.
