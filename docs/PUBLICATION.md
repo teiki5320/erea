@@ -1,6 +1,6 @@
 # PUBLICATION — état des boutiques
 
-> Généré le 4 septembre 2026 d'après les consoles App Store Connect et
+> Généré le 7 septembre 2026 d'après les consoles App Store Connect et
 > Google Play. Une ligne par système d'exploitation, dans un format
 > réutilisable d'une application à l'autre. Pour mettre à jour :
 > relancer ce même prompt.
@@ -13,14 +13,14 @@
 - **iOS** : **1.0.0 publiée le 3 septembre 2026** · 1.0.1 en attente de vérification depuis le 7 septembre
 - **Android** : test fermé envoyé pour examen le 3 septembre 2026
 - **Chemin critique** : 12 testeurs pendant 14 jours consécutifs, imposés par le compte Play personnel
-- **Version commune** : `1.0.0` (`pubspec.yaml`) — versionCode Android `1`, build iOS du 3 septembre
+- **Version commune** : `1.0.1+2` (`pubspec.yaml`) — versionCode Android `2`, build iOS `143`
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Monétisation** : interstitielle AdMob, consentement RGPD publié le 3 septembre 2026
 
 Les deux boutiques n'avancent pas à la même vitesse et ne bloquent pas
 pour les mêmes raisons. Android attend Google et ne demande plus rien.
-iOS attend une décision : une version approuvée mais dépassée occupe la
-place de celle qui la vaut.
+iOS attend l'App Review : la version en boutique date d'août, celle qui
+la remplace est partie le 7 septembre.
 
 ---
 
@@ -35,11 +35,11 @@ place de celle qui la vaut.
 | Achat intégré | `com.teiki.erea.sanspub` — dans le code, **absent des deux consoles** |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
-**Pourquoi le build 90 ne convient plus.** Cinq commits de code lui sont
-postérieurs : les 1831 faits de la base, le mode Facile qui cessait
+**Pourquoi le build 90 ne convenait plus.** Cinq commits de code lui
+sont postérieurs : les 1831 faits de la base, le mode Facile qui cessait
 d'être un mode « XXᵉ siècle », VoiceOver sur la frise, le découpage de
-l'écran de jeu et la pondération d'époque. Le build du 3 septembre les
-porte tous, plus les cinquante identifiants `SKAdNetworkItems`.
+l'écran de jeu et la pondération d'époque. Le build 143 les porte tous,
+plus les cinquante identifiants `SKAdNetworkItems`.
 
 **Ce qui s'est passé.** La 1.0.0 a été publiée le 3 septembre au soir,
 avec le build 90 d'août. Une version approuvée ne se supprimant pas, la
@@ -51,14 +51,21 @@ affiche des interstitielles ; elle annonçait aussi un **mode Duel qui
 n'existe pas** dans le code. Les deux sont des motifs de refus classiques.
 Corrigé avant l'envoi.
 
-**Avant toute soumission.** La section *Confidentialité de l'app* doit
-déclarer les collectes du SDK de Google : le nouveau build contient la
-publicité, active depuis le 17 août 2026.
+**Confidentialité.** Refaite et publiée le 7 septembre : six types
+déclarés — identifiant de l'appareil, interaction avec le produit,
+données publicitaires, emplacement approximatif, données sur les pannes,
+données de performance. La page produit affiche désormais « Données
+utilisées pour vous suivre ». Le badge « Aucune donnée collectée » est
+perdu ; c'est le prix de la publicité.
 
-**En instance.** Une demande de changement de nom de développeur a été
-déposée le 3 septembre 2026 — un compte individuel affiche le nom légal
-du titulaire, et seule une conversion en organisation le change. On
-ignore si une telle demande gèle les soumissions.
+**Nom du compte.** La demande déposée le 3 septembre a abouti : le compte
+s'affiche **TOA CORP**. ⚠️ Ce n'est qu'un nom d'affichage — le compte
+reste **individuel**, ce qui compte pour le DSA (voir plus bas).
+
+**DSA.** Toujours déclaré **non-trader**, ce qui ne tient plus : Apple
+range parmi les traders qui tire un revenu de son app, publicité
+comprise. Reporté par choix le 7 septembre, à traiter avant de laisser
+courir.
 
 ---
 
@@ -98,18 +105,24 @@ la liste.
    douze adresses, et que ce sont les comptes Google des téléphones.
 2. **Android** — faire accepter les douze liens d'inscription. Le
    décompte des quatorze jours part de là.
-3. **iOS** — chercher un lien de suppression au bas de la page de la
-   version 1.0.0 ; sinon la publier et préparer une `1.0.1`.
-4. **iOS** — mettre *Confidentialité de l'app* en accord avec la
-   publicité embarquée.
-5. **iOS** — soumettre en sélectionnant le build du 3 septembre.
-6. **Les deux** — vérifier sur appareil que le formulaire de consentement
+3. **Android** — reporter dans la Play Console les corrections de
+   description : le mode Duel, les « 1700 événements » et l'achat unique
+   y figurent encore.
+4. **iOS** — attendre l'App Review de la 1.0.1, envoyée le 7 septembre.
+   Publication réglée sur *manuelle* : il faudra cliquer.
+5. **Les deux** — se déclarer **trader** au titre du DSA, après avoir
+   nettoyé le complément d'adresse du compte, qui porte encore le nom
+   d'une SARL sans rapport et deviendrait public.
+6. **Les deux** — créer `com.teiki.erea.sanspub` dans les deux consoles.
+   Côté Apple, un premier achat intégré doit accompagner une version : ce
+   sera donc la 1.0.2 au plus tôt.
+7. **Les deux** — vérifier sur appareil que le formulaire de consentement
    s'affiche et que le journal ne dit plus
    `no form(s) configured for the input app ID`.
 
 ---
 
-## Ce qui a été réglé le 3 septembre 2026
+## Ce qui a été réglé les 3 et 7 septembre 2026
 
 - **Consentement RGPD** : aucun message n'était configuré dans AdMob, et
   le journal du Pixel le disait mot pour mot. Aucune annonce n'aurait été
