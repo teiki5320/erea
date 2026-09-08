@@ -1,28 +1,25 @@
 # Remplir la fiche App Store — Erea
 
-> **État au 3 septembre 2026.** La **1.0.0 est approuvée depuis le
-> 21 août** avec le build **90**, et n'a jamais été publiée : elle est
-> « Prête pour la distribution », tous ses champs verrouillés, sans autre
-> action offerte que *Publier*. Elle est dépassée — cinq commits de code
-> lui sont postérieurs. Le build du **3 septembre** porte, lui, les 1831
-> faits, le mode Facile corrigé, VoiceOver, le découpage de l'écran de jeu
-> et les cinquante identifiants SKAdNetwork.
+> **État au 8 septembre 2026.** La **1.0.0 est en ligne depuis le
+> 3 septembre à 23 h 57** avec le build **90** d'août. La **1.0.2**
+> (build **150**) et l'achat intégré **« Erea sans publicité »** sont
+> partis ensemble en vérification le 7 septembre au soir, publication
+> automatique. Une 1.0.1 (build 143) envoyée le matin sans l'achat a été
+> retirée : Apple exige qu'un premier achat intégré parte avec une
+> version.
 >
-> Côté AdMob, les deux messages sont publiés le 3 septembre : consentement
-> RGPD (les deux plateformes) et explication IDFA (iOS seul). Le code
-> n'avait besoin d'aucune modification : `loadAndShowConsentFormIfRequired`
-> présente les deux.
+> Confidentialité de l'app refaite le 7 septembre (six types, la pub
+> oblige). Description et mots-clés corrigés : plus de Duel, plus de
+> « sans publicité ». Côté AdMob, consentement RGPD et message IDFA
+> publiés le 3 septembre, sans code : `loadAndShowConsentFormIfRequired`
+> présente les deux. Cinquante identifiants SKAdNetwork dans `Info.plist`.
 >
-> **Ce qui reste, dans l'ordre.** Vérifier au bas de la page de version si
-> la 1.0.0 est supprimable — sinon la publier et enchaîner aussitôt sur une
-> **1.0.1**, personne ne l'ayant jamais vue. Mettre **Confidentialité de
-> l'app** à jour : le nouveau build contient la publicité. Puis soumettre
-> en sélectionnant le build du 3 septembre.
+> Le compte s'affiche **TOA CORP** (nom d'affichage seulement, compte
+> individuel, DSA non-trader — à passer trader après nettoyage du
+> complément d'adresse). Le nom de l'app n'occupe que 4 des 30
+> caractères : à trancher pour la version suivante.
 >
-> Une **demande de changement de nom de développeur** a été déposée le
-> 3 septembre — le compte étant individuel, Apple y affiche le nom légal.
-> On ignore si une telle demande gèle les soumissions ; on le saura en
-> tentant la suivante.
+> L'état des deux boutiques côte à côte est dans `docs/PUBLICATION.md`.
 
 > Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
 > mis à jour le 17 août 2026 pour la version 1.1.

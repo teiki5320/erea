@@ -23,12 +23,13 @@
 | Fiche Play Store française, visuels compris | ✅ 3 septembre 2026 |
 | Déclaration « identifiant publicitaire » | ✅ 3 septembre 2026 — oui, trois finalités : publicité, analyse, prévention des fraudes |
 | Message de consentement RGPD (AdMob) | ✅ publié le 3 septembre 2026 — la console était vide, aucune annonce n'aurait été servie en Europe |
-| Release en test fermé | ✅ bundle `1 (1.0.0)` téléversé, 14 modifications envoyées pour examen le 3 septembre 2026 |
+| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` en examen depuis le 8 septembre |
 | Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
-| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : la liste « Perso » existe, le décompte ne démarre qu'au douzième inscrit** |
+| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : testeurs = groupe Google `testers-community@googlegroups.com` depuis le 8 septembre ; le décompte ne démarre qu'au douzième qui installe** |
 | Appareil Android physique (exigé par la validation) | ✅ Pixel 8a commandé le 20 août 2026 |
 | Trois questionnaires | ✅ remplis le 3 septembre 2026 — public cible 13 ans et plus |
-| Phrase « votre enfant de 8 ans » à retirer de la description Play | ⬜ *(voir §5)* |
+| Description Play corrigée dans la console (Duel, 1800, enfant de 8 ans) | ✅ 8 septembre 2026, en examen avec la release 1.0.2 |
+| Achat intégré `com.teiki.erea.sanspub` | ✅ créé et **actif** le 8 septembre 2026 — 3,99 €, 173 pays, profil de paiement créé le même jour |
 | Classements Play Games | ⬜ *(facultatif, voir §7)* |
 
 ---
@@ -217,16 +218,16 @@ de justesse côté App Store.** La description annonçait un **mode Duel qui
 n'existe pas** — plus une ligne de code ne le lance, seulement un
 commentaire qui constate son absence dans `lib/game/badges.dart`. Elle
 annonçait **1700 événements** au lieu de 1831, et **un achat unique qui
-retire la publicité**, alors que `com.teiki.erea.sanspub` n'existe dans
-aucune des deux consoles. Annoncer une fonctionnalité absente est le
+retire la publicité**, alors que `com.teiki.erea.sanspub` n'existait
+encore dans aucune des deux consoles (créé le 8 septembre). Annoncer une fonctionnalité absente est le
 motif de refus le plus courant après les métadonnées trompeuses.
 
 La phrase « votre enfant de 8 ans » est retirée par la même occasion : le
 public cible déclaré est **13 ans et plus** (§5), et c'est cette fiche que
 Google lit pour vérifier la cohérence.
 
-⚠️ **Ces corrections ne sont pas reportées dans la Play Console.** La
-fiche envoyée à Google le 3 septembre porte encore les trois erreurs.
+Corrections reportées dans la Play Console le 8 septembre 2026, envoyées
+pour examen avec la release 1.0.2.
 
 ## 4. Les visuels
 
