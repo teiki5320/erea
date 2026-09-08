@@ -86,7 +86,7 @@ comprise. À traiter après nettoyage du complément d'adresse du compte.
 | Version publiée | aucune |
 | Canal en cours | test fermé « Alpha » — release `1 (1.0.0)` **approuvée** (envoyée le 3 septembre), release `3 (1.0.2)` en examen |
 | Envoyé pour examen | 8 septembre 2026 — trois modifications : la release 1.0.2, les testeurs, la description corrigée |
-| Testeurs | groupe Google `testers-community@googlegroups.com` (communauté de testeurs mutuels), choisi le 8 septembre |
+| Testeurs | groupe Google `testers-community@googlegroups.com` — service **Testers Community**, plan Starter 14 €, 15 testeurs, souscrit le 8 septembre à 22 h ; l'ajout du groupe à la piste est dans l'examen en cours |
 | Achat intégré | `com.teiki.erea.sanspub`, option d'achat `sans-pub`, **actif** depuis le 8 septembre — 3,99 € en France, 173 pays, profil de paiement créé le même jour |
 | Distribution | App Bundle signé localement, certificat `CN=Toa` valable jusqu'en 2053 |
 | Taille | 56 Mo de bundle, **13,6 Mo** à l'installation après découpage par Play |
@@ -117,7 +117,10 @@ lien reçu et installer l'app — pas figurer sur la liste.
 
 1. **Android** — attendre l'examen de la release 1.0.2, puis vérifier
    que douze membres du groupe de testeurs ont bien installé l'app. Le
-   décompte des quatorze jours part de là.
+   décompte des quatorze jours part de là. Pendant ces quatorze jours,
+   **publier deux ou trois mises à jour** sur la piste (1.0.3, 1.0.4…) :
+   le formulaire d'accès à la production demande ce qui a changé grâce
+   aux retours des testeurs, et une piste figée se fait refuser.
 2. **iOS** — vérifier dans les 24 heures que l'App Store affiche bien la
    1.0.2 (l'API `itunes.apple.com/lookup?id=6794918301` répond avec le
    numéro de version), puis que l'achat apparaît dans le jeu installé
