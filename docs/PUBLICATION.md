@@ -13,7 +13,7 @@
 - **iOS** : **1.0.2 + achat intégré approuvés le 8 septembre 2026** à 12 h 18, publication automatique en cours (jusqu'à 24 h pour apparaître)
 - **Android** : test fermé actif depuis le 3 septembre · release 1.0.2 en cours d'examen depuis le 8 septembre
 - **Chemin critique** : 12 testeurs pendant 14 jours consécutifs, imposés par le compte Play personnel
-- **Version commune** : `1.0.2+3` (`pubspec.yaml`) — build iOS `150`, bundle Android `3 (1.0.2)`
+- **Version commune** : `1.0.3+4` (`pubspec.yaml`) depuis le 8 septembre — la 1.0.2 (build iOS `150`, bundle Android `3 (1.0.2)`) est close côté Apple, tout nouveau build ira dans la 1.0.3
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — soumis avec la 1.0.2 sur iOS, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
