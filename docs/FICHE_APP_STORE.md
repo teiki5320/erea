@@ -1,10 +1,11 @@
 # Remplir la fiche App Store — Erea
 
-> **État au 8 septembre 2026.** La **1.0.0 est en ligne depuis le
-> 3 septembre à 23 h 57** avec le build **90** d'août. La **1.0.2**
-> (build **150**) et l'achat intégré **« Erea sans publicité »** sont
-> partis ensemble en vérification le 7 septembre au soir, publication
-> automatique. Une 1.0.1 (build 143) envoyée le matin sans l'achat a été
+> **État au 8 septembre 2026, midi.** La **1.0.2** (build **150**) et
+> l'achat intégré **« Erea sans publicité »** sont **approuvés**, partis
+> ensemble en vérification le 7 septembre au soir et acceptés le
+> lendemain à 12 h 18 — « Prête à être distribuée », publication
+> automatique, jusqu'à 24 h avant d'apparaître à la place de la 1.0.0 du
+> 3 septembre. Une 1.0.1 (build 143) envoyée sans l'achat avait été
 > retirée : Apple exige qu'un premier achat intégré parte avec une
 > version.
 >

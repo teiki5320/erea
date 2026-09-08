@@ -10,7 +10,7 @@
 
 ## Vue d'ensemble
 
-- **iOS** : **1.0.0 publiée le 3 septembre 2026** · 1.0.2 + achat intégré en attente de vérification depuis le 7 septembre
+- **iOS** : **1.0.2 + achat intégré approuvés le 8 septembre 2026** à 12 h 18, publication automatique en cours (jusqu'à 24 h pour apparaître)
 - **Android** : test fermé actif depuis le 3 septembre · release 1.0.2 en cours d'examen depuis le 8 septembre
 - **Chemin critique** : 12 testeurs pendant 14 jours consécutifs, imposés par le compte Play personnel
 - **Version commune** : `1.0.2+3` (`pubspec.yaml`) — build iOS `150`, bundle Android `3 (1.0.2)`
@@ -18,11 +18,10 @@
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — soumis avec la 1.0.2 sur iOS, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
 
-Les deux boutiques attendent désormais la même chose : un examen. Rien
-n'est en retard côté développeur. La version en ligne sur l'App Store
-date d'août ; celle qui la remplace, avec l'offre « sans pub », est
-partie le 7 septembre. Android n'a encore rien publié et ne publiera
-rien avant la fin des quatorze jours de test.
+Apple a tranché en une nuit : la 1.0.2 et l'achat intégré sont
+approuvés ensemble le 8 septembre à midi, et remplacent la version
+d'août dans les 24 heures. Android attend encore l'examen de sa release
+1.0.2, puis les quatorze jours de test que rien ne raccourcit.
 
 ---
 
@@ -30,11 +29,11 @@ rien avant la fin des quatorze jours de test.
 
 | | |
 |---|---|
-| État | **1.0.2 en attente de vérification depuis le 7 septembre 2026** |
+| État | **1.0.2 et achat intégré approuvés le 8 septembre 2026** — « Prête à être distribuée », publication automatique |
 | Console | <https://appstoreconnect.apple.com> |
-| Version publiée | `1.0.0`, build `90`, en ligne depuis le 3 septembre 2026 à 23 h 57 |
-| Version soumise | `1.0.2`, build `150`, envoyée le 7 septembre 2026 vers 23 h 30 avec l'achat intégré — publication **automatique** dès approbation |
-| Achat intégré | `com.teiki.erea.sanspub`, « Prêt à être envoyé » → joint à la soumission de la 1.0.2, vignette 1024 × 1024 et capture iPad 2732 × 2048 fournies |
+| Version publiée | `1.0.2`, build `150`, approuvée le 8 septembre 2026 à 12 h 18 — remplace la `1.0.0` (build `90`) du 3 septembre ; l'API iTunes affichait encore 1.0.0 à 12 h 30 |
+| Version soumise | aucune — la prochaine portera le nom long de l'app |
+| Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable, **approuvé** le 8 septembre avec la 1.0.2 |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
 **Pourquoi le build 90 ne convenait plus.** Cinq commits de code lui
@@ -119,9 +118,10 @@ lien reçu et installer l'app — pas figurer sur la liste.
 1. **Android** — attendre l'examen de la release 1.0.2, puis vérifier
    que douze membres du groupe de testeurs ont bien installé l'app. Le
    décompte des quatorze jours part de là.
-2. **iOS** — attendre l'App Review de la 1.0.2 et de l'achat intégré,
-   envoyés le 7 septembre. Publication automatique : elle sort dès
-   qu'Apple approuve.
+2. **iOS** — vérifier dans les 24 heures que l'App Store affiche bien la
+   1.0.2 (l'API `itunes.apple.com/lookup?id=6794918301` répond avec le
+   numéro de version), puis que l'achat apparaît dans le jeu installé
+   depuis la boutique, à 3,99 €.
 3. **Les deux** — vérifier sur le Pixel que le formulaire de consentement
    s'affiche et que le journal ne dit plus
    `no form(s) configured for the input app ID`.
@@ -152,4 +152,5 @@ lien reçu et installer l'app — pas figurer sur la liste.
   pastille sur l'écran de fin et à l'accueil. Les réglages ne contiennent
   plus « Revoir la présentation » ni « Tout remettre à zéro ».
 - **Achat intégré** créé et actif dans les deux consoles, même
-  identifiant, même prix.
+  identifiant, même prix. Approuvé par Apple le 8 septembre, sept jours
+  après la première soumission ratée sans lui.
