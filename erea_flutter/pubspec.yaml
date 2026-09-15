@@ -22,6 +22,7 @@ dependencies:
   share_plus: ^10.1.4 # feuille de partage iOS pour la grille du défi
   shared_preferences: ^2.2.3 # persistance locale (XP, records, défi du jour)
   timezone: ^0.11.1
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

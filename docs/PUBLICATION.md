@@ -13,7 +13,7 @@
 - **iOS** : **1.0.2 en ligne depuis le 8 septembre 2026 à 12 h 19**, achat intégré compris — la version d'août est remplacée
 - **Android** : release 1.0.2 **approuvée le 8 septembre à 9 h 38**, disponible pour les testeurs · **12 testeurs inscrits le soir même**, les 14 jours courent jusqu'au **22 septembre**
 - **Chemin critique** : 14 jours avec 12 testeurs inscrits sans interruption — démarré le 8 septembre, demande d'accès à la production possible le 22 septembre
-- **Version commune** : `1.0.3+4` (`pubspec.yaml`) depuis le 8 septembre — la 1.0.2 (build iOS `150`, bundle Android `3 (1.0.2)`) est close côté Apple, tout nouveau build ira dans la 1.0.3
+- **Version commune** : `1.0.3+4` — bundle Android `4 (1.0.3)` construit le 15 septembre (démo animée du geste dans la présentation, « Donner mon avis » dans les réglages), à déposer sur la piste Alpha ; côté iOS, la 1.0.3 se construit sur Xcode Cloud
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — soumis avec la 1.0.2 sur iOS, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
@@ -127,8 +127,10 @@ inscrit le 8 septembre au soir ; le compteur court jusqu'au
    deux ou trois mises à jour** sur la piste (1.0.3 vers le 13, 1.0.4
    vers le 18) : le formulaire d'accès à la production demande ce qui a
    changé grâce aux retours des testeurs, et une piste figée se fait
-   refuser. Le 22, « Demander un accès en production » et répondre aux
-   questions (aperçu dans le tableau de bord).
+   refuser. La 1.0.3 répond au rapport du 15 septembre : démo animée
+   du geste (« tutoriel dynamique »), captures Play légendées, ligne
+   « Donner mon avis ». Le 22, « Demander un accès en production » et
+   répondre aux questions (aperçu dans le tableau de bord).
 2. **iOS** — vérifier dans les 24 heures que l'App Store affiche bien la
    1.0.2 (l'API `itunes.apple.com/lookup?id=6794918301` répond avec le
    numéro de version), puis que l'achat apparaît dans le jeu installé

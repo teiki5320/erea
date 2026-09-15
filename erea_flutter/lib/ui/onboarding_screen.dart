@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/region.dart' as region;
 import '../core/sons.dart';
 import '../data/store.dart';
+import 'onboarding_demo.dart';
 import 'sticker_widgets.dart';
 
 /// Parcours de premier lancement, sur le modèle de Kultiva : des pages qui
@@ -73,7 +74,9 @@ String drapeauIso(String? iso) => iso == null
         iso.toUpperCase().codeUnits.map((c) => 0x1F1A5 + c));
 
 class _Page {
-  final String image;
+  /// `null` : la page n'a pas d'image fixe mais la démonstration animée
+  /// du geste ([DemoFrise]).
+  final String? image;
   final Color fond;
   final String titre;
   final String texte;
@@ -89,7 +92,7 @@ const List<_Page> _pages = [
   _Page('$_dossier/bienvenue.png', Color(0xFFFFE9C7), 'Bienvenue sur Erea',
       'Un événement, une frise du temps : à toi de deviner l’année. '
           'Plus tu vises juste, plus tu marques de points.'),
-  _Page('$_dossier/geste.png', Color(0xFFDDF3EC), 'Fais glisser la frise',
+  _Page(null, Color(0xFFDDF3EC), 'Fais glisser la frise',
       'De 3000 av. J.-C. à demain : approche-toi au doigt, ajuste à '
           'l’année près avec − et +, puis valide. La frise révèle la '
           'vraie date.'),
@@ -205,7 +208,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 190,
+              // La démo du geste est une frise : elle a besoin de largeur.
+              width: p.image == null ? 300 : 190,
               height: 190,
               decoration: BoxDecoration(
                 color: p.fond,
@@ -218,7 +222,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               // Une marge intérieure généreuse : l'illustration ne doit
               // pas venir toucher le trait d'encre du cadre.
               padding: const EdgeInsets.all(18),
-              child: Image.asset(p.image, fit: BoxFit.contain),
+              clipBehavior: Clip.antiAlias,
+              child: p.image == null
+                  ? const DemoFrise()
+                  : Image.asset(p.image!, fit: BoxFit.contain),
             ),
             const SizedBox(height: 30),
             Text(

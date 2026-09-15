@@ -183,6 +183,16 @@ acheteur, ni quand la boutique ne répond pas.
 remettre à zéro », deux outils de mise au point sans valeur pour un
 joueur — le second effaçait toute la progression en deux touches.
 
+**Ajoutés en 1.0.3.** La page « Fais glisser la frise » de la
+présentation n'est plus une image fixe : `lib/ui/onboarding_demo.dart`
+dessine en boucle une main qui tire la frise de 1900 à 1789, la vraie
+date qui se plante en vert et les points qui surgissent — aucune vidéo,
+aucun paquet natif. Sous « Réduire les animations » (accessibilité), la
+démo se fige sur son image finale. Les réglages gagnent une ligne
+« Donner mon avis » qui ouvre l'app de courrier sur l'adresse publique
+(`url_launcher`, schéma `mailto` déclaré dans les deux manifestes) : le
+seul canal de retour du jeu, sans serveur ni formulaire.
+
 L'idée antérieure de vendre les packs à l'unité est **écartée** : elle
 contredirait la promesse « rien ne se débloque, il n'y a rien à
 débloquer » affichée dans la description de l'achat.

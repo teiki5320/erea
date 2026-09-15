@@ -36,6 +36,10 @@
 	<!-- Texte de la demande de suivi publicitaire (App Tracking
 	     Transparency). Sans lui, iOS refuse d'afficher la demande, et la
 	     publicité reste non personnalisée — donc bien moins rémunératrice. -->
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>Pour vous proposer des publicités adaptées plutôt que des publicités au hasard. Refuser ne change rien au jeu.</string>
 	<!-- SKAdNetwork : les réseaux autorisés à mesurer une installation

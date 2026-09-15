@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart' hide Badge;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/achat.dart';
 import '../core/classement.dart';
@@ -45,6 +46,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         children: [
           _carteSansPub(),
           _cartePublicite(),
+          _carteAvis(),
           _carte([
             SwitchListTile(
               value: widget.store.hapticsOn,
@@ -215,6 +217,43 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         ),
       ]),
     );
+  }
+
+  /// Le seul canal de retour du jeu : un courrier à l'adresse publique.
+  /// Pas de formulaire maison, pas de serveur — le jeu n'en a pas, et
+  /// une boîte mail suffit à un joueur qui a quelque chose à dire.
+  Widget _carteAvis() => Padding(
+        padding: const EdgeInsets.only(top: 12),
+        child: _carte([
+          ListTile(
+            title: const Text('Donner mon avis'),
+            subtitle:
+                const Text('Une idée, un bug, une date à corriger ? Écris-moi.'),
+            trailing: const Icon(Icons.mail_outline, color: inkSoftColor),
+            onTap: _ecrire,
+          ),
+        ]),
+      );
+
+  static const String _adresseAvis = 'erea.toa@gmail.com';
+
+  Future<void> _ecrire() async {
+    // `query` à la main : `queryParameters` encoderait les espaces en
+    // « + », que les apps de courrier affichent tels quels.
+    final uri = Uri(
+      scheme: 'mailto',
+      path: _adresseAvis,
+      query: 'subject=${Uri.encodeComponent('Mon avis sur Erea')}',
+    );
+    var ouvert = false;
+    try {
+      ouvert = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on Exception {
+      ouvert = false;
+    }
+    if (!ouvert && mounted) {
+      _dire('Aucune app de courrier trouvée. Écris à $_adresseAvis.');
+    }
   }
 
   Future<void> _acheter() async {
