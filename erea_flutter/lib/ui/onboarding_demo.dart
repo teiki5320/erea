@@ -101,7 +101,10 @@ class _DemoPainter extends CustomPainter {
     final alpha = t < _Phase.fondu
         ? 1.0
         : 1 - ((t - _Phase.fondu) / (1 - _Phase.fondu)).clamp(0.0, 1.0);
-    canvas.saveLayer(Offset.zero & size, Paint()..color = Colors.white.withValues(alpha: alpha));
+    // Le calque déborde du cadre, comme la bande qu'il contient (voir
+    // _peindreFrise) : sinon il la rognerait au bord de la peinture.
+    canvas.saveLayer((Offset.zero & size).inflate(18),
+        Paint()..color = Colors.white.withValues(alpha: alpha));
 
     _peindreFrise(canvas, w, h, cx, ligneY);
     _peindreAnnee(canvas, cx, h);
@@ -115,11 +118,15 @@ class _DemoPainter extends CustomPainter {
   void _peindreFrise(Canvas canvas, double w, double h, double cx, double ligneY) {
     // Bande de la frise : deux teintes, la séparation d'époque glisse
     // avec les années pour que l'œil sente le mouvement.
-    final bande = Rect.fromLTWH(0, ligneY - 34, w, 68);
+    // La bande déborde du cadre de peinture : le conteneur de la page la
+    // rogne à son bord arrondi, et la frise semble traverser la vignette
+    // au lieu de flotter au milieu.
+    const deb = 18.0;
+    final bande = Rect.fromLTWH(-deb, ligneY - 34, w + 2 * deb, 68);
     final frontiere = cx + (1800 - _annee) * _pxParAn;
     canvas.drawRect(bande, Paint()..color = const Color(0xFFDDF3EC));
     canvas.drawRect(
-      Rect.fromLTRB(frontiere.clamp(0, w), bande.top, w, bande.bottom),
+      Rect.fromLTRB(frontiere.clamp(-deb, w + deb), bande.top, w + deb, bande.bottom),
       Paint()..color = const Color(0xFFFFE1B8),
     );
 
@@ -127,11 +134,11 @@ class _DemoPainter extends CustomPainter {
       ..color = inkColor
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
-    canvas.drawLine(Offset(0, ligneY), Offset(w, ligneY), trait);
+    canvas.drawLine(Offset(-deb, ligneY), Offset(w + deb, ligneY), trait);
 
     // Crans tous les 10 ans, grands tous les 50 avec leur étiquette.
-    final premiere = (_annee - w / _pxParAn / 2).floor() ~/ 10 * 10;
-    final derniere = (_annee + w / _pxParAn / 2).ceil();
+    final premiere = (_annee - (w / 2 + deb) / _pxParAn).floor() ~/ 10 * 10;
+    final derniere = (_annee + (w / 2 + deb) / _pxParAn).ceil();
     for (var a = premiere; a <= derniere; a += 10) {
       final x = cx + (a - _annee) * _pxParAn;
       final grand = a % 50 == 0;
@@ -201,10 +208,23 @@ class _DemoPainter extends CustomPainter {
         : ((t - _Phase.glisseFin) / (_Phase.mainPartie - _Phase.glisseFin))
             .clamp(0.0, 1.0);
     final x = w * 0.72 - w * 0.44 * _glisse;
-    final y = ligneY + 6 + 26 * (1 - arrivee) + 26 * depart;
+    final y = ligneY + 4 + 14 * (1 - arrivee) + 14 * depart;
     final opacite = arrivee * (1 - depart);
-    _texte(canvas, '👆', Offset(x, y), 34, Colors.black.withValues(alpha: opacite),
-        FontWeight.w400, null, centreVertical: true);
+    // Un doigt dessiné, pas un émoji : le rendu des émojis change d'un
+    // système à l'autre, et la présentation n'en utilise nulle part.
+    // Le disque translucide est le « point de contact » qu'on voit dans
+    // toutes les démos tactiles ; le trait blanc le rend lisible sur la
+    // bande claire comme sur la bande orange.
+    final centre = Offset(x, y);
+    canvas.drawCircle(
+        centre, 22, Paint()..color = inkColor.withValues(alpha: 0.28 * opacite));
+    canvas.drawCircle(
+        centre, 22,
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.9 * opacite)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3);
+    canvas.drawCircle(centre, 7, Paint()..color = inkColor.withValues(alpha: opacite));
   }
 
   void _texte(Canvas canvas, String s, Offset centre, double taille, Color couleur,
