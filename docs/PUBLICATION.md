@@ -13,7 +13,7 @@
 - **iOS** : **1.0.2 en ligne depuis le 8 septembre 2026 à 12 h 19**, achat intégré compris — la version d'août est remplacée
 - **Android** : release 1.0.2 **approuvée le 8 septembre à 9 h 38**, disponible pour les testeurs · **12 testeurs inscrits le soir même**, les 14 jours courent jusqu'au **22 septembre**
 - **Chemin critique** : 14 jours avec 12 testeurs inscrits sans interruption — démarré le 8 septembre, demande d'accès à la production possible le 22 septembre
-- **Version commune** : `1.0.3+4` — bundle Android `4 (1.0.3)` construit le 15 septembre (démo animée du geste dans la présentation, « Donner mon avis » dans les réglages), à déposer sur la piste Alpha ; côté iOS, la 1.0.3 se construit sur Xcode Cloud
+- **Version commune** : `1.0.3+4` — release Android `4 (1.0.3)` et captures Play légendées **envoyées pour examen le 16 septembre à 10 h 14** (envoi 4) ; côté iOS, la 1.0.3 se construit sur Xcode Cloud (build 153, premier avec `url_launcher`)
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — soumis avec la 1.0.2 sur iOS, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
@@ -86,7 +86,7 @@ comprise. À traiter après nettoyage du complément d'adresse du compte.
 | État | **Test fermé en cours, 14 jours jusqu'au 22 septembre 2026** |
 | Console | <https://play.google.com/console> |
 | Version publiée | aucune |
-| Canal en cours | test fermé « Alpha » — release `3 (1.0.2)` **disponible pour les testeurs depuis le 8 septembre à 9 h 38**, déploiement complet ; le bundle `1 (1.0.0)` est inactif |
+| Canal en cours | test fermé « Alpha » — release `3 (1.0.2)` servie depuis le 8 septembre ; release `4 (1.0.3)` en examen depuis le 16 septembre (démo animée du geste, « Donner mon avis ») |
 | Examen | envoyé le 8 septembre 2026 à 9 h 07 (release 1.0.2, testeurs, description corrigée), approuvé à 9 h 38 |
 | Testeurs | groupe Google `testers-community@googlegroups.com` — service **Testers Community**, plan Starter 14 €, 15 testeurs, souscrit le 8 septembre à 22 h ; **« 12 testeurs inscrits pour 1 jour » le 10 septembre**, compteur Google |
 | Rapports | reçus le 15 septembre : rapport de test (aucun plantage, aucun bug ; trois « pistes » génériques : tutoriel dynamique, captures Play légendées, langues) et questionnaire d'accès à la production pré-rempli, à réécrire avec ce qui a réellement changé |
