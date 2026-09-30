@@ -106,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _chargerRangs() async {
+    if (!Classement.disponible) return;
     // En parallèle : trois allers-retours Game Center, on n'attend pas
     // qu'ils s'enchaînent.
     final resultats = await Future.wait([
@@ -662,8 +663,12 @@ class _HomeScreenState extends State<HomeScreen>
                                 // premier lancement, à la place d'un simple
                                 // total mort.
                                 _collectionBar(),
-                                const SizedBox(height: 16),
-                                _classementMondial(),
+                                // Sur Android, tant que Play Games n'a pas
+                                // ses classements, le bloc n'existe pas.
+                                if (Classement.disponible) ...[
+                                  const SizedBox(height: 16),
+                                  _classementMondial(),
+                                ],
                               ],
                             ),
                           ),

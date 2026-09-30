@@ -40,8 +40,7 @@ class Pub {
 
   static String get _bloc => Platform.isAndroid ? _blocAndroid : _blocIOS;
 
-  static bool _demarre = false;
-  static bool _consentementDemande = false;
+  static Future<bool>? _preparation;
   static InterstitialAd? _prete;
   static bool _chargeEnCours = false;
 
@@ -49,16 +48,16 @@ class Pub {
   ///
   /// Le formulaire européen (RGPD) est celui de Google : il ne s'affiche
   /// que là où il est exigé, et se souvient de la réponse. On ne charge
-  /// aucune publicité avant qu'il soit clos.
-  static Future<bool> _preparer() async {
-    if (_demarre) return true;
+  /// aucune publicité avant qu'il soit clos. Les appels concurrents (le
+  /// lancement de l'app, puis la première fin de partie) attendent la même
+  /// préparation : aucun ne peut initialiser le SDK pendant que le
+  /// formulaire est encore ouvert.
+  static Future<bool> _preparer() => _preparation ??= _demarrerSdk();
+
+  static Future<bool> _demarrerSdk() async {
     try {
-      if (!_consentementDemande) {
-        _consentementDemande = true;
-        await _recolterConsentement();
-      }
+      await _recolterConsentement();
       await MobileAds.instance.initialize();
-      _demarre = true;
       _precharger();
       return true;
     } catch (e) {
@@ -67,27 +66,42 @@ class Pub {
     }
   }
 
+  /// Rend la main quand le formulaire est refermé, ou quand Google a fait
+  /// savoir qu'il n'y en aurait pas : les deux fonctions du SDK répondent
+  /// par rappel, un simple `await` rendrait la main tout de suite.
   static Future<void> _recolterConsentement() async {
+    final clos = Completer<void>();
+    void clore() {
+      if (!clos.isCompleted) clos.complete();
+    }
+
     try {
       ConsentInformation.instance.requestConsentInfoUpdate(
         ConsentRequestParameters(),
         () async {
           try {
-            await ConsentForm.loadAndShowConsentFormIfRequired((erreur) {
+            await ConsentForm.loadAndShowConsentFormIfRequired((erreur) async {
               if (erreur != null) {
                 debugPrint('Formulaire de consentement : ${erreur.message}');
               }
+              await _releverOptions();
+              clore();
             });
           } catch (e) {
             debugPrint('Consentement non recueilli : $e');
+            clore();
           }
-          await _releverOptions();
         },
-        (erreur) => debugPrint('Consentement indisponible : ${erreur.message}'),
+        (erreur) {
+          debugPrint('Consentement indisponible : ${erreur.message}');
+          clore();
+        },
       );
     } catch (e) {
       debugPrint('Consentement impossible : $e');
+      clore();
     }
+    await clos.future;
   }
 
   /// Vrai quand Google réclame un point d'entrée permanent vers ses

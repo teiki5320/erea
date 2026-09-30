@@ -43,9 +43,31 @@ class Achat {
   /// plutôt que de proposer un bouton qui échouerait.
   static bool disponible = false;
 
+  /// Issue de l'achat ou de la restauration en cours, complétée par le
+  /// flux de la boutique : c'est lui, et non un délai, qui dit quand le
+  /// joueur a fini.
+  static Completer<bool>? _attente;
+
+  static Future<bool> _attendreIssue() {
+    final enCours = _attente;
+    if (enCours != null && !enCours.isCompleted) return enCours.future;
+    return (_attente = Completer<bool>()).future;
+  }
+
+  static void _conclure(bool paye) {
+    final enCours = _attente;
+    if (enCours != null && !enCours.isCompleted) enCours.complete(paye);
+  }
+
+  static bool get _dejaPaye => _store?.sansPub ?? false;
+
   /// À appeler une fois au lancement. Écoute la boutique et met le cache
-  /// local à jour — y compris pour un achat fait sur un autre appareil,
-  /// qu'iOS restitue spontanément.
+  /// local à jour. Chez un joueur que le cache croit non acheteur, la
+  /// restauration part aussitôt : après une réinstallation ou sur un
+  /// nouvel appareil, il retrouve son achat sans toucher « Restaurer »,
+  /// et la régie ne démarre pas pour rien. Elle est silencieuse sur les
+  /// deux boutiques (droits en cours sur iOS, achats du compte sur
+  /// Android) : aucune demande de mot de passe.
   static Future<void> demarrer(Store store) async {
     _store = store;
     try {
@@ -65,6 +87,7 @@ class Achat {
       }
       prix = produit.price;
       disponible = true;
+      if (!store.sansPub) await restaurer();
     } catch (e) {
       debugPrint('Boutique indisponible : $e');
     }
@@ -77,12 +100,16 @@ class Achat {
         case PurchaseStatus.restored:
           if (achat.productID == idSansPub) {
             await _store?.setSansPub(true);
+            _conclure(true);
           }
         case PurchaseStatus.error:
           debugPrint('Achat en erreur : ${achat.error}');
+          if (achat.productID == idSansPub) _conclure(false);
         case PurchaseStatus.canceled:
+        // En attente de l'accord d'un parent : le joueur n'a pas payé
+        // aujourd'hui ; l'achat arrivera par le flux s'il est accepté.
         case PurchaseStatus.pending:
-          break;
+          if (achat.productID == idSansPub) _conclure(false);
       }
       // À faire dans TOUS les cas terminés, sinon la boutique represente
       // la transaction à chaque lancement, indéfiniment.
@@ -96,32 +123,49 @@ class Achat {
     }
   }
 
-  /// Lance l'achat. Retourne false si la boutique n'a pas pu l'ouvrir —
-  /// le résultat, lui, arrive par le flux, pas par cette valeur.
-  static Future<bool> acheter() async {
-    if (!disponible) return false;
+  /// Lance l'achat et attend que le joueur en ait fini. Retourne null si
+  /// la boutique n'a pas pu s'ouvrir ; sinon true s'il a payé, false s'il
+  /// a renoncé, si le paiement a échoué ou s'il attend l'accord d'un
+  /// parent.
+  static Future<bool?> acheter() async {
+    if (!disponible) return null;
+    final issue = _attendreIssue();
     try {
       final reponse = await _boutique.queryProductDetails({idSansPub});
       final produit =
           reponse.productDetails.where((p) => p.id == idSansPub).firstOrNull;
-      if (produit == null) return false;
-      return await _boutique.buyNonConsumable(
-        purchaseParam: PurchaseParam(productDetails: produit),
-      );
+      if (produit != null &&
+          await _boutique.buyNonConsumable(
+            purchaseParam: PurchaseParam(productDetails: produit),
+          )) {
+        // Filet pour une boutique qui ne répondrait jamais : le joueur ne
+        // reste pas bloqué devant « Un instant… ».
+        return await issue.timeout(const Duration(minutes: 10),
+            onTimeout: () => _dejaPaye);
+      }
     } catch (e) {
       debugPrint('Achat impossible : $e');
-      return false;
     }
+    _conclure(false);
+    return null;
   }
 
   /// Restaure un achat déjà payé, sur un nouvel appareil ou après une
-  /// réinstallation. Le résultat passe par le flux, comme un achat neuf.
-  static Future<void> restaurer() async {
+  /// réinstallation. Retourne vrai si le joueur est (désormais) acheteur.
+  ///
+  /// La boutique restitue les achats par le flux, puis se tait : elle ne
+  /// signale jamais qu'il n'y avait rien. Le délai ne court donc qu'après
+  /// sa réponse, pour laisser le flux livrer ce qu'elle a trouvé.
+  static Future<bool> restaurer() async {
+    final issue = _attendreIssue();
     try {
       await _boutique.restorePurchases();
     } catch (e) {
       debugPrint('Restauration impossible : $e');
+      _conclure(_dejaPaye);
     }
+    return issue.timeout(const Duration(seconds: 5),
+        onTimeout: () => _dejaPaye);
   }
 
   static Future<void> arreter() async {

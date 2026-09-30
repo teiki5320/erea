@@ -4,8 +4,15 @@ import 'package:in_app_review/in_app_review.dart';
 import '../data/store.dart';
 
 /// Lien public de l'app, ajouté au texte partagé : sans lui, une grille
-/// qui circule ne mène nulle part.
+/// qui circule ne mène nulle part. Chacun partage la boutique de son
+/// appareil : un lien App Store n'ouvre rien sur un téléphone Android.
 const String lienAppStore = 'https://apps.apple.com/app/id6794918301';
+const String lienPlayStore =
+    'https://play.google.com/store/apps/details?id=com.teiki.erea';
+
+String get lienBoutique => defaultTargetPlatform == TargetPlatform.android
+    ? lienPlayStore
+    : lienAppStore;
 
 /// La demande de note, au bon moment et pas plus d'une fois.
 ///

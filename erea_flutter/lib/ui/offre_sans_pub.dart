@@ -53,20 +53,16 @@ class _FeuilleState extends State<_Feuille> {
 
   Future<void> _acheter() async {
     setState(() => _enCours = true);
-    final ouvert = await Achat.acheter();
+    final paye = await Achat.acheter();
     if (!mounted) return;
-    if (!ouvert) {
+    if (paye == null) {
       setState(() => _enCours = false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('La boutique n’a pas répondu. Réessaie plus tard.'),
       ));
       return;
     }
-    // Le résultat arrive par le flux de la boutique : on lui laisse le
-    // temps d'aboutir avant de conclure.
-    await Future<void>.delayed(const Duration(seconds: 1));
-    if (!mounted) return;
-    Navigator.of(context).pop(widget.store.sansPub);
+    Navigator.of(context).pop(paye);
   }
 
   @override

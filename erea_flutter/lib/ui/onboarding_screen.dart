@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/classement.dart';
 import '../core/region.dart' as region;
 import '../core/sons.dart';
 import '../data/store.dart';
@@ -88,22 +89,39 @@ class _Page {
 /// jeu. Toutes en 512 px, fond transparent, même trait d'encre.
 const String _dossier = 'assets/img/onboarding';
 
-const List<_Page> _pages = [
-  _Page('$_dossier/bienvenue.png', Color(0xFFFFE9C7), 'Bienvenue sur Erea',
-      'Un événement, une frise du temps : à toi de deviner l’année. '
-          'Plus tu vises juste, plus tu marques de points.'),
-  _Page(null, Color(0xFFDDF3EC), 'Fais glisser la frise',
-      'De 3000 av. J.-C. à demain : approche-toi au doigt, ajuste à '
-          'l’année près avec − et +, puis valide. La frise révèle la '
-          'vraie date.'),
-  _Page('$_dossier/modes.png', Color(0xFFE3ECFF), 'Cinq façons de jouer',
-      'Le Défi du jour (le même pour le monde entier), le Classique, le '
-          'Chrono 10 s par question, la Roulette des drapeaux et les '
-          'Packs à thème.'),
-  _Page('$_dossier/progresse.png', Color(0xFFF6E3FF), 'Progresse',
-      'Gagne de l’XP, débloque des succès et grimpe au classement '
-          'mondial. Chaque partie enrichit ta collection d’événements.'),
-];
+/// Recalculée à chaque lecture : la page « Progresse » ne promet le
+/// classement mondial que là où il existe (voir [Classement.disponible]).
+List<_Page> get _pages => [
+      const _Page(
+          '$_dossier/bienvenue.png',
+          Color(0xFFFFE9C7),
+          'Bienvenue sur Erea',
+          'Un événement, une frise du temps : à toi de deviner l’année. '
+              'Plus tu vises juste, plus tu marques de points.'),
+      const _Page(
+          null,
+          Color(0xFFDDF3EC),
+          'Fais glisser la frise',
+          'De 3000 av. J.-C. à demain : approche-toi au doigt, ajuste à '
+              'l’année près avec − et +, puis valide. La frise révèle la '
+              'vraie date.'),
+      const _Page(
+          '$_dossier/modes.png',
+          Color(0xFFE3ECFF),
+          'Cinq façons de jouer',
+          'Le Défi du jour (le même pour le monde entier), le Classique, le '
+              'Chrono 10 s par question, la Roulette des drapeaux et les '
+              'Packs à thème.'),
+      _Page(
+          '$_dossier/progresse.png',
+          const Color(0xFFF6E3FF),
+          'Progresse',
+          Classement.disponible
+              ? 'Gagne de l’XP, débloque des succès et grimpe au classement '
+                  'mondial. Chaque partie enrichit ta collection d’événements.'
+              : 'Gagne de l’XP et débloque des succès. Chaque partie enrichit '
+                  'ta collection d’événements.'),
+    ];
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _ctrl = PageController();

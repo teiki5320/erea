@@ -56,6 +56,12 @@ class Classement {
   static bool _sansTableau(String tableau) =>
       _surAndroid && _pourAndroid(tableau) == null;
 
+  /// Vrai quand la plateforme courante a un classement à montrer. Faux
+  /// sur Android tant que la table Play Games est vide : l'interface cache
+  /// alors tout ce qui mène au classement, plutôt qu'un bouton qui ne fait
+  /// rien.
+  static bool get disponible => !_surAndroid || _playGames.isNotEmpty;
+
   static bool _connecte = false;
 
   /// Connexion EN COURS, partagée : les trois requêtes de rang du bloc

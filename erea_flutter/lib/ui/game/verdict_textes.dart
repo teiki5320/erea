@@ -77,5 +77,5 @@ String texteGrillePour(GameController game, Store store) {
           ? '\n🔥 ${store.effectiveStreak} jours d’affilée'
           : '';
   return 'Erea ⏳ $quoi\n${game.total} / $max\n'
-      '${game.emojiGrid()}$serie\n\n$lienAppStore';
+      '${game.emojiGrid()}$serie\n\n$lienBoutique';
 }

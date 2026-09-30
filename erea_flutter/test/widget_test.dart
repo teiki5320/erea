@@ -1,3 +1,5 @@
+import 'package:erea/core/avis.dart';
+import 'package:erea/core/classement.dart';
 import 'package:erea/core/scoring.dart';
 import 'package:erea/data/events_repository.dart';
 import 'package:erea/data/store.dart';
@@ -139,15 +141,35 @@ void main() {
   // Le bloc « Classement mondial » de l'accueil : il doit s'afficher sans
   // déborder (le libellé + le rang/l'invite tenaient de justesse), sur les
   // deux formats. En test Game Center est indisponible : on vérifie surtout
-  // la mise en page, pas le rang lui-même.
+  // la mise en page, pas le rang lui-même. Sur iOS seulement : flutter_test
+  // se fait passer pour Android par défaut.
   for (final format in [('iPhone 14', _iphone14), ('iPhone SE', _iphoneSE)]) {
     testWidgets('l’accueil montre le classement mondial sans déborder '
         '(${format.$1})', (tester) async {
       await pumpApp(tester, size: format.$2);
       expect(find.text('Classement mondial'), findsOneWidget);
       expect(tester.takeException(), isNull);
-    });
+    }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
   }
+
+  // Tant que Play Games n'a pas ses classements, Android ne montre aucun
+  // bouton qui ne mènerait nulle part, et partage le lien du Play Store.
+  testWidgets('Android : ni classement mondial, ni lien App Store',
+      (tester) async {
+    expect(Classement.disponible, isFalse);
+    expect(lienBoutique, lienPlayStore);
+    await pumpApp(tester);
+    expect(find.text('Classement mondial'), findsNothing);
+    await tester.tap(find.byIcon(Icons.tune));
+    await tester.pumpAndSettle();
+    expect(find.text('Classement mondial'), findsNothing);
+    expect(find.textContaining('bouton silencieux'), findsNothing);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+  testWidgets('iOS : classement mondial et lien App Store', (tester) async {
+    expect(Classement.disponible, isTrue);
+    expect(lienBoutique, lienAppStore);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   testWidgets('le sélecteur de catégorie s’ouvre et applique le choix',
       (tester) async {

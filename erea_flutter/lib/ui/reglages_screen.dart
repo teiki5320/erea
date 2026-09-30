@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/material.dart' hide Badge;
 import 'package:url_launcher/url_launcher.dart';
 
@@ -67,8 +69,11 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
                 if (mounted) setState(() {});
               },
               title: const Text('Sons'),
-              subtitle: const Text('Respecte le bouton silencieux de '
-                  'l’iPhone'),
+              // Seul iOS a un bouton silencieux que les sons respectent
+              // (catégorie « ambient », voir sons.dart).
+              subtitle: defaultTargetPlatform == TargetPlatform.iOS
+                  ? const Text('Respecte le bouton silencieux de l’iPhone')
+                  : null,
             ),
             SwitchListTile(
               value: widget.store.remindersOn,
@@ -89,12 +94,13 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
               title: const Text('Rappel du soir'),
               subtitle: const Text('Seulement quand une série est en cours'),
             ),
-            ListTile(
-              title: const Text('Classement mondial'),
-              subtitle: const Text('Défi du jour, série et records'),
-              trailing: const Icon(Icons.emoji_events, color: yellowColor),
-              onTap: () => Classement.afficher(tableau: Classement.defi),
-            ),
+            if (Classement.disponible)
+              ListTile(
+                title: const Text('Classement mondial'),
+                subtitle: const Text('Défi du jour, série et records'),
+                trailing: const Icon(Icons.emoji_events, color: yellowColor),
+                onTap: () => Classement.afficher(tableau: Classement.defi),
+              ),
             ListTile(
               title: const Text('Mon pays'),
               subtitle:
@@ -257,24 +263,20 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
   }
 
   Future<void> _acheter() async {
-    final ouvert = await Achat.acheter();
+    final paye = await Achat.acheter();
     if (!mounted) return;
-    if (!ouvert) {
+    if (paye == null) {
       _dire('La boutique n’a pas répondu. Réessaie plus tard.');
       return;
     }
-    // Le résultat arrive par le flux de la boutique, pas ici : on laisse
-    // le temps à la transaction d'aboutir avant de redessiner.
-    await Future<void>.delayed(const Duration(seconds: 1));
-    if (mounted) setState(() {});
+    setState(() {});
   }
 
   Future<void> _restaurer() async {
-    await Achat.restaurer();
-    await Future<void>.delayed(const Duration(seconds: 1));
+    final retrouve = await Achat.restaurer();
     if (!mounted) return;
     setState(() {});
-    _dire(widget.store.sansPub
+    _dire(retrouve
         ? 'Achat retrouvé, merci !'
         : 'Aucun achat à restaurer sur ce compte.');
   }
