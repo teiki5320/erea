@@ -241,7 +241,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         ]),
       );
 
-  static const String _adresseAvis = 'erea.toa@gmail.com';
+  static const String _adresseAvis = 'erea@toakeur.com';
 
   Future<void> _ecrire() async {
     // `query` à la main : `queryParameters` encoderait les espaces en
