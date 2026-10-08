@@ -331,13 +331,13 @@ ajouter un. Inutile d'y remettre « histoire », « jeu », « famille » ou
 ## URL d'assistance ✅ — obligatoire
 
 ```
-https://teiki5320.github.io/erea/support.html
+https://erea.toakeur.com/support.html
 ```
 
 ## URL marketing ✅ — facultative
 
 ```
-https://teiki5320.github.io/erea/
+https://erea.toakeur.com/
 ```
 
 ## Version
@@ -545,7 +545,7 @@ Deux choses qui ne changent pas :
 **URL de politique de confidentialité** :
 
 ```
-https://teiki5320.github.io/erea/confidentialite.html
+https://erea.toakeur.com/confidentialite.html
 ```
 
 ✅ La page a été mise à jour le 17 août 2026 : elle décrit la publicité,

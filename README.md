@@ -10,8 +10,8 @@ Le produit, c'est l'**application iOS** (dossier [`erea_flutter/`](erea_flutter/
 Le jeu web de ce dépôt en est le prototype d'origine, conservé et
 toujours jouable.
 
-▶️ **Vitrine : [teiki5320.github.io/erea](https://teiki5320.github.io/erea/)**
-· [Jouer dans le navigateur](https://teiki5320.github.io/erea/jeu.html)
+▶️ **Vitrine : [erea.toakeur.com](https://erea.toakeur.com/)**
+· [Jouer dans le navigateur](https://erea.toakeur.com/jeu.html)
 
 ## Modes de jeu *(application)*
 
@@ -69,7 +69,7 @@ Ni compte, ni serveur : la progression reste sur l'appareil et le jeu
 fonctionne entièrement hors ligne. L'app est financée par une publicité
 (Google AdMob) qu'un achat unique retire — c'est le seul tiers qui
 collecte quoi que ce soit. Voir
-[`confidentialite.html`](https://teiki5320.github.io/erea/confidentialite.html).
+[`confidentialite.html`](https://erea.toakeur.com/confidentialite.html).
 
 ## Organisation du dépôt
 
