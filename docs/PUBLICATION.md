@@ -129,7 +129,7 @@ au questionnaire avec ce qui a réellement changé.
 |---|---|
 | Production | `https://erea.toakeur.com/` — vitrine, jeu web sur `/jeu.html`, `/support.html`, `/confidentialite.html` ; répond le 12 octobre 2026 |
 | Domaine & SSL | sous-domaine de `toakeur.com` depuis le 7 octobre 2026, servi par GitHub Pages derrière Cloudflare, HTTPS valide ; l'ancienne adresse `teiki5320.github.io/erea/` répond toujours |
-| Visibilité | Smart App Banner (`app-id=6794918301`) sur les pages ; ⚠️ la vitrine affiche encore « Bientôt sur l'App Store » alors que l'app y est depuis le 3 septembre |
+| Visibilité | Smart App Banner (`app-id=6794918301`) sur les pages ; badge officiel « Télécharger dans l'App Store » vers `https://apps.apple.com/fr/app/erea/id6794918301` depuis le 12 octobre 2026 ; Android annoncé « bientôt sur Google Play », sans lien tant que la fiche n'existe pas |
 
 ---
 
@@ -142,8 +142,8 @@ au questionnaire avec ce qui a réellement changé.
 2. **iOS** — soumettre la 1.0.4 (consentement attendu, achats restaurés,
    `PrivacyInfo.xcprivacy` enfin juste), en choisissant au passage le
    nom long de l'app.
-3. **Web** — remplacer « Bientôt sur l'App Store » par le lien vers la
-   fiche, et ajouter Google Play le jour de la production.
+3. **Web** — le jour de la production Android, remplacer « Bientôt sur
+   Google Play » par le badge officiel et le lien vers la fiche.
 4. **Les deux** — se déclarer **trader** au titre du DSA, après avoir
    nettoyé le complément d'adresse du compte Apple.
 5. **iOS** — élucider les builds Xcode Cloud 141 et 142, échoués le

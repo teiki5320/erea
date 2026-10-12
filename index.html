@@ -4,9 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Smart App Banner : sur un iPhone, Safari propose l'installation d'Erea
-     en haut de la page. La balise reste inerte tant que l'app n'est pas
-     publiée — aucun bandeau mort, aucun lien cassé. L'identifiant est
-     celui de la fiche App Store d'Erea. -->
+     en haut de la page. L'identifiant est celui de la fiche App Store
+     d'Erea, en ligne depuis le 8 septembre 2026. -->
 <meta name="apple-itunes-app" content="app-id=6794918301">
 <title>Erea — le jeu qui te fait deviner l'année</title>
 <meta name="description" content="Erea, le jeu d'histoire pour toute la famille : place les grands événements sur la frise du temps, de 3000 av. J.-C. à aujourd'hui. Plus de 1700 faits vérifiés, un défi chaque jour.">
@@ -63,7 +62,9 @@
   .btn:active{transform:translateY(2px)}
   .btn-1{background:var(--coral); color:#fff; box-shadow:0 5px 0 var(--coral-dark)}
   .btn-2{background:var(--white); color:var(--ink); box-shadow:0 5px 0 #d8ddef}
-  .bientot{font-size:14px; color:var(--ink-soft); margin:14px 0 0; font-weight:700}
+  .store{display:inline-block; margin:22px 0 0; line-height:0}
+  .store img{height:54px; width:auto; display:block}
+  .bientot{font-size:14px; color:var(--ink-soft); margin:10px 0 0; font-weight:700}
 
   /* ------------------------------------------------------------ sections */
   .section{padding:62px 0 10px; text-align:center}
@@ -122,7 +123,10 @@
       <a class="btn btn-1" href="jeu.html">▶︎ Jouer tout de suite</a>
       <a class="btn btn-2" href="#modes">Découvrir le jeu</a>
     </div>
-    <p class="bientot">Bientôt sur l'App Store</p>
+    <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
+      <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54">
+    </a>
+    <p class="bientot">Bientôt sur Google Play</p>
   </header>
 
   <section class="section" id="modes">
@@ -237,10 +241,13 @@
   <div class="final">
     <h2>Tu peux faire mieux que moi ?</h2>
     <p class="st">Le jeu est jouable tout de suite dans ton navigateur,
-    sans rien installer.</p>
+    sans rien installer — et sur iPhone et iPad, depuis l'App Store.</p>
     <div class="boutons">
       <a class="btn btn-1" href="jeu.html">▶︎ Commencer une partie</a>
     </div>
+    <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
+      <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54" loading="lazy">
+    </a>
   </div>
 
 </div>

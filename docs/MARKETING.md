@@ -103,7 +103,7 @@ pas encore faite.
 | Défi du jour + rappel | Mêmes questions pour tous, une tentative/jour, rappel local 18 h 30 (`lib/core/rappels.dart`) — le moteur de rétention qui alimente le partage | ✅ |
 | Classements mondiaux | Game Center : défi, série, Classique ×3, Chrono (`lib/core/classement.dart`) — actifs sur iOS ; Play Games pas configuré, classements masqués sur Android | ✅ iOS · ⬜ Android |
 | Vitrine web | `erea.toakeur.com` (depuis le 7 octobre 2026) : page de présentation dédiée, le jeu jouable sur `/jeu.html`, Smart App Banner sur les pages | ✅ |
-| Bandeau « Disponible sur l'App Store » | La vitrine affiche encore « Bientôt sur l'App Store » au 12 octobre 2026, alors que l'app y est depuis le 3 septembre | ⬜ |
+| Badge « Télécharger dans l'App Store » | Badge officiel d'Apple sur la vitrine, en tête et en bas de page, vers la fiche `id6794918301` ; Android annoncé « bientôt sur Google Play » — depuis le 12 octobre 2026 | ✅ |
 | Enseignants & parents | Dossier d'une page « Erea en classe » (repères du brevet couverts, mode Facile, zéro collecte) à envoyer aux profs d'histoire-géo, groupes Facebook de profs, La Salle des Maîtres | ⬜ |
 | Afrique de l'Ouest | Mise en avant du pack Afrique auprès des communautés éducatives francophones (Sénégal, Côte d'Ivoire…) ; presse tech locale ; créateurs de contenu éducation | ⬜ |
 | Réseaux sociaux | Comptes communs du Studio branchés au Planning : TikTok « Afrotok » et YouTube « toa.afrotok ». Pubs vidéo produites par le Studio le 5 octobre 2026 (« le temps qui bugue ») : une validée le 6 octobre, huit à valider. **Aucune publication** : le Planning est vide | ⬜ |
@@ -156,7 +156,7 @@ ferait perdre le « aucune donnée collectée » de la fiche.
 
 - **Demander l'accès à la production sur Google Play**, avec la 1.0.4 sur la piste : les quatorze jours sont tenus depuis le 22 septembre, et c'est tout un second public qui attend derrière.
 - **Publier la pub vidéo validée** du Studio sur TikTok « Afrotok » et YouTube « toa.afrotok » par le Planning, puis trier les huit vidéos en attente : aucune publication n'a encore eu lieu.
-- **Remplacer « Bientôt sur l'App Store » sur la vitrine** par le lien vers la fiche : l'app y est depuis le 3 septembre, et la page la dit encore à venir.
+- **Envoyer le dossier « Erea en classe »** aux professeurs d'histoire-géographie et à leurs groupes : c'est le public naturel d'un jeu familial calé sur les repères du brevet, et rien ne lui a encore été adressé.
 
 ## Déjà fait
 
@@ -166,5 +166,6 @@ ferait perdre le « aucune donnée collectée » de la fiche.
 - ✅ **Demande de note in-app.**
 - ✅ **Monétisation en ligne** — publicité + achat 3,99 €, depuis la 1.0.2.
 - ✅ **Smart App Banner** sur les pages de la vitrine.
+- ✅ **Badge App Store sur la vitrine** — fini « Bientôt sur l'App Store », 12 octobre 2026.
 - ✅ **Douze testeurs Android pendant quatorze jours** — du 8 au 22 septembre 2026.
 - ✅ **Adresse et contact propres** — `erea.toakeur.com` et `erea@toakeur.com`, 7 octobre 2026.
