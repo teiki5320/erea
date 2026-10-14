@@ -40,10 +40,10 @@
 - **Web** : vitrine `https://erea.toakeur.com/` en ligne, contact `erea@toakeur.com`
 
 Côté iOS, rien n'a bougé en boutique depuis le 8 septembre : la 1.0.3
-(build 161) est restée sur TestFlight, et la 1.0.4 n'a laissé aucune
-trace de soumission dans le dépôt. Côté Android, le seul délai
-incompressible est passé ; ce qui manque, c'est la demande d'accès à la
-production.
+(build 161) est restée sur TestFlight, et la 1.0.4 attend sa soumission
+avec le nom long et les captures légendées. Côté Android, tout est chez
+Google depuis le 14 octobre : la demande de production et la release
+1.0.4 ; il n'y a plus qu'à attendre.
 
 ---
 
