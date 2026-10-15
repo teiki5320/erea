@@ -23,9 +23,8 @@ toujours jouable.
 - **⏱️ Chrono** — 10 secondes par question, pas une de plus.
 - **🎡 Roulette des drapeaux** — un pays tiré au sort, une partie
   entière consacrée à son histoire.
-- **👥 Duel à deux** — sur le même téléphone, chacun son tour.
-- **🌍 Packs à thèmes** — Égypte & Orient ancien, Asie, Amériques,
-  Afrique & Moyen-Orient, Conquête de l'espace.
+- **🌍 Packs à thèmes** — Antiquité & Orient ancien, Asie, Les Amériques,
+  Ciel & conquête spatiale, Afrique & Moyen-Orient.
 
 ## Règles
 
@@ -33,14 +32,13 @@ toujours jouable.
   (inertie, aiguille fixe au centre), avec des boutons − / + pour
   l'ajustement fin.
 - Frise à **échelle non linéaire** (le XXᵉ siècle occupe 30 % du ruban,
-  l'Antiquité 20 %), bandes de couleur par époque, **événements-repères**
-  datés (🔺 pyramides, ⛵ 1492, 🗼 1889…).
-- Barème : `tolérance = 5 % de l'ancienneté (entre 5 et 45 ans)` ;
-  **0 point au-delà de 200 ans d'écart** ; modulé par la difficulté
-  (Facile ×2,2 · Normal · Difficile ×0,55 sans repères, +30 % d'XP).
+  l'Antiquité 20 %), grandes époques illustrées le long du ruban.
+- Barème : `points = 1000 × exp(−écart / tolérance)`, avec une
+  **tolérance de 30 ans** identique à toutes les époques, modulée par la
+  difficulté (Facile ×2,2 · Normal · Difficile ×0,55, +75 % d'XP).
   Réponse exacte = **PERFECT** 🎯.
 - Chaque événement porte un **niveau (1-3)** : en Facile, le jeu ne
-  pioche que dans les 191 faits les plus connus ; en Difficile, dans les
+  pioche que dans les 268 faits les plus connus ; en Difficile, dans les
   plus pointus.
 - Après chaque réponse : la direction de l'erreur (« 40 ans trop tard
   ⏪ ») et une anecdote **« Le savais-tu ? »** vérifiée.
@@ -51,15 +49,15 @@ toujours jouable.
   temps → 🌟 Légende).
 - **Succès** à débloquer et **album de collection** : les événements
   rencontrés se dévoilent au fil des parties.
-- **Classements mondiaux** via Game Center : défi du jour, série,
+- **Classements mondiaux** via Game Center (iPhone) : défi du jour, série,
   Classique par difficulté, Chrono.
 - Records par catégorie × difficulté, tout en local sur l'appareil.
 
 ## Contenu
 
-**1 738 événements vérifiés**, répartis en 4 catégories — Pouvoir &
-guerres, Sciences & inventions, Arts & culture, Vie quotidienne — et 5
-packs à thèmes. Le jeu s'adapte à la région : depuis l'Afrique de
+**1 831 événements vérifiés**, répartis en 4 catégories — Pouvoir &
+guerres, Sciences & explorations, Culture & croyances, Vie quotidienne &
+sport — et 5 packs à thèmes. Le jeu s'adapte à la région : depuis l'Afrique de
 l'Ouest, la moitié des questions du mode Classique porte sur l'histoire
 africaine.
 

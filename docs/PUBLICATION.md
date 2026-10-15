@@ -33,17 +33,17 @@
 
 - **iOS** : **1.0.4 (build 182) en attente de vérification depuis le 15 octobre 2026 à 12 h 51**, publication automatique ; nouveau nom « Erea : Quiz d'histoire & frise » ; la 1.0.2 reste en ligne jusqu'à l'approbation
 - **Android** : **accès à la production demandé le 14 octobre 2026 à 18 h 39** (formulaire en trois pages, 300 caractères par réponse) ; le même jour, release `5 (1.0.4)` et captures légendées envoyées pour examen sur la piste Alpha ; fiche publique encore en 404
-- **Version dans le code** : `1.0.4+5` depuis le 30 septembre 2026 (corrections de l'audit du 28 septembre) ; envoyée à Google le 14 octobre, pas encore à Apple
+- **Version dans le code** : `1.0.4+5` depuis le 30 septembre 2026 (corrections de l'audit du 28 septembre) ; envoyée à Google le 14 octobre et à Apple le 15 octobre
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — **approuvé** sur l'App Store, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
 - **Web** : vitrine `https://erea.toakeur.com/` en ligne, contact `erea@toakeur.com`
 
-Côté iOS, rien n'a bougé en boutique depuis le 8 septembre : la 1.0.3
-(build 161) est restée sur TestFlight, et la 1.0.4 attend sa soumission
-avec le nom long et les captures légendées. Côté Android, tout est chez
-Google depuis le 14 octobre : la demande de production et la release
-1.0.4 ; il n'y a plus qu'à attendre.
+Les deux boutiques ont la 1.0.4 entre les mains. Apple l'examine depuis
+le 15 octobre, avec le nom long et les captures légendées, après deux
+builds refusés à l'import pour le manifeste de confidentialité. Google
+examine depuis le 14 octobre la demande d'accès à la production. Il n'y a
+plus qu'à attendre les deux réponses.
 
 ---
 
@@ -94,9 +94,10 @@ sur la fiche publique, le vendeur affiché est le nom civil de Jean
 d'affichage — le compte reste **individuel**, ce qui compte pour le DSA
 (voir plus bas).
 
-**Nom de l'app.** « Erea » n'occupe que 4 des 30 caractères du champ le
-plus indexé. À trancher pour la version suivante : `Erea — Devine
-l'année !` (23) ou `Erea : Quiz d'histoire & frise` (30).
+**Nom de l'app.** `Erea : Quiz d'histoire & frise` (30 caractères)
+depuis la 1.0.4, saisi le 15 octobre 2026. « Erea » seul n'occupait que 4
+des 30 caractères du champ le plus indexé, et la recherche « erea » ne
+le trouvait pas (Apple la confond avec « erase »).
 
 **DSA.** Toujours déclaré **non-trader**, ce qui ne tient plus : Apple
 range parmi les traders qui tire un revenu de son app, publicité
@@ -138,10 +139,9 @@ la release 1.0.2. L'achat intégré, lui, existe maintenant vraiment.
 
 **Ce qui bloque.** Plus aucun délai : les **douze testeurs pendant
 quatorze jours consécutifs**, exigés d'un compte personnel, ont été
-tenus du 8 au 22 septembre. Reste à envoyer une release récente (la
-1.0.4 corrige les classements fantômes et le lien App Store partagé
-depuis Android), puis à demander l'accès à la production et à répondre
-au questionnaire avec ce qui a réellement changé.
+tenus du 8 au 22 septembre. La release 1.0.4 est partie le 14 octobre
+et l'accès à la production a été demandé le même jour, avec les vrais
+changements des 1.0.3 et 1.0.4.
 
 ---
 
@@ -151,7 +151,7 @@ au questionnaire avec ce qui a réellement changé.
 |---|---|
 | Production | `https://erea.toakeur.com/` — vitrine, jeu web sur `/jeu.html`, `/support.html`, `/confidentialite.html` ; répond le 13 octobre 2026 |
 | Domaine & SSL | sous-domaine de `toakeur.com` depuis le 7 octobre 2026, servi par GitHub Pages derrière Cloudflare, HTTPS valide ; l'ancienne adresse `teiki5320.github.io/erea/` répond toujours |
-| Visibilité | Smart App Banner (`app-id=6794918301`) sur les pages ; badge officiel « Télécharger dans l'App Store » vers `https://apps.apple.com/fr/app/erea/id6794918301` depuis le 12 octobre 2026 ; Android annoncé « bientôt sur Google Play », sans lien tant que la fiche n'existe pas |
+| Visibilité | Smart App Banner (`app-id=6794918301`) sur les pages ; badge officiel « Télécharger dans l'App Store » vers `https://apps.apple.com/fr/app/erea/id6794918301` depuis le 12 octobre 2026 ; Android annoncé « bientôt sur Google Play », sans lien tant que la fiche n'existe pas ; page d'aiguillage `https://erea.toakeur.com/telecharger/` depuis le 15 octobre 2026 (iPhone et iPad vers l'App Store, Android vers Google Play une fois `PLAY_OUVERT` à vrai, `?src=` relayé aux boutiques) |
 
 ---
 
@@ -161,8 +161,9 @@ au questionnaire avec ce qui a réellement changé.
 2. ✅ **Douze testeurs Android pendant quatorze jours** : tenus du 8 au 22 septembre 2026.
 3. **Attendre la réponse de Google** à la demande de production (envoyée le 14 octobre), puis créer la première release de production avec le bundle 1.0.4.
 4. **Attendre l'App Review de la 1.0.4** (envoyée le 15 octobre ; jusqu'à 48 heures). Publication automatique à l'approbation.
-5. **Badge Google Play sur la vitrine** : le jour de la production Android, remplacer « Bientôt sur Google Play » par le lien.
-7. **Se déclarer trader (DSA)** : sur les deux boutiques, après avoir nettoyé le complément d'adresse du compte Apple.
+5. **Le jour de la production Android** : passer `PLAY_OUVERT` à `true` dans `telecharger/index.html`, et remplacer « Bientôt sur Google Play » par le badge (`badge-google-play.png`, déjà dans le dépôt) dans `index.html`.
+6. **Lancer la pub TikTok** vers `https://erea.toakeur.com/telecharger/?src=tiktok`, une fois les deux boutiques en ligne.
+7. **DSA** : Jean a demandé le passage du compte Apple en compte entreprise (octobre 2026) ; se déclarer trader une fois le compte converti et le complément d'adresse nettoyé.
 8. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.
 
 ---

@@ -106,7 +106,7 @@ pays.
 
 - `AGENTS.md` (copie exacte de `CLAUDE.md`) et `docs/erea_feedback.pdf` ne sont pas suivis par git.
 - `docs/visuels-play/` fait doublon avec `docs/play/` ; `docs/visuels-app-store/` et `docs/play/captures-legendees/` ne sont cités nulle part ; `FICHE_PLAY_STORE.md:249` dit « six écrans », `:256` « les sept ».
-- `docs/FICHE_APP_STORE.md:195` contient le complément d'adresse d'un tiers (« SARL GROUPE MATEVIE ») dans un dépôt présenté comme publiable.
+- `docs/FICHE_APP_STORE.md:195` contient le complément d'adresse d'un tiers (le nom d'une société sans rapport) dans un dépôt présenté comme publiable. Corrigé le 15 octobre.
 - Testers Community (service payant, 14 €) est absent de `docs/INFRA.md`.
 - Compte des faits : 1831 est juste ; 1738 traîne encore dans `README.md:60`, `erea_flutter/README.md:102`, `SPEC.md:104`, `MARKETING.md:63,124`, `APP_REVIEW.md:90`.
 

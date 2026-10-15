@@ -1,68 +1,36 @@
 # Remplir la fiche App Store — Erea
 
-> **État au 8 septembre 2026, midi.** La **1.0.2** (build **150**) et
-> l'achat intégré **« Erea sans publicité »** sont **approuvés**, partis
-> ensemble en vérification le 7 septembre au soir et acceptés le
-> lendemain à 12 h 18 — « Prête à être distribuée », publication
-> automatique, jusqu'à 24 h avant d'apparaître à la place de la 1.0.0 du
-> 3 septembre. Une 1.0.1 (build 143) envoyée sans l'achat avait été
-> retirée : Apple exige qu'un premier achat intégré parte avec une
-> version.
+> **État au 15 octobre 2026.** La **1.0.4** (build **182**) est en
+> attente de vérification depuis le 15 octobre à 12 h 51, publication
+> automatique, sous un nouveau nom : **« Erea : Quiz d'histoire &
+> frise »**. La **1.0.2** (build 150) reste en ligne en attendant : elle
+> l'est depuis le 8 septembre 2026, avec l'achat intégré **« Erea sans
+> publicité »**, approuvé le même jour.
 >
 > Confidentialité de l'app refaite le 7 septembre (six types, la pub
-> oblige). Description et mots-clés corrigés : plus de Duel, plus de
-> « sans publicité ». Côté AdMob, consentement RGPD et message IDFA
-> publiés le 3 septembre, sans code : `loadAndShowConsentFormIfRequired`
-> présente les deux. Cinquante identifiants SKAdNetwork dans `Info.plist`.
+> oblige). Côté AdMob, consentement RGPD et message IDFA publiés le
+> 3 septembre. Cinquante identifiants SKAdNetwork dans `Info.plist`.
 >
 > Le compte s'affiche **TOA CORP** (nom d'affichage seulement, compte
-> individuel, DSA non-trader — à passer trader après nettoyage du
-> complément d'adresse). Le nom de l'app n'occupe que 4 des 30
-> caractères : à trancher pour la version suivante.
+> individuel, DSA **non-trader**). Le passage du compte en compte
+> entreprise a été demandé à Apple en octobre 2026 : à suivre.
 >
-> L'état des deux boutiques côte à côte est dans `docs/PUBLICATION.md`.
+> **L'état à jour des deux boutiques est dans `docs/PUBLICATION.md`** :
+> c'est lui qui fait foi. Ce document-ci décrit la fiche, champ par
+> champ.
 
-> Refait le 4 août 2026 d'après l'interface réelle d'App Store Connect,
-> mis à jour le 17 août 2026 pour la version 1.1.
+> *Historique.* La 1.0 (build 90) a été soumise le 14 août 2026, refusée
+> deux fois en demande d'informations (Guideline 2.1), puis publiée le
+> 3 septembre. Les réponses et la marche à suivre sont dans
+> **`docs/APP_REVIEW.md`**. La monétisation, longtemps appelée « 1.1 »
+> dans ce document, est sortie en **1.0.2** : publicité, achat intégré,
+> description sans « sans publicité », confidentialité refaite.
 >
-> **Où on en est.** La version **1.0.0** est partie à la revue le 14 août
-> 2026 à 11 h 42 avec le build **90** ; la sortie est réglée sur
-> *manuelle*, pour pouvoir la faire coïncider avec celle du Play Store.
->
-> **Le 20 août, la soumission est repartie** : état « En attente de
-> vérification », build **90 inchangé**. Voici ce qui s'était passé.
->
-> Le 15 août, Apple avait **refusé** la version (**Guideline 2.1 —
-> Information Needed**, état *2.1.0 Performance: App Completeness*).
-> Aucun bug n'est reproché : c'est la demande d'information standard des
-> nouvelles apps, en **sept points**. La réponse du **18 août à 11 h 39**,
-> avec `Erea.mov` en pièce jointe, n'en couvrait qu'un — et surtout,
-> **répondre ne relance pas l'examen** : tant que l'élément refusé n'est
-> pas modifié puis re-soumis, la soumission reste bloquée et le bouton
-> *Soumettre à nouveau* est grisé. La réponse complète aux sept points,
-> le texte du champ *Notes* et la marche à suivre sont dans
-> **`docs/APP_REVIEW.md`**. Au passage, deux leçons sur ce fil de messages, payées
-> en deux jours : depuis l'iPad (navigation privée, VPN), l'envoi
-> échouait avec un « Une erreur s'est produite » sans détail ; depuis le
-> Mac, en fenêtre Safari normale, **le même fichier est passé tel
-> quel** — le « Traitement en cours » d'une vidéo dure de longues
-> minutes, c'est normal, il aboutit. Mac + navigation normale + patience,
-> et rien d'autre.
->
-> La version **1.1** apporte la publicité et l'achat qui l'enlève. Elle
-> change **quatre choses** dans cette fiche, et aucune n'est cosmétique :
->
-> | Ce qui change | Où |
-> |---|---|
-> | La description ne peut plus promettre « sans publicité » | [Description](#description--4-000-caractères-texte-brut) |
-> | La confidentialité passe de « aucune donnée » à une déclaration en règle | [Page 4](#page-4--confidentialité-de-lapp) |
-> | La déclaration DSA passe de non-trader à **trader** | [Réglementations](#réglementations-et-autorisations-de-lapp-store) |
-> | Un achat intégré à créer, et un accord à signer avant tout | [Page 3](#page-3--tarifs-et-disponibilité) |
->
-> ⚠️ **Rien ne peut être testé avant la signature de l'accord
-> « Applications payantes ».** Sans lui, la boutique reste muette,
-> `Achat.disponible` reste faux, et l'offre ne s'affiche même pas dans
-> l'app. C'est la première marche, pas la dernière.
+> Leçon gardée de ce fil de messages : pour joindre une vidéo à l'App
+> Review, passer par le Mac en fenêtre Safari normale. Depuis l'iPad
+> (navigation privée, VPN), l'envoi échouait sans détail. Le
+> « Traitement en cours » d'une vidéo dure de longues minutes, c'est
+> normal, il aboutit.
 
 L'interface découpe la fiche en **deux pages différentes**, et c'est ce
 qui perd tout le monde :
@@ -83,13 +51,12 @@ Suis l'ordre ci-dessous, il correspond à l'ordre des écrans.
 **Nom** — 30 caractères maximum
 
 ```
-Erea — Devine l'année !
+Erea : Quiz d'histoire & frise
 ```
 
-*(Tu as saisi « Erea » tout court, ce qui est valable. Le nom est le
-champ le plus fortement indexé par la recherche App Store : la version
-longue te fait remonter sur « devine » et « année ». À toi de choisir
-entre visibilité et sobriété.)*
+*(Saisi avec la 1.0.4 : 30 caractères, le maximum. La 1.0 et la 1.0.2
+s'appelaient « Erea » tout court, qui n'occupait que 4 caractères du
+champ le plus fortement indexé par la recherche App Store.)*
 
 **Sous-titre** — 30 caractères maximum ✅ déjà rempli
 
@@ -163,9 +130,10 @@ aucun document.
 ## Réglementations et autorisations de l'App Store
 
 **Législation sur les services numériques (DSA)** ⬜ **toujours
-non-trader au 7 septembre 2026.** Cette fiche a longtemps annoncé le
-contraire — « repassée en trader le 18 août, vérification en cours » —
-c'était faux, et vérifié dans la console le 7 septembre. La déclaration
+non-trader.** Cette fiche a longtemps annoncé le contraire, « repassée
+en trader le 18 août » : c'était faux, vérifié dans la console le
+7 septembre. En octobre 2026, Jean a demandé à Apple le passage de son
+compte en compte entreprise : la déclaration trader attend la réponse. La déclaration
 se fait à deux endroits : au niveau du **compte** (Business →
 Conformité) et au niveau de l'app (Informations sur l'app →
 Réglementations → DSA). Le même jour, le questionnaire **DAC7**
@@ -175,7 +143,7 @@ même page) a été rempli : Erea ne fournit pas de services personnels.
 Tu t'es déclaré **non-trader** le 4 août 2026, ce qui était juste : l'app
 était gratuite, sans publicité et sans achat intégré.
 
-⚠️ **Ce n'est plus vrai avec la 1.1**, et il faut reprendre la
+⚠️ **Ce n'est plus vrai depuis la 1.0.2**, et il faut reprendre la
 déclaration. Apple ne dit pas que monétiser fait *automatiquement* de toi
 un trader : elle dit que le fait de tirer un revenu de l'app — achat
 intégré, app payante ou **financée par la publicité** — est l'un des
@@ -191,9 +159,9 @@ cliquer :
   Store** dans les 27 pays de l'UE. ⚠️ **TOA CORP n'est que le nom
   d'affichage du compte**, obtenu en septembre 2026 : le compte reste
   individuel, donc Apple publierait l'adresse postale du titulaire, et
-  non celle d'une société. Son complément d'adresse porte encore
-  « SARL GROUPE MATEVIE » — à nettoyer avant toute déclaration trader,
-  sous peine de le voir sur la fiche App Store de 27 pays. Ce n'est pas un effet de bord, c'est
+  non celle d'une société. Son complément d'adresse porte le nom
+  d'une société sans rapport : à nettoyer avant toute déclaration
+  trader, sous peine de le voir sur la fiche App Store de 27 pays. Ce n'est pas un effet de bord, c'est
   l'objet des articles 30 et 31 du DSA : permettre au public de joindre
   un professionnel. Pas d'option pour les masquer ;
 - Apple **vérifie** ces coordonnées avant de les publier ;
@@ -221,7 +189,7 @@ Clique sur **Enregistrer** en haut à droite.
 
 # PAGE 2 — Distribution → iOS 1.0
 
-## Captures d'écran ✅ *(déposées le 9 août 2026)*
+## Captures d'écran ✅ *(iPhone : sept captures légendées pour la 1.0.4 · iPad : celles du 9 août 2026)*
 
 ⚠️ **Fie-toi aux dimensions affichées dans le cadre de dépôt**, elles
 varient selon les appareils que l'app déclare supporter. Pour Erea,
@@ -230,6 +198,7 @@ App Store Connect demande :
 | Onglet | Dimensions acceptées | Nombre |
 |---|---|---|
 | **iPhone** — écran de 6,9" | 1260 × 2736 px (portrait) · 2736 × 1260 px (paysage) | 1 à 10 |
+| **iPhone** — écran moyen | 1206 × 2622 px (portrait), déposé pour la 1.0.4 | 1 à 10 |
 | **iPad** — écran de 13" | 2064 × 2752 px (portrait) · 2752 × 2064 px (paysage) | 1 à 10 |
 
 Formats acceptés : PNG ou JPEG, **sans transparence**.
@@ -247,16 +216,17 @@ de t'y fier.
 Seules les **trois premières** captures apparaissent sur les fiches
 d'installation — ce sont elles qui décident du téléchargement.
 
-**Les 6 écrans à capturer, dans cet ordre** — les deux premiers sont les
-seuls visibles sans faire défiler, ce sont eux qui décident du
-téléchargement :
+**Les sept captures iPhone de la 1.0.4, dans l'ordre** — légendées,
+rangées dans `docs/visuels-app-store/captures-iphone/` (grand écran) et
+`docs/visuels-app-store/captures-iphone-moyen/` (écran moyen) :
 
-1. Une partie en cours, la frise bien visible
-2. Une révélation réussie, idéalement un **PERFECT 🎯**
-3. Le défi du jour
-4. L'écran de fin avec la grille de partage
-5. Le mode Chrono, chronomètre en vue
-6. La Roulette des drapeaux
+1. L'accueil
+2. Une partie en cours, la frise bien visible
+3. Une révélation
+4. La Roulette des drapeaux
+5. Le mode Chrono
+6. Les packs à thèmes
+7. L'écran de fin
 
 ## Aperçu de l'app *(facultatif)*
 
@@ -311,16 +281,23 @@ Erea est gratuit et complet : tous les modes, tous les événements, rien de ré
 Bonne partie !
 ```
 
-⚠️ **La 1.1 doit remplacer les deux derniers paragraphes**, faute de quoi
-la fiche promet une app sans publicité en en affichant une : contradiction
-que la revue relève, et qui vaut un rejet au titre de la règle 2.3
-(*Accurate Metadata*). Le bloc ci-dessus est déjà la version corrigée.
+Ce texte est celui corrigé le 7 septembre 2026 pour la 1.0.2. Celui de
+la 1.0 promettait « sans publicité », faux dès l'arrivée de la pub, et
+un mode Duel qui n'existe pas : deux motifs de rejet au titre de la
+règle 2.3 (*Accurate Metadata*).
 
 ## Mots-clés ✅ — **100 octets**, séparés par des virgules sans espace
 
+Liste de la 1.0.4, saisie le 15 octobre 2026 (96 octets). « quiz »,
+« frise » et « histoire » en sont sortis : ils sont déjà dans le nom,
+et un mot du nom ne compte pas deux fois.
+
 ```
-quiz,frise,chronologie,date,culture,générale,brevet,éducatif,afrique,collège,révision,enfant
+chronologie,culture,générale,brevet,éducatif,afrique,collège,révision,trivia,siècle,année
 ```
+
+Celle de la 1.0.2, pour mémoire :
+`quiz,frise,chronologie,date,culture,générale,brevet,éducatif,afrique,collège,révision,enfant`.
 
 ⚠️ Apple compte en **octets**, pas en caractères : chaque lettre accentuée
 en vaut deux. Cette liste fait 92 caractères mais **97 octets** — elle
@@ -343,7 +320,7 @@ https://erea.toakeur.com/
 ## Version
 
 ```
-1.0
+1.0.4
 ```
 
 ## Informations générales sur l'app ✅ *(en bas de page)*
@@ -361,10 +338,12 @@ App Store Connect l'ajoute lui-même à l'affichage.
 *(Si ton compte développeur est enregistré sous ton nom complet, mets
 plutôt celui-là : c'est ce qu'Apple affiche déjà comme vendeur.)*
 
-## Build ⬜
+## Build ✅ *(1.0.4 : build 182)*
 
 Sélectionne la version envoyée par Xcode Cloud, qui apparaît une
-quinzaine de minutes après la fin du build.
+quinzaine de minutes après la fin du build. Pour la 1.0.4, les builds
+176 et 180 ont été refusés à l'import (ITMS-91064, manifeste de
+confidentialité) ; le 182 est passé.
 
 ⚠️ **Deux pièges qui rendent un build non sélectionnable**, tous deux
 rencontrés :
@@ -406,15 +385,14 @@ Les classements mondiaux passent par Game Center : la fenêtre de connexion appa
 Le Défi du jour n'est jouable qu'une fois par jour (c'est le principe du mode : les mêmes 10 questions pour tous les joueurs). Pour tester plusieurs parties, utilisez le mode Classique.
 ```
 
-## Publication de la version ✅ *(réglée sur manuelle)*
+## Publication de la version ✅ *(automatique)*
 
 Deux choix : **Publier automatiquement**, et l'app sort dès qu'Apple l'a
 validée, ou **Publier manuellement**, et tu déclenches la sortie toi-même.
 
-C'est **manuelle** qui a été choisie pour la 1.0, afin de pouvoir faire
-coïncider la sortie avec celle du Play Store. Conséquence à ne pas
-oublier : une fois l'app validée par Apple, **elle ne sort pas toute
-seule** — il faut revenir cliquer.
+La 1.0.2 et la 1.0.4 sont en **automatique** : l'app sort dès
+l'approbation. La 1.0 avait été réglée sur manuelle, pour coïncider avec
+le Play Store.
 
 ---
 
@@ -455,10 +433,9 @@ n'affiche aucune offre, c'est voulu.
 
 ## L'achat intégré ✅ *(créé le 18 août 2026, identifiant Apple 6802621891)*
 
-État « Finaliser avant soumission » : il attend seulement sa **capture
-d'écran de vérification** (à faire quand l'offre s'affichera dans l'app,
-au test de la 1.1) et son rattachement à la version 1.1 — ne pas cliquer
-« Ajouter pour vérification » avant.
+**Approuvé le 8 septembre 2026**, avec la 1.0.2 à laquelle il était
+rattaché. Une 1.0.1 envoyée sans lui avait dû être retirée : Apple exige
+qu'un premier achat intégré parte avec une version.
 
 ⬜ **Décision en suspens : le « Partage familial »** (interrupteur en
 haut de la page du produit). L'activer permet à six membres d'une
@@ -482,9 +459,9 @@ dur dans `lib/core/achat.dart` (`Achat.idSansPub`), et un test le vérifie.
 Une faute de frappe rend l'achat introuvable **sans aucun message
 d'erreur** côté joueur.
 
-Il faut aussi joindre une **capture de l'écran de réglages** montrant
-l'offre, et l'achat doit être **soumis avec la version 1.1** (case à
-cocher dans la page de la version) — sinon il reste en « Prêt à
+Pour un premier envoi, il fallait joindre une **capture de l'écran de
+réglages** montrant l'offre, et soumettre l'achat **avec une version**
+(case à cocher dans la page de la version) : sinon il reste en « Prêt à
 soumettre » et n'est jamais examiné.
 
 ---
@@ -498,13 +475,13 @@ soumettre » et n'est jamais examiné.
 > section garde le détail des réponses, au cas où il faudrait les
 > refaire.
 
-⚠️ **C'est le changement le plus lourd de la 1.1, et le plus risqué.** La
-réponse actuelle — « Non, nous ne collectons pas de données de cette
-app. » — était exacte pour la 1.0. Avec AdMob elle devient **fausse**, et
+⚠️ **Ce fut le changement le plus lourd de la 1.0.2, et le plus risqué.**
+La réponse d'alors, « Non, nous ne collectons pas de données de cette
+app. », était exacte pour la 1.0. Avec AdMob elle devient **fausse**, et
 une déclaration de confidentialité fausse est un motif de rejet immédiat
 (règle 5.1.1), voire de retrait après publication.
 
-**Tu perds le badge « Aucune donnée collectée ».** C'était un argument
+**Le badge « Aucune donnée collectée » est perdu.** C'était un argument
 réel auprès des parents ; c'est le prix de la monétisation, et il n'y a
 pas de moyen de le garder tout en affichant de la publicité.
 
@@ -550,8 +527,8 @@ https://erea.toakeur.com/confidentialite.html
 
 ✅ La page a été mise à jour le 17 août 2026 : elle décrit la publicité,
 les données que Google recueille, le consentement européen révocable et
-l'achat qui supprime tout. Elle doit être **en ligne avant** l'envoi de
-la 1.1 — la revue la lit.
+l'achat qui supprime tout. Elle doit être **en ligne avant** chaque
+envoi : la revue la lit.
 
 ---
 
@@ -566,60 +543,47 @@ banal.
 
 ---
 
-# Sortir la version 1.1
+# Sortir une nouvelle version
 
 L'ordre compte : chaque étape dépend de la précédente.
 
-1. ✅ **Signer l'accord « Applications payantes »** *(page 3)* — fait le
-   18 août ; reste à attendre que la vérification bancaire le passe à
-   « Actif », sous 24 h environ.
-2. ✅ **Repasser la déclaration DSA en trader** *(page 1)* — fait le
-   18 août, vérification Apple en cours.
-3. ✅ **Créer l'achat** `com.teiki.erea.sanspub` à 3,99 € *(page 3)* —
-   fait le 18 août ; sa capture de vérification attend le test 1.1.
-4. **Créer le bloc interstitiel iOS** dans AdMob — fait ✅, et les quatre
-   identifiants réels sont déjà dans le code.
-5. **Passer `pubspec.yaml` en `1.1.0`** et pousser sur `main` : Xcode
-   Cloud produit le build.
-6. **Créer la version 1.1** dans App Store Connect *(le numéro doit être
-   identique à celui de `pubspec.yaml`, sinon le build est
-   non-sélectionnable)*.
-7. **Réécrire la description** *(page 2)* et **refaire la déclaration de
-   confidentialité** *(page 4)*. Les textes sont prêts ci-dessus.
-8. **Attacher l'achat intégré à la version**, avec sa capture d'écran.
-9. **Tester sur un iPhone réel** : l'offre apparaît-elle ? l'achat
-   passe-t-il en Sandbox ? « Restaurer mes achats » retrouve-t-il l'achat
-   après réinstallation ? le formulaire de consentement s'affiche-t-il, et
-   la ligne « Publicité personnalisée » permet-elle d'y revenir ?
-10. **Envoyer à la revue.**
+1. **Monter la version dans `pubspec.yaml`** et pousser sur `main` :
+   Xcode Cloud produit le build.
+2. **Créer la version** dans App Store Connect, au même numéro que
+   `pubspec.yaml` *(sinon le build est non sélectionnable)*.
+3. **Mettre à jour ce qui change** : description, mots-clés, captures,
+   notes App Review (texte en vigueur dans `docs/APP_REVIEW.md` §0).
+4. **Sélectionner le build**, vérifier que Game Center est attaché.
+5. **Envoyer à la revue**, publication automatique.
 
-⚠️ La 1.0 doit être **publiée** avant que la 1.1 puisse partir : App
-Store Connect n'accepte qu'une version en cours d'examen à la fois.
+⚠️ App Store Connect n'accepte qu'une version en cours d'examen à la
+fois.
+
+*Historique.* La sortie de la monétisation, préparée ici sous le nom
+« 1.1 », est partie en **1.0.2** : accord « Applications payantes »
+signé le 18 août, achat créé le même jour, description et
+confidentialité refaites le 7 septembre, approbation le 8 septembre.
+La déclaration DSA, elle, est restée non-trader.
 
 ---
 
 # Où en est chaque champ
 
-| Élément | 1.0 | 1.1 |
+| Élément | 1.0.2 (en ligne depuis le 8 septembre) | 1.0.4 (envoyée le 15 octobre) |
 |---|---|---|
-| Nom, sous-titre, catégories | ✅ | inchangé |
-| Classification par âge (4+), droits de contenu | ✅ | inchangé |
-| Déclaration DSA | ✅ non-trader | ✅ trader le 18 août, vérification en cours |
-| Texte promotionnel, mots-clés | ✅ | inchangés |
-| Description | ✅ | ⬜ **à réécrire** (texte prêt) |
-| URL d'assistance et de confidentialité | ✅ | inchangées |
-| Politique de confidentialité en ligne | ✅ | ✅ refaite le 17 août |
-| Droits d'auteur, coordonnées de revue, remarques | ✅ | inchangés |
-| Prix (gratuit), disponibilité (175 pays) | ✅ | inchangés |
-| Accord « Applications payantes » | — | ✅ signé le 18 août, activation en cours |
-| Achat `com.teiki.erea.sanspub` | — | ✅ créé le 18 août, capture au test 1.1 |
-| Déclaration de confidentialité | ✅ « aucune donnée » | ⬜ **à refaire** |
-| Game Center attaché à la version | ✅ | ⬜ à vérifier sur la 1.1 |
-| Captures d'écran iPhone 6,9" + iPad 13" | ✅ | inchangées |
-| Version dans `pubspec.yaml` | ✅ 1.0.0 | ⬜ **à passer en 1.1.0** |
-| Sélection du build | ✅ build 90 | ⬜ |
-| **Envoi à la revue** | ✅ **14 août 2026, 11 h 42** | ⬜ |
-| Complément 2.1 (vidéo du parcours) | ✅ envoyé le 18 août, 11 h 39 | — |
-| **Réponse aux 7 points + champ Remarques** | ✅ 20 août (texte conservé dans `docs/APP_REVIEW.md`) | ⬜ à reprendre |
-| **Re-soumission** | ✅ **20 août 2026 — « En attente de vérification », build 90 inchangé** | ⬜ |
-| **Publication** | ⬜ manuelle, en attente d'Apple | ⬜ |
+| Nom | ✅ « Erea » | ✅ « Erea : Quiz d'histoire & frise » |
+| Classification par âge (4+), droits de contenu | ✅ | inchangés |
+| Déclaration DSA | ⬜ non-trader | ⬜ non-trader, passage du compte en entreprise demandé en octobre |
+| Mots-clés | ✅ liste ci-dessus | ✅ sans « quiz », « frise », « histoire » |
+| Description | ✅ corrigée le 7 septembre | à vérifier dans la console |
+| URL d'assistance, marketing et de confidentialité | ✅ | ✅ passées sur `erea.toakeur.com` |
+| Achat `com.teiki.erea.sanspub` | ✅ approuvé le 8 septembre | déjà approuvé |
+| Déclaration de confidentialité | ✅ refaite le 7 septembre, six types | inchangée |
+| Captures d'écran | ✅ iPhone 6,9" + iPad 13" du 9 août | ✅ iPhone légendées (écran moyen et grand écran) ; iPad : celles d'août |
+| Version dans `pubspec.yaml` | ✅ 1.0.2 | ✅ 1.0.4 (`1.0.4+5`) |
+| Sélection du build | ✅ build 150 | ✅ build 182 |
+| Notes App Review | — | ✅ réécrites (`docs/APP_REVIEW.md` §0) |
+| **Envoi à la revue** | ✅ 7 septembre au soir | ✅ **15 octobre 2026, 12 h 51** |
+| **Publication** | ✅ automatique, en ligne le 8 septembre à 12 h 19 | ⬜ automatique, en attente d'Apple |
+
+La 1.0 (build 90, août 2026) est racontée dans `docs/APP_REVIEW.md`.

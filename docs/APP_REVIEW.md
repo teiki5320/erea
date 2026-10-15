@@ -5,11 +5,13 @@
 
 ## Où on en est, exactement
 
-> **15 octobre 2026 — 1.0.4 envoyée.** Les sections ci-dessous datent
-> de la 1.0 (août) : elles affirment « aucun SDK publicitaire, aucun
-> achat intégré, aucune demande ATT », ce qui est **faux depuis la
-> 1.0.2**. Ne plus les recopier. Le texte en vigueur est celui des
-> notes de la 1.0.4, reproduit au §0.
+> **15 octobre 2026 — 1.0.4 (build 182) envoyée.** Tout ce qui suit
+> le §0 est une **archive d'août**, gardée telle qu'elle a été envoyée
+> pour la 1.0. Ces textes sont **faux aujourd'hui** : ils affirment
+> « aucun SDK publicitaire, aucun achat intégré, aucune demande ATT »
+> (faux depuis la 1.0.2) et décrivent un Chrono de « 90 seconds »
+> (c'est 10 secondes par question). Ne plus les recopier. Le texte en
+> vigueur est celui des notes de la 1.0.4, reproduit au §0.
 
 ## §0 — Notes en vigueur (1.0.4, envoyées le 15 octobre 2026)
 

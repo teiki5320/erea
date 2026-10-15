@@ -20,7 +20,7 @@ Tableau d'objets :
 | `fun` | string | Anecdote « Le savais-tu ? » (affichée APRÈS la réponse, peut citer des dates). |
 | `pack` | string? | Optionnel : `egypte` \| `asie` \| `ameriques` \| `espace` \| `afrique`. **Chaque pack doit tenir au moins 13 parties COMPOSABLES, difficultés cumulées** (des parties conformes aux quotas §3, pas un volume de faits). On somme Facile, Normal et Difficile : c'est ce dont dispose vraiment l'acheteur, et cela récompense un pack équilibré plutôt qu'un pack fourni dans une seule difficulté. C'est l'unité de vente. Verrouillé par un test ; cible : 20. |
 | `continent` | string? | Optionnel : `afrique` \| `ameriques` \| `asie` \| `europe` \| `oceanie`. Réservé aux futures catégories géographiques. |
-| `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la future « roue des pays » : 113 pays couverts, dont 52 avec au moins 10 faits. |
+| `pays` | string? | Pays en français, renseigné avec `continent` (sauf quelques faits transnationaux). Alimente la Roulette des drapeaux : 113 pays couverts, dont 52 avec au moins 10 faits. |
 
 Toutes les dates ont été vérifiées par relecture croisée (génération puis
 vérification adversariale). Ne pas modifier une date sans re-vérification.
@@ -29,8 +29,8 @@ vérification adversariale). Ne pas modifier une date sans re-vérification.
 avant 1900 (priorité Antiquité et Moyen Âge) et au moins la moitié hors
 d'Europe. La base penche déjà vers l'Europe (46 %) et l'après-1945 (23 %) :
 un joueur attentif apprend sinon à parier « récent » plutôt qu'à raisonner.
-Et en priorité des niveaux 1 et 2 — 191 faits de niveau 1 seulement, le
-mode Facile n'a presque rien à jouer hors de la catégorie Pouvoir.
+Et en priorité des niveaux 1 et 2 : 268 faits de niveau 1 seulement sur
+1 831, c'est la réserve la plus maigre du mode Facile.
 
 ## 2. Frise à échelle non linéaire
 
@@ -53,16 +53,18 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 
 ## 3. Barème
 
-- `tolérance = clamp(5 % × (maxYear − année), 12, 90) × multiplicateur de difficulté` — avec `maxYear = 2026`
+- `tolérance = 30 ans × multiplicateur de difficulté`, identique à toutes
+  les époques (`toleranceBase`, `lib/core/scoring.dart`)
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
-- **0 point au-delà de `max(200 × mult, tolérance × 4,5)`** — la fenêtre
-  s'élargit sur les faits très anciens, où 200 ans d'erreur ne sont pas
-  une faute grossière
+- Pas de fenêtre à zéro explicite : l'exponentielle y arrive seule, à
+  7,6 × la tolérance (201 ans en Facile, 92 en Normal, 51 en Difficile)
 - Difficultés : Facile ×2,2 (XP ×0,75) · Normal ×1 · Difficile ×0,55 (XP ×1,75).
-  Le plancher de tolérance est à 12 ans (et non 5) : à 5, décrocher le vert
-  en Difficile sur un fait récent exigeait l'ANNÉE EXACTE et le combo y
-  était inatteignable. Les multiplicateurs d'XP compensent le barème :
-  sans ça, Difficile rapportait autant que Facile malgré sa promesse.
+  Le « vert » (700 points) demande ± 24 ans en Facile, ± 11 en Normal,
+  ± 6 en Difficile. La tolérance a d'abord dépendu de l'ancienneté du
+  fait (5 %, bornée entre 12 et 90 ans) : à connaissance égale,
+  l'Antiquité rapportait bien plus de points. Les multiplicateurs d'XP
+  compensent le barème : sans ça, Difficile rapportait autant que Facile
+  malgré sa promesse.
 - **Pondération d'époque** : à l'intérieur de chaque niveau, le tirage
   favorise les époques peu peuplées, à l'inverse de leur densité
   (`shuffledWeighted`, quatre âges : avant 500, 500-1500, 1500-1900,
@@ -93,7 +95,7 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
 - **Classique** : 10 manches, catégorie + difficulté choisies, anti-répétition
   (mémoriser les ~300 derniers ids joués, épuiser TOUT le jamais-vu — tous
   niveaux confondus — avant de resservir quoi que ce soit).
-- **Tour du monde** : la roue s'arrête sur UN drapeau et les 10 manches
+- **Roulette des drapeaux** : la roue s'arrête sur UN drapeau et les 10 manches
   portent toutes sur ce pays (`tirerPays` puis `partiePays`). Elle tournait
   autrefois à chaque manche, pour dix pays par partie ; d'où le seuil relevé
   à 10 faits par pays (`minFaitsParPays`) : à 6, le tirage ne pouvait plus se
@@ -101,18 +103,19 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   roulette n'en propose aucune.
 - **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
   série pour tous les joueurs de l'app à une date donnée. La parité avec le
-  prototype web n'est plus tenable (1 738 événements contre 613) et n'est pas
+  prototype web n'est plus tenable (1 831 événements contre 613) et n'est pas
   un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
   jour** : le verrou est posé au lancement (abandonner consomme la tentative),
   mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
   éteinte dès qu'un jour est sauté (`Store.effectiveStreak`). La pastille
   de l'accueil s'explique au tap : à 0 et sans légende, un compteur doré
   se lit comme un solde de jetons — l'App Review d'Apple s'y est trompée.
-- **Chrono** : 90 s au total, décompte uniquement pendant la phase de choix,
-  +5 s si points de base ≥ 700, événements illimités, pas de manche ×2.
-- **Duel local** : 2 joueurs sur le même appareil, même série. Par manche :
-  J1 devine → écran « passe le téléphone » (sans révélation) → J2 devine →
-  révélation commune (deux épingles). Pas d'XP ni de record.
+- **Chrono** : 10 manches, 10 secondes par question, décompte uniquement
+  pendant la phase de choix. Temps écoulé : la manche vaut zéro. Toute la
+  base, difficulté Normal fixe, pas de manche ×2.
+- **Packs à thèmes** : cinq packs (Antiquité & Orient ancien, Asie, Les
+  Amériques, Ciel & conquête spatiale, Afrique & Moyen-Orient), joués
+  comme un Classique, difficulté Normal fixe.
 
 ## 5. Progression
 
@@ -138,8 +141,8 @@ découvertes » manqueraient toujours d'une manche).
 
 premiers pas (1 partie) · PERFECT · 3 PERFECT en une partie · 8000 pts ·
 jouer les 4 catégories · 10 parties · 50 parties · marquer en Difficile ·
-série quotidienne de 3 · de 7 · 12 évts en Chrono · terminer un duel ·
-100 événements découverts · niveau 10.
+série quotidienne de 3 · de 7 · 6 000 pts en Chrono · terminer une partie
+de Roulette · 100 événements découverts · niveau 10.
 
 ## 7. Partage (sans spoiler)
 

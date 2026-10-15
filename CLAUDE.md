@@ -70,7 +70,8 @@ possible.
 
 | Fichier | Contenu |
 |---|---|
-| **`docs/FICHE_APP_STORE.md` (en-tête)** | **l'état d'avancement à jour : où en sont la 1.0, la 1.1 et chaque démarche** |
+| **`docs/PUBLICATION.md`** | **l'état à jour des deux boutiques : versions, examens, démarches en cours** |
+| `docs/AUDIT.md` | l'audit du 28 septembre 2026 (rapport daté, ne se met pas à jour) |
 | `erea_flutter/SPEC.md` | la spécification de référence : formules, barème, règles |
 | `erea_flutter/README.md` | développer, builder, les pièges Xcode Cloud |
 | `docs/FICHE_APP_STORE.md` | la fiche App Store, champ par champ |

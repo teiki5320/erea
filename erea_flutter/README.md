@@ -3,9 +3,12 @@
 L'application Erea, en Flutter — **c'est le produit**. Le jeu web à la
 racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
-État : **version 1.0.0** soumise à l'App Store le 14 août (build 90),
-publicité et achat intégré branchés pour la 1.1.
-154 tests, `flutter analyze` propre.
+État : **version 1.0.4** (build 182) envoyée en vérification à l'App
+Store le 15 octobre 2026 ; la 1.0.2 y est en ligne depuis le 8 septembre.
+Sur Google Play, accès à la production demandé le 14 octobre. Publicité
+et achat intégré en place depuis la 1.0.2. L'état à jour des boutiques
+vit dans `docs/PUBLICATION.md`.
+167 tests, `flutter analyze` propre.
 
 ## Démarrer
 
@@ -34,7 +37,7 @@ L'upload se fait ensuite via Transporter ou l'Organizer de Xcode.
 |---|---|
 | Bundle identifier | `com.teiki.erea` |
 | Nom affiché | Erea |
-| Version | `1.0.0` (depuis `pubspec.yaml`) |
+| Version | `1.0.4` (depuis `pubspec.yaml`) |
 | Numéro de build | attribué par Xcode Cloud, qui l'incrémente seul |
 | iOS minimum | 15.0 |
 | Langue | français (`CFBundleDevelopmentRegion` + `CFBundleLocalizations`) |
@@ -77,9 +80,9 @@ par Xcode Cloud.
 
 - **`assets/events.json`** — toute la base d'événements vérifiée (dates,
   anecdotes, niveaux, packs). C'est l'actif principal du projet.
-- **`lib/core/`** — les règles du jeu, portées à l'identique du web :
-  échelle non linéaire de la frise, barème (tolérance, fenêtre de 200 ans,
-  manche finale ×2), courbe d'XP et titres, PRNG mulberry32 compatible bit à
+- **`lib/core/`** — les règles du jeu, portées du web puis ajustées
+  (`SPEC.md`) : échelle non linéaire de la frise, barème (tolérance
+  uniforme de 30 ans, manche finale ×2), courbe d'XP et titres, PRNG mulberry32 compatible bit à
   bit avec le web (le défi du jour tire la même série pour tous les joueurs
   de l'app à une date donnée ; la base ayant grandi, ce n'est plus la même
   série que le site).
@@ -96,10 +99,11 @@ par Xcode Cloud.
   l'Ouest, le Classique tire la moitié de ses questions dans le pack
   Afrique.
 - **`lib/core/classement.dart`** — Game Center : connexion paresseuse et
-  partagée, six tableaux, échec silencieux.
+  partagée, six tableaux, échec silencieux. iOS seulement : sur Android,
+  l'entrée est masquée tant que Play Games n'est pas branché.
 - **`lib/core/avis.dart`** — demande de note, une seule fois et après une
   réussite.
-- **`test/`** — 154 tests : règles du jeu, intégrité des 1 738
+- **`test/`** — 167 tests : règles du jeu, intégrité des 1 831
   événements, persistance et défi du jour, interface jusqu'à une partie
   complète, mise en page iPad et iPhone SE en très grande police, règle
   d'affichage de la publicité, promesse de l'achat.
@@ -150,8 +154,9 @@ fiche Play, qui ne doit pas s'adresser aux enfants — voir
 
 ## L'achat « Erea sans pub »
 
-Un produit **non consommable**, `com.teiki.erea.sanspub`, à créer à
-l'identique dans App Store Connect et dans la Play Console. Il n'ouvre
+Un produit **non consommable**, `com.teiki.erea.sanspub`, « Erea sans
+publicité », 3,99 €, créé à l'identique dans App Store Connect et dans la
+Play Console, actif des deux côtés depuis le 8 septembre 2026. Il n'ouvre
 rien : il enlève la publicité, et c'est tout — aucun événement, aucun
 mode, aucune fonction n'est réservé à ceux qui paient.
 
@@ -169,19 +174,15 @@ serait restée muette et l'offre invisible.
 
 ## Ce qui n'est pas fait
 
-- **Android** : l'App Bundle se signe et se construit (la clé vit hors
-  du dépôt, dans `android/key.properties`), mais la publication est
-  suspendue à deux questions ouvertes : les 12 testeurs pendant 14 jours
-  exigés d'un compte personnel, et l'absence d'appareil physique. Play
-  Games n'est pas configuré : les classements sont muets, le jeu reste
-  jouable — la table d'identifiants attend dans `lib/core/classement.dart`.
-  Tout le chemin est dans `docs/FICHE_PLAY_STORE.md`.
-- **L'achat n'a jamais été exécuté sur un appareil** : l'accord
-  « Applications payantes » est actif et le produit existe dans App Store
-  Connect depuis le 18 août 2026, mais personne n'a encore vu l'offre
-  s'afficher, payé en Sandbox, ni vérifié « Restaurer mes achats » après
-  réinstallation. C'est l'étape 9 de la sortie 1.1
-  (`docs/FICHE_APP_STORE.md`).
+- **Android en production** : l'App Bundle se signe et se construit (la
+  clé vit hors du dépôt, dans `android/key.properties`). Le test fermé
+  est terminé (douze testeurs du 8 au 22 septembre 2026, vérifications
+  sur un Pixel 8a, offre « sans pub » affichée à 3,99 € le 16 septembre).
+  L'accès à la production est demandé depuis le 14 octobre. Tout le
+  chemin est dans `docs/FICHE_PLAY_STORE.md`.
+- **Play Games** n'est pas configuré : pas de classement sur Android,
+  l'entrée est masquée dans l'app depuis la 1.0.4. Le jeu reste jouable ;
+  la table d'identifiants attend dans `lib/core/classement.dart`.
 
 `SPEC.md` est la spécification de référence : toutes les formules et
 règles validées par le prototype web y sont consignées.

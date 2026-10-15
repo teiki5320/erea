@@ -2,3 +2,6 @@
 # Sondes temporaires écrites par les agents d'audit (jamais du livrable)
 erea_flutter/test/zz_*
 erea_flutter/test/devil_*
+
+# Métadonnées du Finder (macOS)
+.DS_Store

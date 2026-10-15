@@ -1,7 +1,10 @@
 # Publier Erea sur le Play Store
 
-> Écrit le 9 août 2026. **Rien n'est publié côté Android** : ce document
-> est la marche à suivre, et l'état de ce qui est déjà prêt.
+> Écrit le 9 août 2026, mis à jour le 15 octobre 2026. **Rien n'est
+> encore public côté Android** : le test fermé est terminé, l'accès à la
+> production est demandé depuis le 14 octobre 2026. Ce document est la
+> marche à suivre ; l'état à jour des deux boutiques est dans
+> `docs/PUBLICATION.md`.
 >
 > Le pendant iOS est `docs/FICHE_APP_STORE.md`. Les deux boutiques ne se
 > ressemblent pas : Google pose trois questionnaires là où Apple en pose
@@ -13,24 +16,25 @@
 | | |
 |---|---|
 | Identifiant `com.teiki.erea`, identique à iOS | ✅ dans `android/app/build.gradle.kts` |
-| Clé de signature | ✅ créée le 14 août 2026 (`~/erea-upload.jks` + `key.properties`, hors dépôt) — **à sauvegarder ailleurs que sur le Mac** |
-| App Bundle signé qui se construit | ✅ reconstruit le 20 août 2026 : 58,5 Mo, certificat `CN=Toa` — voir §1 |
+| Clé de signature | ✅ créée le 14 août 2026 (`android/erea-upload.jks` + `android/key.properties`, hors dépôt), copie de secours dans iCloud Drive le 29 septembre 2026 |
+| App Bundle signé qui se construit | ✅ release `5 (1.0.4)` : 56 Mo, certificat `CN=Toa` — voir §1 |
 | Autorisation de notification Android 13 demandée | ✅ dans `lib/core/rappels.dart` |
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
-| Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` |
+| Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` ; version légendée dans `docs/play/captures-legendees/`, en place sur la fiche depuis le 16 septembre 2026 |
 | Titre, descriptions | ✅ rédigés plus bas |
 | Compte Google Play Console | ✅ créé le 20 août 2026, type **personnel** — voir §2 |
 | Fiche Play Store française, visuels compris | ✅ 3 septembre 2026 |
 | Déclaration « identifiant publicitaire » | ✅ 3 septembre 2026 — oui, trois finalités : publicité, analyse, prévention des fraudes |
 | Message de consentement RGPD (AdMob) | ✅ publié le 3 septembre 2026 — la console était vide, aucune annonce n'aurait été servie en Europe |
-| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` en examen depuis le 8 septembre |
+| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` approuvée le 8 septembre — release `4 (1.0.3)` servie depuis le 16 septembre — release `5 (1.0.4)` en examen depuis le 14 octobre |
 | Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
-| **12 testeurs pendant 14 jours** | ⬜ **le chemin critique : testeurs = groupe Google `testers-community@googlegroups.com` depuis le 8 septembre ; le décompte ne démarre qu'au douzième qui installe** |
-| Appareil Android physique (exigé par la validation) | ✅ Pixel 8a commandé le 20 août 2026 |
+| **12 testeurs pendant 14 jours** | ✅ tenus du 8 au 22 septembre 2026 (groupe Google `testers-community@googlegroups.com`, service Testers Community) |
+| **Accès à la production** | ⬜ demandé le 14 octobre 2026 à 18 h 39, réponse de Google attendue |
+| Appareil Android physique (exigé par la validation) | ✅ Pixel 8a, en service depuis septembre 2026 |
 | Trois questionnaires | ✅ remplis le 3 septembre 2026 — public cible 13 ans et plus |
-| Description Play corrigée dans la console (Duel, 1800, enfant de 8 ans) | ✅ 8 septembre 2026, en examen avec la release 1.0.2 |
+| Description Play corrigée dans la console (Duel, 1800, enfant de 8 ans) | ✅ 8 septembre 2026, approuvée avec la release 1.0.2 |
 | Achat intégré `com.teiki.erea.sanspub` | ✅ créé et **actif** le 8 septembre 2026 — 3,99 €, 173 pays, profil de paiement créé le même jour |
-| Classements Play Games | ⬜ *(facultatif, voir §7)* |
+| Classements Play Games | ⬜ *(facultatif, voir §7)* — entrée masquée dans l'app depuis la 1.0.4 |
 
 ---
 
@@ -136,8 +140,9 @@ son app en vrai.
 | La durée | moins d'une minute |
 | Réutilisable | le même appareil peut vérifier plusieurs comptes |
 
-Le **Pixel 8a**, commandé le 20 août 2026, coche tout. Il servira aussi à
-tester la publicité et l'achat de la 1.1, que l'émulateur rend mal.
+Le **Pixel 8a**, commandé le 20 août 2026, coche tout. Il sert depuis
+septembre aux vérifications que l'émulateur rend mal : le 16 septembre,
+formulaire de consentement affiché et offre « sans pub » à 3,99 €.
 
 📎 [Device verification requirements for new developer
 accounts](https://support.google.com/googleplay/android-developer/answer/14316361?hl=en)
@@ -226,8 +231,8 @@ La phrase « votre enfant de 8 ans » est retirée par la même occasion : le
 public cible déclaré est **13 ans et plus** (§5), et c'est cette fiche que
 Google lit pour vérifier la cohérence.
 
-Corrections reportées dans la Play Console le 8 septembre 2026, envoyées
-pour examen avec la release 1.0.2.
+Corrections reportées dans la Play Console le 8 septembre 2026,
+approuvées le même jour avec la release 1.0.2.
 
 ## 4. Les visuels
 
@@ -235,7 +240,7 @@ pour examen avec la release 1.0.2.
 |---|---|---|
 | Icône | PNG 32 bits **avec** alpha, 512 × 512, moins de 1024 Ko | ✅ `docs/play/icone-512.png` (92 Ko) |
 | Graphique de mise en avant | JPEG ou PNG 24 bits **sans** alpha, 1024 × 500 | ✅ `docs/play/bandeau-1024x500.png` |
-| Captures téléphone | au moins 2, entre 320 et 3840 px | ✅ sept dans `docs/play/captures/` |
+| Captures téléphone | au moins 2, entre 320 et 3840 px | ✅ sept légendées dans `docs/play/captures-legendees/`, sur la fiche depuis le 16 septembre 2026 (versions brutes dans `docs/play/captures/`) |
 
 ⚠️ **Les captures iOS ne se recyclent pas telles quelles.** Google
 impose que la plus grande dimension ne dépasse pas le double de la plus
@@ -247,7 +252,7 @@ aux mises en avant.
 ### Les refaire
 
 `erea_flutter/tool/captures_play.js` pilote la **version web** de l'app
-dans Chromium et capture les six écrans :
+dans Chromium et capture les sept écrans :
 
 ```bash
 cd erea_flutter
@@ -280,7 +285,7 @@ Mesuré sur l'APK produit le 11 août 2026, pas déduit du code :
 |---|---|
 | Poids téléchargé | **~20 Mo** (APK arm64 ; 17,5 Mo en armeabi-v7a). Très loin des seuils de Google |
 | `targetSdk` / `compileSdk` | 36 · `minSdk` 24 (Android 7) |
-| `versionName` | 1.0.0, comme iOS |
+| `versionName` | 1.0.0 à l'époque ; 1.0.4 aujourd'hui, comme iOS |
 
 **Permissions réellement embarquées**, plugins compris, relevées sur le
 manifeste fusionné :
@@ -340,9 +345,9 @@ deviner.
    pas donner l'impression de viser les enfants, sans quoi la Play
    Console requalifie l'app d'office. Or la description longue du §3 dit
    « votre enfant de 8 ans ne tombera pas sur la bataille de Bouvines ».
-   ⬜ **Cette phrase est à retirer de la version Play** avant d'envoyer
-   la fiche — la version App Store, elle, peut la garder : Apple ne pose
-   pas cette question et le 4+ est déjà obtenu.
+   ✅ **Cette phrase est retirée de la version Play** depuis le
+   7 septembre (§3). La version App Store, elle, peut la garder : Apple
+   ne pose pas cette question et le 4+ est déjà obtenu.
 
 ## 6. Le build
 
@@ -356,8 +361,8 @@ accepté pour une nouvelle app. Le `targetSdk` vient de Flutter
 (`flutter.targetSdkVersion`) ; Google relève chaque année le niveau
 minimum exigé, donc un SDK Flutter à jour évite le refus.
 
-À vérifier avant l'envoi, sur un appareil Android réel : le jeu n'a
-jamais tourné en release signée.
+Le jeu tourne en release signée chez les testeurs du test fermé depuis
+septembre 2026.
 
 ## 7. Les classements Play Games *(facultatif)*
 
