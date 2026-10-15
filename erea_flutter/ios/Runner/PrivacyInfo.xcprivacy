@@ -10,16 +10,18 @@
 	     (docs/FICHE_APP_STORE.md, page 4) : les deux doivent dire la même
 	     chose.
 
-	     Pas de clé NSPrivacyTrackingDomains, et surtout pas une liste
-	     vide : le validateur d'App Store Connect la refuse avec
-	     NSPrivacyTracking à vrai (ITMS-91064, build 176 du 15 octobre
-	     2026). Lister des domaines ne conviendrait pas non plus : iOS
-	     coupe les requêtes vers ces domaines sans accord ATT, ce qui
-	     priverait de publicité non personnalisée les joueurs qui
-	     refusent le suivi. Le SDK de Google ne liste aucun domaine
-	     dans son propre manifeste, pour la même raison. -->
+	     NSPrivacyTracking reste à FAUX et la clé NSPrivacyTrackingDomains
+	     est absente. C'est la seule combinaison qu'App Store Connect
+	     accepte ici : « vrai sans domaine » est refusé à l'import
+	     (ITMS-91064, builds 176 et 180 du 15 octobre 2026), et lister
+	     des domaines ferait couper par iOS la publicité, même non
+	     personnalisée, aux joueurs qui refusent l'ATT. Le SDK de Google
+	     ne déclare ni l'un ni l'autre dans son propre manifeste. Le
+	     suivi publicitaire reste déclaré là où il est lu par les
+	     joueurs : la fiche Confidentialité d'App Store Connect, et les
+	     types de données ci-dessous (NSPrivacyCollectedDataTypeTracking). -->
 	<key>NSPrivacyTracking</key>
-	<true/>
+	<false/>
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
 		<dict>
