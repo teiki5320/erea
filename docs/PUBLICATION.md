@@ -21,7 +21,7 @@
 
 | | 🍎 App Store | 🤖 Google Play |
 |---|---|---|
-| État | [ok] 1.0.2 en ligne depuis le 8 septembre 2026 | [en cours] production demandée le 14 octobre 2026, réponse sous sept jours environ |
+| État | [en cours] 1.0.4 envoyée le 15 octobre 2026 · 1.0.2 en ligne en attendant | [en cours] production demandée le 14 octobre 2026, réponse sous sept jours environ |
 | Construction | [ok] Xcode Cloud, à chaque poussée sur `main` | [ok] App Bundle construit sur le Mac |
 | Signature | [ok] automatique, gérée par Apple | [ok] keystore `CN=Toa`, copie de secours |
 | Classification | [ok] 4+ | [ok] questionnaire rempli, note à vérifier dans la console |
@@ -31,7 +31,7 @@
 
 ## Vue d'ensemble
 
-- **iOS** : **1.0.2 en ligne depuis le 8 septembre 2026 à 12 h 19**, achat intégré compris — toujours la version publique au 13 octobre 2026, 0 note
+- **iOS** : **1.0.4 (build 176) envoyée pour vérification le 15 octobre 2026 à 12 h 22**, publication automatique ; nouveau nom « Erea : Quiz d'histoire & frise » ; la 1.0.2 reste en ligne jusqu'à l'approbation
 - **Android** : **accès à la production demandé le 14 octobre 2026 à 18 h 39** (formulaire en trois pages, 300 caractères par réponse) ; le même jour, release `5 (1.0.4)` et captures légendées envoyées pour examen sur la piste Alpha ; fiche publique encore en 404
 - **Version dans le code** : `1.0.4+5` depuis le 30 septembre 2026 (corrections de l'audit du 28 septembre) ; envoyée à Google le 14 octobre, pas encore à Apple
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
@@ -51,12 +51,12 @@ Google depuis le 14 octobre : la demande de production et la release
 
 | | |
 |---|---|
-| État | **1.0.2 en ligne depuis le 8 septembre 2026** (vérifié sur l'App Store le 13 octobre 2026) |
+| État | **1.0.4 en vérification depuis le 15 octobre 2026 à 12 h 22** · 1.0.2 en ligne en attendant |
 | Console | <https://appstoreconnect.apple.com> |
 | Fiche publique | identifiant App Store `6794918301` |
 | Version publiée | `1.0.2`, build `150`, en ligne depuis le 8 septembre 2026 à 12 h 19 (approuvée à 12 h 18, une minute avant) — remplace la `1.0.0` du 3 septembre |
-| Dernier build connu | `161` (`1.0.3`), vert, sur TestFlight, jamais soumis (audit du 28 septembre) ; les builds de la `1.0.4` sont à vérifier dans la console |
-| Version soumise | aucune connue — à vérifier dans la console ; la prochaine doit porter la `1.0.4` |
+| Dernier build connu | builds `167` à `176` en `1.0.4` sur TestFlight, tous « Prêt à soumettre » au 15 octobre ; les suivants viennent de commits de documentation, même code |
+| Version soumise | `1.0.4`, build `176`, le 15 octobre 2026 : nom « Erea : Quiz d'histoire & frise », mots-clés sans « quiz/frise/histoire » (déjà dans le nom), captures iPhone légendées écran moyen et grand écran (iPad : celles d'août), adresses passées sur `erea.toakeur.com` (assistance, site, confidentialité), notes App Review réécrites (AdMob, consentement, achat intégré) |
 | Notes / avis | 0 / 0 au 13 octobre 2026 |
 | Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable, **approuvé** le 8 septembre avec la 1.0.2 |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
@@ -160,7 +160,7 @@ au questionnaire avec ce qui a réellement changé.
 1. ✅ **App Store** : la 1.0.2 est en ligne depuis le 8 septembre 2026, achat intégré compris.
 2. ✅ **Douze testeurs Android pendant quatorze jours** : tenus du 8 au 22 septembre 2026.
 3. **Attendre la réponse de Google** à la demande de production (envoyée le 14 octobre), puis créer la première release de production avec le bundle 1.0.4.
-4. **Soumettre la 1.0.4 sur l'App Store** : consentement attendu, achats restaurés, manifeste de confidentialité juste ; choisir le nom long.
+4. **Attendre l'App Review de la 1.0.4** (envoyée le 15 octobre ; jusqu'à 48 heures). Publication automatique à l'approbation.
 5. **Badge Google Play sur la vitrine** : le jour de la production Android, remplacer « Bientôt sur Google Play » par le lien.
 7. **Se déclarer trader (DSA)** : sur les deux boutiques, après avoir nettoyé le complément d'adresse du compte Apple.
 8. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.

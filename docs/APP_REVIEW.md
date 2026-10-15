@@ -5,6 +5,36 @@
 
 ## Où on en est, exactement
 
+> **15 octobre 2026 — 1.0.4 envoyée.** Les sections ci-dessous datent
+> de la 1.0 (août) : elles affirment « aucun SDK publicitaire, aucun
+> achat intégré, aucune demande ATT », ce qui est **faux depuis la
+> 1.0.2**. Ne plus les recopier. Le texte en vigueur est celui des
+> notes de la 1.0.4, reproduit au §0.
+
+## §0 — Notes en vigueur (1.0.4, envoyées le 15 octobre 2026)
+
+```
+Erea is a single-player history quiz in French. An event is shown without its date and the player drags a timeline (3000 BC to today) to guess the year.
+
+NO ACCOUNT: no registration, no login, no user accounts. No demo account or credentials are needed. Every mode is reachable from the home screen.
+NO USER-GENERATED CONTENT: players cannot post or exchange content. The only outgoing message is "Donner mon avis" in Settings, which opens the Mail app addressed to erea@toakeur.com.
+GAMEPLAY IS OFFLINE: all questions ship in the bundle; the game is fully playable in airplane mode.
+
+THIRD-PARTY SERVICES:
+- Google AdMob (Google Mobile Ads SDK) for interstitial ads, with Google's UMP SDK for consent. An interstitial may appear when leaving the end-of-game screen, on every other game; never during a round and never on the Daily Challenge.
+- Apple Game Center for optional leaderboards.
+- StoreKit for the in-app purchase below.
+No backend, no account system, no analytics of our own.
+
+SYSTEM PROMPTS: the GDPR consent form (European users), then the App Tracking Transparency request, then Game Center sign-in; notification permission is asked only if the player turns on the optional evening reminder. Declining any of them leaves the game fully playable. Consent can be changed later in Settings > "Publicité personnalisée".
+
+IN-APP PURCHASE: one non-consumable, "Erea sans publicité" (com.teiki.erea.sanspub), which removes ads permanently. All modes and all questions remain free; nothing else is unlocked. It is offered in Settings, on the end-of-game screen and after an ad. "Restaurer mes achats" is in Settings, and purchases are also restored automatically at launch.
+
+MODES: Classic (10 rounds, category and difficulty selectable), Daily Challenge (same 10 questions for everyone, one attempt per day), Chrono (10 seconds per question), Flag Roulette (one country per game), Theme Packs.
+
+WHAT'S NEW IN 1.0.4: animated tutorial page showing the timeline gesture; "Donner mon avis" (feedback by e-mail) in Settings; the ad SDK now waits for the consent form to close before loading any ad; automatic restore of purchases at launch; corrected privacy manifest (PrivacyInfo.xcprivacy) matching the App Privacy declaration.
+```
+
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
 > inchangé), puis **deuxième demande d'informations le 21 août**, portant
 > cette fois sur une seule question — les flammes. Réponse au §3. Comme le
