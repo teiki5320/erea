@@ -47,10 +47,12 @@
       PLAY += '&referrer=' + encodeURIComponent('utm_source=' + src + '&utm_medium=social');
     }
     var ua = navigator.userAgent || '';
-    // iPadOS se présente comme un Mac : on le reconnaît à l'écran tactile.
-    var ios = /iPhone|iPad|iPod/.test(ua) ||
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    // Android d'abord : c'est l'agent utilisateur qui fait foi.
     var android = /Android/i.test(ua);
+    // iPadOS se présente comme un Mac : on le reconnaît à l'écran tactile,
+    // mais seulement si l'agent ne dit pas déjà Android.
+    var ios = !android && (/iPhone|iPad|iPod/.test(ua) ||
+      (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1));
     window.EREA_APPAREIL = ios ? 'ios' : (android ? 'android' : 'autre');
     if (ios) { location.replace(APP_STORE); }
     else if (android && PLAY_OUVERT) { location.replace(PLAY); }
