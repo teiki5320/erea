@@ -31,7 +31,7 @@
 
 ## Vue d'ensemble
 
-- **iOS** : **1.0.4 (build 180) en attente de vérification depuis le 15 octobre 2026 à 12 h 38**, publication automatique ; nouveau nom « Erea : Quiz d'histoire & frise » ; la 1.0.2 reste en ligne jusqu'à l'approbation
+- **iOS** : **1.0.4 (build 182) en attente de vérification depuis le 15 octobre 2026 à 12 h 51**, publication automatique ; nouveau nom « Erea : Quiz d'histoire & frise » ; la 1.0.2 reste en ligne jusqu'à l'approbation
 - **Android** : **accès à la production demandé le 14 octobre 2026 à 18 h 39** (formulaire en trois pages, 300 caractères par réponse) ; le même jour, release `5 (1.0.4)` et captures légendées envoyées pour examen sur la piste Alpha ; fiche publique encore en 404
 - **Version dans le code** : `1.0.4+5` depuis le 30 septembre 2026 (corrections de l'audit du 28 septembre) ; envoyée à Google le 14 octobre, pas encore à Apple
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
@@ -51,12 +51,12 @@ Google depuis le 14 octobre : la demande de production et la release
 
 | | |
 |---|---|
-| État | **1.0.4 (build 180) en attente de vérification depuis le 15 octobre 2026 à 12 h 38** · 1.0.2 en ligne en attendant |
+| État | **1.0.4 (build 182) en attente de vérification depuis le 15 octobre 2026 à 12 h 51** · 1.0.2 en ligne en attendant |
 | Console | <https://appstoreconnect.apple.com> |
 | Fiche publique | identifiant App Store `6794918301` |
 | Version publiée | `1.0.2`, build `150`, en ligne depuis le 8 septembre 2026 à 12 h 19 (approuvée à 12 h 18, une minute avant) — remplace la `1.0.0` du 3 septembre |
-| Dernier build connu | builds `167` à `176` en `1.0.4` sur TestFlight, tous « Prêt à soumettre » au 15 octobre ; les suivants viennent de commits de documentation, même code |
-| Version soumise | `1.0.4`, build `180`, le 15 octobre 2026 à 12 h 38 — le build `176`, envoyé à 12 h 22, a été refusé à l'import (ITMS-91064 : liste de domaines de suivi vide dans `PrivacyInfo.xcprivacy`, corrigée dans le commit da9e941) ; nom « Erea : Quiz d'histoire & frise », mots-clés sans « quiz/frise/histoire » (déjà dans le nom), captures iPhone légendées écran moyen et grand écran (iPad : celles d'août), adresses passées sur `erea.toakeur.com` (assistance, site, confidentialité), notes App Review réécrites (AdMob, consentement, achat intégré) |
+| Dernier build connu | `182` (`1.0.4`), soumis ; les builds suivants viennent de commits de documentation, même code |
+| Version soumise | `1.0.4`, build `182`, le 15 octobre 2026 à 12 h 51 — les builds `176` et `180` ont été refusés à l'import (ITMS-91064) : le validateur n'accepte ni « suivi à vrai, liste de domaines vide » ni « suivi à vrai, sans clé » ; le 182 porte « suivi à faux, sans clé » (commit 6e981b6) ; nom « Erea : Quiz d'histoire & frise », mots-clés sans « quiz/frise/histoire » (déjà dans le nom), captures iPhone légendées écran moyen et grand écran (iPad : celles d'août), adresses passées sur `erea.toakeur.com` (assistance, site, confidentialité), notes App Review réécrites (AdMob, consentement, achat intégré) |
 | Notes / avis | 0 / 0 au 13 octobre 2026 |
 | Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable, **approuvé** le 8 septembre avec la 1.0.2 |
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |

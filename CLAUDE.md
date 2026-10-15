@@ -50,6 +50,15 @@ possible.
   `ios/Flutter/{Debug,Release}.xcconfig` (cible Runner — c'est elle qui
   construit le module et lève le diagnostic ; quatre builds ont échoué
   avec la moitié Pods seule). Ne retire ni l'un ni l'autre.
+- **`ios/Runner/PrivacyInfo.xcprivacy` : `NSPrivacyTracking` à `false`
+  et pas de clé `NSPrivacyTrackingDomains`.** Toute autre combinaison
+  (vrai avec liste vide, vrai sans clé) est refusée à l'import par
+  ITMS-91064, malgré un fichier valide : deux builds perdus le 15 octobre
+  2026. Le suivi publicitaire se déclare dans la fiche Confidentialité
+  d'App Store Connect et dans les types de données du manifeste. Pour
+  savoir ce qui est réellement embarqué : `flutter build ios --release
+  --no-codesign`, puis chercher les `PrivacyInfo.xcprivacy` dans
+  `build/ios/iphoneos/Runner.app`.
 - **Flutter ne descend pas dans les sous-dossiers d'assets** : chaque
   sous-dossier se déclare à part dans `pubspec.yaml`.
 - **Le dépôt a contenu deux histoires git sans ancêtre commun**, nées
