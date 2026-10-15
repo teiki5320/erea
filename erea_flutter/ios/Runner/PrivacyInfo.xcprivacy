@@ -10,13 +10,16 @@
 	     (docs/FICHE_APP_STORE.md, page 4) : les deux doivent dire la même
 	     chose.
 
-	     Les domaines de suivi restent vides ici : ils sont déclarés par
-	     le manifeste que le SDK de Google embarque, et Xcode fusionne les
-	     deux dans le rapport de confidentialité. -->
+	     Pas de clé NSPrivacyTrackingDomains, et surtout pas une liste
+	     vide : le validateur d'App Store Connect la refuse avec
+	     NSPrivacyTracking à vrai (ITMS-91064, build 176 du 15 octobre
+	     2026). Lister des domaines ne conviendrait pas non plus : iOS
+	     coupe les requêtes vers ces domaines sans accord ATT, ce qui
+	     priverait de publicité non personnalisée les joueurs qui
+	     refusent le suivi. Le SDK de Google ne liste aucun domaine
+	     dans son propre manifeste, pour la même raison. -->
 	<key>NSPrivacyTracking</key>
 	<true/>
-	<key>NSPrivacyTrackingDomains</key>
-	<array/>
 	<key>NSPrivacyCollectedDataTypes</key>
 	<array>
 		<dict>
