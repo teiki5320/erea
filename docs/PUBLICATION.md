@@ -33,7 +33,7 @@
 
 - **iOS** : **1.0.4 (build 182) en ligne depuis le 15 octobre 2026 à 14 h 01**, soumise à 12 h 51 et publiée automatiquement à l'approbation ; nouveau nom « Erea : Quiz d'histoire & frise »
 - **Android** : **accès à la production demandé le 14 octobre 2026 à 18 h 39** (formulaire en trois pages, 300 caractères par réponse) ; le même jour, release `5 (1.0.4)` et captures légendées envoyées pour examen sur la piste Alpha ; fiche publique encore en 404
-- **Version dans le code** : `1.0.4+5` depuis le 30 septembre 2026 (corrections de l'audit du 28 septembre) ; envoyée à Google le 14 octobre et à Apple le 15 octobre
+- **Version dans le code** : `1.0.5+6` depuis le 16 octobre 2026, pour que Xcode Cloud ne bute plus sur la 1.0.4 approuvée (build 187 refusé, ITMS-90186) ; même code que la 1.0.4, envoyée à Google le 14 octobre et à Apple le 15 octobre ; le bundle Android de production reste celui de la 1.0.4 (`versionCode 5`)
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — **approuvé** sur l'App Store, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026

@@ -6,7 +6,7 @@
 ## En bref
 
 - **Plateforme** : iOS 15+ en ligne · Android en test fermé · site vitrine
-- **Stack** : Flutter (Dart ≥ 3.6), version `1.0.4+5` dans le code
+- **Stack** : Flutter (Dart ≥ 3.6), version `1.0.5+6` dans le code
 - **Backend** : aucun — tout reste sur l'appareil, jeu hors ligne
 - **Distribution** : Xcode Cloud vers l'App Store · App Bundle signé en local
 - **Site** : `erea.toakeur.com`, GitHub Pages derrière Cloudflare
@@ -14,15 +14,15 @@
 
 ## Parcours
 
-- 🍎 **iOS** : 🐙 GitHub — main, 1.0.4 dans le code [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.4 (build 182) approuvée le 15 octobre [ok] → 📱 App Store — 1.0.4 en ligne depuis le 15 octobre [ok]
-- 🤖 **Android** : 🐙 GitHub — main, 1.0.4 dans le code [ok] → 🔑 Keystore Android — App Bundle signé sur le Mac [ok] → 🎮 Google Play Console — test fermé terminé, 1.0.4 en examen, production demandée le 14 octobre [en cours] → 🛒 Google Play — pas en production [pas encore]
+- 🍎 **iOS** : 🐙 GitHub — main, 1.0.5 dans le code [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.4 (build 182) approuvée le 15 octobre [ok] → 📱 App Store — 1.0.4 en ligne depuis le 15 octobre [ok]
+- 🤖 **Android** : 🐙 GitHub — main, 1.0.5 dans le code [ok] → 🔑 Keystore Android — App Bundle signé sur le Mac [ok] → 🎮 Google Play Console — test fermé terminé, 1.0.4 en examen, production demandée le 14 octobre [en cours] → 🛒 Google Play — pas en production [pas encore]
 - 🌐 **Web** : 🐙 GitHub — racine de main, sans CNAME [ok] → 📄 Hébergement web (GitHub Pages / Cloudflare Pages) — GitHub Pages [ok] → 🏷️ Nom de domaine — erea.toakeur.com via Cloudflare [ok] → 🌐 Site — vitrine, jeu, support, confidentialité [ok]
 - 🎬 **Contenu** : 🎬 Studio — neuf pubs vidéo produites le 5 octobre [ok] → 🗓️ Planning — aucune publication programmée [à faire] → 📣 Réseaux sociaux & influenceurs — YouTube et TikTok branchés, rien publié [pas encore]
 
 ## Vue d'ensemble
 
 - **Plateforme** : iOS 15+ (1.0.4 en ligne sur l'App Store depuis le 15 octobre 2026) · Android en test fermé, pas encore en production · site vitrine `erea.toakeur.com`
-- **Stack** : Flutter (Dart ≥ 3.6), version `1.0.4+5` dans le code, 167 tests, aucun serveur applicatif
+- **Stack** : Flutter (Dart ≥ 3.6), version `1.0.5+6` dans le code, 167 tests, aucun serveur applicatif
 - **Backend** : aucun — tout l'état du joueur vit sur l'appareil (`shared_preferences`)
 - **Distribution** : App Store via Xcode Cloud · Play Store via App Bundle signé localement
 - **Monétisation** : interstitielle AdMob + achat unique 3,99 € qui la retire, en ligne depuis la 1.0.2
@@ -127,7 +127,7 @@ sauvegarder, rien à recopier sur une machine neuve.
 
 **Identifiants publics :**
 - App « Erea », bundle `com.teiki.erea` ; nom « Erea : Quiz d'histoire & frise » à partir de la 1.0.4.
-- Version `1.0.4+5` dans `erea_flutter/pubspec.yaml` depuis le 30 septembre 2026 — **doit être identique** au numéro saisi dans la console, sinon le build reste non sélectionnable.
+- Version `1.0.5+6` dans `erea_flutter/pubspec.yaml` depuis le 16 octobre 2026 : la 1.0.4 étant approuvée, Apple refuse tout nouveau build 1.0.4. Les builds 1.0.5 vont dans TestFlight ; avant de soumettre, créer la version 1.0.5 dans la console avec **exactement** ce numéro, sinon le build reste non sélectionnable.
 - iOS minimum : 15.0 (`IPHONEOS_DEPLOYMENT_TARGET`, `Podfile`).
 - Chiffrement : `ITSAppUsesNonExemptEncryption = false` dans `ios/Runner/Info.plist` — pas de formulaire d'export à chaque build.
 

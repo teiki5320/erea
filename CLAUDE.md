@@ -42,6 +42,11 @@ possible.
   de sélection d'une version.
 - **La version de `pubspec.yaml` doit être identique** à celle saisie
   dans App Store Connect, sinon le build est non sélectionnable.
+- **Dès qu'une version est approuvée, monte le numéro avant la poussée
+  suivante.** Apple ferme la version approuvée à tout nouveau build
+  (ITMS-90186 et ITMS-90062) : chaque poussée, même de documentation,
+  finit en build Xcode Cloud échoué et en deux e-mails. Le build 187 du
+  16 octobre 2026 l'a montré au lendemain de la 1.0.4.
 - **Les mots-clés App Store se comptent en octets**, pas en caractères :
   chaque accent en vaut deux.
 - **`google_mobile_ads` ne compile pas sur iOS sans
