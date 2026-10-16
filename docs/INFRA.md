@@ -1,7 +1,7 @@
 # INFRA — fiche technique
 
 > Généré le 20 août 2026 par un scan du dépôt, mis à jour le
-> 15 octobre 2026. Pour mettre à jour : relancer ce même prompt.
+> 16 octobre 2026. Pour mettre à jour : relancer ce même prompt.
 
 ## En bref
 
@@ -14,14 +14,14 @@
 
 ## Parcours
 
-- 🍎 **iOS** : 🐙 GitHub — main, 1.0.4 dans le code [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.4 (build 182) en vérification depuis le 15 octobre [en cours] → 📱 App Store — 1.0.2 en ligne depuis le 8 septembre [ok]
+- 🍎 **iOS** : 🐙 GitHub — main, 1.0.4 dans le code [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.4 (build 182) approuvée le 15 octobre [ok] → 📱 App Store — 1.0.4 en ligne depuis le 15 octobre [ok]
 - 🤖 **Android** : 🐙 GitHub — main, 1.0.4 dans le code [ok] → 🔑 Keystore Android — App Bundle signé sur le Mac [ok] → 🎮 Google Play Console — test fermé terminé, 1.0.4 en examen, production demandée le 14 octobre [en cours] → 🛒 Google Play — pas en production [pas encore]
 - 🌐 **Web** : 🐙 GitHub — racine de main, sans CNAME [ok] → 📄 Hébergement web (GitHub Pages / Cloudflare Pages) — GitHub Pages [ok] → 🏷️ Nom de domaine — erea.toakeur.com via Cloudflare [ok] → 🌐 Site — vitrine, jeu, support, confidentialité [ok]
-- 🎬 **Contenu** : 🎬 Studio — neuf pubs vidéo produites le 5 octobre [ok] → 🗓️ Planning — aucune publication programmée [à faire] → 📣 Réseaux sociaux & influenceurs — YouTube toa.afrotok, rien publié [pas encore]
+- 🎬 **Contenu** : 🎬 Studio — neuf pubs vidéo produites le 5 octobre [ok] → 🗓️ Planning — aucune publication programmée [à faire] → 📣 Réseaux sociaux & influenceurs — YouTube et TikTok branchés, rien publié [pas encore]
 
 ## Vue d'ensemble
 
-- **Plateforme** : iOS 15+ (1.0.2 en ligne sur l'App Store depuis le 8 septembre 2026) · Android en test fermé, pas encore en production · site vitrine `erea.toakeur.com`
+- **Plateforme** : iOS 15+ (1.0.4 en ligne sur l'App Store depuis le 15 octobre 2026) · Android en test fermé, pas encore en production · site vitrine `erea.toakeur.com`
 - **Stack** : Flutter (Dart ≥ 3.6), version `1.0.4+5` dans le code, 167 tests, aucun serveur applicatif
 - **Backend** : aucun — tout l'état du joueur vit sur l'appareil (`shared_preferences`)
 - **Distribution** : App Store via Xcode Cloud · Play Store via App Bundle signé localement
@@ -139,12 +139,12 @@ art. 12 à 0 %). L'achat intégré lui-même est décrit plus bas, section
 **État des versions :** la `1.0.0` (build 90) est sortie le 3 septembre
 2026 après un refus *Guideline 2.1 — Information Needed* et une
 re-soumission (détail dans `docs/APP_REVIEW.md`). La **`1.0.2` (build
-150) est en ligne depuis le 8 septembre 2026**, avec la publicité et
-l'achat intégré, et le reste jusqu'à l'approbation de la suivante. Le
-build 161 (`1.0.3`) est resté sur TestFlight sans être soumis. La
-**`1.0.4` (build 182) est en vérification depuis le 15 octobre 2026**,
-publication automatique ; les builds 176 et 180 avaient été refusés à
-l'import (ITMS-91064, manifeste de confidentialité).
+150) est sortie le 8 septembre 2026**, avec la publicité et
+l'achat intégré. Le build 161 (`1.0.3`) est resté sur TestFlight sans
+être soumis. La **`1.0.4` (build 182), soumise le 15 octobre 2026, est
+en ligne depuis le même jour à 14 h 01** (publication automatique) ; les
+builds 176 et 180 avaient été refusés à l'import (ITMS-91064, manifeste
+de confidentialité).
 
 **Où vivent les secrets :** aucun côté dépôt. L'authentification est
 celle du compte Apple (+ double facteur).
@@ -360,7 +360,7 @@ uniquement.
 Proposée après un PERFECT, un record ou trois défis d'affilée, une seule
 fois, jamais au lancement ; le système décide de l'affichage. Le même
 fichier fournit le lien de boutique ajouté aux grilles partagées : App
-Store sur iOS, Play Store sur Android depuis la 1.0.4. Au 13 octobre
+Store sur iOS, Play Store sur Android depuis la 1.0.4. Au 16 octobre
 2026, l'App Store compte 0 note.
 
 **Où vivent les secrets :** aucun.
