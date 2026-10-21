@@ -50,7 +50,12 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   String catKey = 'tout';
-  Difficulty diff = Difficulty.normal;
+
+  /// Reprise de [Store.difficulteChoisie] : Facile pour un nouveau joueur.
+  late Difficulty diff = Difficulty.values.firstWhere(
+    (d) => d.name == widget.store.difficulteChoisie,
+    orElse: () => Difficulty.facile,
+  );
   bool _navigating = false;
   DateTime? _dailyNow;
 
@@ -401,6 +406,7 @@ class _HomeScreenState extends State<HomeScreen>
                 onTap: () {
                   Sons.appui();
                   setState(() => diff = d);
+                  widget.store.setDifficulteChoisie(d.name);
                   Navigator.of(context).pop();
                 },
               ),

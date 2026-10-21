@@ -189,6 +189,8 @@ void main() {
     await pumpApp(tester);
     await tester.tap(find.text('Classique'));
     await tester.pumpAndSettle();
+    // Un nouveau joueur part en Facile : le Normal d'emblée décourageait.
+    expect(find.text('Facile'), findsOneWidget);
     await tester.tap(find.text('Difficulté'));
     await tester.pumpAndSettle();
     expect(find.text('Choisis une difficulté'), findsOneWidget);

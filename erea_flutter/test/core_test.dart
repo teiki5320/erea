@@ -346,4 +346,25 @@ void main() {
       expect(nouveauxBadges(s).map((b) => b.cle), contains('touche-a-tout'));
     });
   });
+
+  group('difficulté retenue', () {
+    test('un nouveau joueur part en Facile', () async {
+      SharedPreferences.setMockInitialValues({});
+      final s = await Store.load();
+      expect(s.difficulteChoisie, 'facile');
+    });
+
+    test('un joueur d’avant la 1.0.5 garde le Normal', () async {
+      SharedPreferences.setMockInitialValues({'games': 12});
+      final s = await Store.load();
+      expect(s.difficulteChoisie, 'normal');
+    });
+
+    test('le dernier choix est retenu', () async {
+      SharedPreferences.setMockInitialValues({});
+      final s = await Store.load();
+      await s.setDifficulteChoisie('difficile');
+      expect((await Store.load()).difficulteChoisie, 'difficile');
+    });
+  });
 }

@@ -167,6 +167,15 @@ class Store {
   Future<void> setHapticsOn(bool v) =>
       _put(() => _prefs.setBool('opt.haptics', v));
 
+  /// Dernière difficulté choisie pour le Classique (nom de l'enum
+  /// `Difficulty`). Absente : un nouveau joueur part en Facile — le
+  /// Normal d'emblée décourageait —, un joueur qui avait déjà des parties
+  /// avant la 1.0.5 garde le Normal qu'il a toujours connu.
+  String get difficulteChoisie =>
+      _prefs.getString('opt.diff') ?? (games == 0 ? 'facile' : 'normal');
+  Future<void> setDifficulteChoisie(String nom) =>
+      _put(() => _prefs.setString('opt.diff', nom));
+
   /// Le geste de la frise n'est montré qu'une fois.
   bool get tutoSeen => _prefs.getBool('opt.tuto') ?? false;
   Future<void> setTutoSeen() => _put(() => _prefs.setBool('opt.tuto', true));
