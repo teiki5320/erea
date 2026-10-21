@@ -62,9 +62,13 @@
   .btn:active{transform:translateY(2px)}
   .btn-1{background:var(--coral); color:#fff; box-shadow:0 5px 0 var(--coral-dark)}
   .btn-2{background:var(--white); color:var(--ink); box-shadow:0 5px 0 #d8ddef}
-  .store{display:inline-block; margin:22px 0 0; line-height:0}
+  .stores{display:flex; gap:12px; justify-content:center; align-items:center;
+    flex-wrap:wrap; margin:22px 0 0}
+  .store{display:inline-block; line-height:0}
   .store img{height:54px; width:auto; display:block}
-  .bientot{font-size:14px; color:var(--ink-soft); margin:10px 0 0; font-weight:700}
+  /* Le badge officiel de Google porte une marge transparente : on la
+     compense pour l'aligner sur celui d'Apple. */
+  .store img.google{height:80px; margin:-13px -10px}
 
   /* ------------------------------------------------------------ sections */
   .section{padding:62px 0 10px; text-align:center}
@@ -123,10 +127,14 @@
       <a class="btn btn-1" href="jeu.html">▶︎ Jouer tout de suite</a>
       <a class="btn btn-2" href="#modes">Découvrir le jeu</a>
     </div>
-    <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
-      <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54">
-    </a>
-    <p class="bientot">Bientôt sur Google Play</p>
+    <div class="stores">
+      <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
+        <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54">
+      </a>
+      <a class="store" href="https://play.google.com/store/apps/details?id=com.teiki.erea">
+        <img class="google" src="badge-google-play.png" alt="Disponible sur Google Play" width="207" height="80">
+      </a>
+    </div>
   </header>
 
   <section class="section" id="modes">
@@ -241,13 +249,18 @@
   <div class="final">
     <h2>Tu peux faire mieux que moi ?</h2>
     <p class="st">Le jeu est jouable tout de suite dans ton navigateur,
-    sans rien installer — et sur iPhone et iPad, depuis l'App Store.</p>
+    sans rien installer — et en appli sur iPhone, iPad et Android.</p>
     <div class="boutons">
       <a class="btn btn-1" href="jeu.html">▶︎ Commencer une partie</a>
     </div>
-    <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
-      <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54" loading="lazy">
-    </a>
+    <div class="stores">
+      <a class="store" href="https://apps.apple.com/fr/app/erea/id6794918301">
+        <img src="badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54" loading="lazy">
+      </a>
+      <a class="store" href="https://play.google.com/store/apps/details?id=com.teiki.erea">
+        <img class="google" src="badge-google-play.png" alt="Disponible sur Google Play" width="207" height="80" loading="lazy">
+      </a>
+    </div>
   </div>
 
 </div>

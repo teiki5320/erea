@@ -12,9 +12,8 @@
      côté Apple, « referrer » côté Google, pour savoir d'où viennent les
      installations dans App Store Connect et la Play Console.
 
-     LE JOUR DE LA PRODUCTION GOOGLE PLAY : passer PLAY_OUVERT à true
-     ci-dessous, et dans index.html remplacer « Bientôt sur Google Play »
-     par le badge (voir docs/PUBLICATION.md). -->
+     PLAY_OUVERT : à false, un Android reste ici et se voit proposer le
+     jeu web (c'était le cas avant la production Google Play). -->
 <meta name="apple-itunes-app" content="app-id=6794918301">
 <title>Télécharger Erea — Devine l'année !</title>
 <meta name="description" content="Télécharge Erea, le jeu d'histoire pour toute la famille : place les grands événements sur la frise du temps, de 3000 av. J.-C. à aujourd'hui.">
@@ -37,7 +36,7 @@
 <script>
   var APP_STORE = 'https://apps.apple.com/fr/app/erea/id6794918301';
   var PLAY = 'https://play.google.com/store/apps/details?id=com.teiki.erea';
-  var PLAY_OUVERT = false; // true le jour où Google ouvre la production
+  var PLAY_OUVERT = true; // en production sur Google Play depuis le 20 octobre 2026
 
   (function () {
     var p = new URLSearchParams(location.search);
