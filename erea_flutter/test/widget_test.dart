@@ -527,9 +527,15 @@ void main() {
     await tester.pumpAndSettle();
     await tapVisible(tester, find.text('Je place ici !'));
 
-    // Les deux épingles…
+    // La bonne année s'affiche en grand dans la carte, et la même année
+    // marque la vraie date sur la frise…
+    final annee = tester
+        .widget<Text>(find.byKey(const ValueKey('annee-revelee')))
+        .data!;
+    expect(find.text(annee), findsNWidgets(2));
+    // … la carte dit la réponse du joueur et l'écart…
     expect(find.textContaining('Toi · '), findsOneWidget);
-    expect(find.textContaining('🎯'), findsWidgets);
+    expect(find.textContaining('d’écart'), findsOneWidget);
     // … reliées par le trait de l'écart, qui porte le nombre d'années.
     expect(
       find.byWidgetPredicate((w) =>

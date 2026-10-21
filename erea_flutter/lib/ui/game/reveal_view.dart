@@ -10,9 +10,9 @@ import '../tape_widget.dart';
 import 'gap_line_painter.dart';
 import 'verdict_textes.dart';
 
-/// Révélation : la frise reste grande, avec la place des deux pastilles
-/// au-dessus (« Toi · … ») et en dessous (la vraie date).
-const double _revealTapeH = 240;
+/// Révélation : la frise est réduite sous la carte de l'année (1.0.5),
+/// avec la place des deux repères au-dessus et en dessous.
+const double _revealTapeH = 110;
 const double revealTopPad = 44;
 const double revealBottomPad = 46;
 
@@ -34,11 +34,10 @@ const double maxEchelleVerdict = 1.3;
 /// gonflent : une frise de hauteur constante faisait alors déborder la
 /// colonne de 280 px, et le bouton « Manche suivante » disparaissait.
 double revealTapeHeightFor(double available) {
-  final voulu = available < 620 ? 190.0 : _revealTapeH;
-  // Les pastilles ont besoin de leurs marges hautes et basses : c'est la
-  // frise elle-même qui cède, jamais elles.
+  // Les repères ont besoin de leurs marges hautes et basses : c'est la
+  // frise elle-même qui cède, jamais eux.
   final place = available * 0.34 - revealTopPad - revealBottomPad;
-  return math.min(voulu, math.max(110.0, place));
+  return math.min(_revealTapeH, math.max(90.0, place));
 }
 
 /// La révélation d'une manche : badge de verdict, points, puis la frise
@@ -82,7 +81,6 @@ class RevealView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reduce = MediaQuery.of(context).disableAnimations;
-    final tol = tolerance(controller.diff);
     // UN SEUL verdict pour tout l'écran : badge, points, trait d'écart et
     // titre de la carte disent la même chose que la pastille de manche et
     // que la grille de partage (cf. scoring.dart).
@@ -92,8 +90,8 @@ class RevealView extends StatelessWidget {
     // ligne de flottaison — c'est la partie qui apprend quelque chose.
     final serre = available < 620;
     final tapeH = revealTapeHeightFor(available);
-    final ptsSize = serre ? 44.0 : 56.0;
-    final badgeSize = serre ? 18.0 : 22.0;
+    final verdictSize = serre ? 26.0 : 32.0;
+    final anneeSize = serre ? 84.0 : 112.0;
     return Column(
       children: [
         // Le bandeau de verdict — badge, points, écart — cesse de grossir
@@ -103,104 +101,114 @@ class RevealView extends StatelessWidget {
           maxScaleFactor: maxEchelleVerdict,
           child: Column(
             children: [
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         // liveRegion : VoiceOver lit la phrase dès qu'elle apparaît.
-        // excludeSemantics : le résumé complet remplace le seul
-        // « Incroyable ! » du badge, qui ne donnait ni l'année ni l'écart.
+        // excludeSemantics : le résumé complet remplace le seul verdict,
+        // qui ne donnait ni l'année ni l'écart.
         Semantics(
           liveRegion: true,
           container: true,
           excludeSemantics: true,
           label: resumeVocalPour(r),
-          child:
-          ScaleTransition(
+          child: ScaleTransition(
             key: const ValueKey('badge-verdict'),
             scale: popBadge,
-            child: Transform.rotate(
-              angle: dansLaCible ? -0.035 : 0,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 9),
-                decoration: BoxDecoration(
-                  // Menthe / jaune / blanc : les mêmes couleurs que la
-                  // pastille de manche. Jamais de rouge, on ne punit pas.
-                  color: switch (verdict) {
-                    Verdict.reussi => verdictMintColor,
-                    Verdict.moyen => yellowColor,
-                    Verdict.rate => Colors.white,
-                  },
-                  borderRadius: BorderRadius.circular(999),
-                  boxShadow: const [pillShadow],
-                ),
-                child: Text(
-                  '${reactionPour(r)} ${dansLaCible ? '🎯' : '😅'}',
+            child: Text(
+              reactionPour(r),
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: verdictSize,
+                height: 1.1,
+                color: inkColor,
+              ),
+            ),
+          ),
+        ),
+        // La carte de l'année (maquette du 21 octobre 2026) : la bonne
+        // année en très grand, c'est ce qu'on doit retenir de la manche.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(22, 10, 22, 0),
+          child: Container(
+            width: double.infinity,
+            padding: EdgeInsets.fromLTRB(20, serre ? 14 : 22, 20, serre ? 14 : 22),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(30),
+              boxShadow: const [softShadow],
+            ),
+            child: Column(
+              children: [
+                const Text(
+                  'C’ÉTAIT EN',
                   style: TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12,
+                    letterSpacing: 1,
+                    color: inkPaleColor,
+                  ),
+                ),
+                AnimatedBuilder(
+                  animation: pop,
+                  builder: (context, child) => Transform.translate(
+                    offset: Offset(0, popPointsMontee.value),
+                    child: Transform.scale(scale: popPoints.value, child: child),
+                  ),
+                  // FittedBox : « 3000 av. J.-C. » en 112 px, ou à 200 % de
+                  // taille de texte système, déborderait de la carte.
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      formatYear(r.event.annee),
+                      key: const ValueKey('annee-revelee'),
+                      style: TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: anneeSize,
+                        height: 1.05,
+                        letterSpacing: -2,
+                        color: inkColor,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Row(
+                    children: [
+                      if (r.ecart > 0) ...[
+                        _jeton('Toi · ${formatYear(r.guess)}',
+                            const Color(0xFFFFF7E8)),
+                        const SizedBox(width: 8),
+                      ],
+                      _jeton(
+                        r.ecart == 0
+                            ? 'Année exacte !'
+                            : r.ecart == 1
+                                ? '1 an d’écart'
+                                : '${r.ecart} ans d’écart',
+                        yellowColor,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  '+${r.pts} pts',
+                  style: const TextStyle(
                     fontFamily: 'Baloo2',
                     fontWeight: FontWeight.w800,
-                    fontSize: badgeSize,
-                    color: dansLaCible ? Colors.white : inkColor,
+                    fontSize: 22,
+                    height: 1.0,
+                    color: inkColor,
+                    fontFeatures: [FontFeature.tabularFigures()],
                   ),
                 ),
-              ),
+              ],
             ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        AnimatedBuilder(
-          animation: pop,
-          builder: (context, child) => Transform.translate(
-            offset: Offset(0, popPointsMontee.value),
-            child: Transform.scale(scale: popPoints.value, child: child),
-          ),
-          // FittedBox : à 200 % de taille de texte système, « +11000 pts »
-          // débordait de l'écran.
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.baseline,
-                textBaseline: TextBaseline.alphabetic,
-                children: [
-                  Text(
-                    '+${r.pts}',
-                    style: TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: ptsSize,
-                      height: 1.0,
-                      color:
-                          verdict == Verdict.rate ? inkPaleColor : coralColor,
-                      fontFeatures: const [FontFeature.tabularFigures()],
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Text(
-                    'pts',
-                    style: TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 17,
-                      color:
-                          verdict == Verdict.rate ? inkPaleColor : coralColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          // La « cible » affichée = l'écart qui donne encore le vert
-          // (700 pts) : tolérance × ln(1000/700). Afficher la tolérance
-          // brute (30 ans en Normal) contredisait le verdict du dessus.
-          '${directionPour(r)} · cible ± ${(tol * 0.3567).round()} ans',
-          style: const TextStyle(
-            fontFamily: 'Nunito',
-            fontWeight: FontWeight.w800,
-            fontSize: 13.5,
-            color: inkSoftColor,
           ),
         ),
               const SizedBox(height: 12),
@@ -244,14 +252,13 @@ class RevealView extends StatelessWidget {
               return tp.width + 20;
             }
 
-            final texteToi =
-                horsChamp ? (versLaGauche ? '‹ Toi · ' : 'Toi · ') : 'Toi · ';
+            // Les années seules : « Toi » et l'écart sont dans la carte.
             final libelleToi = horsChamp
                 ? (versLaGauche
-                    ? '‹ Toi · ${formatYear(r.guess)}'
-                    : 'Toi · ${formatYear(r.guess)} ›')
-                : '$texteToi${formatYear(r.guess)}';
-            final libelleVrai = '${formatYear(r.event.annee)} 🎯';
+                    ? '‹ ${formatYear(r.guess)}'
+                    : '${formatYear(r.guess)} ›')
+                : formatYear(r.guess);
+            final libelleVrai = formatYear(r.event.annee);
             final wToi = largeur(libelleToi);
             final wVrai = largeur(libelleVrai);
 
@@ -332,33 +339,6 @@ class RevealView extends StatelessWidget {
                         height: 3,
                         child: CustomPaint(
                           painter: GapLinePainter(dashed: !dansLaCible),
-                        ),
-                      ),
-                    ),
-                  // … et le nombre d'années, porté par le trait.
-                  if (r.ecart > 0)
-                    Positioned(
-                      top: revealTopPad + tapeH * 0.30 - 11,
-                      left: (gx + trueX) / 2,
-                      child: FractionalTranslation(
-                        translation: const Offset(-0.5, 0),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 9, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: coralColor,
-                            borderRadius: BorderRadius.circular(999),
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                          child: Text(
-                            r.ecart == 1 ? '1 an' : '${r.ecart} ans',
-                            style: const TextStyle(
-                              fontFamily: 'Nunito',
-                              fontWeight: FontWeight.w900,
-                              fontSize: 11.5,
-                              color: Colors.white,
-                            ),
-                          ),
                         ),
                       ),
                     ),
@@ -582,3 +562,24 @@ Widget _token(String text, Color bg, Color fg) {
       ),
     );
   }
+
+/// Jeton de la carte de l'année : « Toi · 1946 », « 12 ans d'écart ».
+Widget _jeton(String texte, Color fond) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+    decoration: BoxDecoration(
+      color: fond,
+      borderRadius: BorderRadius.circular(999),
+    ),
+    child: Text(
+      texte,
+      maxLines: 1,
+      style: const TextStyle(
+        fontFamily: 'Nunito',
+        fontWeight: FontWeight.w800,
+        fontSize: 13,
+        color: inkColor,
+      ),
+    ),
+  );
+}

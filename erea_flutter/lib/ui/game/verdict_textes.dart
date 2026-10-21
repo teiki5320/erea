@@ -26,18 +26,6 @@ String reactionPour(RoundResult r) {
   return 'Trop loin !';
 }
 
-/// L'écart, dit dans le sens du temps : « 5 ans trop tôt ⏩ ».
-String directionPour(RoundResult r) {
-  // Temps écoulé avec le curseur pile dessus : le dire, sinon l'écran
-  // afficherait « Année exacte ! » à côté de zéro point.
-  if (r.tempsEcoule && r.ecart == 0) return 'Tu y étais… trop tard ⏱';
-  if (r.ecart == 0) return 'Année exacte !';
-  final unit = r.ecart == 1 ? 'an' : 'ans';
-  return r.guess < r.event.annee
-      ? '${r.ecart} $unit trop tôt ⏩'
-      : '${r.ecart} $unit trop tard ⏪';
-}
-
 /// La phrase que VoiceOver lit d'une traite à la révélation. Le badge,
 /// les points et le trait d'écart racontent le verdict aux yeux ; sans
 /// elle, le moment le plus important d'une manche était muet.
