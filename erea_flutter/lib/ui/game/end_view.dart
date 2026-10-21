@@ -120,137 +120,193 @@ class EndView extends StatelessWidget {
             color: inkSoftColor,
           ),
         ),
-        // Ce que la partie a rapporté : XP, barre de niveau, palier franchi
+        // Ce que la partie a rapporté : XP, barre de niveau, palier franchi,
+        // et les succès débloqués accrochés SOUS la même carte. Dans un
+        // encadré à part au milieu du bilan, ils passaient inaperçus.
         Padding(
           padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
           child: Container(
-            padding: const EdgeInsets.all(14),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(22),
               boxShadow: const [softShadow],
             ),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Text(titre.emoji, style: const TextStyle(fontSize: 26)),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                  child: Column(
+                    children: [
+                      Row(
                         children: [
-                          Text(
-                            monteDeNiveau
-                                ? 'Niveau ${nivApres.level} atteint ! '
-                                    '${titre.titre}'
-                                : '${titre.titre} · niveau ${nivApres.level}',
-                            style: TextStyle(
-                              fontFamily: 'Baloo2',
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15,
-                              color: monteDeNiveau ? coralColor : inkColor,
+                          // Le niveau dans un carré jaune (maquette du 21 octobre
+                          // 2026), à la place de l'émoji du titre.
+                          Container(
+                            width: 40,
+                            height: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: yellowColor,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${nivApres.level}',
+                              style: const TextStyle(
+                                fontFamily: 'Baloo2',
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                                color: inkColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  monteDeNiveau
+                                      ? 'Niveau ${nivApres.level} atteint ! '
+                                          '${titre.titre}'
+                                      : '${titre.titre} · niveau ${nivApres.level}',
+                                  style: TextStyle(
+                                    fontFamily: 'Baloo2',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 15,
+                                    color: monteDeNiveau ? coralColor : inkColor,
+                                  ),
+                                ),
+                                Text(
+                                  '${nivApres.into} / ${nivApres.need} XP',
+                                  style: const TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 11.5,
+                                    color: inkPaleColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Text(
-                            '${nivApres.into} / ${nivApres.need} XP',
+                            '+${controller.xpTotal} XP',
                             style: const TextStyle(
-                              fontFamily: 'Nunito',
+                              fontFamily: 'Baloo2',
                               fontWeight: FontWeight.w800,
-                              fontSize: 11.5,
-                              color: inkPaleColor,
+                              fontSize: 20,
+                              color: Color(0xFFA9761C),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    Text(
-                      '+${controller.xpTotal} XP',
-                      style: const TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        color: Color(0xFFA9761C),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: SizedBox(
-                    height: 8,
-                    width: double.infinity,
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ColoredBox(
-                              color: inkColor.withValues(alpha: 0.10)),
-                        ),
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: FractionallySizedBox(
-                              widthFactor: (nivApres.into / nivApres.need)
-                                  .clamp(0.0, 1.0)
-                                  .toDouble(),
-                              heightFactor: 1,
-                              child: const DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [yellowColor, coralColor],
+                      const SizedBox(height: 12),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: SizedBox(
+                          height: 10,
+                          width: double.infinity,
+                          child: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: ColoredBox(
+                                    color: inkColor.withValues(alpha: 0.10)),
+                              ),
+                              Positioned.fill(
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: FractionallySizedBox(
+                                    widthFactor: (nivApres.into / nivApres.need)
+                                        .clamp(0.0, 1.0)
+                                        .toDouble(),
+                                    heightFactor: 1,
+                                    child: const DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [yellowColor, coralColor],
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                            ],
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (badgesGagnes.isNotEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                    color: yellowColor.withValues(alpha: 0.35),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          badgesGagnes.length == 1
+                              ? 'SUCCÈS DÉBLOQUÉ'
+                              : '${badgesGagnes.length} SUCCÈS DÉBLOQUÉS',
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.w900,
+                            fontSize: 13,
+                            letterSpacing: 1,
+                            color: Color(0xFFA9761C),
+                          ),
+                        ),
+                        for (final b in badgesGagnes) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Container(
+                                width: 26,
+                                height: 26,
+                                alignment: Alignment.center,
+                                decoration: const BoxDecoration(
+                                  color: inkColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.check_rounded,
+                                    size: 17, color: yellowColor),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text.rich(
+                                  TextSpan(children: [
+                                    TextSpan(
+                                      text: '${b.titre}  ',
+                                      style: const TextStyle(
+                                        fontFamily: 'Baloo2',
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                        color: inkColor,
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: b.comment,
+                                      style: const TextStyle(
+                                        fontFamily: 'Nunito',
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 12.5,
+                                        color: inkSoftColor,
+                                      ),
+                                    ),
+                                  ]),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ],
                     ),
                   ),
-                ),
               ],
             ),
           ),
         ),
-        if (badgesGagnes.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
-            child: Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: yellowColor.withValues(alpha: 0.30),
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    badgesGagnes.length == 1
-                        ? 'Nouveau succès !'
-                        : '${badgesGagnes.length} nouveaux succès !',
-                    style: const TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                      color: inkColor,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  for (final b in badgesGagnes)
-                    Text(
-                      '${b.emoji}  ${b.titre} — ${b.comment}',
-                      style: const TextStyle(
-                        fontFamily: 'Nunito',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12.5,
-                        color: inkSoftColor,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
         const SizedBox(height: 10),
         // Partage : la grille sans spoiler, prête à coller n'importe où.
         Padding(
