@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- L'icône des notifications n'est nommée que depuis Dart
+     (lib/core/rappels.dart) : sans cette ligne, la réduction des
+     ressources du build release la supprimerait, et les rappels
+     échoueraient sans bruit. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_erea" />

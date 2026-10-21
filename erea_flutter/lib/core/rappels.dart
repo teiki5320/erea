@@ -1,3 +1,5 @@
+import 'dart:ui' show Color;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
@@ -29,7 +31,9 @@ class Rappels {
             requestBadgePermission: false,
             requestSoundPermission: false,
           ),
-          android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+          // Silhouette blanche : Android teinte l'icône des notifications,
+          // l'icône couleur de l'app s'y affichait en carré blanc.
+          android: AndroidInitializationSettings('@drawable/ic_stat_erea'),
         ),
       );
       _pret = true;
@@ -99,7 +103,8 @@ class Rappels {
           notificationDetails: const NotificationDetails(
             iOS: DarwinNotificationDetails(),
             android: AndroidNotificationDetails('defi', 'Défi du jour',
-                importance: Importance.defaultImportance),
+                importance: Importance.defaultImportance,
+                color: Color(0xFFF25B4D)),
           ),
           androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         );

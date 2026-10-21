@@ -67,6 +67,10 @@ flutter:
 flutter_launcher_icons:
   image_path: "assets/icon/icon.png"
   android: true
+  # Icône adaptative (1.0.5) : sans elle, les Pixel rognaient l'icône
+  # carrée en cercle. Le premier plan est l'icône sans son liseré.
+  adaptive_icon_background: "#FFFFFF"
+  adaptive_icon_foreground: "assets/icon/icon_adaptatif_premier_plan.png"
   ios: true
   remove_alpha_ios: true # l'App Store refuse les icônes avec canal alpha
   web:
