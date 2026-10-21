@@ -1,6 +1,6 @@
 # Travailler sur Erea
 
-Erea est un jeu iOS de culture historique en Flutter : un événement
+Erea est un jeu iOS et Android de culture historique en Flutter : un événement
 s'affiche sans sa date, on fait défiler une frise de 3000 av. J.-C. à
 aujourd'hui pour deviner l'année. Le produit est l'application, dans
 [`erea_flutter/`](erea_flutter/) ; le jeu web à la racine est le

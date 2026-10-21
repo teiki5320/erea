@@ -1,8 +1,8 @@
 # Publier Erea sur le Play Store
 
-> Écrit le 9 août 2026, mis à jour le 15 octobre 2026. **Rien n'est
-> encore public côté Android** : le test fermé est terminé, l'accès à la
-> production est demandé depuis le 14 octobre 2026. Ce document est la
+> Écrit le 9 août 2026, mis à jour le 21 octobre 2026. **La 1.0.4 est
+> en ligne sur Google Play depuis le 20 octobre 2026** : l'accès à la
+> production, demandé le 14 octobre, a été accordé le 17. Ce document est la
 > marche à suivre ; l'état à jour des deux boutiques est dans
 > `docs/PUBLICATION.md`.
 >
@@ -26,10 +26,10 @@
 | Fiche Play Store française, visuels compris | ✅ 3 septembre 2026 |
 | Déclaration « identifiant publicitaire » | ✅ 3 septembre 2026 — oui, trois finalités : publicité, analyse, prévention des fraudes |
 | Message de consentement RGPD (AdMob) | ✅ publié le 3 septembre 2026 — la console était vide, aucune annonce n'aurait été servie en Europe |
-| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` approuvée le 8 septembre — release `4 (1.0.3)` servie depuis le 16 septembre — release `5 (1.0.4)` en examen depuis le 14 octobre |
+| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` approuvée le 8 septembre — release `4 (1.0.3)` servie depuis le 16 septembre — release `5 (1.0.4)` envoyée le 14 octobre, puis promue en production le 17 octobre |
 | Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
 | **12 testeurs pendant 14 jours** | ✅ tenus du 8 au 22 septembre 2026 (groupe Google `testers-community@googlegroups.com`, service Testers Community) |
-| **Accès à la production** | ⬜ demandé le 14 octobre 2026 à 18 h 39, réponse de Google attendue |
+| **Accès à la production** | ✅ demandé le 14 octobre 2026 à 18 h 39, accordé le 17 octobre ; 1.0.4 en ligne depuis le 20 octobre |
 | Appareil Android physique (exigé par la validation) | ✅ Pixel 8a, en service depuis septembre 2026 |
 | Trois questionnaires | ✅ remplis le 3 septembre 2026 — public cible 13 ans et plus |
 | Description Play corrigée dans la console (Duel, 1800, enfant de 8 ans) | ✅ 8 septembre 2026, approuvée avec la release 1.0.2 |

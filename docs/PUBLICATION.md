@@ -32,7 +32,7 @@
 ## Vue d'ensemble
 
 - **iOS** : **1.0.4 (build 182) en ligne depuis le 15 octobre 2026 à 14 h 01**, soumise à 12 h 51 et publiée automatiquement à l'approbation ; nouveau nom « Erea : Quiz d'histoire & frise »
-- **Android** : **accès à la production accordé le 17 octobre 2026** (demandé le 14 octobre à 18 h 39) ; **release de production `5 (1.0.4)` envoyée pour examen le 17 octobre vers 8 h 25**, promue depuis la piste Alpha, 177 pays plus « reste du monde », déploiement complet, publication gérée désactivée ; **en ligne sur Google Play depuis le 20 octobre 2026 à 16 h 07**
+- **Android** : **accès à la production accordé le 17 octobre 2026** (demandé le 14 octobre à 18 h 39) ; **release de production `5 (1.0.4)` envoyée pour examen le 17 octobre vers 8 h 25**, promue depuis la piste Alpha, déploiement complet, publication gérée désactivée ; **en ligne sur Google Play depuis le 20 octobre 2026 à 16 h 07**
 - **Version dans le code** : `1.0.5+6` depuis le 16 octobre 2026, pour que Xcode Cloud ne bute plus sur la 1.0.4 approuvée (build 187 refusé, ITMS-90186) ; même code que la 1.0.4, envoyée à Google le 14 octobre et à Apple le 15 octobre ; le bundle Android de production reste celui de la 1.0.4 (`versionCode 5`)
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — **approuvé** sur l'App Store, **actif** sur Google Play
@@ -159,7 +159,7 @@ le 17 octobre ; la release de production est en ligne depuis le
 
 ## Ce qui reste, dans l'ordre
 
-1. ✅ **App Store** : la 1.0.2 est en ligne depuis le 8 septembre 2026, achat intégré compris.
+1. ✅ **App Store** : la 1.0.4 est en ligne depuis le 15 octobre 2026 (après la 1.0.2 du 8 septembre, qui apportait l'achat intégré).
 2. ✅ **Douze testeurs Android pendant quatorze jours** : tenus du 8 au 22 septembre 2026.
 3. ✅ **Google Play** : la 1.0.4 est en production depuis le 20 octobre 2026 à 16 h 07 (notes de version : « Bienvenue dans Erea ! »).
 4. ✅ **App Review de la 1.0.4** : approuvée et en ligne le 15 octobre 2026, le jour de l'envoi.

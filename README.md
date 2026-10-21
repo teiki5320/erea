@@ -6,7 +6,7 @@ la date — et il faut le placer sur une grande frise allant de **3000 av.
 J.-C. à aujourd'hui** en faisant défiler un ruban. Plus la réponse est
 proche, plus on marque de points.
 
-Le produit, c'est l'**application iOS** (dossier [`erea_flutter/`](erea_flutter/)).
+Le produit, c'est l'**application iOS et Android** (dossier [`erea_flutter/`](erea_flutter/)).
 Le jeu web de ce dépôt en est le prototype d'origine, conservé et
 toujours jouable.
 
@@ -73,7 +73,7 @@ collecte quoi que ce soit. Voir
 
 | Chemin | Rôle |
 |---|---|
-| `erea_flutter/` | **l'application iOS** — le produit |
+| `erea_flutter/` | **l'application iOS et Android** — le produit |
 | `index.html` | la vitrine publique (GitHub Pages) |
 | `jeu.html` | le prototype web, toujours jouable |
 | `support.html`, `confidentialite.html` | les deux pages exigées par l'App Store |
