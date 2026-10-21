@@ -57,7 +57,7 @@ boutiques, et la 1.0.5 est en examen chez Apple et chez Google depuis le
 | Fiche publique | identifiant App Store `6794918301` |
 | Version publiée | `1.0.4`, build `182`, en ligne depuis le 15 octobre 2026 à 14 h 01 — remplace la `1.0.2` (build `150`) du 8 septembre, qui remplaçait la `1.0.0` du 3 septembre |
 | Dernier build connu | `195` (`1.0.5`), soumis ; le `187` (1.0.4, refusé par ITMS-90186 au lendemain de l'approbation) a imposé le passage du code en 1.0.5 |
-| Soumission en cours | `1.0.5`, build `195`, **en attente de vérification depuis le 21 octobre 2026 à 15 h 11**, soumise par TOA CORP ; publication automatique, notes App Review du §0 de `APP_REVIEW.md` |
+| Soumission en cours | `1.0.5`, build `195`, **en attente de vérification depuis le 21 octobre 2026 à 15 h 11** ; publication automatique, notes App Review du §0 de `APP_REVIEW.md` |
 | Dernière soumission | `1.0.4`, build `182`, le 15 octobre 2026 à 12 h 51, approuvée le jour même — les builds `176` et `180` ont été refusés à l'import (ITMS-91064) : le validateur n'accepte ni « suivi à vrai, liste de domaines vide » ni « suivi à vrai, sans clé » ; le 182 porte « suivi à faux, sans clé » (commit 6e981b6) ; nom « Erea : Quiz d'histoire & frise », mots-clés sans « quiz/frise/histoire » (déjà dans le nom), captures iPhone légendées écran moyen et grand écran (iPad : celles d'août), adresses passées sur `erea.toakeur.com` (assistance, site, confidentialité), notes App Review réécrites (AdMob, consentement, achat intégré) |
 | Notes / avis | 0 / 0 au 21 octobre 2026 |
 | Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable, **approuvé** le 8 septembre avec la 1.0.2 |
@@ -169,7 +169,7 @@ le 17 octobre ; la release de production est en ligne depuis le
 5. ✅ **Site et page d'aiguillage** passés sur Google Play le 21 octobre 2026 : badge sur la vitrine, `PLAY_OUVERT` à `true`.
 6. **Lancer la pub TikTok** vers `https://erea.toakeur.com/telecharger/?src=tiktok` : les deux boutiques sont en ligne.
 7. **Suivre l'examen de la 1.0.5** : App Review (build 195, envoyée le 21 octobre à 15 h 11) et Google Play (`6 (1.0.5)`, le même jour).
-8. **DSA** : le compte Apple soumet désormais au nom de **TOA CORP** (constaté le 21 octobre 2026) ; vérifier dans App Store Connect → Business la déclaration de trader et le complément d'adresse.
+8. **DSA** : Jean a demandé le passage du compte Apple en compte entreprise (octobre 2026), toujours en cours au 21 octobre — « TOA CORP » n'est que le nom affiché du compte ; se déclarer trader une fois le compte converti et le complément d'adresse nettoyé.
 9. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.
 
 ---
