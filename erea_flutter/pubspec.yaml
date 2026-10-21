@@ -1,10 +1,10 @@
 name: erea
 description: "Erea — devine l'année ! Jeu d'histoire pour toute la famille."
 publish_to: "none"
-version: 1.0.5+6 # 1.0.5 = CFBundleShortVersionString · 6 = CFBundleVersion / versionCode Android
+version: 1.0.6+7 # 1.0.6 = CFBundleShortVersionString · 7 = CFBundleVersion / versionCode Android
 # Le numéro de build (après le +) est écrasé par Xcode Cloud, qui
-# incrémente le sien à chaque compilation (la 1.0.4 en ligne porte le build 182).
-# Seul le 1.0.5 compte ici, et il doit être identique au numéro de
+# incrémente le sien à chaque compilation (la 1.0.5 en ligne porte le build 195).
+# Seul le 1.0.6 compte ici, et il doit être identique au numéro de
 # version saisi dans App Store Connect, sinon la soumission est refusée.
 
 environment:
