@@ -167,9 +167,4 @@ class Achat {
     return issue.timeout(const Duration(seconds: 5),
         onTimeout: () => _dejaPaye);
   }
-
-  static Future<void> arreter() async {
-    await _flux?.cancel();
-    _flux = null;
-  }
 }

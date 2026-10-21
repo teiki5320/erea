@@ -2,7 +2,6 @@ import 'package:flutter/material.dart' hide Badge;
 
 import '../../data/events_repository.dart';
 import '../../core/timeline_scale.dart';
-import '../../data/store.dart';
 import '../../game/game_controller.dart';
 import '../sticker_widgets.dart';
 import '../tape_widget.dart';
@@ -47,7 +46,6 @@ class GuessView extends StatelessWidget {
   const GuessView({
     super.key,
     required this.controller,
-    required this.store,
     required this.guessing,
     required this.available,
     required this.tapeKey,
@@ -56,7 +54,6 @@ class GuessView extends StatelessWidget {
   });
 
   final GameController controller;
-  final Store store;
 
   /// Faux dès que la manche est validée : la frise se verrouille et le
   /// ruban part en voyage vers la vraie date.
@@ -261,11 +258,10 @@ class GuessView extends StatelessWidget {
       ],
     );
   }
-
-  /// Bouton de réglage fin 46 × 46 : glyphe « − » / « + » en Baloo,
-  /// blanc, ombre douce (0, 6, 14).
 }
 
+/// Bouton de réglage fin 46 × 46 : glyphe « − » / « + » en Baloo,
+/// blanc, ombre douce (0, 6, 14).
 Widget _fineButton(String glyph, String label, VoidCallback? onTap) {
     // Le glyphe est un dessin : sans étiquette, VoiceOver n'annonce rien.
     return Semantics(
@@ -308,9 +304,3 @@ Widget _fineButton(String glyph, String label, VoidCallback? onTap) {
     );
   }
 
-/// Sortie de l'écran de fin : la publicité s'intercale ICI, jamais
-  /// avant. Le joueur a vu son score, son XP et son bilan ; il quitte de
-  /// son plein gré. C'est le seul moment où une réclame ne coupe rien.
-  ///
-  /// Le Défi du jour en est exempté (voir `Pub`), et l'affichage échoue en
-  /// silence : la navigation part de toute façon.

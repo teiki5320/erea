@@ -404,6 +404,4 @@ class EndView extends StatelessWidget {
     );
   }
 
-  /// Texte de partage, sans spoiler : score, grille emoji, et la série
-  /// pour le défi du jour.
 }

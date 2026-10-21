@@ -86,8 +86,8 @@ double tolerance(Difficulty diff) => toleranceBase * diff.tolMult;
 /// `points = round(1000 × exp(−écart / tolérance))`.
 ///
 /// Il n'y a plus de fenêtre explicite à zéro : l'exponentielle y arrive
-/// d'elle-même, à 7,6 × la tolérance, soit 201 ans en Facile, 92 en
-/// Normal et 51 en Difficile. L'ancienne borne dure (200 ans × mode)
+/// d'elle-même, à 7,6 × la tolérance, soit 502 ans en Facile, 229 en
+/// Normal et 126 en Difficile (vérifié par core_test). L'ancienne borne dure (200 ans × mode)
 /// était calculée pour une tolérance qui montait jusqu'à 90 ans sur
 /// l'Antiquité ; depuis que la tolérance est uniforme, elle tombait
 /// toujours APRÈS le zéro naturel et ne pouvait plus se déclencher.

@@ -25,8 +25,6 @@ import '../game/badges.dart';
 import '../game/game_controller.dart';
 import 'sticker_widgets.dart';
 
-/// Couleur d'étiquette par catégorie (carte de l'événement).
-
 /// Écran de jeu « Sticker Arcade » (handoff 3a) : fond fondu d'époque,
 /// carte de l'événement, année sans bulle, frise plein-bord, minimap,
 /// révélation à épingles sur la frise.
@@ -565,7 +563,6 @@ class _GameScreenState extends State<GameScreen>
               if (!(revealed && _lastResult != null)) {
                 return GuessView(
                 controller: game,
-                store: widget.store,
                 guessing: guessing,
                 available: h,
                 tapeKey: _tapeKey,
@@ -796,8 +793,3 @@ class _GameScreenState extends State<GameScreen>
     }
   }
 }
-
-/// Trait qui relie l'épingle « Toi » à la vraie date. Sa LONGUEUR est
-/// l'erreur : c'est ce qui fait sentir l'échelle non linéaire de la frise
-/// sans avoir à l'expliquer. Plein quand la réponse tient dans la
-/// tolérance, pointillé quand elle est loin.

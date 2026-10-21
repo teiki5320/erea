@@ -18,9 +18,10 @@ class Retour {
 
   static void cran() {
     if (!actif) return;
-    // Bride à 45 ms, soit près du double de celle du son (26 ms) : une
-    // vibration à chaque cran serait un bourdonnement continu dans la
-    // main, et viderait la batterie. Un cran sonore sur deux vibre.
+    // Bride à 45 ms : sans elle, une vibration à chaque cran serait un
+    // bourdonnement continu dans la main, et viderait la batterie. Le son
+    // du cran étant bridé plus large (55 ms, Sons.cran), chaque cran qui
+    // sonne vibre aussi.
     final maintenant = DateTime.now().millisecondsSinceEpoch;
     if (maintenant - _dernierCran < 45) return;
     _dernierCran = maintenant;

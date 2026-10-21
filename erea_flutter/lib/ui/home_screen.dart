@@ -646,7 +646,7 @@ class _HomeScreenState extends State<HomeScreen>
                               child: _modeTile(
                                 emoji: '🚀',
                                 titre: 'Packs',
-                                sousTitre: '5 thèmes',
+                                sousTitre: '${packs.length} thèmes',
                                 onTap: _openPacks,
                                 gradient: const LinearGradient(
                                   begin: Alignment.topLeft,

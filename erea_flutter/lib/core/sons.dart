@@ -2,8 +2,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
 /// Sons du jeu — marimba pour les verdicts, échappement de montre
-/// mécanique pour le glissement de la frise. Sept petits WAV embarqués
-/// (~104 Ko au total), joués en local : rien ne part sur le réseau, l'app
+/// mécanique pour le glissement de la frise. Onze petits WAV embarqués
+/// (~150 Ko au total), joués en local : rien ne part sur le réseau, l'app
 /// reste jouable hors ligne.
 ///
 /// Tout est enveloppé de try/catch : sur un appareil où l'audio est
@@ -177,16 +177,6 @@ class Sons {
       case SonBouton.aucun:
         break;
     }
-  }
-
-  static Future<void> liberer() async {
-    try {
-      await _joueur.dispose();
-      await _ui.dispose();
-      for (final p in _crans) {
-        await p.dispose();
-      }
-    } catch (_) {}
   }
 }
 

@@ -11,7 +11,7 @@ import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../models/hist_event.dart';
 
-enum GameMode { classique, daily, chrono, duel, roulette }
+enum GameMode { classique, daily, chrono, roulette }
 
 enum GamePhase { guess, anim, reveal }
 
@@ -37,8 +37,8 @@ class RoundResult {
       {this.tempsEcoule = false});
 }
 
-/// État central d'une partie (solo classique / défi du jour pour ce squelette ;
-/// chrono et duel sont décrits dans SPEC.md et à porter ensuite).
+/// État central d'une partie, pour tous les modes : Classique et packs,
+/// défi du jour, Chrono, Roulette des drapeaux.
 class GameController extends ChangeNotifier {
   GameController(this.repo);
 

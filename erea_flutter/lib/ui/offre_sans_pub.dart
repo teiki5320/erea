@@ -102,7 +102,9 @@ class _FeuilleState extends State<_Feuille> {
             ),
             const SizedBox(height: 18),
             PushButton(
-              onPressed: _enCours ? () {} : _acheter,
+              // Pendant l'achat, le bouton se grise et ne répond plus : un
+              // bouton actif sans effet laissait croire à un plantage.
+              onPressed: _enCours ? null : _acheter,
               color: coralColor,
               shadowColor: const Color(0xFFB93A2F),
               radius: 16,

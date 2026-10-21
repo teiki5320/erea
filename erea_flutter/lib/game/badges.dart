@@ -71,7 +71,7 @@ bool _serie3(Store s, GameController? g) => s.effectiveStreak >= 3;
 bool _serie7(Store s, GameController? g) => s.effectiveStreak >= 7;
 // L'ancien « Éclair » exigeait 12 manches en Chrono — le mode n'en a que
 // 10 : succès mathématiquement inatteignable, tout comme « Duelliste »
-// (aucun écran ne lance GameMode.duel). Remplacés par deux objectifs
+// (le mode Duel n'a jamais existé). Remplacés par deux objectifs
 // réels ; les clés changent, personne n'avait pu les débloquer.
 bool _chrono6000(Store s, GameController? g) =>
     g != null && g.mode == GameMode.chrono && g.total >= 6000;
