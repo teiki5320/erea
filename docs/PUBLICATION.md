@@ -11,7 +11,7 @@
 
 ## En bref
 
-- **Version commune** : `1.0.4` en ligne sur les deux boutiques (App Store le 15 octobre, Google Play le 20 octobre 2026) ; **`1.0.5` envoyée aux deux le 21 octobre 2026**
+- **Version commune** : **`1.0.5` approuvée sur l'App Store le 21 octobre 2026** ; sur Google Play, `1.0.4` en ligne depuis le 20 octobre et `1.0.5` en examen depuis le 21
 - **Identifiant de bundle** : `com.teiki.erea`, identique sur iOS et Android
 - **Monétisation** : pub AdMob + achat unique « Erea sans publicité », 3,99 €
 - **Confidentialité** : six types déclarés (SDK AdMob), consentement RGPD et ATT
@@ -21,7 +21,7 @@
 
 | | 🍎 App Store | 🤖 Google Play |
 |---|---|---|
-| État | [ok] 1.0.4 en ligne · [en cours] 1.0.5 en vérification depuis le 21 octobre 2026 | [ok] 1.0.4 en ligne · [en cours] 1.0.5 en examen depuis le 21 octobre 2026 |
+| État | [ok] 1.0.5 approuvée le 21 octobre 2026, publication automatique | [ok] 1.0.4 en ligne · [en cours] 1.0.5 en examen depuis le 21 octobre 2026 |
 | Construction | [ok] Xcode Cloud, à chaque poussée sur `main` | [ok] App Bundle construit sur le Mac |
 | Signature | [ok] automatique, gérée par Apple | [ok] keystore `CN=Toa`, copie de secours |
 | Classification | [ok] 4+ | [ok] questionnaire rempli, note à vérifier dans la console |
@@ -43,8 +43,8 @@ La 1.0.4 est en ligne sur l'App Store depuis le 15 octobre, avec le nom
 long et les captures légendées, après deux builds refusés à l'import pour
 le manifeste de confidentialité. Sur Google Play, la même 1.0.4
 est en production depuis le 20 octobre. Erea est disponible sur les deux
-boutiques, et la 1.0.5 est en examen chez Apple et chez Google depuis le
-21 octobre.
+boutiques. La 1.0.5, envoyée le 21 octobre, a été approuvée par Apple le
+jour même ; elle est en examen chez Google.
 
 ---
 
@@ -57,7 +57,7 @@ boutiques, et la 1.0.5 est en examen chez Apple et chez Google depuis le
 | Fiche publique | identifiant App Store `6794918301` |
 | Version publiée | `1.0.4`, build `182`, en ligne depuis le 15 octobre 2026 à 14 h 01 — remplace la `1.0.2` (build `150`) du 8 septembre, qui remplaçait la `1.0.0` du 3 septembre |
 | Dernier build connu | `195` (`1.0.5`), soumis ; le `187` (1.0.4, refusé par ITMS-90186 au lendemain de l'approbation) a imposé le passage du code en 1.0.5 |
-| Soumission en cours | `1.0.5`, build `195`, **en attente de vérification depuis le 21 octobre 2026 à 15 h 11** ; publication automatique, notes App Review du §0 de `APP_REVIEW.md` |
+| Dernière soumission | `1.0.5`, build `195`, envoyée le 21 octobre 2026 à 15 h 11, **approuvée à 17 h 44** (fiche publique `https://apps.apple.com/app/erea-quiz-dhistoire-frise/id6794918301`) ; publication automatique, notes App Review du §0 de `APP_REVIEW.md` |
 | Dernière soumission | `1.0.4`, build `182`, le 15 octobre 2026 à 12 h 51, approuvée le jour même — les builds `176` et `180` ont été refusés à l'import (ITMS-91064) : le validateur n'accepte ni « suivi à vrai, liste de domaines vide » ni « suivi à vrai, sans clé » ; le 182 porte « suivi à faux, sans clé » (commit 6e981b6) ; nom « Erea : Quiz d'histoire & frise », mots-clés sans « quiz/frise/histoire » (déjà dans le nom), captures iPhone légendées écran moyen et grand écran (iPad : celles d'août), adresses passées sur `erea.toakeur.com` (assistance, site, confidentialité), notes App Review réécrites (AdMob, consentement, achat intégré) |
 | Notes / avis | 0 / 0 au 21 octobre 2026 |
 | Achat intégré | `com.teiki.erea.sanspub` « Erea sans publicité », non consommable, **approuvé** le 8 septembre avec la 1.0.2 |
@@ -168,7 +168,7 @@ le 17 octobre ; la release de production est en ligne depuis le
 4. ✅ **App Review de la 1.0.4** : approuvée et en ligne le 15 octobre 2026, le jour de l'envoi.
 5. ✅ **Site et page d'aiguillage** passés sur Google Play le 21 octobre 2026 : badge sur la vitrine, `PLAY_OUVERT` à `true`.
 6. **Lancer la pub TikTok** vers `https://erea.toakeur.com/telecharger/?src=tiktok` : les deux boutiques sont en ligne.
-7. **Suivre l'examen de la 1.0.5** : App Review (build 195, envoyée le 21 octobre à 15 h 11) et Google Play (`6 (1.0.5)`, le même jour).
+7. **Suivre l'examen de la 1.0.5 sur Google Play** (`6 (1.0.5)`, envoyée le 21 octobre) ; ✅ App Review : approuvée le 21 octobre à 17 h 44.
 8. **DSA** : Jean a demandé le passage du compte Apple en compte entreprise (octobre 2026), toujours en cours au 21 octobre — « TOA CORP » n'est que le nom affiché du compte ; se déclarer trader une fois le compte converti et le complément d'adresse nettoyé.
 9. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.
 
