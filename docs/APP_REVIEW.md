@@ -5,15 +5,16 @@
 
 ## Où on en est, exactement
 
-> **15 octobre 2026 — 1.0.4 (build 182) envoyée.** Tout ce qui suit
+> **21 octobre 2026 — 1.0.5 (build 195) envoyée** (la 1.0.4 du 15 octobre
+> a été approuvée le jour même). Tout ce qui suit
 > le §0 est une **archive d'août**, gardée telle qu'elle a été envoyée
 > pour la 1.0. Ces textes sont **faux aujourd'hui** : ils affirment
 > « aucun SDK publicitaire, aucun achat intégré, aucune demande ATT »
 > (faux depuis la 1.0.2) et décrivent un Chrono de « 90 seconds »
 > (c'est 10 secondes par question). Ne plus les recopier. Le texte en
-> vigueur est celui des notes de la 1.0.4, reproduit au §0.
+> vigueur est celui des notes de la 1.0.5, reproduit au §0.
 
-## §0 — Notes en vigueur (1.0.4, envoyées le 15 octobre 2026)
+## §0 — Notes en vigueur (1.0.5, envoyées le 21 octobre 2026)
 
 ```
 Erea is a single-player history quiz in French. An event is shown without its date and the player drags a timeline (3000 BC to today) to guess the year.
@@ -34,7 +35,7 @@ IN-APP PURCHASE: one non-consumable, "Erea sans publicité" (com.teiki.erea.sans
 
 MODES: Classic (10 rounds, category and difficulty selectable), Daily Challenge (same 10 questions for everyone, one attempt per day), Chrono (10 seconds per question), Flag Roulette (one country per game), Theme Packs.
 
-WHAT'S NEW IN 1.0.4: animated tutorial page showing the timeline gesture; "Donner mon avis" (feedback by e-mail) in Settings; the ad SDK now waits for the consent form to close before loading any ad; automatic restore of purchases at launch; corrected privacy manifest (PrivacyInfo.xcprivacy) matching the App Privacy declaration.
+WHAT'S NEW IN 1.0.5: the correct year is now shown large on the result screen after each answer; new players start in Easy mode and the chosen difficulty is remembered; unlocked achievements are listed under the level card at the end of a game. No change to ads, consent, tracking or the in-app purchase.
 ```
 
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
