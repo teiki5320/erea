@@ -34,12 +34,19 @@ echo "ℹ️  CI_PRIMARY_REPOSITORY_PATH = $CI_PRIMARY_REPOSITORY_PATH"
 echo "ℹ️  PROJECT_DIR                = $PROJECT_DIR"
 xcodebuild -version
 
-# Clone du SDK, idempotent : les runners Xcode Cloud peuvent être réutilisés.
-if [ ! -d "$FLUTTER_DIR" ]; then
-  echo "📥 Installation de Flutter stable dans $FLUTTER_DIR"
-  retry sh -c "rm -rf '$FLUTTER_DIR' && git clone --depth 1 -b stable https://github.com/flutter/flutter.git '$FLUTTER_DIR'"
+# Version FIGÉE, la même que sur le Mac (`flutter --version`) : avec
+# « stable », un build pouvait casser un jour sans qu'aucun commit ne
+# l'explique. Pour monter de version : changer ce numéro, `flutter
+# upgrade` sur le Mac, et pousser le pubspec.lock qui va avec.
+FLUTTER_VERSION="3.47.3"
+
+# Clone du SDK, idempotent : les runners Xcode Cloud peuvent être
+# réutilisés, mais un SDK d'une autre version est recloné.
+if [ "$(git -C "$FLUTTER_DIR" describe --tags --exact-match 2>/dev/null)" != "$FLUTTER_VERSION" ]; then
+  echo "📥 Installation de Flutter $FLUTTER_VERSION dans $FLUTTER_DIR"
+  retry sh -c "rm -rf '$FLUTTER_DIR' && git clone --depth 1 -b $FLUTTER_VERSION https://github.com/flutter/flutter.git '$FLUTTER_DIR'"
 else
-  echo "♻️  Flutter déjà présent dans $FLUTTER_DIR"
+  echo "♻️  Flutter $FLUTTER_VERSION déjà présent dans $FLUTTER_DIR"
 fi
 
 # Préfixe (et non suffixe) : on veut ce SDK-là, pas un flutter système.

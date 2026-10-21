@@ -61,14 +61,22 @@ android {
 
     buildTypes {
         release {
-            // Sans key.properties — sur une machine neuve, en CI, chez un
-            // contributeur — on retombe sur les clés de debug pour que
-            // `flutter run --release` continue de fonctionner. Un tel build
-            // n'est pas publiable, et c'est justement ce qu'on veut : la
-            // publication exige la vraie clé.
+            // Sans key.properties — sur une machine neuve, chez un
+            // contributeur — `flutter run --release` retombe sur les clés
+            // de debug. Mais un App Bundle signé ainsi serait refusé par
+            // Google Play après coup : là, on s'arrête tout de suite.
             signingConfig = if (fichierCle.exists()) {
                 signingConfigs.getByName("release")
             } else {
+                if (gradle.startParameter.taskNames.any {
+                        it.contains("bundleRelease", ignoreCase = true)
+                    }) {
+                    throw GradleException(
+                        "android/key.properties manquant : le bundle serait " +
+                            "signé avec la clé de debug et refusé par Google " +
+                            "Play. Le keystore et sa copie : docs/INFRA.md."
+                    )
+                }
                 signingConfigs.getByName("debug")
             }
         }

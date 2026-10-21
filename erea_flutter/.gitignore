@@ -5,7 +5,8 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 .metadata
-pubspec.lock
+# pubspec.lock et ios/Podfile.lock SONT suivis : chaque build, ici comme
+# sur Xcode Cloud, prend exactement les mêmes versions de dépendances.
 
 # Plateformes non utilisées (regénérables par `flutter create .`)
 macos/
@@ -19,7 +20,6 @@ ios/Flutter/flutter_export_environment.sh
 ios/Flutter/ephemeral/
 ios/Pods/
 ios/.symlinks/
-ios/Podfile.lock
 **/xcuserdata/
 *.mobileprovision
 
