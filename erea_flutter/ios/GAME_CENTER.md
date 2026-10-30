@@ -6,8 +6,8 @@
 > reste comme mémoire de la configuration — l'ordre décrit ci-dessous
 > compte si l'App ID est un jour recréé.
 
-`lib/core/classement.dart` tente une connexion paresseuse et échoue en
-silence : même si Game Center est désactivé sur l'appareil, le jeu reste
+`lib/core/classement.dart` se connecte à l'ouverture de l'accueil (pour
+afficher les rangs mondiaux) et échoue en silence : même si Game Center est désactivé sur l'appareil, le jeu reste
 entièrement jouable.
 
 Trois étapes, dans cet ordre.
@@ -67,9 +67,10 @@ une build TestFlight.
 
 ## Ce qui est déjà tenu côté code
 
-- Connexion **paresseuse** : jamais au lancement, seulement à la fin d'un
-  défi ou au tap sur « Classement mondial ». Apple refuse les fenêtres
-  Game Center intrusives, et ça perturbe un enfant.
+- Connexion **à l'ouverture de l'accueil** : c'est elle qui affiche les
+  rangs mondiaux (choix assumé, `home_screen.dart`). Elle a longtemps été
+  paresseuse, à la fin d'un défi seulement ; un échec n'est retenté
+  qu'après une minute de répit.
 - **Aucun blocage** : Game Center désactivé par le contrôle parental →
   l'appel échoue, le jeu continue.
 - **Bornes anti-absurde** : un total hors barème n'est pas envoyé.

@@ -1,8 +1,8 @@
-# Erea — Spécification du jeu (pour le portage Flutter)
+# Erea — Spécification du jeu
 
-Référence complète des règles validées par le prototype web (`../index.html`).
-Les modules `lib/core/*` implémentent déjà les formules ; ce document fait foi
-pour ce qui reste à porter.
+Référence des règles de l'app, nées du prototype web (`../index.html`) et
+portées dans `lib/core/*`, `lib/data/*` et `lib/game/*`. Ce document fait
+foi : une règle changée dans le code se change ici dans le même commit.
 
 ## 1. Données (`assets/events.json`)
 
@@ -27,10 +27,10 @@ vérification adversariale). Ne pas modifier une date sans re-vérification.
 
 **Règle d'écriture pour tout nouveau lot de faits** : au moins la moitié
 avant 1900 (priorité Antiquité et Moyen Âge) et au moins la moitié hors
-d'Europe. La base penche déjà vers l'Europe (46 %) et l'après-1945 (23 %) :
+d'Europe. La base penche déjà vers l'Europe (46 %) et l'après-1945 (31 %) :
 un joueur attentif apprend sinon à parier « récent » plutôt qu'à raisonner.
 Et en priorité des niveaux 1 et 2 : 268 faits de niveau 1 seulement sur
-1 831, c'est la réserve la plus maigre du mode Facile.
+1 830, c'est la réserve la plus maigre du mode Facile.
 
 ## 2. Frise à échelle non linéaire
 
@@ -57,10 +57,10 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
   les époques (`toleranceBase`, `lib/core/scoring.dart`)
 - `points = round(1000 × exp(−écart / tolérance))`, plafonné à 1000
 - Pas de fenêtre à zéro explicite : l'exponentielle y arrive seule, à
-  7,6 × la tolérance (201 ans en Facile, 92 en Normal, 51 en Difficile)
+  7,6 × la tolérance (502 ans en Facile, 229 en Normal, 126 en Difficile)
 - Difficultés : Facile ×2,2 (XP ×0,75) · Normal ×1 · Difficile ×0,55 (XP ×1,75).
-  Le « vert » (700 points) demande ± 24 ans en Facile, ± 11 en Normal,
-  ± 6 en Difficile. La tolérance a d'abord dépendu de l'ancienneté du
+  Le « vert » (700 points) demande ± 23 ans en Facile, ± 10 en Normal,
+  ± 5 en Difficile. La tolérance a d'abord dépendu de l'ancienneté du
   fait (5 %, bornée entre 12 et 90 ans) : à connaissance égale,
   l'Antiquité rapportait bien plus de points. Les multiplicateurs d'XP
   compensent le barème : sans ça, Difficile rapportait autant que Facile
@@ -84,17 +84,22 @@ repli sur des bandes de couleur unies si l'image n'est pas chargée.
 - Les « repères » (emoji d'ancrage du prototype web) ne sont PAS portés :
   ne rien promettre de tel dans les descriptions de difficulté.
 - **Manche 10 : points × 2** (total maximal 11 000)
-- Réponse exacte : PERFECT (confettis, fanfare)
+- Réponse exacte : « PILE DESSUS ! », jingle `parfait`
 
-Réactions : ≥ 1000 PERFECT · ≥ 900 Incroyable · ≥ 700 Excellent · ≥ 500 Bien
-joué · ≥ 250 Pas mal · ≥ 80 Pas loin · sinon Trop loin/Oups (sur points de base).
-Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
+Réactions (`verdict_textes.dart`, sur points de base) : 1000 PILE DESSUS ·
+≥ 900 Incroyable · ≥ 700 Excellent · ≥ 500 Bien joué · ≥ 250 Pas mal ·
+≥ 80 Pas loin · sinon Trop loin ; TEMPS ÉCOULÉ en Chrono. L'écran affiche
+« N ans d'écart » ; la direction (« trop tôt / trop tard ») n'est dite
+que par VoiceOver.
 
 ## 4. Modes
 
 - **Classique** : 10 manches, catégorie + difficulté choisies, anti-répétition
-  (mémoriser les ~300 derniers ids joués, épuiser TOUT le jamais-vu — tous
-  niveaux confondus — avant de resservir quoi que ce soit).
+  (mémoriser les ~300 derniers ids joués). Ordre du tirage : le jamais-vu
+  des niveaux du mode, puis le DÉJÀ-VU de ces mêmes niveaux, et seulement
+  ensuite les autres niveaux (`EventsRepository.pick`) : revoir un fait
+  adapté au mode vaut mieux que découvrir un fait qui trahit la
+  difficulté choisie.
 - **Roulette des drapeaux** : la roue s'arrête sur UN drapeau et les 10 manches
   portent toutes sur ce pays (`tirerPays` puis `partiePays`). Elle tournait
   autrefois à chaque manche, pour dix pays par partie ; d'où le seuil relevé
@@ -103,7 +108,7 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   roulette n'en propose aucune.
 - **Défi du jour** : graine = AAAAMMJJ (`lib/core/rng.dart`, mulberry32) → même
   série pour tous les joueurs de l'app à une date donnée. La parité avec le
-  prototype web n'est plus tenable (1 831 événements contre 613) et n'est pas
+  prototype web n'est plus tenable (1 830 événements contre 613) et n'est pas
   un objectif. Catégorie « Tout », difficulté Normal, **une tentative par
   jour** : le verrou est posé au lancement (abandonner consomme la tentative),
   mais la série 🔥 n'est créditée qu'à un défi TERMINÉ, et une série est
@@ -112,14 +117,29 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   se lit comme un solde de jetons — l'App Review d'Apple s'y est trompée.
 - **Chrono** : 10 manches, 10 secondes par question, décompte uniquement
   pendant la phase de choix. Temps écoulé : la manche vaut zéro. Toute la
-  base, difficulté Normal fixe, pas de manche ×2.
+  base, difficulté Normal fixe, pas de manche ×2. **Pause** (app en
+  arrière-plan, boîte « Quitter ? ») : le temps s'arrête et un voile
+  opaque CACHE la question ; seul le bouton « Reprendre » relance le
+  temps restant. Sans voile, une pause donnait un temps de réflexion
+  illimité à un score envoyé au classement mondial.
+- **Rappel du soir** (`lib/core/rappels.dart`) : autorisation demandée
+  après un défi terminé qui porte la série à 2 jours au moins, ou à
+  l'activation du réglage. UN SEUL rappel programmé (18 h 30, heure de
+  l'appareil), le soir où la série est en jeu : demain si le défi du
+  jour est fait, ce soir sinon, aucun si la tentative du jour a été
+  abandonnée ou s'il n'y a pas de série. Recalculé à chaque lancement de
+  l'app, en fin de défi et à l'abandon. Il ne promet jamais l'avenir :
+  le titre donne la série actuelle, exacte.
 - **Packs à thèmes** : cinq packs (Antiquité & Orient ancien, Asie, Les
   Amériques, Ciel & conquête spatiale, Afrique & Moyen-Orient), joués
   comme un Classique, difficulté Normal fixe.
 
 ## 5. Progression
 
-- XP d'une MANCHE : `round(points / 10 × XPmult × (1,5 si combo))`. L'XP
+- XP d'une MANCHE : `round(points en Normal / 10 × XPmult × (1,5 si combo))`,
+  où « points en Normal » sont ceux que la même réponse aurait obtenus en
+  Normal, multiplicateur de manche compris : sans cette base neutre,
+  Facile rapportait plus d'XP que Difficile dès ~12 ans d'erreur. L'XP
   d'une partie est la SOMME de ces valeurs, plafonnée à 2000 — c'est
   exactement ce qui est annoncé au joueur à chaque révélation, donc ce qui
   doit lui être crédité. Ne jamais recalculer l'XP à partir du seul total :
@@ -130,8 +150,14 @@ Afficher la direction : « N ans trop tôt ⏩ / trop tard ⏪ ».
   7 Historien 📚 · 9 Sage 🦉 · 10 Maître du temps 👑 · 13 Légende 🌟 ·
   16 Érudit 🎓 · 20 Archiviste 🗄️ · 25 Oracle 🔮 · 30 Gardien du temps ⏰ ·
   40 Mémoire du monde 🌍 · 50 Immortel 💎.
-- Cosmétiques par niveau : mascottes (🦉 1, 🦖 3, 🧙 5, 🤖 8, 🐉 12), thèmes de
-  frise (Classique 1, Bonbon 2, Océan 4, Forêt 7), confettis (Fête 1, Or 6, Étoiles 9).
+- Cosmétiques par niveau (mascottes, thèmes de frise, confettis) : prévus
+  par le prototype, **pas portés** dans l'app.
+- **Album** (`lib/ui/album_screen.dart`, ouvert depuis le compteur de
+  l'accueil) : la collection des faits révélés au moins une fois, rangés
+  par époque de la frise. Un fait jamais révélé n'est JAMAIS montré, même
+  grisé (son titre donnerait la question) : seul leur nombre s'affiche.
+  Toucher un fait rouvre sa fiche (année, description, anecdote). Le jeton
+  « ＋ Album » de la révélation ne salue qu'un fait encore jamais vu.
 
 ## 6. Succès (14) — implémentés dans `lib/game/badges.dart`
 
@@ -148,7 +174,9 @@ de Roulette · 100 événements découverts · niveau 10.
 
 Grille emoji par manche sur les points de base : 🎯 =1000 · 🟩 ≥700 ·
 🟨 ≥350 · 🟥 sinon. Exemple :
-`Erea du samedi 26 juillet ⏳ 8 240 / 11 000 · 🔥 3 jours` + grille + URL.
+`Erea ⏳ Défi du jour`, puis `8240 / 11000`, la grille, `🔥 3 jours
+d’affilée` pour le défi, et le lien de la boutique de l'appareil
+(`texteGrillePour`, `verdict_textes.dart`).
 
 ## 8. Design system
 
@@ -158,7 +186,16 @@ Grille emoji par manche sur les points de base : 🎯 =1000 · 🟩 ≥700 ·
 - Polices : Baloo 2 (titres) + Nunito (interface).
 - Boutons « pousse-bouton » (ombre dure 4-6 px dessous, enfoncement au tap),
   cartes blanches très arrondies (20-24 px), animations rebondissantes
-  (`Curves.elasticOut` léger), confettis aux grands moments.
+  (`Curves.elasticOut` léger).
+- Icônes de l'interface : illustrations « sticker » (contour encre épais,
+  liseré blanc), `assets/img/icones/*.webp`, affichées par
+  `lib/ui/icone.dart` à la place des emoji du système. Les emoji restent
+  dans les données (titres, succès, catégories) et dans tout ce qui est du
+  TEXTE : grille et message de partage, notifications. Les 1 830 faits et
+  les drapeaux gardent leurs emoji.
+- Accueil : le Défi du jour en tête, puis le **Classique en pleine
+  largeur** (le jeu de base), puis Chrono, Roulette et Packs sur une
+  ligne.
 - Écran de jeu : carte en haut, frise grande et centrale, explications sous la
   frise, bouton en bas. Respecter « réduire les animations » du système.
 
@@ -215,7 +252,7 @@ manche, 2a/2b révélation).
   (dégradé 0 / 23 % / 75-76 %). Rien ne doit se voir derrière la carte.
 - **Ce qui ne fond jamais** : carte blanche, année, aiguille corail,
   boutons, contours et ombres.
-- **Dérive de l'accueil** : `homeFrac` avance de +0,0183/s en boucle,
+- **Dérive de l'accueil** : `homeFrac` avance de 0,0011/s en aller-retour,
   arrêtée définitivement au premier contact sur la mini-frise ; jamais
   démarrée si « réduire les animations ».
 - **Combo** : 3 réponses consécutives ≥ 700 points de base → la manche
@@ -233,7 +270,8 @@ manche, 2a/2b révélation).
 - **La frise domine les deux écrans.** Pendant le choix c'est l'outil de
   visée : 44 % de la hauteur disponible, bornée à [210, 310] px — soit
   ~280 px sur un iPhone 14 contre 150 px à l'origine. À la révélation :
-  240 px. Le réglage fin et la mini-carte peuvent passer sous la ligne de
+  110 px au plus, 90 au moins (`revealTapeHeightFor`) — c'est la carte de
+  l'année, en très grand, qui porte la réponse. Le réglage fin et la mini-carte peuvent passer sous la ligne de
   flottaison sur les événements à longue description : c'est assumé, la
   frise elle-même reste le contrôle principal.
 - **L'arrivée du verdict claque.** Badge et points entrent au ressort

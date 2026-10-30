@@ -4,6 +4,7 @@ import '../core/classement.dart';
 import '../core/region.dart' as region;
 import '../core/sons.dart';
 import '../data/store.dart';
+import 'icone.dart';
 import 'onboarding_demo.dart';
 import 'sticker_widgets.dart';
 
@@ -109,7 +110,7 @@ List<_Page> get _pages => [
           '$_dossier/modes.png',
           Color(0xFFE3ECFF),
           'Cinq façons de jouer',
-          'Le Défi du jour (le même pour le monde entier), le Classique, le '
+          'Le Défi du jour (le même pour tous, à la même date), le Classique, le '
               'Chrono 10 s par question, la Roulette des drapeaux et les '
               'Packs à thème.'),
       _Page(
@@ -290,7 +291,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
             const SizedBox(height: 4),
             const Text(
-              'Le mode Classique met en avant l’histoire de ta région.',
+              'En Afrique, le mode Classique mêle l’histoire du continent à celle '
+              'du monde.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Nunito',
@@ -353,7 +355,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
         child: Row(
           children: [
-            Text(drapeauIso(p.iso), style: const TextStyle(fontSize: 22)),
+            p.iso == null
+                ? icone('🌐', taille: 26)
+                : Text(drapeauIso(p.iso), style: const TextStyle(fontSize: 22)),
             const SizedBox(width: 12),
             Expanded(
               child: Text(

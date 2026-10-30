@@ -1,11 +1,11 @@
 # Remplir la fiche App Store — Erea
 
-> **État au 15 octobre 2026.** La **1.0.4** (build **182**) est en
-> attente de vérification depuis le 15 octobre à 12 h 51, publication
-> automatique, sous un nouveau nom : **« Erea : Quiz d'histoire &
-> frise »**. La **1.0.2** (build 150) reste en ligne en attendant : elle
-> l'est depuis le 8 septembre 2026, avec l'achat intégré **« Erea sans
-> publicité »**, approuvé le même jour.
+> **État au 30 octobre 2026.** La **1.0.5** (build **195**) est en
+> ligne depuis le 21 octobre 2026 à 17 h 44, sous le nom **« Erea : Quiz
+> d'histoire & frise »** ; la **1.0.7** est dans le code, pas encore
+> soumise. Avant elle, la 1.0.4 (build 182) a été en ligne à partir du
+> 15 octobre et la 1.0.2 (build 150) à partir du 8 septembre 2026, avec
+> l'achat intégré **« Erea sans publicité »**, approuvé le même jour.
 >
 > Confidentialité de l'app refaite le 7 septembre (six types, la pub
 > oblige). Côté AdMob, consentement RGPD et message IDFA publiés le
@@ -13,7 +13,8 @@
 >
 > Le compte s'affiche **TOA CORP** (nom d'affichage seulement, compte
 > individuel, DSA **non-trader**). Le passage du compte en compte
-> entreprise a été demandé à Apple en octobre 2026 : à suivre.
+> organisation a été demandé à Apple en octobre 2026 ; Apple a répondu le
+> 23 octobre, Jean le 29 octobre : c'est Apple qui a la main.
 >
 > **L'état à jour des deux boutiques est dans `docs/PUBLICATION.md`** :
 > c'est lui qui fait foi. Ce document-ci décrit la fiche, champ par
@@ -133,7 +134,8 @@ aucun document.
 non-trader.** Cette fiche a longtemps annoncé le contraire, « repassée
 en trader le 18 août » : c'était faux, vérifié dans la console le
 7 septembre. En octobre 2026, Jean a demandé à Apple le passage de son
-compte en compte entreprise : la déclaration trader attend la réponse. La déclaration
+compte en compte organisation ; Apple a répondu le 23 octobre, Jean le
+29 octobre, et la déclaration trader attend la fin de la migration. La déclaration
 se fait à deux endroits : au niveau du **compte** (Business →
 Conformité) et au niveau de l'app (Informations sur l'app →
 Réglementations → DSA). Le même jour, le questionnaire **DAC7**
@@ -300,10 +302,11 @@ Celle de la 1.0.2, pour mémoire :
 `quiz,frise,chronologie,date,culture,générale,brevet,éducatif,afrique,collège,révision,enfant`.
 
 ⚠️ Apple compte en **octets**, pas en caractères : chaque lettre accentuée
-en vaut deux. Cette liste fait 92 caractères mais **97 octets** — elle
-passe de justesse, donc si tu la modifies, retire un mot avant d'en
-ajouter un. Inutile d'y remettre « histoire », « jeu », « famille » ou
-« année » : le nom et le sous-titre sont déjà indexés.
+en vaut deux. La liste en vigueur fait 89 caractères mais **96 octets**
+(celle de la 1.0.2 en faisait 97) — elle passe de justesse, donc si tu la
+modifies, retire un mot avant d'en ajouter un. Inutile d'y remettre
+« histoire », « quiz » ou « frise » : le nom et le sous-titre sont déjà
+indexés.
 
 ## URL d'assistance ✅ — obligatoire
 
@@ -320,7 +323,7 @@ https://erea.toakeur.com/
 ## Version
 
 ```
-1.0.4
+1.0.7
 ```
 
 ## Informations générales sur l'app ✅ *(en bas de page)*
@@ -338,7 +341,7 @@ App Store Connect l'ajoute lui-même à l'affichage.
 *(Si ton compte développeur est enregistré sous ton nom complet, mets
 plutôt celui-là : c'est ce qu'Apple affiche déjà comme vendeur.)*
 
-## Build ✅ *(1.0.4 : build 182)*
+## Build ✅ *(version en ligne : 1.0.5, build 195)*
 
 Sélectionne la version envoyée par Xcode Cloud, qui apparaît une
 quinzaine de minutes après la fin du build. Pour la 1.0.4, les builds
@@ -375,22 +378,16 @@ pendant l'examen.
 
 Pas de compte de démonstration à fournir : l'app n'a pas de connexion.
 
-Dans **Notes**, ce texte évitera un aller-retour avec le testeur :
-
-```
-L'app fonctionne entièrement hors ligne, sans compte ni inscription.
-
-Les classements mondiaux passent par Game Center : la fenêtre de connexion apparaît à la fin de la première partie, jamais au lancement. Si Game Center est désactivé sur l'appareil de test, le jeu reste entièrement jouable — les classements sont simplement masqués.
-
-Le Défi du jour n'est jouable qu'une fois par jour (c'est le principe du mode : les mêmes 10 questions pour tous les joueurs). Pour tester plusieurs parties, utilisez le mode Classique.
-```
+Dans **Notes** (champ « Remarques »), colle le texte en vigueur du §0 de
+[`APP_REVIEW.md`](APP_REVIEW.md) : il est tenu à jour à chaque version, et
+le recopier ici le ferait diverger.
 
 ## Publication de la version ✅ *(automatique)*
 
 Deux choix : **Publier automatiquement**, et l'app sort dès qu'Apple l'a
 validée, ou **Publier manuellement**, et tu déclenches la sortie toi-même.
 
-La 1.0.2 et la 1.0.4 sont en **automatique** : l'app sort dès
+La 1.0.2, la 1.0.4 et la 1.0.5 ont été publiées en **automatique** : l'app sort dès
 l'approbation. La 1.0 avait été réglée sur manuelle, pour coïncider avec
 le Play Store.
 
@@ -548,7 +545,9 @@ banal.
 L'ordre compte : chaque étape dépend de la précédente.
 
 1. **Monter la version dans `pubspec.yaml`** et pousser sur `main` :
-   Xcode Cloud produit le build.
+   Xcode Cloud produit le build. La montée se fait **dès qu'une version
+   est approuvée**, dans le commit même qui note l'approbation : Apple
+   refuse ensuite tout nouveau build au numéro approuvé (ITMS-90186).
 2. **Créer la version** dans App Store Connect, au même numéro que
    `pubspec.yaml` *(sinon le build est non sélectionnable)*.
 3. **Mettre à jour ce qui change** : description, mots-clés, captures,
@@ -567,9 +566,14 @@ La déclaration DSA, elle, est restée non-trader.
 
 ---
 
-# Où en est chaque champ
+# Où en est chaque champ *(tableau de la 1.0.4, 15 octobre 2026)*
 
-| Élément | 1.0.2 (en ligne depuis le 8 septembre) | 1.0.4 (envoyée le 15 octobre) |
+Depuis, la 1.0.5 (build 195) a été approuvée et mise en ligne le
+21 octobre 2026 avec les notes du §0 de `docs/APP_REVIEW.md` ; la 1.0.7
+est en préparation. L'état à jour est
+dans `docs/PUBLICATION.md`.
+
+| Élément | 1.0.2 (en ligne à partir du 8 septembre) | 1.0.4 (envoyée le 15 octobre) |
 |---|---|---|
 | Nom | ✅ « Erea » | ✅ « Erea : Quiz d'histoire & frise » |
 | Classification par âge (4+), droits de contenu | ✅ | inchangés |
@@ -584,6 +588,6 @@ La déclaration DSA, elle, est restée non-trader.
 | Sélection du build | ✅ build 150 | ✅ build 182 |
 | Notes App Review | — | ✅ réécrites (`docs/APP_REVIEW.md` §0) |
 | **Envoi à la revue** | ✅ 7 septembre au soir | ✅ **15 octobre 2026, 12 h 51** |
-| **Publication** | ✅ automatique, en ligne le 8 septembre à 12 h 19 | ⬜ automatique, en attente d'Apple |
+| **Publication** | ✅ automatique, en ligne le 8 septembre à 12 h 19 | ✅ automatique, en ligne le 15 octobre à 14 h 01 |
 
 La 1.0 (build 90, août 2026) est racontée dans `docs/APP_REVIEW.md`.

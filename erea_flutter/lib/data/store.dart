@@ -181,6 +181,12 @@ class Store {
   Future<void> setTutoSeen() => _put(() => _prefs.setBool('opt.tuto', true));
 
   bool get remindersOn => _prefs.getBool('opt.reminders') ?? false;
+
+  /// Le rappel a déjà été allumé ou éteint une fois : le choix du joueur
+  /// ne se redemande plus. Sans ce drapeau, un rappel coupé dans les
+  /// réglages se rallumait en silence au défi suivant, l'autorisation
+  /// système étant déjà accordée.
+  bool get remindersDecided => _prefs.containsKey('opt.reminders');
   Future<void> setRemindersOn(bool v) =>
       _put(() => _prefs.setBool('opt.reminders', v));
 
@@ -269,6 +275,11 @@ class Store {
 
   /// Défi du jour mené à son terme : seul cas où un score est affichable.
   bool get dailyFinishedToday => dailyDone == dayKey(_now);
+
+  /// Tentative du jour perdue : utilisée, ni terminée ni reprenable (un
+  /// abandon volontaire). La série s'éteindra à minuit.
+  bool get dailyAttemptLost =>
+      dailyPlayedToday && !dailyFinishedToday && !dailyResumable;
 
   /// Défi du jour interrompu par un arrêt subi : il peut être REPRIS là où
   /// il s'était arrêté. Un abandon volontaire efface la reprise.

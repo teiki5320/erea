@@ -5,6 +5,7 @@ import 'package:erea/data/events_repository.dart';
 import 'package:erea/data/store.dart';
 import 'package:erea/game/game_controller.dart';
 import 'package:erea/main.dart';
+import 'package:erea/ui/game_screen.dart';
 import 'package:erea/ui/roulette_screen.dart';
 import 'package:erea/ui/sticker_widgets.dart';
 import 'package:erea/ui/game/gap_line_painter.dart';
@@ -56,6 +57,10 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  /// Le nombre affiché dans la pastille de série de l'accueil.
+  Finder serie(String n) => find.descendant(
+      of: find.byKey(const ValueKey('pastille-serie')), matching: find.text(n));
+
   Future<void> startClassique(WidgetTester tester) async {
     await tester.tap(find.text('Classique'));
     await tester.pumpAndSettle();
@@ -82,7 +87,7 @@ void main() {
       await tapVisible(tester, find.text('Je place ici !'));
       await tapVisible(
         tester,
-        find.text(i < rounds ? 'Manche suivante →' : 'Voir mes résultats 🏁'),
+        find.text(i < rounds ? 'Manche suivante →' : 'Voir mes résultats'),
       );
     }
   }
@@ -113,13 +118,60 @@ void main() {
     await tester.pump(); // montage de la route
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('MANCHE 1/10'), findsOneWidget);
-    expect(find.textContaining('⏱'), findsWidgets);
+    expect(find.byKey(const ValueKey('pastille-chrono')), findsOneWidget);
     // On ne répond pas : à 10 s le temps expire (manche à zéro), le ruban
     // voyage (80 ms en animations réduites) puis la révélation s'affiche.
     await tester.pump(const Duration(seconds: 10, milliseconds: 200));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Manche suivante →'), findsOneWidget);
     // …et la manche suivante part toute seule (~2,2 s plus tard).
+    await tester.pump(const Duration(milliseconds: 2400));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('MANCHE 2/10'), findsOneWidget);
+  });
+
+  testWidgets('le Chrono en pause cache la question et attend « Reprendre »',
+      (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Chrono'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('Chrono en pause'), findsNothing);
+    // L'app passe en arrière-plan puis revient : le voile reste, le temps
+    // ne court pas, même longtemps après.
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    await tester.pump();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pump(const Duration(seconds: 20));
+    expect(find.text('Chrono en pause'), findsOneWidget);
+    expect(find.text('Manche suivante →'), findsNothing);
+    // « Reprendre » relance le temps restant : il finit par expirer.
+    await tester.tap(find.text('Reprendre'));
+    await tester.pump();
+    expect(find.text('Chrono en pause'), findsNothing);
+    await tester.pump(const Duration(seconds: 10, milliseconds: 200));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Manche suivante →'), findsOneWidget);
+  });
+
+  testWidgets('le Chrono ne repart pas derrière la boîte « Quitter ? »',
+      (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.text('Chrono'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    // Le temps expire : la boîte s'ouvre PENDANT le voyage du ruban, avant
+    // même que l'enchaînement automatique soit armé.
+    await tester.pump(const Duration(seconds: 10));
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200)); // fin du voyage
+    await tester.pump(const Duration(seconds: 3)); // > 2,2 s d'enchaînement
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('MANCHE 1/10'), findsOneWidget,
+        reason: 'la manche suivante est partie derrière la boîte');
+    await tester.tap(find.text('Continuer à jouer'));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 2400));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('MANCHE 2/10'), findsOneWidget);
@@ -165,6 +217,42 @@ void main() {
     expect(find.text('Classement mondial'), findsNothing);
     expect(find.textContaining('bouton silencieux'), findsNothing);
   }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+  testWidgets('l’album montre les faits découverts, et eux seuls',
+      (tester) async {
+    SharedPreferences.setMockInitialValues({
+      'onboardingVu': true,
+      'discovered': '[0, 52]', // Fondation de Marseille, L'Hégire
+    });
+    await pumpApp(tester);
+    await tapVisible(tester, find.textContaining('Album ›'));
+    expect(find.text('2 / ${repo.events.length}'), findsOneWidget);
+    expect(find.text('Fondation de Marseille'), findsOneWidget);
+    // Un fait jamais révélé ne doit pas donner sa question d'avance.
+    expect(find.text('Baptême de Clovis'), findsNothing);
+    await tester.tap(find.text('Fondation de Marseille'));
+    await tester.pumpAndSettle();
+    expect(find.text('600 av. J.-C.'), findsWidgets);
+    expect(find.text('Le savais-tu ?'), findsOneWidget);
+  });
+
+  testWidgets('« ＋ Album » ne salue qu’un fait encore jamais vu',
+      (tester) async {
+    await pumpApp(tester);
+    await startClassique(tester);
+    await tapVisible(tester, find.text('+'));
+    await tapVisible(tester, find.text('Je place ici !'));
+    expect(find.text('＋ Album'), findsOneWidget);
+  });
+
+  // Apple demande la politique de confidentialité DANS l'app (5.1.1).
+  testWidgets('les réglages mènent à la politique de confidentialité',
+      (tester) async {
+    await pumpApp(tester);
+    await tester.tap(find.byIcon(Icons.tune));
+    await tester.pumpAndSettle();
+    expect(find.text('Confidentialité'), findsOneWidget);
+  });
 
   testWidgets('iOS : classement mondial et lien App Store', (tester) async {
     expect(Classement.disponible, isTrue);
@@ -343,6 +431,48 @@ void main() {
     expect(bouton.bottom, lessThanOrEqualTo(ecran.height),
         reason: 'le bouton de manche suivante passe sous l’écran');
   });
+
+  // Le pire cas, sans hasard : réponse EXACTE (verdict, carte de l'année
+  // et bandeau de série tous affichés) sur iPhone SE à 200 %. Le test
+  // ci-dessus tire un événement au hasard et une réponse lointaine : il ne
+  // voyait ce cas qu'une fois sur dix environ.
+  for (final ecart in [0, 3]) {
+    testWidgets('réponse à $ecart an(s) près : rien ne déborde sur iPhone SE '
+        'en très grande police', (tester) async {
+      tester.view.physicalSize = _iphoneSE;
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      tester.platformDispatcher.accessibilityFeaturesTestValue =
+          const FakeAccessibilityFeatures(disableAnimations: true);
+      addTearDown(
+          tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final store = await Store.load();
+      final c = GameController(repo)..start(GameMode.classique);
+      // L'Hégire (622) : celle qui avait révélé le débordement.
+      c.events = [
+        repo.events.firstWhere((e) => e.id == 52),
+        ...c.events.skip(1),
+      ];
+      await tester.pumpWidget(
+          MaterialApp(home: GameScreen(controller: c, store: store)));
+      await tester.pump(const Duration(seconds: 1));
+      c.setYear(622 + ecart);
+      await tester.pump();
+      await tapVisible(tester, find.text('Je place ici !'));
+      final erreurs = <String>[];
+      final signale = FlutterError.onError;
+      FlutterError.onError =
+          (details) => erreurs.add(details.exceptionAsString());
+      tester.platformDispatcher.textScaleFactorTestValue = 2.0;
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      FlutterError.onError = signale;
+      expect(erreurs.where((e) => e.contains('overflowed') && e.contains('bottom')),
+          isEmpty,
+          reason: 'la révélation déborde par le bas');
+    });
+  }
 
   // Le réglage fin et la mini-carte ne doivent JAMAIS passer sous la ligne
   // de flottaison : c'est la carte de l'événement qui défile sur elle-même.
@@ -545,8 +675,8 @@ void main() {
       reason: 'la longueur du trait EST l’erreur',
     );
     // La carte de savoir est là, sous l'un de ses deux titres.
-    final savoir = find.text('Le savais-tu ? 💡').evaluate().length +
-        find.text('Pour t’en souvenir 💡').evaluate().length;
+    final savoir = find.text('Le savais-tu ?').evaluate().length +
+        find.text('Pour t’en souvenir').evaluate().length;
     expect(savoir, 1);
   });
 
@@ -597,7 +727,7 @@ void main() {
     // Tentative consommée, score restitué, série créditée.
     expect(find.textContaining('Déjà joué ·'), findsOneWidget);
     expect(find.text('Jouer !'), findsNothing);
-    expect(find.text('🔥 1'), findsOneWidget);
+    expect(serie('1'), findsOneWidget);
   });
 
   testWidgets('un défi abandonné consomme la tentative sans afficher de score',
@@ -613,7 +743,7 @@ void main() {
     expect(find.text('Prochain défi demain !'), findsOneWidget);
     expect(find.text('Jouer !'), findsNothing);
     // Un abandon ne crédite aucune série.
-    expect(find.text('🔥 0'), findsOneWidget);
+    expect(serie('0'), findsOneWidget);
   });
 
   testWidgets(
@@ -656,10 +786,10 @@ void main() {
     // « how users can obtain flames ». Un tap doit répondre à la question.
     await pumpApp(tester);
 
-    await tester.tap(find.textContaining('🔥'));
+    await tester.tap(find.byKey(const ValueKey('pastille-serie')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Ta série 🔥'), findsOneWidget);
+    expect(find.text('Ta série'), findsOneWidget);
     expect(find.textContaining('Défi du jour'), findsWidgets,
         reason: 'l’explication doit dire d’où vient la série');
     expect(find.textContaining('repart à zéro'), findsOneWidget,

@@ -11,7 +11,9 @@ import '../core/sons.dart';
 import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
+import 'album_screen.dart';
 import 'era_art.dart';
+import 'icone.dart';
 import 'game_screen.dart';
 import 'offre_sans_pub.dart';
 import 'reglages_screen.dart';
@@ -369,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen>
   Widget _pickTile(Playable p, int count) {
     final selected = catKey == p.key;
     return ListTile(
-      leading: Text(p.emoji, style: const TextStyle(fontSize: 22)),
+      leading: iconeJouable(p, taille: 30),
       title: Text(p.label),
       subtitle: Text('$count événements'),
       trailing: selected ? const Icon(Icons.check) : null,
@@ -398,7 +400,7 @@ class _HomeScreenState extends State<HomeScreen>
             const _SheetTitle('Choisis une difficulté'),
             for (final d in Difficulty.values)
               ListTile(
-                leading: Text(d.emoji, style: const TextStyle(fontSize: 22)),
+                leading: icone(d.emoji, taille: 30),
                 title: Text(d.label),
                 subtitle: Text(d.desc),
                 trailing: diff == d ? const Icon(Icons.check) : null,
@@ -437,8 +439,7 @@ class _HomeScreenState extends State<HomeScreen>
               children: [
                 const _SheetTitle('Partie classique'),
                 ListTile(
-                  leading: Text(playable.emoji,
-                      style: const TextStyle(fontSize: 20)),
+                  leading: iconeJouable(playable, taille: 28),
                   title: const Text('Catégorie'),
                   trailing: Text(playable.label),
                   onTap: () async {
@@ -447,8 +448,7 @@ class _HomeScreenState extends State<HomeScreen>
                   },
                 ),
                 ListTile(
-                  leading:
-                      Text(diff.emoji, style: const TextStyle(fontSize: 20)),
+                  leading: icone(diff.emoji, taille: 28),
                   title: const Text('Difficulté'),
                   trailing: Text(diff.label),
                   onTap: () async {
@@ -505,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen>
             for (final p in packs)
               if (widget.repo.pool(p.key).length >= rounds)
                 ListTile(
-                  leading: Text(p.emoji, style: const TextStyle(fontSize: 22)),
+                  leading: iconeJouable(p, taille: 30),
                   title: Text(p.label),
                   subtitle:
                       Text('${widget.repo.pool(p.key).length} événements'),
@@ -601,37 +601,24 @@ class _HomeScreenState extends State<HomeScreen>
                         const SizedBox(height: 15),
                         _dailyPanel(dailyUsed, dailyDone, now),
                         const SizedBox(height: 15),
-                        // Grille des 4 modes
+                        // Le Classique, jeu de base, en grand ; les trois
+                        // autres modes en ligne dessous.
+                        _classiqueHero(best),
+                        const SizedBox(height: 11),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: _modeTile(
-                                emoji: '🎯',
-                                titre: 'Classique',
-                                sousTitre: best > 0
-                                    ? 'record $best'
-                                    : 'catégories & niveaux',
-                                onTap: _openClassique,
-                              ),
-                            ),
-                            const SizedBox(width: 11),
                             Expanded(
                               child: _modeTile(
                                 emoji: '⏱️',
                                 titre: 'Chrono',
                                 sousTitre: widget.store.bestFor('chrono') > 0
                                     ? 'record ${widget.store.bestFor('chrono')}'
-                                    : '10 s par question',
+                                    : '10 s / question',
                                 onTap: () => _play(GameMode.chrono),
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 11),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
+                            const SizedBox(width: 9),
                             Expanded(
                               child: _modeTile(
                                 emoji: '🎡',
@@ -647,7 +634,7 @@ class _HomeScreenState extends State<HomeScreen>
                                 light: true,
                               ),
                             ),
-                            const SizedBox(width: 11),
+                            const SizedBox(width: 9),
                             Expanded(
                               child: _modeTile(
                                 emoji: '🚀',
@@ -743,23 +730,58 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  Future<void> _ouvrirAlbum() async {
+    Sons.bouton(SonBouton.appui);
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AlbumScreen(repo: widget.repo, store: widget.store),
+      ),
+    );
+  }
+
   /// Avancement de la collection : les événements déjà révélés au moins
   /// une fois, sur toute la base.
   Widget _collectionBar() {
     final total = widget.repo.events.length;
-    final trouves = widget.store.discovered.length;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 6),
+    // Seuls les faits encore dans la base comptent : un fait retiré (un
+    // doublon) ne doit pas faire afficher « 1 831 / 1 830 ».
+    final ids = {for (final e in widget.repo.events) e.id};
+    final trouves = widget.store.discovered.where(ids.contains).length;
+    // Toucher la barre ouvre l'album de collection.
+    return Semantics(
+      button: true,
+      label: 'Ouvrir l’album',
+      child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _ouvrirAlbum,
+      child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
       child: Column(
         children: [
-          Text(
-            '$trouves / $total événements découverts',
-            style: const TextStyle(
-              fontFamily: 'Nunito',
-              fontWeight: FontWeight.w800,
-              fontSize: 12,
-              color: inkSoftColor,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Text(
+                  '$trouves / $total événements découverts',
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 12,
+                    color: inkSoftColor,
+                  ),
+                ),
+              ),
+              const Text(
+                '  ·  Album ›',
+                style: TextStyle(
+                  fontFamily: 'Nunito',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12,
+                  color: coralColor,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
           ClipRRect(
@@ -793,6 +815,8 @@ class _HomeScreenState extends State<HomeScreen>
             ),
           ),
         ],
+      ),
+      ),
       ),
     );
   }
@@ -915,15 +939,24 @@ class _HomeScreenState extends State<HomeScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  '${diff.emoji} ${diff.label}',
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontFamily: 'Baloo2',
-                    fontWeight: FontWeight.w800,
-                    fontSize: 15,
-                    color: inkColor,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icone(diff.emoji, taille: 20),
+                    const SizedBox(width: 5),
+                    Flexible(
+                      child: Text(
+                        diff.label,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                          color: inkColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 // Le rang seul ne dit pas grand-chose : « 1er » sans
                 // score laissait le joueur deviner AVEC QUOI il est
@@ -992,7 +1025,7 @@ class _HomeScreenState extends State<HomeScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title.emoji, style: const TextStyle(fontSize: 20)),
+          icone(title.emoji, taille: 24),
           const SizedBox(width: 8),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1040,7 +1073,7 @@ class _HomeScreenState extends State<HomeScreen>
         return ListView(
           shrinkWrap: true,
           children: const [
-            _SheetTitle('Ta série 🔥'),
+            _SheetTitle('Ta série'),
             Padding(
               padding: EdgeInsets.fromLTRB(16, 4, 16, 28),
               child: Text(
@@ -1074,15 +1107,23 @@ class _HomeScreenState extends State<HomeScreen>
               BoxShadow(offset: Offset(0, 3), blurRadius: 0, color: inkColor),
             ],
           ),
-          child: Text(
-            // Série RÉELLE : une série interrompue ne doit plus s'afficher.
-            '🔥 $serie',
-            style: const TextStyle(
-              fontFamily: 'Baloo2',
-              fontWeight: FontWeight.w800,
-              fontSize: 14,
-              color: inkColor,
-            ),
+          child: Row(
+            key: const ValueKey('pastille-serie'),
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icone('🔥', taille: 20),
+              const SizedBox(width: 4),
+              Text(
+                // Série RÉELLE : une série interrompue ne doit plus s'afficher.
+                '$serie',
+                style: const TextStyle(
+                  fontFamily: 'Baloo2',
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  color: inkColor,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -1108,19 +1149,28 @@ class _HomeScreenState extends State<HomeScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Flexible(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    '🗓️ Défi du jour',
-                    style: TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 18,
-                      color: Colors.white,
+              Flexible(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icone('🗓️', taille: 26),
+                    const SizedBox(width: 6),
+                    const Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Défi du jour',
+                          style: TextStyle(
+                            fontFamily: 'Baloo2',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
               const SizedBox(width: 8),
@@ -1202,6 +1252,72 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
+  /// Le Classique en pleine largeur : c'est le jeu de base, il ne doit
+  /// pas peser autant qu'un mode annexe.
+  Widget _classiqueHero(int best) {
+    return PushButton(
+      onPressed: _openClassique,
+      gradient: const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment(0.9, 1),
+        colors: [yellowColor, orangeColor],
+      ),
+      border: Border.all(color: inkColor, width: 2.5),
+      shadowColor: inkColor,
+      radius: 22,
+      padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+      child: Row(
+        children: [
+          icone('🎯', taille: 46),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Classique',
+                  style: TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 25,
+                    height: 1.1,
+                    color: inkColor,
+                  ),
+                ),
+                Text(
+                  best > 0 ? 'Record $best' : 'Catégories & niveaux',
+                  style: const TextStyle(
+                    fontFamily: 'Nunito',
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                    color: inkColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: inkColor,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: const Text(
+              'Jouer',
+              style: TextStyle(
+                fontFamily: 'Baloo2',
+                fontWeight: FontWeight.w800,
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _modeTile({
     required String emoji,
     required String titre,
@@ -1221,7 +1337,7 @@ class _HomeScreenState extends State<HomeScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(emoji, style: const TextStyle(fontSize: 24)),
+          icone(emoji, taille: 32),
           const SizedBox(height: 3),
           Text(
             titre,

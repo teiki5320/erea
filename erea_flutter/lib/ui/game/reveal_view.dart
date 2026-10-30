@@ -5,6 +5,7 @@ import 'package:flutter/material.dart' hide Badge;
 import '../../core/scoring.dart';
 import '../../core/timeline_scale.dart';
 import '../../game/game_controller.dart';
+import '../icone.dart';
 import '../sticker_widgets.dart';
 import '../tape_widget.dart';
 import 'gap_line_painter.dart';
@@ -51,6 +52,7 @@ class RevealView extends StatelessWidget {
     super.key,
     required this.controller,
     required this.r,
+    this.nouveau = false,
     required this.available,
     required this.pop,
     required this.popBadge,
@@ -61,6 +63,9 @@ class RevealView extends StatelessWidget {
 
   final GameController controller;
   final RoundResult r;
+
+  /// Fait découvert pour la première fois : lui seul rejoint l'album.
+  final bool nouveau;
   final double available;
 
   /// L'animation d'apparition du bandeau — le badge grossit, les points
@@ -89,9 +94,13 @@ class RevealView extends StatelessWidget {
     // Petit écran : on resserre pour que l'anecdote ne passe pas sous la
     // ligne de flottaison — c'est la partie qui apprend quelque chose.
     final serre = available < 620;
+    // Petit écran ET très grande police (iPhone SE à 200 %) : la carte de
+    // l'année se resserre encore, sinon verdict, carte et frise ne
+    // laissaient plus un pixel à l'anecdote.
+    final tresSerre = serre && MediaQuery.textScalerOf(context).scale(10) > 11.5;
     final tapeH = revealTapeHeightFor(available);
-    final verdictSize = serre ? 26.0 : 32.0;
-    final anneeSize = serre ? 84.0 : 112.0;
+    final verdictSize = tresSerre ? 22.0 : serre ? 26.0 : 32.0;
+    final anneeSize = tresSerre ? 60.0 : serre ? 84.0 : 112.0;
     return Column(
       children: [
         // Le bandeau de verdict — badge, points, écart — cesse de grossir
@@ -131,7 +140,8 @@ class RevealView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(22, 10, 22, 0),
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.fromLTRB(20, serre ? 14 : 22, 20, serre ? 14 : 22),
+            padding: EdgeInsets.fromLTRB(20, tresSerre ? 8 : serre ? 14 : 22, 20,
+                tresSerre ? 8 : serre ? 14 : 22),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
@@ -155,11 +165,14 @@ class RevealView extends StatelessWidget {
                     offset: Offset(0, popPointsMontee.value),
                     child: Transform.scale(scale: popPoints.value, child: child),
                   ),
-                  // FittedBox : « 3000 av. J.-C. » en 112 px, ou à 200 % de
-                  // taille de texte système, déborderait de la carte.
+                  // FittedBox : « 3000 av. J.-C. » en 112 px déborderait de
+                  // la carte. Pas d'agrandissement système sur ce chiffre
+                  // déjà géant : à 130 %, il poussait l'anecdote hors de
+                  // l'écran sur iPhone SE dès une réponse exacte.
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
+                      textScaler: TextScaler.noScaling,
                       formatYear(r.event.annee),
                       key: const ValueKey('annee-revelee'),
                       style: TextStyle(
@@ -384,160 +397,181 @@ class RevealView extends StatelessWidget {
           },
         ),
 
-        // Le savais-tu ? + jetons. C'est la SEULE partie qui cède de la
-        // place : longue anecdote ou grande police, elle défile sur
-        // elle-même au lieu de pousser l'écran au-delà du bord.
-        if (r.event.fun.isNotEmpty)
-          Flexible(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 4, 18, 0),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: const [softShadow],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        // Raté : ce n'est plus une anecdote en passant, c'est le
-                        // moment où l'on apprend vraiment. Le titre le dit.
-                        dansLaCible
-                            ? 'Le savais-tu ? 💡'
-                            : 'Pour t’en souvenir 💡',
-                        style: const TextStyle(
-                          fontFamily: 'Baloo2',
-                          fontWeight: FontWeight.w800,
-                          fontSize: 18,
-                          color: inkColor,
-                        ),
+        // Le savais-tu ?, jetons et bandeau de série : c'est la SEULE
+        // partie qui cède de la place. Longue anecdote ou grande police,
+        // elle défile sur elle-même au lieu de pousser l'écran au-delà du
+        // bord.
+        Flexible(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (r.event.fun.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 4, 18, 0),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: const [softShadow],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        r.event.fun,
-                        style: const TextStyle(
-                          fontFamily: 'Nunito',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14.5,
-                          height: 1.5,
-                          color: inkSoftColor,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _token('＋ Album', const Color(0xFFEEF3FF),
-                              const Color(0xFF5F6890)),
-                          const SizedBox(width: 8),
-                          _token(
-                            '+${r.xp} XP',
-                            const Color(0xFFFFF3D9),
-                            const Color(0xFFA9761C),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  // Raté : ce n'est plus une anecdote en passant, c'est le
+                                  // moment où l'on apprend vraiment. Le titre le dit.
+                                  dansLaCible
+                                      ? 'Le savais-tu ?'
+                                      : 'Pour t’en souvenir',
+                                  style: const TextStyle(
+                                    fontFamily: 'Baloo2',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 18,
+                                    color: inkColor,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              icone('💡', taille: 24),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            r.event.fun,
+                            style: const TextStyle(
+                              fontFamily: 'Nunito',
+                              fontWeight: FontWeight.w700,
+                              fontSize: 14.5,
+                              height: 1.5,
+                              color: inkSoftColor,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              if (nouveau) ...[
+                                _token('＋ Album', const Color(0xFFEEF3FF),
+                                    const Color(0xFF5F6890)),
+                                const SizedBox(width: 8),
+                              ],
+                              _token(
+                                '+${r.xp} XP',
+                                const Color(0xFFFFF3D9),
+                                const Color(0xFFA9761C),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
-          ),
-        // Bandeau de série : montante en jaune-corail, ou perdue en gris —
-        // une série qui se brise doit se dire, pas disparaître en silence.
-        if (controller.combo > 0 || controller.comboBroken)
-          Padding(
-            padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                color: controller.comboBroken
-                    ? inkColor.withValues(alpha: 0.06)
-                    : const Color(0xFFFFF3D9),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: [
-                  Opacity(
-                    opacity: controller.comboBroken ? 0.4 : 1,
-                    child: const Text('🔥', style: TextStyle(fontSize: 18)),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          controller.comboBroken
-                              ? 'Série perdue — on repart de zéro'
-                              : controller.combo == 1
-                                  ? '1 bonne réponse'
-                                  : '${controller.combo} bonnes réponses d’affilée',
-                          style: TextStyle(
-                            fontFamily: 'Nunito',
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                            color: controller.comboBroken ? inkPaleColor : inkColor,
+                // Bandeau de série : montante en jaune-corail, ou perdue en gris —
+                // une série qui se brise doit se dire, pas disparaître en silence.
+                if (controller.combo > 0 || controller.comboBroken)
+                  // Plafonné comme le verdict : en très grande police, le bandeau
+                  // atteignait 114 px sur iPhone SE.
+                  MediaQuery.withClampedTextScaling(
+                    maxScaleFactor: maxEchelleVerdict,
+                    child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: controller.comboBroken
+                            ? inkColor.withValues(alpha: 0.06)
+                            : const Color(0xFFFFF3D9),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Row(
+                        children: [
+                          Opacity(
+                            opacity: controller.comboBroken ? 0.4 : 1,
+                            child: icone('🔥', taille: 24),
                           ),
-                        ),
-                        const SizedBox(height: 4),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(999),
-                          child: SizedBox(
-                            height: 6,
-                            width: double.infinity,
-                            child: Stack(
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Positioned.fill(
-                                  child: ColoredBox(
-                                      color: inkColor.withValues(alpha: 0.10)),
+                                Text(
+                                  controller.comboBroken
+                                      ? 'Série perdue — on repart de zéro'
+                                      : controller.combo == 1
+                                          ? '1 bonne réponse'
+                                          : '${controller.combo} bonnes réponses d’affilée',
+                                  style: TextStyle(
+                                    fontFamily: 'Nunito',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                    color: controller.comboBroken ? inkPaleColor : inkColor,
+                                  ),
                                 ),
-                                Positioned.fill(
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: FractionallySizedBox(
-                                      widthFactor: controller.comboBroken
-                                          ? 0.0
-                                          : (controller.combo / 3)
-                                              .clamp(0.0, 1.0)
-                                              .toDouble(),
-                                      heightFactor: 1,
-                                      child: const DecoratedBox(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [yellowColor, coralColor],
+                                const SizedBox(height: 4),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: SizedBox(
+                                    height: 6,
+                                    width: double.infinity,
+                                    child: Stack(
+                                      children: [
+                                        Positioned.fill(
+                                          child: ColoredBox(
+                                              color: inkColor.withValues(alpha: 0.10)),
+                                        ),
+                                        Positioned.fill(
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: FractionallySizedBox(
+                                              widthFactor: controller.comboBroken
+                                                  ? 0.0
+                                                  : (controller.combo / 3)
+                                                      .clamp(0.0, 1.0)
+                                                      .toDouble(),
+                                              heightFactor: 1,
+                                              child: const DecoratedBox(
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [yellowColor, coralColor],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 10),
+                          Text(
+                            controller.boostNext && !controller.isLastRound ? '×1,5' : '×1',
+                            style: TextStyle(
+                              fontFamily: 'Baloo2',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 16,
+                              color: controller.boostNext && !controller.isLastRound
+                                  ? coralColor
+                                  : inkPaleColor,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Text(
-                    controller.boostNext && !controller.isLastRound ? '×1,5' : '×1',
-                    style: TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      color: controller.boostNext && !controller.isLastRound
-                          ? coralColor
-                          : inkPaleColor,
-                    ),
                   ),
-                ],
-              ),
+              ],
             ),
           ),
+        ),
         const SizedBox(height: 8),
       ],
     );

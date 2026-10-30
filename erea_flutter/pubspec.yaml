@@ -1,10 +1,10 @@
 name: erea
 description: "Erea — devine l'année ! Jeu d'histoire pour toute la famille."
 publish_to: "none"
-version: 1.0.6+7 # 1.0.6 = CFBundleShortVersionString · 7 = CFBundleVersion / versionCode Android
+version: 1.0.7+8 # 1.0.7 = CFBundleShortVersionString · 8 = CFBundleVersion / versionCode Android
 # Le numéro de build (après le +) est écrasé par Xcode Cloud, qui
 # incrémente le sien à chaque compilation (la 1.0.5 en ligne porte le build 195).
-# Seul le 1.0.6 compte ici, et il doit être identique au numéro de
+# Côté iOS, seul le 1.0.7 compte ici, et il doit être identique au numéro de
 # version saisi dans App Store Connect, sinon la soumission est refusée.
 
 environment:
@@ -39,6 +39,7 @@ flutter:
     # déclare à part, sinon les illustrations d'accueil manquent à
     # l'appel une fois l'app compilée.
     - assets/img/onboarding/
+    - assets/img/icones/
     - assets/sfx/
   # Polices embarquées (Baloo 2 pour les titres, Nunito pour l'interface).
   # Volontairement en local plutôt que via google_fonts : l'app doit

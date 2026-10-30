@@ -8,6 +8,7 @@ import '../../data/store.dart';
 import '../../game/badges.dart';
 import '../../game/game_controller.dart';
 import '../../core/sons.dart';
+import '../icone.dart';
 import '../offre_sans_pub.dart';
 import '../sticker_widgets.dart';
 
@@ -97,14 +98,21 @@ class EndView extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
               boxShadow: const [pillShadow],
             ),
-            child: const Text(
-              '🏆 Nouveau record !',
-              style: TextStyle(
-                fontFamily: 'Baloo2',
-                fontWeight: FontWeight.w800,
-                fontSize: 15,
-                color: inkColor,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                icone('🏆', taille: 22),
+                const SizedBox(width: 6),
+                const Text(
+                  'Nouveau record !',
+                  style: TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 15,
+                    color: inkColor,
+                  ),
+                ),
+              ],
             ),
           ),
         const SizedBox(height: 6),
@@ -261,17 +269,7 @@ class EndView extends StatelessWidget {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              Container(
-                                width: 26,
-                                height: 26,
-                                alignment: Alignment.center,
-                                decoration: const BoxDecoration(
-                                  color: inkColor,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(Icons.check_rounded,
-                                    size: 17, color: yellowColor),
-                              ),
+                              iconeBadge(b, taille: 34),
                               const SizedBox(width: 10),
                               Expanded(
                                 child: Text.rich(
@@ -319,14 +317,21 @@ class EndView extends StatelessWidget {
             radius: 16,
             padding: const EdgeInsets.symmetric(vertical: 11),
             child: Center(
-              child: Text(
-                grilleCopiee ? '✅ Partagé !' : '📤 Partager ma grille',
-                style: const TextStyle(
-                  fontFamily: 'Baloo2',
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                  color: inkColor,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  icone(grilleCopiee ? '✅' : '📤', taille: 24),
+                  const SizedBox(width: 6),
+                  Text(
+                    grilleCopiee ? 'Partagé !' : 'Partager ma grille',
+                    style: const TextStyle(
+                      fontFamily: 'Baloo2',
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: inkColor,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

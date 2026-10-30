@@ -45,3 +45,17 @@ l'an 2000 mais ~2 px vers −2000. Un cran par décennie donnait donc un tic
 occasionnel là où l'on joue le plus, et une mitraille dans l'Antiquité.
 Un cran tous les **40 px de ruban** sonne pareil partout, et ralentit avec
 l'inertie — comme une roue qui s'arrête.
+
+## Les icônes de l'interface
+
+`decoupe_icones.py` découpe une planche d'icônes « sticker » (générée par
+OpenArt, GPT Image 2, octobre 2026) en PNG transparents, une icône par
+case de la grille ; les petites étincelles détachées sont écartées. Les
+icônes de `assets/img/icones/` en sortent, puis passent en WebP 192 px
+(environ 17 Ko chacune). La correspondance emoji → icône vit dans
+`lib/ui/icone.dart`.
+
+```bash
+pip install pillow numpy scipy
+python3 tools/decoupe_icones.py planche.png 5 4 sortie/ defi classique chrono …
+```

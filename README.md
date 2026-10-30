@@ -36,12 +36,12 @@ toujours jouable.
 - Barème : `points = 1000 × exp(−écart / tolérance)`, avec une
   **tolérance de 30 ans** identique à toutes les époques, modulée par la
   difficulté (Facile ×2,2 · Normal · Difficile ×0,55, +75 % d'XP).
-  Réponse exacte = **PERFECT** 🎯.
+  Réponse exacte = **« PILE DESSUS ! »** 🎯.
 - Chaque événement porte un **niveau (1-3)** : en Facile, le jeu ne
   pioche que dans les 268 faits les plus connus ; en Difficile, dans les
   plus pointus.
-- Après chaque réponse : la direction de l'erreur (« 40 ans trop tard
-  ⏪ ») et une anecdote **« Le savais-tu ? »** vérifiée.
+- Après chaque réponse : la bonne année en très grand, l'écart (« 40 ans
+  d'écart ») et une anecdote **« Le savais-tu ? »** vérifiée.
 
 ## Progression
 
@@ -55,10 +55,10 @@ toujours jouable.
 
 ## Contenu
 
-**1 831 événements vérifiés**, répartis en 4 catégories — Pouvoir &
+**1 830 événements vérifiés**, répartis en 4 catégories — Pouvoir &
 guerres, Sciences & explorations, Culture & croyances, Vie quotidienne &
-sport — et 5 packs à thèmes. Le jeu s'adapte à la région : depuis l'Afrique de
-l'Ouest, la moitié des questions du mode Classique porte sur l'histoire
+sport — et 5 packs à thèmes. Le jeu s'adapte à la région : depuis un pays
+d'Afrique, la moitié des questions du mode Classique porte sur l'histoire
 africaine.
 
 ## Confidentialité

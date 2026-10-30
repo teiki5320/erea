@@ -1,8 +1,10 @@
 # Publier Erea sur le Play Store
 
-> Écrit le 9 août 2026, mis à jour le 21 octobre 2026. **La 1.0.4 est
-> en ligne sur Google Play depuis le 20 octobre 2026** : l'accès à la
-> production, demandé le 14 octobre, a été accordé le 17. Ce document est la
+> Écrit le 9 août 2026, mis à jour le 30 octobre 2026. **La 1.0.6 est
+> en ligne sur Google Play depuis le 22 octobre 2026**, après la 1.0.5 le
+> 21 octobre et la 1.0.4, première version publique, le 20 octobre ;
+> l'accès à la production, demandé le 14 octobre, a été accordé le 17.
+> La 1.0.7 est dans le code, pas encore envoyée. Ce document est la
 > marche à suivre ; l'état à jour des deux boutiques est dans
 > `docs/PUBLICATION.md`.
 >
@@ -17,7 +19,7 @@
 |---|---|
 | Identifiant `com.teiki.erea`, identique à iOS | ✅ dans `android/app/build.gradle.kts` |
 | Clé de signature | ✅ créée le 14 août 2026 (`android/erea-upload.jks` + `android/key.properties`, hors dépôt), copie de secours dans iCloud Drive le 29 septembre 2026 |
-| App Bundle signé qui se construit | ✅ release `5 (1.0.4)` : 56 Mo, certificat `CN=Toa` — voir §1 |
+| App Bundle signé qui se construit | ✅ dernière release envoyée `7 (1.0.6)`, certificat `CN=Toa` — voir §1 |
 | Autorisation de notification Android 13 demandée | ✅ dans `lib/core/rappels.dart` |
 | Icône 512 × 512 et bandeau 1024 × 500 | ✅ dans `docs/play/` |
 | Captures d'écran Android (1080 × 2160) | ✅ sept dans `docs/play/captures/` ; version légendée dans `docs/play/captures-legendees/`, en place sur la fiche depuis le 16 septembre 2026 |
@@ -26,10 +28,10 @@
 | Fiche Play Store française, visuels compris | ✅ 3 septembre 2026 |
 | Déclaration « identifiant publicitaire » | ✅ 3 septembre 2026 — oui, trois finalités : publicité, analyse, prévention des fraudes |
 | Message de consentement RGPD (AdMob) | ✅ publié le 3 septembre 2026 — la console était vide, aucune annonce n'aurait été servie en Europe |
-| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` approuvée le 8 septembre — release `4 (1.0.3)` servie depuis le 16 septembre — release `5 (1.0.4)` envoyée le 14 octobre, puis promue en production le 17 octobre |
+| Release en test fermé | ✅ bundle `1 (1.0.0)` approuvé (envoyé le 3 septembre 2026) — release `3 (1.0.2)` approuvée le 8 septembre — release `4 (1.0.3)` servie à partir du 16 septembre — release `5 (1.0.4)` envoyée le 14 octobre, puis promue en production le 17 octobre |
 | Application créée dans la console | ✅ 3 septembre 2026 — nom `Erea`, package `com.teiki.erea`, type Jeu, sans frais |
 | **12 testeurs pendant 14 jours** | ✅ tenus du 8 au 22 septembre 2026 (groupe Google `testers-community@googlegroups.com`, service Testers Community) |
-| **Accès à la production** | ✅ demandé le 14 octobre 2026 à 18 h 39, accordé le 17 octobre ; 1.0.4 en ligne depuis le 20 octobre |
+| **Accès à la production** | ✅ demandé le 14 octobre 2026 à 18 h 39, accordé le 17 octobre ; 1.0.4 mise en ligne le 20 octobre, 1.0.5 le 21, 1.0.6 le 22 octobre 2026 |
 | Appareil Android physique (exigé par la validation) | ✅ Pixel 8a, en service depuis septembre 2026 |
 | Trois questionnaires | ✅ remplis le 3 septembre 2026 — public cible 13 ans et plus |
 | Description Play corrigée dans la console (Duel, 1800, enfant de 8 ans) | ✅ 8 septembre 2026, approuvée avec la release 1.0.2 |
@@ -43,8 +45,10 @@
 Fait — la marche ci-dessous reste pour mémoire, au cas où il faudrait la
 recréer sur une autre machine. `android/app/build.gradle.kts` lit
 `android/key.properties`, que git ignore. Tant que ce fichier n'existe
-pas, la release est signée avec les clés de debug : l'app se lance, mais
-Google la refuse. C'est voulu — un build publiable exige la vraie clé.
+pas, `flutter build appbundle` **échoue** avec un message explicite
+(garde-fou de `build.gradle.kts`) : un bundle signé en debug, que Google
+refuserait, ne peut plus sortir par mégarde. Un APK de développement,
+lui, se construit toujours avec les clés de debug.
 
 ```bash
 keytool -genkey -v -keystore ~/erea-upload.jks \
@@ -285,7 +289,7 @@ Mesuré sur l'APK produit le 11 août 2026, pas déduit du code :
 |---|---|
 | Poids téléchargé | **~20 Mo** (APK arm64 ; 17,5 Mo en armeabi-v7a). Très loin des seuils de Google |
 | `targetSdk` / `compileSdk` | 36 · `minSdk` 24 (Android 7) |
-| `versionName` | 1.0.0 à l'époque ; 1.0.4 aujourd'hui, comme iOS |
+| `versionName` | 1.0.0 à l'époque ; 1.0.7 dans le code aujourd'hui (`versionCode` 8) |
 
 **Permissions réellement embarquées**, plugins compris, relevées sur le
 manifeste fusionné :
@@ -361,8 +365,9 @@ accepté pour une nouvelle app. Le `targetSdk` vient de Flutter
 (`flutter.targetSdkVersion`) ; Google relève chaque année le niveau
 minimum exigé, donc un SDK Flutter à jour évite le refus.
 
-Le jeu tourne en release signée chez les testeurs du test fermé depuis
-septembre 2026.
+Le jeu a tourné en release signée chez les testeurs du test fermé à
+partir de septembre 2026 ; il est en production depuis le 20 octobre
+2026.
 
 ## 7. Les classements Play Games *(facultatif)*
 

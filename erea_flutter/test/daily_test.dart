@@ -1,3 +1,4 @@
+import 'package:erea/core/rappels.dart';
 import 'package:erea/data/store.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -246,5 +247,56 @@ void main() {
     expect(s.onboardingVu, isFalse, reason: 'la présentation revient');
     expect(s.paysChoisiIso, isNull, reason: 'le pays aussi');
     expect(s.paysChoisiNom, isNull);
+  });
+
+  test('un abandon perd la tentative ; un arrêt subi la laisse reprenable',
+      () async {
+    final s = await store();
+    final today = DateTime.now();
+    await s.lockDaily(now: today);
+    await s.saveDailyProgress(Store.dayKey(today), [1500]);
+    expect(s.dailyAttemptLost, isFalse, reason: 'app tuée : reprise possible');
+    await s.clearDailyProgress(); // abandon volontaire
+    expect(s.dailyAttemptLost, isTrue);
+  });
+
+  test('le rappel coupé par le joueur ne se redemande plus', () async {
+    final s = await store();
+    expect(s.remindersDecided, isFalse);
+    await s.setRemindersOn(false);
+    expect(s.remindersDecided, isTrue);
+    expect(s.remindersOn, isFalse);
+  });
+
+  group('rappel du soir : un seul soir, celui où la série est en jeu', () {
+    final midi = DateTime(2026, 10, 30, 12);
+    DateTime? soir(DateTime m,
+            {int serie = 5, bool fait = false, bool perdue = false}) =>
+        Rappels.soirEnJeu(
+            maintenant: m,
+            serie: serie,
+            defiFaitAujourdhui: fait,
+            tentativePerdue: perdue);
+
+    test('défi pas encore joué : ce soir à 18 h 30', () {
+      expect(soir(midi), DateTime(2026, 10, 30, 18, 30));
+    });
+    test('défi terminé : demain soir, pas ce soir', () {
+      expect(soir(midi, fait: true), DateTime(2026, 10, 31, 18, 30));
+    });
+    test('18 h 30 passée sans défi : rien (pas de rappel pour une série morte)',
+        () {
+      expect(soir(DateTime(2026, 10, 30, 21)), isNull);
+    });
+    test('tentative perdue par abandon : rien', () {
+      expect(soir(midi, perdue: true), isNull);
+    });
+    test('sans série : rien', () {
+      expect(soir(midi, serie: 0), isNull);
+    });
+    test('fin de mois : demain soir tombe le 1er', () {
+      expect(soir(DateTime(2026, 10, 31, 20), fait: true),
+          DateTime(2026, 11, 1, 18, 30));
+    });
   });
 }

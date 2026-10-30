@@ -6,9 +6,9 @@ import 'package:games_services/games_services.dart';
 /// classement lui-même.
 ///
 /// Règles tenues ici :
-/// - la connexion est PARESSEUSE : jamais au lancement, seulement à la
-///   première fin de défi ou au tap sur « classement ». Une fenêtre Game
-///   Center au démarrage est intrusive et perturbe un enfant ;
+/// - la connexion se fait à l'ouverture de l'accueil, qui affiche les
+///   rangs mondiaux (`home_screen.dart`, choix assumé) ; après un échec,
+///   elle n'est retentée qu'après une minute de répit ;
 /// - tout échec est silencieux : sur un appareil où Game Center est
 ///   désactivé par le contrôle parental, le jeu doit rester entièrement
 ///   jouable ;

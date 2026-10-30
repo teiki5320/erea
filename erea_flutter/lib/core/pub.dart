@@ -38,7 +38,15 @@ class Pub {
       'ca-app-pub-2680784147246798/7670278436';
   static const String _blocIOS = 'ca-app-pub-2680784147246798/6744159246';
 
-  static String get _bloc => Platform.isAndroid ? _blocAndroid : _blocIOS;
+  /// Blocs de TEST publiés par Google : en debug (`flutter run` depuis le
+  /// Mac), un vrai bloc servirait de vraies pubs sur le téléphone du
+  /// développeur — du trafic que AdMob peut juger invalide.
+  static const String _testAndroid = 'ca-app-pub-3940256099942544/1033173712';
+  static const String _testIOS = 'ca-app-pub-3940256099942544/4411468910';
+
+  static String get _bloc => kDebugMode
+      ? (Platform.isAndroid ? _testAndroid : _testIOS)
+      : (Platform.isAndroid ? _blocAndroid : _blocIOS);
 
   static Future<bool>? _preparation;
   static InterstitialAd? _prete;
@@ -57,6 +65,14 @@ class Pub {
   static Future<bool> _demarrerSdk() async {
     try {
       await _recolterConsentement();
+      // Sans un consentement valable (formulaire injoignable hors ligne,
+      // serveurs de Google muets), AUCUNE demande de publicité de toute la
+      // session : c'est la règle de Google. Pas de nouvel essai en fin de
+      // partie, il ferait attendre le joueur et pourrait ouvrir le
+      // formulaire au moment où il touche « Rejouer ».
+      if (!await ConsentInformation.instance.canRequestAds()) {
+        return false;
+      }
       await MobileAds.instance.initialize();
       _precharger();
       return true;

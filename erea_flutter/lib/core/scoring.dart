@@ -67,8 +67,8 @@ enum Difficulty {
 ///
 /// La valeur elle-même est un curseur de confort, réglable ici et nulle
 /// part ailleurs. À 30 ans, se tromper d'une génération reste une bonne
-/// réponse : en Facile il faut situer l'année à ± 24 ans pour les 700
-/// points du « vert », à ± 11 ans en Normal, à ± 6 ans en Difficile.
+/// réponse : en Facile il faut situer l'année à ± 23 ans pour les 700
+/// points du « vert », à ± 10 ans en Normal, à ± 5 ans en Difficile.
 ///
 /// Elle a valu 12 un temps. C'était jouable sur le récent, mais cela
 /// condamnait tout ce qui n'a pas de date au demi-siècle près — soit une

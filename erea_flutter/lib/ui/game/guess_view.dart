@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' hide Badge;
 import '../../data/events_repository.dart';
 import '../../core/timeline_scale.dart';
 import '../../game/game_controller.dart';
+import '../icone.dart';
 import '../sticker_widgets.dart';
 import '../tape_widget.dart';
 
@@ -95,9 +96,17 @@ class GuessView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (controller.multiplier == 2)
-                          const Padding(
-                            padding: EdgeInsets.only(bottom: 6),
-                            child: Text('🌟 Manche finale : points × 2 !'),
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              children: [
+                                icone('🌟', taille: 22),
+                                const SizedBox(width: 6),
+                                const Flexible(
+                                  child: Text('Manche finale : points × 2 !'),
+                                ),
+                              ],
+                            ),
                           ),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -218,14 +227,23 @@ class GuessView extends StatelessWidget {
                     color: inkColor.withValues(alpha: 0.88),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Text(
-                    '👆 Fais glisser la frise',
-                    style: TextStyle(
-                      fontFamily: 'Baloo2',
-                      fontWeight: FontWeight.w800,
-                      fontSize: 15,
-                      color: Colors.white,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      icone('👆', taille: 22),
+                      const SizedBox(width: 6),
+                      const Flexible(
+                        child: Text(
+                          'Fais glisser la frise',
+                          style: TextStyle(
+                            fontFamily: 'Baloo2',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 15,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

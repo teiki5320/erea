@@ -23,6 +23,7 @@ import 'game/verdict_textes.dart';
 import '../data/store.dart';
 import '../game/badges.dart';
 import '../game/game_controller.dart';
+import 'icone.dart';
 import 'sticker_widgets.dart';
 
 /// Écran de jeu « Sticker Arcade » (handoff 3a) : fond fondu d'époque,
@@ -95,6 +96,19 @@ class _GameScreenState extends State<GameScreen>
   Timer? _chrono;
   int _restantMs = 0;
   Timer? _autoSuivant;
+
+  /// Chrono en pause pendant une question : la question est CACHÉE tant
+  /// que le temps ne court pas, sinon une pause offrait un temps de
+  /// réflexion illimité à un score qui part au classement mondial.
+  bool _pauseChrono = false;
+
+  /// Boîte « Quitter ? » ouverte : l'enchaînement automatique du Chrono ne
+  /// doit pas lancer la manche suivante derrière elle.
+  bool _quitOuvert = false;
+
+  /// La manche révèle un fait jamais vu : lu AVANT que la révélation ne
+  /// l'ajoute à la collection, pour que « ＋ Album » ne s'affiche qu'alors.
+  bool _faitNouveau = false;
 
   GameController get game => widget.controller;
 
@@ -180,7 +194,10 @@ class _GameScreenState extends State<GameScreen>
         if (game.mode == GameMode.chrono && mounted) {
           _autoSuivant?.cancel();
           _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
-            if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+            if (mounted &&
+                game.phase == GamePhase.reveal &&
+                !_showEnd &&
+                !_quitOuvert) {
               _next();
             }
           });
@@ -203,12 +220,18 @@ class _GameScreenState extends State<GameScreen>
         state == AppLifecycleState.inactive) {
       _chrono?.cancel();
       _autoSuivant?.cancel();
+      if (game.phase == GamePhase.guess && !_showEnd && !_pauseChrono) {
+        setState(() => _pauseChrono = true);
+      }
     } else if (state == AppLifecycleState.resumed && mounted && !_showEnd) {
-      if (game.phase == GamePhase.guess) {
-        _demarrerTic(); // reprend le temps restant, sans le remettre à 10 s
-      } else if (game.phase == GamePhase.reveal) {
+      // Pendant une question, c'est le bouton « Reprendre » du voile qui
+      // relance le temps : le joueur revient sans rien voir de la question.
+      if (game.phase == GamePhase.reveal) {
         _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
-          if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+          if (mounted &&
+              game.phase == GamePhase.reveal &&
+              !_showEnd &&
+              !_quitOuvert) {
             _next();
           }
         });
@@ -250,6 +273,7 @@ class _GameScreenState extends State<GameScreen>
   /// reprendre là où il en était.
   void _demarrerTic() {
     _chrono?.cancel();
+    _pauseChrono = false;
     _chrono = Timer.periodic(const Duration(milliseconds: 100), (_) {
       if (!mounted || game.phase != GamePhase.guess) return;
       _restantMs -= 100;
@@ -268,6 +292,7 @@ class _GameScreenState extends State<GameScreen>
     final result = game.validateTimeout();
     if (result == null) return;
     _lastResult = result;
+    _faitNouveau = !widget.store.discovered.contains(result.event.id);
     Retour.validation();
     _jingleVerdict = Sons.rate;
     _travelBegin = game.frac;
@@ -286,6 +311,7 @@ class _GameScreenState extends State<GameScreen>
     if (result == null) return;
     _chrono?.cancel(); // répondu à temps : le compte à rebours s'arrête
     _lastResult = result;
+    _faitNouveau = !widget.store.discovered.contains(result.event.id);
     // Le « pop » répond à l'appui tout de suite ; le verdict, lui, arrive
     // après le voyage du ruban.
     Sons.validation();
@@ -330,15 +356,23 @@ class _GameScreenState extends State<GameScreen>
         borderRadius: BorderRadius.circular(999),
         border: Border.all(color: urgent ? coralColor : inkColor, width: 2),
       ),
-      child: Text(
-        '⏱ ${s.toStringAsFixed(1)}',
-        style: TextStyle(
-          fontFamily: 'Baloo2',
-          fontWeight: FontWeight.w800,
-          fontSize: 13,
-          color: urgent ? Colors.white : inkColor,
-          fontFeatures: const [FontFeature.tabularFigures()],
-        ),
+      child: Row(
+        key: const ValueKey('pastille-chrono'),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          icone('⏱', taille: 16),
+          const SizedBox(width: 3),
+          Text(
+            s.toStringAsFixed(1),
+            style: TextStyle(
+              fontFamily: 'Baloo2',
+              fontWeight: FontWeight.w800,
+              fontSize: 13,
+              color: urgent ? Colors.white : inkColor,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -428,17 +462,17 @@ class _GameScreenState extends State<GameScreen>
       if (serie > 0) {
         await Classement.envoyer(Classement.serie, serie, max: 3650);
       }
-      // L'autorisation de rappel n'est demandée qu'ici : après un premier
-      // défi TERMINÉ, jamais au lancement.
-      if (!widget.store.remindersOn && serie >= 2) {
-        final ok = await Rappels.demanderAutorisation();
-        if (ok) {
+      // L'autorisation de rappel n'est demandée qu'ici, une seule fois :
+      // après un défi TERMINÉ qui porte la série à 2 jours au moins,
+      // jamais au lancement, et jamais si le joueur a déjà tranché.
+      if (!widget.store.remindersDecided && serie >= 2) {
+        if (await Rappels.demanderAutorisation()) {
           await widget.store.setRemindersOn(true);
-          await Rappels.programmer(serie: serie, defiFaitAujourdhui: true);
         }
-      } else if (widget.store.remindersOn) {
-        await Rappels.programmer(serie: serie, defiFaitAujourdhui: true);
       }
+      // L'état du Store, pas « fait aujourd'hui » en dur : un défi lancé à
+      // 23 h 58 et fini après minuit est crédité à la veille.
+      await Rappels.reprogrammer(widget.store);
     } else if (game.mode == GameMode.classique &&
         !game.catKey.startsWith('pack:')) {
       // Les packs ne partent PAS au tableau du Classique : leurs pools
@@ -493,6 +527,7 @@ class _GameScreenState extends State<GameScreen>
           onQuitter: (rejouer) => _quitter(rejouer: rejouer),
         ) : _buildGame(context),
                 ),
+                if (_pauseChrono && !_showEnd) _voilePause(),
               ],
             );
           },
@@ -500,6 +535,70 @@ class _GameScreenState extends State<GameScreen>
       ),
     );
   }
+
+  /// Voile opaque de la pause du Chrono : rien de la question ne passe,
+  /// ni au doigt ni aux lecteurs d'écran (BlockSemantics), sinon VoiceOver
+  /// lisait la question et actionnait la frise pendant la pause.
+  Widget _voilePause() => Positioned.fill(
+        child: BlockSemantics(
+          child: ColoredBox(
+          color: const Color(0xFFFFF7E8),
+          child: SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    icone('⏸', taille: 64),
+                    const SizedBox(height: 12),
+                    const Text(
+                      'Chrono en pause',
+                      semanticsLabel: 'Chrono en pause. La question est cachée.',
+                      style: TextStyle(
+                        fontFamily: 'Baloo2',
+                        fontWeight: FontWeight.w800,
+                        fontSize: 24,
+                        color: inkColor,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'La question reste cachée tant que le temps est arrêté. '
+                      'Il te reste ${(_restantMs / 1000).ceil()} s.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontFamily: 'Nunito',
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: inkSoftColor,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    PushButton(
+                      onPressed: () => setState(_demarrerTic),
+                      color: coralColor,
+                      shadowColor: const Color(0xFFB93A2F),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 36, vertical: 14),
+                      child: const Text(
+                        'Reprendre',
+                        style: TextStyle(
+                          fontFamily: 'Baloo2',
+                          fontWeight: FontWeight.w800,
+                          fontSize: 19,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          ),
+        ),
+      );
 
   Widget _buildGame(BuildContext context) {
     final guessing = game.phase == GamePhase.guess;
@@ -579,6 +678,7 @@ class _GameScreenState extends State<GameScreen>
               return RevealView(
                 controller: game,
                 r: _lastResult!,
+                nouveau: _faitNouveau,
                 available: h,
                 pop: _pop,
                 popBadge: _popBadge,
@@ -629,16 +729,28 @@ class _GameScreenState extends State<GameScreen>
                   shadowHeight: 6,
                   padding: const EdgeInsets.all(15),
                   child: Center(
-                    child: Text(
-                      game.isLastRound
-                          ? 'Voir mes résultats 🏁'
-                          : 'Manche suivante →',
-                      style: const TextStyle(
-                        fontFamily: 'Baloo2',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 22,
-                        color: Colors.white,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            game.isLastRound
+                                ? 'Voir mes résultats'
+                                : 'Manche suivante →',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontFamily: 'Baloo2',
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        if (game.isLastRound) ...[
+                          const SizedBox(width: 8),
+                          icone('🏁', taille: 26),
+                        ],
+                      ],
                     ),
                   ),
                 ),
@@ -744,6 +856,10 @@ class _GameScreenState extends State<GameScreen>
     // score enregistré… alors que le dialogue promet le contraire).
     _chrono?.cancel();
     _autoSuivant?.cancel();
+    if (game.mode == GameMode.chrono && game.phase == GamePhase.guess) {
+      setState(() => _pauseChrono = true);
+    }
+    _quitOuvert = true;
     final quit = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -768,15 +884,19 @@ class _GameScreenState extends State<GameScreen>
         ],
       ),
     );
+    _quitOuvert = false;
     if (quit != true) {
       // Le joueur reste : le compte à rebours reprend où il en était, et
       // la révélation en cours retrouve son enchaînement automatique.
       if (game.mode == GameMode.chrono && mounted) {
         if (game.phase == GamePhase.guess) {
-          _demarrerTic();
+          setState(_demarrerTic); // lève aussi le voile
         } else if (game.phase == GamePhase.reveal && !_showEnd) {
           _autoSuivant = Timer(const Duration(milliseconds: 2200), () {
-            if (mounted && game.phase == GamePhase.reveal && !_showEnd) {
+            if (mounted &&
+                game.phase == GamePhase.reveal &&
+                !_showEnd &&
+                !_quitOuvert) {
               _next();
             }
           });
@@ -788,6 +908,9 @@ class _GameScreenState extends State<GameScreen>
       // relancerait le défi en connaissant déjà les réponses vues.
       if (game.mode == GameMode.daily) {
         await widget.store.clearDailyProgress();
+        // La série ne peut plus être sauvée aujourd'hui : plus de rappel
+        // ce soir pour un défi qui n'est plus jouable.
+        await Rappels.reprogrammer(widget.store);
       }
       if (context.mounted) Navigator.of(context).pop(false);
     }

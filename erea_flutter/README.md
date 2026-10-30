@@ -3,12 +3,12 @@
 L'application Erea, en Flutter — **c'est le produit**. Le jeu web à la
 racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
-État : **version 1.0.4** (build 182) envoyée en vérification à l'App
-Store le 15 octobre 2026 ; la 1.0.2 y est en ligne depuis le 8 septembre.
-Sur Google Play, accès à la production demandé le 14 octobre. Publicité
-et achat intégré en place depuis la 1.0.2. L'état à jour des boutiques
-vit dans `docs/PUBLICATION.md`.
-167 tests, `flutter analyze` propre.
+État : **1.0.5** en ligne sur l'App Store depuis le 21 octobre 2026,
+**1.0.6** en ligne sur Google Play depuis le 22 octobre ; la **1.0.7**
+est dans le code, pas encore envoyée. Publicité et achat intégré en place
+depuis la 1.0.2. L'état à jour des boutiques vit dans
+`docs/PUBLICATION.md`.
+185 tests, `flutter analyze` propre.
 
 ## Démarrer
 
@@ -26,18 +26,20 @@ flutter run
 
 ## Publier sur iOS
 
-```bash
-flutter build ipa --release   # -> build/ios/ipa/erea.ipa
-```
+Les builds partent de **Xcode Cloud**, à chaque poussée sur `main` (voir
+plus bas) : rien ne s'envoie depuis le Mac. L'archive est signée pour
+l'App Store avec la team `K597U7X3FZ`. Pour vérifier en local que l'app
+compile :
 
-L'archive est signée pour l'App Store avec la team `K597U7X3FZ`.
-L'upload se fait ensuite via Transporter ou l'Organizer de Xcode.
+```bash
+flutter build ios --release --no-codesign
+```
 
 | Réglage | Valeur |
 |---|---|
 | Bundle identifier | `com.teiki.erea` |
 | Nom affiché | Erea |
-| Version | `1.0.4` (depuis `pubspec.yaml`) |
+| Version | `1.0.7` (depuis `pubspec.yaml`) |
 | Numéro de build | attribué par Xcode Cloud, qui l'incrémente seul |
 | iOS minimum | 15.0 |
 | Langue | français (`CFBundleDevelopmentRegion` + `CFBundleLocalizations`) |
@@ -47,7 +49,8 @@ L'upload se fait ensuite via Transporter ou l'Organizer de Xcode.
 ⚠️ Le numéro de version de `pubspec.yaml` doit être **identique** à celui
 saisi dans App Store Connect, sinon le build n'apparaît pas dans la liste
 de sélection de la version. Le suffixe après le `+` est écrasé par Xcode
-Cloud.
+Cloud côté iOS, mais c'est le `versionCode` d'Android : il faut le monter
+avant chaque envoi sur Google Play, qui refuse un numéro déjà utilisé.
 
 ### Xcode Cloud
 
@@ -95,16 +98,24 @@ par Xcode Cloud.
 - **`assets/fonts/`** — Baloo 2 et Nunito embarquées : aucun accès réseau
   dans l'app, elle fonctionne entièrement hors ligne.
 - **`lib/core/region.dart`** — détection du pays (choix explicite, sinon
-  réglage de l'appareil) et mélange régional : depuis l'Afrique de
-  l'Ouest, le Classique tire la moitié de ses questions dans le pack
-  Afrique.
-- **`lib/core/classement.dart`** — Game Center : connexion paresseuse et
-  partagée, six tableaux, échec silencieux. iOS seulement : sur Android,
+  réglage de l'appareil) et mélange régional : depuis un pays
+  d'Afrique, le Classique tire la moitié de ses questions dans le pack
+  Afrique. Ailleurs, le pays choisi ne change rien au tirage.
+- **`lib/core/classement.dart`** — Game Center : connexion demandée à
+  l'ouverture de l'accueil (pour afficher les rangs), partagée, six
+  tableaux, échec silencieux. iOS seulement : sur Android,
   l'entrée est masquée tant que Play Games n'est pas branché.
 - **`lib/core/avis.dart`** — demande de note, une seule fois et après une
   réussite.
-- **`test/`** — 167 tests : règles du jeu, intégrité des 1 831
-  événements, persistance et défi du jour, interface jusqu'à une partie
+- **`lib/ui/album_screen.dart`** — l'album de collection, par époque ;
+  **`lib/ui/icone.dart`** — les icônes dessinées (`assets/img/icones/`)
+  qui remplacent les emoji de l'interface.
+- **`lib/core/rappels.dart`** — rappel du soir, 100 % local : un seul
+  rappel programmé, le soir où la série est en jeu, recalculé à chaque
+  lancement de l'app, en fin de défi et à l'abandon.
+- **`test/`** — 185 tests : règles du jeu, intégrité des 1 830
+  événements, persistance et défi du jour, rappel du soir, pause du
+  Chrono, interface jusqu'à une partie
   complète, mise en page iPad et iPhone SE en très grande police, règle
   d'affichage de la publicité, promesse de l'achat.
 
@@ -174,11 +185,10 @@ serait restée muette et l'offre invisible.
 
 ## Ce qui n'est pas fait
 
-- **Android en production** : l'App Bundle se signe et se construit (la
-  clé vit hors du dépôt, dans `android/key.properties`). Le test fermé
-  est terminé (douze testeurs du 8 au 22 septembre 2026, vérifications
-  sur un Pixel 8a, offre « sans pub » affichée à 3,99 € le 16 septembre).
-  L'accès à la production est demandé depuis le 14 octobre. Tout le
+- **Sortie Android automatisée** : chaque version Android se construit
+  et s'envoie à la main (la clé vit hors du dépôt, dans
+  `android/key.properties`, et un bundle sans elle refuse de se
+  construire). Android est en production depuis le 20 octobre 2026 ; le
   chemin est dans `docs/FICHE_PLAY_STORE.md`.
 - **Play Games** n'est pas configuré : pas de classement sur Android,
   l'entrée est masquée dans l'app depuis la 1.0.4. Le jeu reste jouable ;

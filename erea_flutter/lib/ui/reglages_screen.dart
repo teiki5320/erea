@@ -12,6 +12,7 @@ import '../core/retour.dart';
 import '../core/sons.dart';
 import '../data/store.dart';
 import '../game/badges.dart';
+import 'icone.dart';
 import 'onboarding_screen.dart' show PaysPropose, paysProposes, drapeauIso;
 import 'sticker_widgets.dart';
 
@@ -84,6 +85,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
                   await Rappels.programmer(
                     serie: widget.store.effectiveStreak,
                     defiFaitAujourdhui: widget.store.dailyFinishedToday,
+                    tentativePerdue: widget.store.dailyAttemptLost,
                   );
                 } else {
                   await Rappels.toutAnnuler();
@@ -104,10 +106,10 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
             ListTile(
               title: const Text('Mon pays'),
               subtitle:
-                  const Text('Le Classique met en avant l’histoire locale'),
+                  const Text('En Afrique, le Classique mêle l’histoire du continent'),
               trailing: Text(
                 widget.store.paysChoisiNom == null
-                    ? '🌐 Automatique'
+                    ? 'Automatique'
                     : '${drapeauIso(widget.store.paysChoisiIso)} '
                         '${widget.store.paysChoisiNom}',
                 style: const TextStyle(
@@ -164,11 +166,11 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
   Widget _carteSansPub() {
     if (widget.store.sansPub) {
       return _carte([
-        const ListTile(
-          title: Text('Merci !'),
-          subtitle: Text('Erea est sans publicité sur cet appareil, pour '
-              'toujours'),
-          trailing: Text('💛', style: TextStyle(fontSize: 22)),
+        ListTile(
+          title: const Text('Merci !'),
+          subtitle: const Text('Erea est sans publicité sur cet appareil, '
+              'pour toujours'),
+          trailing: icone('💛', taille: 30),
         ),
       ]);
     }
@@ -238,8 +240,32 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
             trailing: const Icon(Icons.mail_outline, color: inkSoftColor),
             onTap: _ecrire,
           ),
+          // Apple demande la politique de confidentialité DANS l'app, pas
+          // seulement sur la fiche (règle 5.1.1).
+          ListTile(
+            dense: true,
+            title: const Text('Confidentialité'),
+            trailing: const Icon(Icons.open_in_new, color: inkSoftColor),
+            onTap: _ouvrirConfidentialite,
+          ),
         ]),
       );
+
+  static final Uri _confidentialite =
+      Uri.parse('https://erea.toakeur.com/confidentialite.html');
+
+  Future<void> _ouvrirConfidentialite() async {
+    var ouvert = false;
+    try {
+      ouvert = await launchUrl(_confidentialite,
+          mode: LaunchMode.externalApplication);
+    } on Exception {
+      ouvert = false;
+    }
+    if (!ouvert && mounted) {
+      _dire('Impossible d’ouvrir la page. Elle est sur erea.toakeur.com.');
+    }
+  }
 
   static const String _adresseAvis = 'erea@toakeur.com';
 
@@ -319,8 +345,10 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
         children: [
           for (final p in paysProposes)
             ListTile(
-              leading: Text(drapeauIso(p.iso),
-                  style: const TextStyle(fontSize: 22)),
+              leading: p.iso == null
+                  ? icone('🌐', taille: 26)
+                  : Text(drapeauIso(p.iso),
+                      style: const TextStyle(fontSize: 22)),
               title: Text(p.nom),
               trailing: (p.iso == widget.store.paysChoisiIso &&
                       (p.iso != null || widget.store.paysChoisiIso == null))
@@ -344,10 +372,7 @@ class _ReglagesScreenState extends State<ReglagesScreen> {
   Widget _ligneSucces(Badge b, bool obtenu) => Opacity(
         opacity: obtenu ? 1 : 0.42,
         child: ListTile(
-          leading: Text(
-            obtenu ? b.emoji : '🔒',
-            style: const TextStyle(fontSize: 24),
-          ),
+          leading: obtenu ? iconeBadge(b, taille: 34) : icone('🔒', taille: 34),
           title: Text(
             b.titre,
             style: const TextStyle(

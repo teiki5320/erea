@@ -5,12 +5,14 @@ import 'dart:async';
 
 import 'core/achat.dart';
 import 'core/pub.dart';
+import 'core/rappels.dart';
 import 'core/region.dart' as region;
 import 'core/retour.dart';
 import 'core/sons.dart';
 import 'data/events_repository.dart';
 import 'data/store.dart';
 import 'ui/home_screen.dart';
+import 'ui/icone.dart';
 import 'ui/onboarding_screen.dart';
 
 Future<void> main() async {
@@ -38,6 +40,11 @@ Future<void> main() async {
     // Classique — posé ici pour être prêt avant la première partie.
     region.paysChoisiIso = store.paysChoisiIso;
     unawaited(Sons.preparer());
+    // Le rappel du soir suit l'état réel de la série à chaque lancement.
+    // Après le premier affichage : la base des fuseaux horaires, décodée
+    // à la première programmation, ne doit pas retarder l'ouverture.
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => unawaited(Rappels.reprogrammer(store)));
     // Boutique et régie, en tâche de fond : ni l'une ni l'autre ne doit
     // retarder l'affichage du jeu d'une milliseconde. La boutique en
     // premier — c'est elle qui dit s'il faut une régie du tout, et un
@@ -70,7 +77,7 @@ class _EcranPanne extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('⏳', style: TextStyle(fontSize: 48)),
+                icone('⏳', taille: 64),
                 const SizedBox(height: 12),
                 Text(
                   message,

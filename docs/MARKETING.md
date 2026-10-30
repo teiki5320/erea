@@ -34,7 +34,7 @@ classiques :
 |---|---|---|
 | Familles francophones (parents + 8-15 ans) | Cœur de cible du ton et du mode Facile (268 faits « grand public ») | « Le jeu d'histoire pour toute la famille » |
 | Collégiens / brevet | Le niveau 1 s'appuie sur les repères officiels du brevet | « Révise tes repères sans t'en rendre compte » |
-| Afrique de l'Ouest francophone | Onboarding avec choix du pays (30 pays africains proposés), mélange 50/50 avec le pack Afrique (196 faits) — rare dans le genre | « Enfin un jeu d'histoire qui parle de chez toi » |
+| Afrique de l'Ouest francophone | Onboarding avec choix du pays (29 pays africains proposés, plus la France), mélange 50/50 avec le pack Afrique (202 faits) — rare dans le genre | « Enfin un jeu d'histoire qui parle de chez toi » |
 | Amateurs de culture G / joueurs de quiz | Modes Difficile et Chrono, classements mondiaux | « Tu peux faire mieux que moi ? » |
 
 ---
@@ -50,7 +50,7 @@ classiques :
 
 - ⏳ **Le geste de la frise** : on place l'événement sur un ruban de −3000 à aujourd'hui, au lieu de choisir entre quatre réponses.
 - 🔥 **Le Défi du jour** : dix questions identiques pour tous, une tentative, une série et une grille emoji à partager.
-- 🌍 **1 831 faits, Afrique comprise** : hors ligne et sans compte, avec choix du pays et un pack Afrique rare dans le genre.
+- 🌍 **1 830 faits, Afrique comprise** : hors ligne et sans compte, avec choix du pays et un pack Afrique rare dans le genre.
 
 ## Modèle de rémunération
 
@@ -74,7 +74,7 @@ avec la 1.0.2), l'argument « sans pub » de la description, et le statut
 pas encore faite.
 
 **Modèles écartés, et pourquoi :**
-- **Abonnement** — le rythme de production de contenu (1 831 faits, mais
+- **Abonnement** — le rythme de production de contenu (1 830 faits, mais
   pas de flux hebdomadaire) ne justifie pas un récurrent ; un abonnement
   mal nourri détruit les notes.
 - **Packs payants / « Erea + » à 4,99 €** (l'ancien plan en phases) —
@@ -135,7 +135,7 @@ pas encore faite.
 | Janvier | Résolutions « culture générale » | Clip défi du jour, « 1 fait par jour » |
 | Mai–juin | Révisions du brevet | Le pic naturel : dossier profs re-poussé, mots-clés « brevet » dans la fiche |
 | Juillet–août | Vacances, trajets | « Le jeu de la voiture » ; anniversaires historiques de l'été (14 juillet, premiers pas sur la Lune le 21 juillet) |
-| Toute l'année | Anniversaires d'événements du jeu | Le calendrier éditorial est déjà dans `assets/events.json` : 1 831 dates à célébrer |
+| Toute l'année | Anniversaires d'événements du jeu | Le calendrier éditorial est déjà dans `assets/events.json` : 1 830 dates à célébrer |
 
 ---
 

@@ -11,7 +11,7 @@
 
 ## En bref
 
-- **Version commune** : **App Store : `1.0.5`** en ligne depuis le 21 octobre 2026 (17 h 44) · **Google Play : `1.0.6`** en ligne depuis le 22 octobre 2026 (Android seul, après la 1.0.5 le 21 octobre à 15 h 30) ; `1.0.6+7` dans le code
+- **Versions** : **App Store : `1.0.5`** en ligne depuis le 21 octobre 2026 (17 h 44) · **Google Play : `1.0.6`** en ligne depuis le 22 octobre 2026 (Android seul, après la 1.0.5 le 21 octobre à 15 h 30) ; `1.0.7+8` dans le code, pas encore envoyée
 - **Identifiant de bundle** : `com.teiki.erea`, identique sur iOS et Android
 - **Monétisation** : pub AdMob + achat unique « Erea sans publicité », 3,99 €
 - **Confidentialité** : six types déclarés (SDK AdMob), consentement RGPD et ATT
@@ -33,7 +33,7 @@
 
 - **iOS** : **1.0.5 (build 195) en ligne depuis le 21 octobre 2026 à 17 h 44** ; avant elle, la 1.0.4 (build 182) a été mise en ligne le 15 octobre 2026 à 14 h 01, soumise à 12 h 51 et publiée automatiquement à l'approbation ; nouveau nom « Erea : Quiz d'histoire & frise »
 - **Android** : **accès à la production accordé le 17 octobre 2026** (demandé le 14 octobre à 18 h 39) ; **release de production `5 (1.0.4)` envoyée pour examen le 17 octobre vers 8 h 25**, promue depuis la piste Alpha, déploiement complet, publication gérée désactivée ; première mise en ligne sur Google Play le 20 octobre 2026 à 16 h 07 ; **1.0.6 (versionCode 7) en ligne depuis le 22 octobre 2026**, après la 1.0.5 le 21 octobre
-- **Version dans le code** : `1.0.6+7` depuis le 21 octobre au soir (le build 196, encore en 1.0.5, a été refusé après l'approbation) ; elle n'ajoute que la réduction optimisée des ressources par R8 et part sur Google Play seul (bundle `versionCode 7`, copie dans iCloud → Erea), rien ne change sur iPhone ; la `1.0.5+6` a été envoyée le 21 octobre 2026 (build iOS `195`, bundle Android `versionCode 6`, copie dans iCloud → Erea) : la bonne année en grand à la révélation, Facile par défaut et niveau retenu, succès sous la carte de niveau en fin de partie, icône adaptative Android, notification en silhouette, logo au démarrage ; Flutter figé à 3.47.3 sur Xcode Cloud
+- **Version dans le code** : `1.0.7+8` depuis le 30 octobre 2026, pas encore envoyée — un seul rappel du soir, au soir où la série est en jeu (au lieu de sept qui pouvaient annoncer une série déjà perdue), question cachée pendant la pause du Chrono, aucune pub demandée sans consentement valable, doublon « La radio franchit l'Atlantique » retiré (1 830 faits), deux phrases corrigées (choix du pays, Défi du jour), rappel coupé par le joueur jamais rallumé, Chrono figé derrière la boîte « Quitter ? », écran de révélation qui tient sur iPhone SE en très grande police, lien « Confidentialité » dans les réglages, pubs de test de Google en mode debug, écran Album, Classique en pleine largeur sur l'accueil, icônes dessinées à la place des emoji de l'interface ; avant elle, `1.0.6+7` à partir du 21 octobre au soir (le build 196, encore en 1.0.5, a été refusé après l'approbation) ; elle n'ajoute que la réduction optimisée des ressources par R8 et part sur Google Play seul (bundle `versionCode 7`, copie dans iCloud → Erea), rien ne change sur iPhone ; la `1.0.5+6` a été envoyée le 21 octobre 2026 (build iOS `195`, bundle Android `versionCode 6`, copie dans iCloud → Erea) : la bonne année en grand à la révélation, Facile par défaut et niveau retenu, succès sous la carte de niveau en fin de partie, icône adaptative Android, notification en silhouette, logo au démarrage ; Flutter figé à 3.47.3 sur Xcode Cloud
 - **Identifiant** : `com.teiki.erea`, identique sur les deux plateformes
 - **Achat intégré** : `com.teiki.erea.sanspub` « Erea sans publicité », 3,99 €, non consommable — **approuvé** sur l'App Store, **actif** sur Google Play
 - **Monétisation** : interstitielle AdMob une partie sur deux, consentement RGPD publié le 3 septembre 2026
@@ -65,7 +65,7 @@ depuis le 22 octobre.
 | Distribution | Xcode Cloud, action *Archiver*, préparation **App Store Connect** |
 
 **Pourquoi le build 90 ne convenait plus.** Cinq commits de code lui
-sont postérieurs : les 1831 faits de la base, le mode Facile qui cessait
+sont postérieurs : les 1 831 faits de la base d'alors, le mode Facile qui cessait
 d'être un mode « XXᵉ siècle », VoiceOver sur la frise, le découpage de
 l'écran de jeu et la pondération d'époque. Le build 150 les porte tous,
 plus les cinquante identifiants `SKAdNetworkItems` et l'offre « sans

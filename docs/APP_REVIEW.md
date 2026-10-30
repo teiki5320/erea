@@ -5,16 +5,18 @@
 
 ## Où on en est, exactement
 
-> **21 octobre 2026 — 1.0.5 (build 195) envoyée** (la 1.0.4 du 15 octobre
-> a été approuvée le jour même). Tout ce qui suit
+> **30 octobre 2026 — 1.0.7 en préparation.** La 1.0.5 (build 195),
+> envoyée le 21 octobre, a été approuvée et mise en ligne le jour même ;
+> la 1.0.4 du 15 octobre aussi. Tout ce qui suit
 > le §0 est une **archive d'août**, gardée telle qu'elle a été envoyée
 > pour la 1.0. Ces textes sont **faux aujourd'hui** : ils affirment
 > « aucun SDK publicitaire, aucun achat intégré, aucune demande ATT »
 > (faux depuis la 1.0.2) et décrivent un Chrono de « 90 seconds »
 > (c'est 10 secondes par question). Ne plus les recopier. Le texte en
-> vigueur est celui des notes de la 1.0.5, reproduit au §0.
+> vigueur est celui du §0 : les notes de la 1.0.5, avec le paragraphe
+> « What's new » de la 1.0.7.
 
-## §0 — Notes en vigueur (1.0.5, envoyées le 21 octobre 2026)
+## §0 — Notes en vigueur (1.0.7, à coller dans « Remarques » à la soumission)
 
 ```
 Erea is a single-player history quiz in French. An event is shown without its date and the player drags a timeline (3000 BC to today) to guess the year.
@@ -29,13 +31,13 @@ THIRD-PARTY SERVICES:
 - StoreKit for the in-app purchase below.
 No backend, no account system, no analytics of our own.
 
-SYSTEM PROMPTS: the GDPR consent form (European users), then the App Tracking Transparency request, then Game Center sign-in; notification permission is asked only if the player turns on the optional evening reminder. Declining any of them leaves the game fully playable. Consent can be changed later in Settings > "Publicité personnalisée".
+SYSTEM PROMPTS: the GDPR consent form (European users) and the App Tracking Transparency request, shown at first launch; Game Center sign-in when the home screen opens (it shows the player's world ranks). Notification permission is asked only for the optional evening reminder: after a completed Daily Challenge once the player has a streak of 2 days or more, or when the reminder is turned on in Settings. Declining any of them leaves the game fully playable. Consent can be changed later in Settings > "Publicité personnalisée".
 
 IN-APP PURCHASE: one non-consumable, "Erea sans publicité" (com.teiki.erea.sanspub), which removes ads permanently. All modes and all questions remain free; nothing else is unlocked. It is offered in Settings, on the end-of-game screen and after an ad. "Restaurer mes achats" is in Settings, and purchases are also restored automatically at launch.
 
 MODES: Classic (10 rounds, category and difficulty selectable), Daily Challenge (same 10 questions for everyone, one attempt per day), Chrono (10 seconds per question), Flag Roulette (one country per game), Theme Packs.
 
-WHAT'S NEW IN 1.0.5: the correct year is now shown large on the result screen after each answer; new players start in Easy mode and the chosen difficulty is remembered; unlocked achievements are listed under the level card at the end of a game. No change to ads, consent, tracking or the in-app purchase.
+WHAT'S NEW IN 1.0.7: the optional evening reminder now shows the player's exact streak, once, on the evening the streak is at stake; in Chrono mode the question is hidden while the timer is paused; ads are no longer requested when Google's consent status cannot be obtained; a duplicate question was removed; the result screen now fits small iPhones at the largest text sizes; the evening reminder is no longer switched back on after the player turned it off; Settings now link to the privacy policy; a new Album screen lists the events already discovered; the Classic mode is shown first on the home screen; interface emoji were replaced by drawn icons. No change to the in-app purchase, tracking or the consent form itself.
 ```
 
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
@@ -61,6 +63,11 @@ dans [Manage a submission with unresolved
 issues](https://developer.apple.com/help/app-store-connect/manage-submissions-to-app-review/manage-a-submission-with-unresolved-issues/).
 
 ## La marche à suivre
+
+> *Procédure de la 1.0, en août 2026, face à une demande d'informations.
+> Pour une simple mise à jour, rien de tout cela : le §0 se colle dans
+> « Remarques » et l'on suit « Sortir une nouvelle version » dans
+> `FICHE_APP_STORE.md`. Le §1 et le §2 cités ci-dessous sont des archives.*
 
 1. **Répondre** dans le fil avec le texte du §1 ci-dessous (limite 4 000
    caractères), en rejoignant `Erea.mov` si le fil ne le conserve pas.
@@ -93,12 +100,12 @@ soumission. Pas de manipulation à l'aveugle.
 
 ---
 
-## §1 — Réponse aux sept points *(à coller telle quelle)*
+## §1 — Réponse aux sept points *(archive du 20 août, ne plus recopier)*
 
 > **Envoyé le 20 août 2026.** Le point 2 est parti incomplet — un message
 > de suivi, reproduit après le bloc, a fourni la liste des appareils. Le
-> texte ci-dessous est la version corrigée, à reprendre telle quelle pour
-> la 1.1.
+> texte ci-dessous est la version corrigée de l'époque : il décrit une app
+> sans publicité ni achat, il est faux depuis la 1.0.2.
 
 ```
 Hello,
@@ -267,7 +274,7 @@ accueil qui s'explique tout seul.
 
 ---
 
-## §2 — Champ « Remarques » de la page de version *(à coller, et à garder pour la 1.1)*
+## §2 — Champ « Remarques » de la page de version *(archive d'août, remplacée par le §0)*
 
 *Distribution → App iOS Version 1.0.0 → tout en bas, sous les coordonnées
 de contact. Remplace le texte court qui s'y trouve déjà.*

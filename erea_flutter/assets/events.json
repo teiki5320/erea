@@ -4294,16 +4294,6 @@
   "continent": "europe"
  },
  {
-  "annee": 1901,
-  "titre": "La radio franchit l'Atlantique",
-  "desc": "Un signal sans fil traverse l'océan d'un continent à l'autre",
-  "cat": "sciences",
-  "emoji": "📡",
-  "niveau": 3,
-  "fun": "Beaucoup jugeaient l'exploit impossible, les ondes ne pouvant épouser la courbure du globe : elles rebondissent en réalité sur la haute atmosphère.",
-  "id": 358
- },
- {
   "annee": 1911,
   "titre": "Le noyau de l'atome dévoilé",
   "desc": "On découvre que l'atome cache en son centre un cœur minuscule et très dense",
