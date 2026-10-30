@@ -198,5 +198,6 @@ une collecte à la fiche de confidentialité.
 - ✅ **Badge Google Play sur la vitrine et page `/telecharger/` ouverte à Android** — 21 octobre 2026.
 - ✅ **1.0.4 sur l'App Store** sous le nom long, captures légendées — mise en ligne le 15 octobre 2026.
 - ✅ **1.0.5 en ligne sur les deux boutiques** — 21 octobre 2026 ; 1.0.6 (Android seul) sur Google Play le 22 octobre.
+- ⏳ **1.0.7 envoyée aux deux boutiques** — 30 octobre 2026 au soir (Album, Classique en tête de l'accueil, icônes dessinées), en examen ; `app-ads.txt` publié le même jour sur `erea.toakeur.com`.
 - ✅ **Adresse et contact propres** — `erea.toakeur.com` et `erea@toakeur.com`, 7 octobre 2026.
 - ✅ **Premières pubs publiées sur TikTok « erea.jeu »** — 29 octobre 2026, par le Planning via Buffer.

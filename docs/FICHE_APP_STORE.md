@@ -2,8 +2,8 @@
 
 > **État au 30 octobre 2026.** La **1.0.5** (build **195**) est en
 > ligne depuis le 21 octobre 2026 à 17 h 44, sous le nom **« Erea : Quiz
-> d'histoire & frise »** ; la **1.0.7** est dans le code, pas encore
-> soumise. Avant elle, la 1.0.4 (build 182) a été en ligne à partir du
+> d'histoire & frise »** ; la **1.0.7** (build **210**) a été
+> soumise le 30 octobre 2026 au soir. Avant elle, la 1.0.4 (build 182) a été en ligne à partir du
 > 15 octobre et la 1.0.2 (build 150) à partir du 8 septembre 2026, avec
 > l'achat intégré **« Erea sans publicité »**, approuvé le même jour.
 >
@@ -570,7 +570,7 @@ La déclaration DSA, elle, est restée non-trader.
 
 Depuis, la 1.0.5 (build 195) a été approuvée et mise en ligne le
 21 octobre 2026 avec les notes du §0 de `docs/APP_REVIEW.md` ; la 1.0.7
-est en préparation. L'état à jour est
+(build 210) a été soumise le 30 octobre 2026. L'état à jour est
 dans `docs/PUBLICATION.md`.
 
 | Élément | 1.0.2 (en ligne à partir du 8 septembre) | 1.0.4 (envoyée le 15 octobre) |

@@ -5,7 +5,7 @@ racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
 État : **1.0.5** en ligne sur l'App Store depuis le 21 octobre 2026,
 **1.0.6** en ligne sur Google Play depuis le 22 octobre ; la **1.0.7**
-est dans le code, pas encore envoyée. Publicité et achat intégré en place
+a été envoyée aux deux boutiques le 30 octobre 2026. Publicité et achat intégré en place
 depuis la 1.0.2. L'état à jour des boutiques vit dans
 `docs/PUBLICATION.md`.
 185 tests, `flutter analyze` propre.

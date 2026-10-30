@@ -4,7 +4,7 @@
 > en ligne sur Google Play depuis le 22 octobre 2026**, après la 1.0.5 le
 > 21 octobre et la 1.0.4, première version publique, le 20 octobre ;
 > l'accès à la production, demandé le 14 octobre, a été accordé le 17.
-> La 1.0.7 est dans le code, pas encore envoyée. Ce document est la
+> La 1.0.7 (`versionCode 8`) a été envoyée en production le 30 octobre 2026 au soir. Ce document est la
 > marche à suivre ; l'état à jour des deux boutiques est dans
 > `docs/PUBLICATION.md`.
 >

@@ -14,8 +14,8 @@
 
 ## Parcours
 
-- 🍎 **iOS** : 🐙 GitHub — main, 1.0.7 dans le code, tests lancés à la main avant chaque commit (aucune CI) [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.5 (build 195) approuvée le 21 octobre [ok] → 📱 App Store — 1.0.5 en ligne depuis le 21 octobre [ok]
-- 🤖 **Android** : 🐙 GitHub — main, 1.0.7 dans le code, tests lancés à la main avant chaque commit (aucune CI) [ok] → 🔑 Keystore Android — App Bundle signé sur le Mac [ok] → 🎮 Google Play Console — production accordée le 17 octobre, 1.0.6 envoyée le 22 octobre [ok] → 🛒 Google Play — 1.0.6 en ligne depuis le 22 octobre [ok]
+- 🍎 **iOS** : 🐙 GitHub — main, 1.0.7 dans le code, tests lancés à la main avant chaque commit (aucune CI) [ok] → ☁️ Xcode Cloud — build à chaque poussée sur main [ok] → 🛍️ App Store Connect — 1.0.5 (build 195) approuvée le 21 octobre, 1.0.7 (build 210) soumise le 30 octobre [ok] → 📱 App Store — 1.0.5 en ligne depuis le 21 octobre [ok]
+- 🤖 **Android** : 🐙 GitHub — main, 1.0.7 dans le code, tests lancés à la main avant chaque commit (aucune CI) [ok] → 🔑 Keystore Android — App Bundle signé sur le Mac [ok] → 🎮 Google Play Console — production accordée le 17 octobre, 1.0.6 envoyée le 22 octobre, 1.0.7 envoyée le 30 octobre [ok] → 🛒 Google Play — 1.0.6 en ligne depuis le 22 octobre [ok]
 - 🌐 **Web** : 🐙 GitHub — racine de main, sans CNAME [ok] → 📄 Hébergement web (GitHub Pages / Cloudflare Pages) — GitHub Pages [ok] → 🏷️ Nom de domaine — erea.toakeur.com via Cloudflare [ok] → 🌐 Site — vitrine, jeu, support, confidentialité [ok]
 - 🎬 **Contenu** : 🎬 Studio — 27 pubs vidéo validées, aucune à valider [ok] → 🗓️ Planning — 25 vidéos programmées jusqu'au 6 nov. [ok] → 📣 Réseaux sociaux & influenceurs — TikTok erea.jeu, 2 publiées le 29 oct. [ok]
 
@@ -127,7 +127,7 @@ sauvegarder, rien à recopier sur une machine neuve.
 
 **Identifiants publics :**
 - App « Erea », bundle `com.teiki.erea` ; nom « Erea : Quiz d'histoire & frise » à partir de la 1.0.4.
-- Version `1.0.7+8` dans `erea_flutter/pubspec.yaml` depuis le 30 octobre 2026 (avant elle, `1.0.6+7` à partir du 21 octobre, quand la 1.0.5 approuvée a fermé son numéro au build 196). Les builds 1.0.7 vont dans TestFlight ; avant de soumettre, créer la version 1.0.7 dans la console avec **exactement** ce numéro, sinon le build reste non sélectionnable.
+- Version `1.0.7+8` dans `erea_flutter/pubspec.yaml` depuis le 30 octobre 2026 (avant elle, `1.0.6+7` à partir du 21 octobre, quand la 1.0.5 approuvée a fermé son numéro au build 196). La 1.0.7 (build 210) a été soumise le 30 octobre 2026 ; dès son approbation, monter à 1.0.8 avant toute poussée.
 - iOS minimum : 15.0 (`IPHONEOS_DEPLOYMENT_TARGET`, `Podfile`).
 - Chiffrement : `ITSAppUsesNonExemptEncryption = false` dans `ios/Runner/Info.plist` — pas de formulaire d'export à chaque build.
 
@@ -148,8 +148,9 @@ de confidentialité). La **`1.0.5` (build 195), soumise le 21 octobre
 2026 à 15 h 11, est en ligne depuis le même jour à 17 h 44**. Aucune
 1.0.6 n'est soumise sur l'App Store : elle ne changeait rien sur iPhone.
 La 1.0.7 (rappel du soir, pause du Chrono, consentement, doublon retiré,
-révélation sur iPhone SE en très grande police, Album, icônes dessinées)
-partira sur les deux boutiques.
+révélation sur iPhone SE en très grande police, Album, icônes dessinées,
+Facile par défaut) a été soumise le 30 octobre 2026 au soir avec le
+build 210, et envoyée le même soir sur Google Play.
 
 **Où vivent les secrets :** aucun côté dépôt. L'authentification est
 celle du compte Apple (+ double facteur).
@@ -272,6 +273,11 @@ publics.
 
 Les quatre valeurs doivent appartenir au même compte, sinon la régie
 refuse de servir.
+
+**app-ads.txt** — publié le 30 octobre 2026 à la racine du dépôt, donc
+servi sur `https://erea.toakeur.com/app-ads.txt` (l'URL marketing de la
+fiche App Store). Une ligne : l'éditeur `pub-2680784147246798` en
+`DIRECT`. Jusque-là, l'adresse répondait 404.
 
 **Consentement RGPD — message publié le 3 septembre 2026.** Jusqu'à
 cette date la console était vide, et le journal Android le disait sans

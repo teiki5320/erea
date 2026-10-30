@@ -5,7 +5,7 @@
 
 ## Où on en est, exactement
 
-> **30 octobre 2026 — 1.0.7 en préparation.** La 1.0.5 (build 195),
+> **30 octobre 2026 — 1.0.7 (build 210) soumise le soir même, avec le §0 ci-dessous.** La 1.0.5 (build 195),
 > envoyée le 21 octobre, a été approuvée et mise en ligne le jour même ;
 > la 1.0.4 du 15 octobre aussi. Tout ce qui suit
 > le §0 est une **archive d'août**, gardée telle qu'elle a été envoyée
@@ -37,7 +37,7 @@ IN-APP PURCHASE: one non-consumable, "Erea sans publicité" (com.teiki.erea.sans
 
 MODES: Classic (10 rounds, category and difficulty selectable), Daily Challenge (same 10 questions for everyone, one attempt per day), Chrono (10 seconds per question), Flag Roulette (one country per game), Theme Packs.
 
-WHAT'S NEW IN 1.0.7: the optional evening reminder now shows the player's exact streak, once, on the evening the streak is at stake; in Chrono mode the question is hidden while the timer is paused; ads are no longer requested when Google's consent status cannot be obtained; a duplicate question was removed; the result screen now fits small iPhones at the largest text sizes; the evening reminder is no longer switched back on after the player turned it off; Settings now link to the privacy policy; a new Album screen lists the events already discovered; the Classic mode is shown first on the home screen; interface emoji were replaced by drawn icons. No change to the in-app purchase, tracking or the consent form itself.
+WHAT'S NEW IN 1.0.7: the optional evening reminder now shows the player's exact streak, once, on the evening the streak is at stake; in Chrono mode the question is hidden while the timer is paused; ads are no longer requested when Google's consent status cannot be obtained; a duplicate question was removed; the result screen now fits small iPhones at the largest text sizes; the evening reminder is no longer switched back on after the player turned it off; Settings now link to the privacy policy; a new Album screen lists the events already discovered; the Classic mode is shown first on the home screen; interface emoji were replaced by drawn icons; players who never picked a difficulty now start in Easy. No change to the in-app purchase, tracking or the consent form itself.
 ```
 
 > **Où en est la 1.0 :** re-soumise le 20 août 2026 (build **90**
