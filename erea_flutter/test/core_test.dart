@@ -354,10 +354,10 @@ void main() {
       expect(s.difficulteChoisie, 'facile');
     });
 
-    test('un joueur d’avant la 1.0.5 garde le Normal', () async {
+    test('un joueur qui n’a jamais choisi part aussi en Facile', () async {
       SharedPreferences.setMockInitialValues({'games': 12});
       final s = await Store.load();
-      expect(s.difficulteChoisie, 'normal');
+      expect(s.difficulteChoisie, 'facile');
     });
 
     test('le dernier choix est retenu', () async {
