@@ -182,9 +182,9 @@ Décidés avec Jean le 31 octobre 2026 : un stock qui s'accumule, mais rare
   de la bonne date, épinglé sur le ruban ;
   Zoom : fenêtre de 500 ans, la date à 50 ans au moins des bords, qui
   borne le ruban et la barre de navigation ;
-  Seconde chance : armée avant de répondre, elle ne se dépense que si
-  l'écart dépasse 50 ans — « Plus tôt ! » / « Plus tard ! », la manche se
-  rejoue, la deuxième réponse garde ses points complets ;
+  Seconde chance : armée avant de répondre, et dépensée dès qu'elle l'est ;
+  si l'écart dépasse 50 ans — « Plus tôt ! » / « Plus tard ! », la manche
+  se rejoue, la deuxième réponse garde ses points complets ;
   XP double : ×2 sur l'XP des manches qui suivent, plafond de la partie
   porté à 4 000.
 - **Partie aidée** (tout bonus sauf XP double) : ni record, ni Game

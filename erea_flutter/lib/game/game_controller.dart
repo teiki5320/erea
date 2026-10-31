@@ -91,8 +91,7 @@ class GameController extends ChangeNotifier {
   // Règles : `lib/core/bonus.dart`. Le contrôleur applique les effets ; le
   // stock, lui, vit dans le Store, que l'écran débite par [onBonusConsomme].
 
-  /// Appelé quand un bonus est réellement dépensé. La Seconde chance ne
-  /// l'est qu'au moment où elle sert : armée pour rien, elle reste au stock.
+  /// Appelé quand un bonus est dépensé, au moment où le joueur le joue.
   void Function(BonusType b)? onBonusConsomme;
 
   /// Bonus dépensés dans cette partie ([bonusParPartie] au plus).
@@ -109,8 +108,7 @@ class GameController extends ChangeNotifier {
   bool get bonusUtilisable =>
       bonusPermis &&
       phase == GamePhase.guess &&
-      bonusJoues.length < bonusParPartie &&
-      !secondeChanceArmee;
+      bonusJoues.length < bonusParPartie;
 
   /// Effets en cours sur la manche, effacés à la manche suivante.
   Era? epoqueAide;
@@ -259,14 +257,14 @@ class GameController extends ChangeNotifier {
       secondeChanceArmee = false;
       if (ecart > secondeChanceEcart) {
         // La manche se rejoue : rien n'est révélé, la direction seule est
-        // dite. Le bonus n'est dépensé que maintenant.
-        _consommer(BonusType.secondeChance);
+        // dite.
         indicationSecondeChance =
             guessYear < ev.annee ? 'Plus tard !' : 'Plus tôt !';
         notifyListeners();
         return null;
       }
-      // Assez près : la Seconde chance n'a pas servi, elle reste au stock.
+      // Assez près : elle n'a pas servi, mais elle est dépensée (choix de
+      // Jean, 31 octobre 2026 : l'armer est déjà un pari).
     }
     phase = GamePhase.anim;
     final base = scoreFor(ev.annee, guessYear, diff);
@@ -353,10 +351,8 @@ class GameController extends ChangeNotifier {
           touched = avant;
         }
       case BonusType.secondeChance:
-        // Armée, pas dépensée : elle ne coûte que si elle sert.
+        // Dépensée dès qu'elle est armée, qu'elle serve ou non.
         secondeChanceArmee = true;
-        notifyListeners();
-        return true;
       case BonusType.xpDouble:
         xpDoubleActif = true;
     }

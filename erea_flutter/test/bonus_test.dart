@@ -180,19 +180,22 @@ void main() {
       expect(g.zoom, isNull); // effacé à la manche suivante
     });
 
-    test('la Seconde chance ne coûte que si elle sert', () {
+    test('la Seconde chance se dépense dès qu’elle est armée', () {
       final g = partie();
       final depenses = <BonusType>[];
       g.onBonusConsomme = depenses.add;
-      // Réponse juste : elle reste au stock, la manche se révèle.
+      // Réponse juste : la manche se révèle, le bonus est quand même parti.
       expect(g.utiliser(BonusType.secondeChance), isTrue);
+      expect(depenses, [BonusType.secondeChance]);
       g.setYear(g.current.annee);
       expect(g.validate(), isNotNull);
-      expect(depenses, isEmpty);
-      expect(g.aidee, isFalse);
-      g.finishReveal();
-      g.next();
-      // Trop loin : la manche se rejoue, le sens est dit.
+      expect(g.aidee, isTrue);
+    });
+
+    test('la Seconde chance fait rejouer une réponse trop loin', () {
+      final g = partie();
+      final depenses = <BonusType>[];
+      g.onBonusConsomme = depenses.add;
       expect(g.utiliser(BonusType.secondeChance), isTrue);
       final annee = g.current.annee;
       // 400 ans avant la date, sauf si la frise s'arrête avant.
