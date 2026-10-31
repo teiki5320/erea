@@ -4,8 +4,8 @@ L'application Erea, en Flutter — **c'est le produit**. Le jeu web à la
 racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 
 État : **1.0.5** en ligne sur l'App Store depuis le 21 octobre 2026,
-**1.0.6** en ligne sur Google Play depuis le 22 octobre ; la **1.0.7**
-a été envoyée aux deux boutiques le 30 octobre 2026. Publicité et achat intégré en place
+**1.0.7** en ligne sur Google Play depuis le 30 octobre 2026 ; envoyée le
+même jour à l'App Store, elle y attend l'examen d'Apple. Publicité et achat intégré en place
 depuis la 1.0.2. L'état à jour des boutiques vit dans
 `docs/PUBLICATION.md`.
 185 tests, `flutter analyze` propre.
