@@ -93,7 +93,7 @@ pas, et c'est ce qui a bloqué l'envoi du 14 août.
 
 ⚠️ Ce n'est pas une page de cases à cocher mais un **assistant en sept
 étapes**, chacune avec des questions oui/non. Pour Erea, la réponse est
-**NON partout**. La septième étape affiche la classification calculée et
+**NON partout, sauf « Publicité »**. La septième étape affiche la classification calculée et
 propose un remplacement : **garder « Non applicable »** — cocher
 « Conçue pour les enfants » ferait basculer l'app dans la catégorie
 Enfants de l'App Store, dont les règles interdisent notamment les
@@ -107,7 +107,7 @@ par âge » et réponds ainsi :
 | Catégorie | Réponse |
 |---|---|
 | Contrôles intégrés (contrôle parental, validation de l'âge) | Aucun |
-| Capacités (accès web libre, contenu généré par les utilisateurs, réseaux sociaux) | Aucune |
+| Capacités | **Publicité : OUI** (l'app affiche des interstitielles AdMob ; la 1.0.7 a été refusée le 31 octobre 2026 faute de cette case). Accès web libre, contenu généré par les utilisateurs, réseaux sociaux : aucun |
 | Thèmes matures (vulgarité, horreur, références à…) | Aucun |
 | Médical ou bien-être | Aucun |
 | Sexualité ou nudité | Aucune |
