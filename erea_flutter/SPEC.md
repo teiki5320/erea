@@ -159,6 +159,44 @@ que par VoiceOver.
   Toucher un fait rouvre sa fiche (année, description, anecdote). Le jeton
   « ＋ Album » de la révélation ne salue qu'un fait encore jamais vu.
 
+## 5 bis. Bonus de niveau (1.0.8) — `lib/core/bonus.dart`
+
+Décidés avec Jean le 31 octobre 2026 : un stock qui s'accumule, mais rare
+(« il ne faut pas que ça devienne trop facile »).
+
+- **Six bonus**, chacun DÉCOUVERT à un niveau (un exemplaire offert) :
+  Remplacer 5 · Époque 9 · Repère 13 · Zoom 17 · Seconde chance 21 ·
+  XP double 25. Découvert = niveau atteint : rien à stocker.
+- **Entre les découvertes**, un bonus à CHOISIR à chaque niveau impair
+  (7, 11, 15…, et au-delà de 25 : 27, 29…), parmi les découverts hors
+  XP double. Un choix non fait reste en attente (`bonus.choix`), proposé
+  en fin de partie et sur l'accueil. XP double en plus aux titres 30, 40
+  et 50.
+- **Stock** : 2 exemplaires au plus de chaque (`stockMax`). Un bonus par
+  partie (`bonusParPartie`). JAMAIS dans le Défi du jour.
+- **Effets** (`GameController.utiliser`) :
+  Remplacer : un autre fait du même tirage (catégorie, pack ou pays),
+  absent de la partie, du même niveau et jamais vu d'abord ;
+  Époque : nom et bornes de l'époque de la bonne date ;
+  Repère : un fait de niveau 1 de toute la base, daté entre 50 et 300 ans
+  de la bonne date, épinglé sur le ruban ;
+  Zoom : fenêtre de 500 ans, la date à 50 ans au moins des bords, qui
+  borne le ruban et la barre de navigation ;
+  Seconde chance : armée avant de répondre, elle ne se dépense que si
+  l'écart dépasse 50 ans — « Plus tôt ! » / « Plus tard ! », la manche se
+  rejoue, la deuxième réponse garde ses points complets ;
+  XP double : ×2 sur l'XP des manches qui suivent, plafond de la partie
+  porté à 4 000.
+- **Partie aidée** (tout bonus sauf XP double) : ni record, ni Game
+  Center ; l'écran de fin le dit (« Partie aidée · hors records »).
+- **Pub avec récompense** : un bonus au choix par jour, sans l'achat
+  « sans publicité », jamais en Chrono, seulement si un bonus peut encore
+  entrer au stock. Blocs AdMob à créer (`Pub._recompenseIOS/Android`) :
+  vides, l'offre ne s'affiche pas en release.
+- **Mise à jour** : un joueur déjà avancé reçoit une fois un exemplaire
+  de chaque découverte de ses niveaux (`bonus.v1`), avec une fenêtre qui
+  l'explique.
+
 ## 6. Succès (14) — implémentés dans `lib/game/badges.dart`
 
 Chacun se juge tout seul à partir de ce qui est persisté, et est évalué

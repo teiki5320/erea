@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Badge;
 
+import '../../core/bonus.dart';
 import '../../core/progression.dart';
 import '../../core/scoring.dart';
 import '../../core/timeline_scale.dart';
@@ -8,6 +9,7 @@ import '../../data/store.dart';
 import '../../game/badges.dart';
 import '../../game/game_controller.dart';
 import '../../core/sons.dart';
+import '../bonus_widgets.dart';
 import '../icone.dart';
 import '../offre_sans_pub.dart';
 import '../sticker_widgets.dart';
@@ -29,6 +31,8 @@ class EndView extends StatelessWidget {
     required this.xpAvant,
     required this.record,
     required this.badgesGagnes,
+    required this.recompenses,
+    required this.onChoisirBonus,
     required this.grilleCopiee,
     required this.onPartager,
     required this.onQuitter,
@@ -42,6 +46,11 @@ class EndView extends StatelessWidget {
   final int xpAvant;
   final bool record;
   final List<Badge> badgesGagnes;
+
+  /// Bonus apportés par les niveaux franchis, et l'ouverture de la feuille
+  /// de choix.
+  final Recompenses recompenses;
+  final VoidCallback onChoisirBonus;
 
   /// Vrai quand la feuille de partage n'a pas pu s'ouvrir et que le texte
   /// a été copié à la place : le bouton le dit alors au joueur.
@@ -110,6 +119,31 @@ class EndView extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                     fontSize: 15,
                     color: inkColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        if (controller.aidee)
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+            decoration: BoxDecoration(
+              color: inkColor.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                iconeNommee(controller.bonusJoues.first.icone, taille: 20),
+                const SizedBox(width: 6),
+                const Text(
+                  'Partie aidée · hors records',
+                  style: TextStyle(
+                    fontFamily: 'Baloo2',
+                    fontWeight: FontWeight.w800,
+                    fontSize: 14,
+                    color: inkSoftColor,
                   ),
                 ),
               ],
@@ -305,6 +339,15 @@ class EndView extends StatelessWidget {
             ),
           ),
         ),
+        if (!recompenses.vide || store.bonusAChoisir > 0)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 10, 18, 0),
+            child: CarteRecompenses(
+              recompenses: recompenses,
+              aChoisir: store.bonusAChoisir,
+              onChoisir: onChoisirBonus,
+            ),
+          ),
         const SizedBox(height: 10),
         // Partage : la grille sans spoiler, prête à coller n'importe où.
         Padding(

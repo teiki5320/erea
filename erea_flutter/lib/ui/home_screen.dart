@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
 import '../core/accessibilite.dart';
+import '../core/bonus.dart';
 import '../core/classement.dart';
 import '../core/progression.dart';
 import '../core/scoring.dart';
@@ -12,6 +13,7 @@ import '../data/events_repository.dart';
 import '../data/store.dart';
 import '../game/game_controller.dart';
 import 'album_screen.dart';
+import 'bonus_widgets.dart';
 import 'era_art.dart';
 import 'icone.dart';
 import 'game_screen.dart';
@@ -103,6 +105,7 @@ class _HomeScreenState extends State<HomeScreen>
     // Center se déclenche (choix assumé de la montrer au démarrage). Tout
     // échec est silencieux — l'accueil reste identique, juste sans rang.
     _chargerRangs();
+    _bienvenueBonus();
     // Le bloc défile entre les difficultés toutes les 5 s.
     _cycleClassement = Timer.periodic(const Duration(seconds: 5), (_) {
       if (!mounted) return;
@@ -110,6 +113,55 @@ class _HomeScreenState extends State<HomeScreen>
         _diffAffichee = (_diffAffichee + 1) % Difficulty.values.length;
       });
     });
+  }
+
+  /// Première ouverture de la 1.0.8 : un joueur déjà avancé reçoit les
+  /// bonus des niveaux qu'il a passés, et on lui dit pourquoi.
+  Future<void> _bienvenueBonus() async {
+    final cadeaux = await widget.store.distribuerBienvenue();
+    if (!mounted || cadeaux.isEmpty) return;
+    setState(() {});
+    await showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Nouveau : les bonus !'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Les niveaux rapportent maintenant des bonus. Pour ceux que '
+              'tu as déjà passés, tu reçois :',
+            ),
+            const SizedBox(height: 10),
+            for (final b in cadeaux)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Row(
+                  children: [
+                    iconeNommee(b.icone, taille: 28),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text('${b.nom} : ${b.effet}')),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 4),
+            const Text('Un bonus par partie, jamais dans le Défi du jour.'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Super !'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _choisirBonusEnAttente() async {
+    await choisirBonusEnAttente(context, widget.store);
+    if (mounted) setState(() {});
   }
 
   Future<void> _chargerRangs() async {
@@ -570,22 +622,44 @@ class _HomeScreenState extends State<HomeScreen>
                         // Barre du haut : profil + série. Le profil peut
                         // se réduire (texte agrandi par accessibilité) sans
                         // jamais déborder ; à taille normale, rendu identique.
+                        // Deux côtés de même largeur : la pastille de série
+                        // tombe pile au-dessus du logo, quelle que soit la
+                        // largeur du profil (elle penchait vers la droite).
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
+                            Expanded(
+                              child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: _profilePill(level, title),
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: _profilePill(level, title),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 8),
                             _streakPill(),
                             const SizedBox(width: 8),
-                            _reglagesPill(),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: _reglagesPill(),
+                              ),
+                            ),
                           ],
                         ),
+                        // Rien tant qu'aucun bonus n'est découvert : l'accueil
+                        // d'un nouveau joueur ne bouge pas d'un pixel.
+                        if (BonusType.values
+                            .any((b) => estDecouvert(b, level.level)))
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8, left: 4),
+                            child: LigneStockBonus(
+                              store: widget.store,
+                              niveau: level.level,
+                              onChoisir: _choisirBonusEnAttente,
+                            ),
+                          ),
                         const SizedBox(height: 15),
                         // Bloc logo (le hibou d'origine a été retiré : la
                         // nouvelle identité, c'est le logotype seul)

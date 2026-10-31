@@ -6,15 +6,18 @@ import 'package:share_plus/share_plus.dart';
 
 import '../core/accessibilite.dart';
 import '../core/avis.dart';
+import '../core/bonus.dart';
 import '../core/classement.dart';
 import '../core/achat.dart';
 import '../core/offre.dart';
+import '../core/progression.dart';
 import '../core/pub.dart';
 import '../core/rappels.dart';
 import '../core/retour.dart';
 import '../core/sons.dart';
 import '../core/scoring.dart';
 import '../core/timeline_scale.dart';
+import 'bonus_widgets.dart';
 import 'game/end_view.dart';
 import 'offre_sans_pub.dart';
 import 'game/guess_view.dart';
@@ -85,6 +88,10 @@ class _GameScreenState extends State<GameScreen>
   int _xpAvant = 0;
   bool _record = false;
   List<Badge> _badgesGagnes = const [];
+
+  /// Bonus apportés par les niveaux franchis dans cette partie, tels
+  /// qu'ils ont réellement rejoint le stock.
+  Recompenses _recompenses = const Recompenses();
   bool _grilleCopiee = false;
 
   /// Mode Chrono : 10 secondes par question. Le temps restant est compté
@@ -127,6 +134,8 @@ class _GameScreenState extends State<GameScreen>
     // écouteur du contrôleur, jamais depuis build() (un effet de bord en
     // pleine construction casserait dès qu'un listener appellera setState).
     game.addListener(_onGameChanged);
+    // Un bonus joué quitte le stock au moment où il sert.
+    game.onBonusConsomme = widget.store.retirerBonus;
     // Chrono : le compte à rebours se fige quand l'app passe en
     // arrière-plan (appel reçu, changement d'app) — personne ne perd sa
     // manche pour une interruption. Les timers Dart, eux, continueraient
@@ -308,7 +317,14 @@ class _GameScreenState extends State<GameScreen>
 
   void _validate() {
     final result = game.validate();
-    if (result == null) return;
+    if (result == null) {
+      // Seconde chance : trop loin, la manche se rejoue sans rien révéler.
+      if (game.indicationSecondeChance != null) {
+        Retour.validation();
+        Sons.rate();
+      }
+      return;
+    }
     _chrono?.cancel(); // répondu à temps : le compte à rebours s'arrête
     _lastResult = result;
     _faitNouveau = !widget.store.discovered.contains(result.event.id);
@@ -420,10 +436,13 @@ class _GameScreenState extends State<GameScreen>
         final cle = game.mode == GameMode.chrono
             ? 'chrono'
             : '${game.catKey}|${game.diff.name}';
-        _record = await widget.store.submitScore(cle, game.total);
+        // Une partie aidée par un bonus n'entre pas dans les records.
+        _record = !game.aidee &&
+            await widget.store.submitScore(cle, game.total);
       }
       // Exactement la somme des « +N XP » annoncés manche après manche.
       await widget.store.addXp(game.xpTotal);
+      await _crediterRecompenses();
       // Les succès se jugent APRÈS l'enregistrement : sinon « niveau 10 »
       // ou « 100 découvertes » manqueraient toujours d'une manche.
       _badgesGagnes = nouveauxBadges(widget.store, game: game);
@@ -456,6 +475,7 @@ class _GameScreenState extends State<GameScreen>
   /// un tableau PAR difficulté — les barèmes ne sont pas comparables
   /// entre eux.
   Future<void> _envoyerAuClassement() async {
+    if (game.aidee) return; // partie aidée : hors classements
     if (game.mode == GameMode.daily) {
       await Classement.envoyer(Classement.defi, game.total);
       final serie = widget.store.effectiveStreak;
@@ -484,6 +504,88 @@ class _GameScreenState extends State<GameScreen>
       await Classement.envoyer(Classement.chrono, game.total,
           max: maxScore * rounds);
     }
+  }
+
+  /// Les niveaux franchis par cette partie : découvertes et XP double
+  /// rejoignent le stock, les bonus à choisir attendent le joueur.
+  Future<void> _crediterRecompenses() async {
+    final avant = levelFromXp(_xpAvant).level;
+    final apres = levelFromXp(widget.store.xp).level;
+    final r = recompensesEntre(avant, apres);
+    if (r.vide) return;
+    final decouvertes = <BonusType>[];
+    for (final b in r.decouvertes) {
+      if (await widget.store.ajouterBonus(b) > 0) decouvertes.add(b);
+    }
+    final xpDouble = r.xpDouble == 0
+        ? 0
+        : await widget.store.ajouterBonus(BonusType.xpDouble, r.xpDouble);
+    if (r.choix > 0) {
+      await widget.store
+          .setBonusAChoisir(widget.store.bonusAChoisir + r.choix);
+    }
+    _recompenses = Recompenses(
+        decouvertes: decouvertes, choix: r.choix, xpDouble: xpDouble);
+  }
+
+  Future<void> _choisirBonus() async {
+    await choisirBonusEnAttente(context, widget.store);
+    if (mounted) setState(() {});
+  }
+
+  int get _niveau => levelFromXp(widget.store.xp).level;
+
+  /// La rangée de bonus : seulement hors Défi du jour, et dès qu'un bonus
+  /// est découvert. Elle reste pendant le voyage du ruban pour que la
+  /// frise ne change pas de taille sous les yeux du joueur.
+  bool get _barreBonusVisible =>
+      game.bonusPermis &&
+      game.phase != GamePhase.reveal &&
+      BonusType.values.any((b) => estDecouvert(b, _niveau));
+
+  /// « Regarder une pub : +1 bonus » : une fois par jour, sans l'achat sans
+  /// pub, jamais pendant le Chrono (le temps court), et seulement s'il y a
+  /// un bonus à gagner — un stock plein ne recevrait rien.
+  bool get _pubBonusProposee =>
+      game.mode != GameMode.chrono &&
+      game.bonusUtilisable &&
+      widget.store.bonusPubDispo &&
+      Pub.recompensePrete(sansPub: widget.store.sansPub) &&
+      choisissables(_niveau).any((b) => widget.store.bonus(b) < stockMax);
+
+  void _jouerBonus(BonusType b) {
+    if (game.utiliser(b)) {
+      Sons.appui();
+      Retour.validation();
+      // Nouvelle question : le fondu de manche la présente comme telle.
+      if (b == BonusType.remplacer) _roundFade.forward(from: 0);
+      setState(() {});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${b.nom} impossible sur cette question.')),
+      );
+    }
+  }
+
+  Future<void> _bonusParPub() async {
+    final messenger = ScaffoldMessenger.of(context);
+    final vue = await Pub.montrerRecompense();
+    if (!mounted) return;
+    if (!vue) {
+      messenger.showSnackBar(const SnackBar(
+          content: Text('Pub interrompue : pas de bonus cette fois.')));
+      setState(() {});
+      return;
+    }
+    await widget.store.marquerBonusPub();
+    if (!mounted) return;
+    final b = await choisirBonus(context, widget.store, _niveau,
+        titre: 'Bonus gagné !');
+    // Feuille refermée sans choisir : le bonus attend, il n'est pas perdu.
+    if (b == null) {
+      await widget.store.setBonusAChoisir(widget.store.bonusAChoisir + 1);
+    }
+    if (mounted) setState(() {});
   }
 
   @override
@@ -522,6 +624,8 @@ class _GameScreenState extends State<GameScreen>
           xpAvant: _xpAvant,
           record: _record,
           badgesGagnes: _badgesGagnes,
+          recompenses: _recompenses,
+          onChoisirBonus: _choisirBonus,
           grilleCopiee: _grilleCopiee,
           onPartager: _partagerGrille,
           onQuitter: (rejouer) => _quitter(rejouer: rejouer),
@@ -689,6 +793,21 @@ class _GameScreenState extends State<GameScreen>
             },
           ),
         ),
+        if (_barreBonusVisible)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: BarreBonus(
+              niveau: _niveau,
+              stock: widget.store.bonus,
+              utilisable: game.bonusUtilisable,
+              actifs: {
+                ...game.bonusJoues,
+                if (game.secondeChanceArmee) BonusType.secondeChance,
+              },
+              onUtiliser: _jouerBonus,
+              onPub: _pubBonusProposee ? _bonusParPub : null,
+            ),
+          ),
         // Bouton principal. Son libellé est plafonné comme le bandeau de
         // verdict : c'est un contrôle, pas un texte à lire, et le laisser
         // doubler de taille le poussait hors de l'écran sur iPhone SE en

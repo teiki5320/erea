@@ -108,6 +108,9 @@ class GuessView extends StatelessWidget {
                               ],
                             ),
                           ),
+                        // En TÊTE de carte : en bas, une description longue
+                        // la poussait hors de vue, la carte défilant seule.
+                        ..._aidesBonus(),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -207,6 +210,12 @@ class GuessView extends StatelessWidget {
               frac: controller.frac,
               locked: !guessing,
               height: tapeHeightFor(available),
+              repere: controller.repere == null
+                  ? null
+                  : (
+                      annee: controller.repere!.annee,
+                      titre: controller.repere!.titre,
+                    ),
               onFracChanged: (f) {
                 if (astuceGeste) {
                   onPremierGeste();
@@ -261,6 +270,8 @@ class GuessView extends StatelessWidget {
               Expanded(
                 child: MiniMap(
                   frac: controller.frac,
+                  fracMin: controller.fracMin,
+                  fracMax: controller.fracMax,
                   onChanged: (f) {
                     if (guessing) controller.setFrac(f);
                   },
@@ -275,6 +286,50 @@ class GuessView extends StatelessWidget {
         const SizedBox(height: 8),
       ],
     );
+  }
+
+  /// Ce que le bonus joué dit au joueur, écrit dans la carte : la frise et
+  /// les boutons gardent leur place.
+  List<Widget> _aidesBonus() {
+    final c = controller;
+    Widget ligne(String icone, String texte, {bool fort = false}) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Row(
+            children: [
+              iconeNommee(icone, taille: 24),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  texte,
+                  style: TextStyle(
+                    fontFamily: fort ? 'Baloo2' : 'Nunito',
+                    fontWeight: FontWeight.w800,
+                    fontSize: fort ? 17 : 13.5,
+                    color: fort ? coralColor : inkColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+    final ep = c.epoqueAide;
+    final rp = c.repere;
+    final zm = c.zoom;
+    return [
+      if (ep != null)
+        ligne('temple',
+            'La bonne date est dans : ${ep.name} (${formatYear(ep.from)} – ${formatYear(ep.to)})'),
+      if (rp != null)
+        ligne('carte', 'Repère : ${rp.titre}, ${formatYear(rp.annee)}'),
+      if (zm != null)
+        ligne('loupe',
+            'Entre ${formatYear(zm.de)} et ${formatYear(zm.a)}'),
+      if (c.secondeChanceArmee)
+        ligne('coeur', 'Seconde chance prête : trop loin, tu pourras rejouer.'),
+      if (c.indicationSecondeChance != null)
+        ligne('coeur', '${c.indicationSecondeChance} Rejoue la manche.',
+            fort: true),
+    ];
   }
 }
 

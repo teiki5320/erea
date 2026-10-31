@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
+import '../core/bonus.dart';
 import '../core/progression.dart';
 import '../core/region.dart';
 import '../core/rng.dart';
@@ -80,7 +81,51 @@ class GameController extends ChangeNotifier {
 
   /// XP réellement créditée en fin de partie : la somme annoncée manche
   /// après manche, plafonnée comme le veut SPEC §5.
-  int get xpTotal => xpEarned.clamp(0, maxXpPerGame);
+  int get xpTotal => xpEarned.clamp(0, plafondXp);
+
+  /// Le plafond d'XP de la partie : doublé avec le bonus XP double, sans
+  /// quoi le bonus ne rapporterait rien à un bon joueur déjà au plafond.
+  int get plafondXp => xpDoubleActif ? maxXpPerGame * 2 : maxXpPerGame;
+
+  // ------------------------------------------------------------------ bonus
+  // Règles : `lib/core/bonus.dart`. Le contrôleur applique les effets ; le
+  // stock, lui, vit dans le Store, que l'écran débite par [onBonusConsomme].
+
+  /// Appelé quand un bonus est réellement dépensé. La Seconde chance ne
+  /// l'est qu'au moment où elle sert : armée pour rien, elle reste au stock.
+  void Function(BonusType b)? onBonusConsomme;
+
+  /// Bonus dépensés dans cette partie ([bonusParPartie] au plus).
+  final List<BonusType> bonusJoues = [];
+
+  /// Partie « aidée » : un bonus qui change le score a servi. Elle n'entre
+  /// ni dans les records ni dans les classements.
+  bool get aidee => bonusJoues.any((b) => b.aide);
+
+  /// Pas de bonus dans le Défi du jour : tout le monde y joue à égalité.
+  bool get bonusPermis => mode != GameMode.daily;
+
+  /// Un bonus peut-il servir maintenant ?
+  bool get bonusUtilisable =>
+      bonusPermis &&
+      phase == GamePhase.guess &&
+      bonusJoues.length < bonusParPartie &&
+      !secondeChanceArmee;
+
+  /// Effets en cours sur la manche, effacés à la manche suivante.
+  Era? epoqueAide;
+  HistEvent? repere;
+  ({int de, int a})? zoom;
+  bool secondeChanceArmee = false;
+
+  /// « Plus tôt ! » ou « Plus tard ! » : la Seconde chance vient de servir.
+  String? indicationSecondeChance;
+
+  /// XP double : vaut pour toutes les manches qui suivent son usage.
+  bool xpDoubleActif = false;
+
+  /// Événements déjà vus au lancement : un remplaçant frais passe avant.
+  Set<int> _seen = const {};
 
   /// Instant de lancement du défi du jour (fourni par l'écran d'accueil,
   /// le même que celui du verrou) et sa clé AAAA-MM-JJ : un défi à cheval
@@ -104,6 +149,9 @@ class GameController extends ChangeNotifier {
     lastBoosted = false;
     comboBroken = false;
     xpEarned = 0;
+    bonusJoues.clear();
+    xpDoubleActif = false;
+    _seen = seenIds;
     if (m == GameMode.daily) {
       final now = dailyNow ?? DateTime.now();
       dailyKey = Store.dayKey(now);
@@ -170,19 +218,30 @@ class GameController extends ChangeNotifier {
   void _setupRound() {
     phase = GamePhase.guess;
     touched = false;
+    epoqueAide = null;
+    repere = null;
+    zoom = null;
+    secondeChanceArmee = false;
+    indicationSecondeChance = null;
     setFrac(0.5, silent: true);
     notifyListeners();
   }
 
+  /// Bornes de la frise en fraction : toute la frise, ou la fenêtre du
+  /// Zoom.
+  double get fracMin => zoom == null ? 0.0 : yearToFrac(zoom!.de);
+  double get fracMax => zoom == null ? 1.0 : yearToFrac(zoom!.a);
+
   void setFrac(double f, {bool silent = false}) {
-    frac = f.clamp(0.0, 1.0).toDouble();
+    frac = f.clamp(fracMin, fracMax).toDouble();
     guessYear = fracToYear(frac);
     if (!silent) touched = true;
     notifyListeners();
   }
 
   void setYear(int y) {
-    final clamped = y.clamp(minYear, maxYear).toInt();
+    final clamped =
+        y.clamp(zoom?.de ?? minYear, zoom?.a ?? maxYear).toInt();
     frac = yearToFrac(clamped);
     guessYear = clamped;
     touched = true;
@@ -193,10 +252,24 @@ class GameController extends ChangeNotifier {
   /// (phase anim) puis appelle [finishReveal].
   RoundResult? validate() {
     if (phase != GamePhase.guess || !touched) return null;
-    phase = GamePhase.anim;
     final ev = current;
-    final base = scoreFor(ev.annee, guessYear, diff);
     final ecart = (guessYear - ev.annee).abs();
+    indicationSecondeChance = null;
+    if (secondeChanceArmee) {
+      secondeChanceArmee = false;
+      if (ecart > secondeChanceEcart) {
+        // La manche se rejoue : rien n'est révélé, la direction seule est
+        // dite. Le bonus n'est dépensé que maintenant.
+        _consommer(BonusType.secondeChance);
+        indicationSecondeChance =
+            guessYear < ev.annee ? 'Plus tard !' : 'Plus tôt !';
+        notifyListeners();
+        return null;
+      }
+      // Assez près : la Seconde chance n'a pas servi, elle reste au stock.
+    }
+    phase = GamePhase.anim;
+    final base = scoreFor(ev.annee, guessYear, diff);
     final pts = base * multiplier;
     lastBoosted = boostNext;
     // L'XP se calcule sur le score que la MÊME réponse aurait obtenu en
@@ -212,8 +285,9 @@ class GameController extends ChangeNotifier {
     // exactement ce qui sera crédité. Avant, l'écran promettait manche
     // après manche jusqu'à 628 XP de plus que le versement final.
     final xp = math.min(
-      xpForRound(ptsNeutres, diff.xpMult, boosted: lastBoosted),
-      maxXpPerGame - xpEarned,
+      xpForRound(ptsNeutres, diff.xpMult, boosted: lastBoosted) *
+          (xpDoubleActif ? 2 : 1),
+      plafondXp - xpEarned,
     );
     final result = RoundResult(ev, guessYear, ecart, base, pts, xp);
     results.add(result);
@@ -232,6 +306,8 @@ class GameController extends ChangeNotifier {
   RoundResult? validateTimeout() {
     if (phase != GamePhase.guess) return null;
     phase = GamePhase.anim;
+    secondeChanceArmee = false;
+    indicationSecondeChance = null;
     final ev = current;
     final ecart = (guessYear - ev.annee).abs();
     lastBoosted = false;
@@ -249,6 +325,87 @@ class GameController extends ChangeNotifier {
     phase = GamePhase.reveal;
     if (results.isNotEmpty) total += results.last.pts;
     notifyListeners();
+  }
+
+  /// Joue le bonus [b] sur la manche en cours. Rend false s'il ne peut pas
+  /// servir (déjà un bonus dans la partie, Défi du jour, aucun Repère ou
+  /// remplaçant possible) : rien n'est alors dépensé.
+  bool utiliser(BonusType b, {double Function()? rng}) {
+    if (!bonusUtilisable) return false;
+    final hasard = rng ?? math.Random().nextDouble;
+    switch (b) {
+      case BonusType.remplacer:
+        final nouveau = _remplacant(hasard);
+        if (nouveau == null) return false;
+        events[round % events.length] = nouveau;
+      case BonusType.epoque:
+        epoqueAide = eraFor(current.annee);
+      case BonusType.repere:
+        final r = _repere(hasard);
+        if (r == null) return false;
+        repere = r;
+      case BonusType.zoom:
+        zoom = fenetreZoom(current.annee, hasard());
+        // Le curseur rentre dans la fenêtre, au milieu, s'il en était sorti.
+        if (frac < fracMin || frac > fracMax) {
+          final avant = touched;
+          setFrac((fracMin + fracMax) / 2, silent: true);
+          touched = avant;
+        }
+      case BonusType.secondeChance:
+        // Armée, pas dépensée : elle ne coûte que si elle sert.
+        secondeChanceArmee = true;
+        notifyListeners();
+        return true;
+      case BonusType.xpDouble:
+        xpDoubleActif = true;
+    }
+    _consommer(b);
+    notifyListeners();
+    return true;
+  }
+
+  void _consommer(BonusType b) {
+    bonusJoues.add(b);
+    onBonusConsomme?.call(b);
+  }
+
+  /// Un autre événement du même tirage (catégorie, pack ou pays), absent
+  /// de la partie : du même niveau et jamais vu d'abord.
+  HistEvent? _remplacant(double Function() hasard) {
+    final dejaLa = events.map((e) => e.id).toSet();
+    final dispo =
+        repo.pool(catKey).where((e) => !dejaLa.contains(e.id)).toList();
+    if (dispo.isEmpty) return null;
+    final niveau = current.niveau;
+    for (final filtre in <bool Function(HistEvent)>[
+      (e) => e.niveau == niveau && !_seen.contains(e.id),
+      (e) => !_seen.contains(e.id),
+      (_) => true,
+    ]) {
+      final choix = dispo.where(filtre).toList();
+      if (choix.isNotEmpty) return choix[(hasard() * choix.length).floor()];
+    }
+    return null;
+  }
+
+  /// Un fait connu (niveau 1 d'abord), daté entre [repereEcartMin] et
+  /// [repereEcartMax] ans de la bonne date, pris dans toute la base.
+  HistEvent? _repere(double Function() hasard) {
+    final annee = current.annee;
+    final dejaLa = events.map((e) => e.id).toSet();
+    bool distance(HistEvent e) {
+      final d = (e.annee - annee).abs();
+      return d >= repereEcartMin && d <= repereEcartMax;
+    }
+
+    final proches = repo.events
+        .where((e) => !dejaLa.contains(e.id) && distance(e))
+        .toList();
+    final connus = proches.where((e) => e.niveau == 1).toList();
+    final source = connus.isNotEmpty ? connus : proches;
+    if (source.isEmpty) return null;
+    return source[(hasard() * source.length).floor()];
   }
 
   /// Passe à la manche suivante. Retourne false quand la partie est finie.

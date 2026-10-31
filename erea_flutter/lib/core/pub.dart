@@ -48,9 +48,29 @@ class Pub {
       ? (Platform.isAndroid ? _testAndroid : _testIOS)
       : (Platform.isAndroid ? _blocAndroid : _blocIOS);
 
+  /// Blocs « avec récompense » : un bonus contre une pub regardée jusqu'au
+  /// bout, une fois par jour (bonus de niveau, 1.0.8). Vides tant que Jean
+  /// ne les a pas créés dans AdMob : la proposition ne s'affiche alors pas
+  /// en release, et seuls les blocs de test de Google servent en debug.
+  static const String _recompenseAndroid = '';
+  static const String _recompenseIOS = '';
+  static const String _testRecompenseAndroid =
+      'ca-app-pub-3940256099942544/5224354917';
+  static const String _testRecompenseIOS =
+      'ca-app-pub-3940256099942544/1712485313';
+
+  static String get _blocRecompense => kDebugMode
+      ? (Platform.isAndroid ? _testRecompenseAndroid : _testRecompenseIOS)
+      : (Platform.isAndroid ? _recompenseAndroid : _recompenseIOS);
+
   static Future<bool>? _preparation;
   static InterstitialAd? _prete;
   static bool _chargeEnCours = false;
+  static RewardedAd? _recompensePrete;
+  static bool _recompenseEnCours = false;
+
+  /// SDK démarré, consentement valable : on peut promettre une pub.
+  static bool _sdkPret = false;
 
   /// Démarre le SDK et récolte le consentement, une seule fois.
   ///
@@ -74,7 +94,9 @@ class Pub {
         return false;
       }
       await MobileAds.instance.initialize();
+      _sdkPret = true;
       _precharger();
+      _prechargerRecompense();
       return true;
     } catch (e) {
       debugPrint('Publicité indisponible : $e');
@@ -177,6 +199,66 @@ class Pub {
           debugPrint('Interstitielle non chargée : ${erreur.message}');
         },
       ),
+    );
+  }
+
+  static void _prechargerRecompense() {
+    if (_blocRecompense.isEmpty) return;
+    if (_recompensePrete != null || _recompenseEnCours) return;
+    _recompenseEnCours = true;
+    RewardedAd.load(
+      adUnitId: _blocRecompense,
+      request: const AdRequest(),
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) {
+          _recompenseEnCours = false;
+          _recompensePrete = ad;
+        },
+        onAdFailedToLoad: (erreur) {
+          _recompenseEnCours = false;
+          debugPrint('Pub avec récompense non chargée : ${erreur.message}');
+        },
+      ),
+    );
+  }
+
+  /// Une pub avec récompense est prête à être montrée tout de suite. La
+  /// proposition « +1 bonus » ne s'affiche qu'alors : promettre une pub
+  /// qui n'arrive pas serait pire que ne rien proposer.
+  static bool recompensePrete({required bool sansPub}) =>
+      !sansPub && _sdkPret && _recompensePrete != null;
+
+  /// Montre la pub avec récompense. Rend true seulement si Google a
+  /// confirmé la récompense — une pub fermée avant la fin ne donne rien.
+  static Future<bool> montrerRecompense() async {
+    final ad = _recompensePrete;
+    if (ad == null) return false;
+    _recompensePrete = null;
+    var gagne = false;
+    final fermee = Completer<bool>();
+    try {
+      ad.fullScreenContentCallback = FullScreenContentCallback(
+        onAdDismissedFullScreenContent: (ad) {
+          ad.dispose();
+          _prechargerRecompense();
+          if (!fermee.isCompleted) fermee.complete(gagne);
+        },
+        onAdFailedToShowFullScreenContent: (ad, erreur) {
+          ad.dispose();
+          debugPrint('Pub avec récompense non affichée : ${erreur.message}');
+          _prechargerRecompense();
+          if (!fermee.isCompleted) fermee.complete(false);
+        },
+      );
+      await ad.show(onUserEarnedReward: (_, __) => gagne = true);
+    } catch (e) {
+      debugPrint('Affichage de la pub avec récompense impossible : $e');
+      await ad.dispose();
+      return false;
+    }
+    return fermee.future.timeout(
+      const Duration(minutes: 2),
+      onTimeout: () => gagne,
     );
   }
 

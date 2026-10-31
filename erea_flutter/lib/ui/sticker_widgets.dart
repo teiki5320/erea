@@ -262,13 +262,26 @@ class _PushButtonState extends State<PushButton> {
 /// aux proportions réelles de l'échelle, avec le curseur corail. Tapable
 /// et glissable pour sauter directement à une position.
 class MiniMap extends StatelessWidget {
-  const MiniMap({super.key, required this.frac, required this.onChanged});
+  const MiniMap({
+    super.key,
+    required this.frac,
+    required this.onChanged,
+    this.fracMin = 0,
+    this.fracMax = 1,
+  });
 
   final double frac;
   final ValueChanged<double> onChanged;
 
+  /// La portion de frise que couvre la barre : toute la frise, ou la
+  /// fenêtre du bonus Zoom.
+  final double fracMin;
+  final double fracMax;
+
   @override
   Widget build(BuildContext context) {
+    final etendue = fracMax - fracMin;
+    double local(double f) => ((f - fracMin) / etendue).clamp(0.0, 1.0);
     final stops = <double>[];
     final colors = <Color>[];
     var from = 0.0;
@@ -278,15 +291,15 @@ class MiniMap extends StatelessWidget {
         ..add(eraThemes[i].tint)
         ..add(eraThemes[i].tint);
       stops
-        ..add(from)
-        ..add(to);
+        ..add(local(from))
+        ..add(local(to));
       from = to;
     }
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
-        void jump(Offset local) =>
-            onChanged((local.dx / w).clamp(0.0, 1.0).toDouble());
+        void jump(Offset local) => onChanged(
+            fracMin + (local.dx / w).clamp(0.0, 1.0).toDouble() * etendue);
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: (d) => jump(d.localPosition),
@@ -306,7 +319,7 @@ class MiniMap extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  left: (frac * w - 2).clamp(0.0, w - 4),
+                  left: (local(frac) * w - 2).clamp(0.0, w - 4),
                   child: Container(
                     width: 4,
                     height: 20,

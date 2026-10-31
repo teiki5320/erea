@@ -20,7 +20,11 @@ class TapeWidget extends StatefulWidget {
     required this.onFracChanged,
     this.locked = false,
     this.height = 150,
+    this.repere,
   });
+
+  /// Bonus Repère : un événement daté, épinglé sur le ruban.
+  final ({int annee, String titre})? repere;
 
   /// Largeur du ruban virtuel, en px logiques. Toute vue qui positionne
   /// quelque chose au-dessus de la frise (épingles de révélation) doit
@@ -215,6 +219,7 @@ class _TapeWidgetState extends State<TapeWidget>
                         frise: EraArt.frise,
                         artVersion: EraArt.version,
                         facingLeft: _facingLeft,
+                        repere: widget.repere,
                       ),
                     ),
                   ),
@@ -261,7 +266,10 @@ class _TapePainter extends CustomPainter {
     this.frise,
     this.artVersion = 0,
     this.facingLeft = false,
+    this.repere,
   });
+
+  final ({int annee, String titre})? repere;
 
   final double frac;
   final double tapeW;
@@ -608,11 +616,67 @@ class _TapePainter extends CustomPainter {
       drawLabel(y, smallFont, const Color(0xFF5F6890));
     }
 
+    final r = repere;
+    if (r != null) _peindreRepere(canvas, r, baseY, visible);
+
     canvas.restore();
+  }
+
+  /// L'épingle du bonus Repère : un trait pointillé violet jusqu'à la ligne
+  /// de base, et l'étiquette « titre · année » sous les noms d'époques.
+  void _peindreRepere(
+    Canvas canvas,
+    ({int annee, String titre}) r,
+    double baseY,
+    bool Function(double, double, [double]) visible,
+  ) {
+    const violet = Color(0xFF7A5FA8);
+    final x = _px(r.annee);
+    final etiquette = _textCache['repere|${r.titre}|${r.annee}'] ??=
+        TextPainter(
+      text: TextSpan(
+        text: '${r.titre} · ${formatYear(r.annee)}',
+        style: const TextStyle(
+          color: violet,
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      maxLines: 1,
+      ellipsis: '…',
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: 190);
+    const haut = 30.0;
+    final boite = Rect.fromCenter(
+      center: Offset(x, haut + etiquette.height / 2 + 4),
+      width: etiquette.width + 16,
+      height: etiquette.height + 8,
+    );
+    if (!visible(boite.left, boite.right)) return;
+    final trait = Paint()
+      ..color = violet
+      ..strokeWidth = 2.5;
+    for (var y = boite.bottom; y < baseY; y += 9) {
+      canvas.drawLine(
+          Offset(x, y), Offset(x, math.min(y + 5, baseY)), trait);
+    }
+    canvas.drawCircle(Offset(x, baseY), 7, Paint()..color = Colors.white);
+    canvas.drawCircle(Offset(x, baseY), 5, Paint()..color = violet);
+    final rrect = RRect.fromRectAndRadius(boite, const Radius.circular(10));
+    canvas.drawRRect(rrect, Paint()..color = Colors.white);
+    canvas.drawRRect(
+      rrect,
+      Paint()
+        ..color = violet
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2,
+    );
+    etiquette.paint(canvas, Offset(boite.left + 8, boite.top + 4));
   }
 
   @override
   bool shouldRepaint(_TapePainter oldDelegate) =>
+      oldDelegate.repere != repere ||
       oldDelegate.frac != frac ||
       oldDelegate.tapeW != tapeW ||
       oldDelegate.frise != frise ||

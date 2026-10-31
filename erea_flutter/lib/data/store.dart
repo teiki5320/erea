@@ -1,6 +1,10 @@
 import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../core/bonus.dart';
+import '../core/progression.dart';
 
 /// Persistance locale (équivalent du localStorage du prototype web) :
 /// XP, records, anti-répétition, collection, défi du jour, réglages.
@@ -156,6 +160,53 @@ class Store {
     } catch (_) {
       return {};
     }
+  }
+
+  // ------------------------------------------------------------------- bonus
+
+  /// Exemplaires en stock d'un bonus (`lib/core/bonus.dart`).
+  int bonus(BonusType b) => _prefs.getInt('bonus.${b.name}') ?? 0;
+
+  /// Ajoute [n] exemplaires, sans jamais dépasser [stockMax]. Rend le
+  /// nombre réellement ajouté : un stock plein n'en reçoit aucun.
+  Future<int> ajouterBonus(BonusType b, [int n = 1]) async {
+    final avant = bonus(b);
+    final apres = math.min(stockMax, avant + n);
+    if (apres == avant) return 0;
+    await _put(() => _prefs.setInt('bonus.${b.name}', apres));
+    return apres - avant;
+  }
+
+  Future<void> retirerBonus(BonusType b) async {
+    final n = bonus(b);
+    if (n == 0) return;
+    await _put(() => _prefs.setInt('bonus.${b.name}', n - 1));
+  }
+
+  /// Bonus gagnés mais pas encore choisis (niveaux impairs hors
+  /// découverte). Gardés tant que le joueur n'a pas choisi : quitter
+  /// l'écran de fin ne les perd pas.
+  int get bonusAChoisir => _prefs.getInt('bonus.choix') ?? 0;
+  Future<void> setBonusAChoisir(int n) =>
+      _put(() => _prefs.setInt('bonus.choix', math.max(0, n)));
+
+  /// Un bonus par jour contre une publicité regardée jusqu'au bout.
+  bool get bonusPubDispo => _prefs.getString('bonus.pubJour') != dayKey(_now);
+  Future<void> marquerBonusPub() =>
+      _put(() => _prefs.setString('bonus.pubJour', dayKey(_now)));
+
+  /// Mise à jour vers la 1.0.8 : un joueur déjà avancé reçoit une fois les
+  /// découvertes des niveaux qu'il a déjà passés. Le drapeau est posé
+  /// même pour un nouveau joueur (niveau 1, rien à offrir), pour que la
+  /// distribution n'ait lieu qu'une fois.
+  Future<List<BonusType>> distribuerBienvenue() async {
+    if (_prefs.getBool('bonus.v1') ?? false) return const [];
+    final cadeaux = cadeauxDeBienvenue(levelFromXp(xp).level);
+    for (final b in cadeaux) {
+      await ajouterBonus(b);
+    }
+    await _put(() => _prefs.setBool('bonus.v1', true));
+    return cadeaux;
   }
 
   // ---------------------------------------------------------------- réglages
