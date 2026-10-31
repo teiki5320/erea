@@ -107,7 +107,7 @@ par âge » et réponds ainsi :
 | Catégorie | Réponse |
 |---|---|
 | Contrôles intégrés (contrôle parental, validation de l'âge) | Aucun |
-| Capacités | **Publicité : OUI** (l'app affiche des interstitielles AdMob ; la 1.0.7 a été refusée le 31 octobre 2026 faute de cette case). Accès web libre, contenu généré par les utilisateurs, réseaux sociaux : aucun |
+| Capacités | **Publicité : OUI** (l'app affiche des interstitielles AdMob ; la 1.0.7 a été refusée le 31 octobre 2026 faute de cette case, cochée le jour même). Accès web libre, contenu généré par les utilisateurs, réseaux sociaux : aucun |
 | Thèmes matures (vulgarité, horreur, références à…) | Aucun |
 | Médical ou bien-être | Aucun |
 | Sexualité ou nudité | Aucune |

@@ -9,7 +9,7 @@
 > contient de la publicité mais la case « Publicité » (Capacités) de la
 > classification par âge n'était pas cochée. Correction : la cocher (la
 > note reste 4+), ajouter une ligne aux Remarques, « Mettre à jour la
-> vérification ». Même build 210.
+> vérification ». Même build 210, renvoyé le 31 octobre à 11 h 03.
 >
 > **30 octobre 2026 — 1.0.7 (build 210) soumise le soir même, avec le §0 ci-dessous.** La 1.0.5 (build 195),
 > envoyée le 21 octobre, a été approuvée et mise en ligne le jour même ;

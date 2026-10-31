@@ -6,10 +6,10 @@ racine du dépôt en est le prototype d'origine, conservé pour mémoire.
 État : **1.0.5** en ligne sur l'App Store depuis le 21 octobre 2026,
 **1.0.7** en ligne sur Google Play depuis le 30 octobre 2026 ; envoyée le
 même jour à l'App Store, elle y a été refusée le 31 octobre (case « Publicité »
-de la classification par âge à cocher) et doit être renvoyée. Publicité et achat intégré en place
+de la classification par âge), puis renvoyée le jour même : en attente de vérification. Publicité et achat intégré en place
 depuis la 1.0.2. L'état à jour des boutiques vit dans
 `docs/PUBLICATION.md`.
-204 tests, `flutter analyze` propre.
+205 tests, `flutter analyze` propre.
 
 ## Démarrer
 
@@ -114,7 +114,7 @@ par Xcode Cloud.
 - **`lib/core/rappels.dart`** — rappel du soir, 100 % local : un seul
   rappel programmé, le soir où la série est en jeu, recalculé à chaque
   lancement de l'app, en fin de défi et à l'abandon.
-- **`test/`** — 204 tests : règles du jeu, intégrité des 1 830
+- **`test/`** — 205 tests : règles du jeu, intégrité des 1 830
   événements, persistance et défi du jour, rappel du soir, pause du
   Chrono, interface jusqu'à une partie
   complète, mise en page iPad et iPhone SE en très grande police, règle
