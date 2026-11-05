@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Mesure d'audience Umami, sans cookie : visites et clics sur les boutons de téléchargement. -->
+<script defer src="https://cloud.umami.is/script.js" data-website-id="d1715415-5452-48af-a9fa-69e3e2de06f3" data-domains="erea.toakeur.com"></script>
 <!-- Page d'aiguillage : https://erea.toakeur.com/telecharger
      LE lien à donner partout (TikTok, bio, QR codes). Un iPhone ou un iPad
      part tout seul vers l'App Store, un téléphone Android vers Google Play,
@@ -112,10 +114,10 @@
   </div>
 
   <div class="badges">
-    <a id="lien-apple" href="https://apps.apple.com/fr/app/erea/id6794918301">
+    <a id="lien-apple" data-umami-event="Télécharger l'appli" data-umami-event-magasin="App Store" href="https://apps.apple.com/fr/app/erea/id6794918301">
       <img class="badge-apple" src="../badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54">
     </a>
-    <a id="lien-google" href="https://play.google.com/store/apps/details?id=com.teiki.erea" hidden>
+    <a id="lien-google" data-umami-event="Télécharger l'appli" data-umami-event-magasin="Google Play" href="https://play.google.com/store/apps/details?id=com.teiki.erea" hidden>
       <img class="badge-google" src="../badge-google-play.png" alt="Disponible sur Google Play" width="207" height="80">
     </a>
   </div>

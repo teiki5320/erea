@@ -72,6 +72,7 @@ appartenait à la 1.0.0.
 - `/support.html` et `/confidentialite.html` : les deux URL exigées par l'App Store, contact `erea@toakeur.com`.
 - Site servi depuis la racine de `main` (fichier `.nojekyll` présent), redéployé à chaque poussée ; dernier déploiement réussi le 4 novembre 2026 à 15 h 09.
 - L'adresse `erea.toakeur.com` passe par Cloudflare, qui relaie GitHub Pages ; le dépôt ne contient pas de fichier `CNAME` (un `CNAME` ajouté le 4 novembre a été retiré le même jour). L'ancienne adresse `teiki5320.github.io/erea/` répond aussi (vérifié le 5 novembre 2026).
+- **Mesure d'audience du site (depuis le 5 novembre 2026)** : Umami Cloud, offre gratuite, région UE, sans cookie ; un seul identifiant de site public partagé par les sites de la maison (`d1715415-5452-48af-a9fa-69e3e2de06f3`), balise dans le `<head>` de `index.html`, `jeu.html`, `support.html`, `confidentialite.html` et `telecharger/index.html`, limitée à `erea.toakeur.com`. Clics comptés : « Télécharger l'appli » (avec le magasin : App Store ou Google Play). Console : https://cloud.umami.is. L'application, elle, n'a toujours aucune mesure d'audience. Sur `telecharger/`, un iPhone ou un Android est renvoyé tout de suite vers sa boutique, avant que la visite soit comptée.
 
 **Où vivent les secrets :** nulle part.
 
