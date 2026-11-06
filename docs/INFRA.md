@@ -25,7 +25,7 @@
 - **Stack** : Flutter (Dart ≥ 3.6), version `1.0.8+9` dans le code, 185 tests, aucun serveur applicatif
 - **Backend** : aucun — tout l'état du joueur vit sur l'appareil (`shared_preferences`)
 - **Distribution** : App Store via Xcode Cloud · Play Store via App Bundle signé localement
-- **Monétisation** : interstitielle AdMob + achat unique 3,99 € qui la retire, en ligne depuis la 1.0.2
+- **Monétisation** : interstitielle AdMob + achat unique 3,99 € qui la retire, en ligne depuis la 1.0.2 ; diffusion d'annonces limitée tant que les applis AdMob ne sont pas associées aux boutiques (vérifié le 6 novembre 2026)
 - **Particularités** : jeu entièrement hors ligne, aucune clé d'API dans le dépôt, un seul e-mail public (`erea@toakeur.com`)
 
 Les deux seuls tiers embarqués sont Google (publicité) et les boutiques
@@ -283,8 +283,7 @@ refuse de servir.
 servi sur `https://erea.toakeur.com/app-ads.txt` (l'URL marketing de la
 fiche App Store), de nouveau en ligne (vérifié le 6 novembre 2026). Une ligne : l'éditeur `pub-2680784147246798` en
 `DIRECT`. Avant le 30 octobre, l'adresse répondait 404, et de nouveau le
-4 novembre au matin, le temps que le dépôt redevienne public. L'état
-affiché par AdMob est à vérifier dans la console (non vérifiable le 6 novembre 2026).
+4 novembre au matin, le temps que le dépôt redevienne public. Dans AdMob, les deux applis AdMob (Erea iOS et Erea Android) sont en « Examen requis », avec une diffusion d'annonces limitée, parce qu'elles ne sont pas encore associées à leur fiche App Store et Google Play ; tant que ce n'est pas fait, AdMob ne peut pas valider `app-ads.txt` (vérifié le 6 novembre 2026).
 
 **Consentement RGPD — message publié le 3 septembre 2026.** Jusqu'à
 cette date la console était vide, et le journal Android le disait sans
@@ -338,7 +337,7 @@ passe par le compte Google (+ double facteur).
 - Application ID `com.teiki.erea`, identique à iOS (`android/app/build.gradle.kts`).
 - Test fermé « Alpha » : release `4 (1.0.3)` servie aux testeurs à partir du 16 septembre 2026, puis release `5 (1.0.4)` envoyée le 14 octobre. Les **douze testeurs pendant quatorze jours** exigés d'un compte personnel ont été tenus du 8 au 22 septembre (voir « Testeurs » plus bas).
 - **Accès à la production demandé le 14 octobre 2026 à 18 h 39, accordé le 17 octobre** ; la release de production `5 (1.0.4)`, promue depuis la piste Alpha et envoyée le 17 octobre vers 8 h 25, a été mise en ligne le 20 octobre 2026 à 16 h 07 ; la `6 (1.0.5)` l'a remplacée le 21 octobre, la `7 (1.0.6)` le 22 octobre 2026, et la **`8 (1.0.7)`, envoyée le 30 octobre 2026, est en ligne (vérifié le 6 novembre 2026)**. La fiche publique `play.google.com/store/apps/details?id=com.teiki.erea` répond (vérifié le 6 novembre 2026).
-- **Statut de professionnel (DSA)** : Google a écrit le 4 novembre 2026 qu'il faut le déclarer dans la Play Console (Gérer le compte → Détails du compte) **d'ici le 1er février 2027**, faute de quoi plus aucune mise à jour ne passe et les applis sont retirées ; pas encore déclaré, à vérifier dans la console.
+- **Statut de professionnel (DSA)** : Google a écrit le 4 novembre 2026 qu'il faut le déclarer dans la Play Console (Gérer le compte → Détails du compte) **d'ici le 1er février 2027**, faute de quoi plus aucune mise à jour ne passe et les applis sont retirées ; le statut de professionnel n'est pas encore déclaré : l'accueil de la Play Console affiche « Déclarez votre statut de professionnel d'ici février 2027 » avec « Action requise » (vérifié le 6 novembre 2026). Erea y est en « Production », mise à jour du 30 octobre 2026.
 - Achat intégré actif (voir « StoreKit / Play Billing »). Classements Play Games non configurés (voir « Game Center / Play Games »).
 - Appareil physique de vérification : un Pixel 8a, utilisé pour les tests du 16 septembre.
 

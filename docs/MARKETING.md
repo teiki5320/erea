@@ -41,7 +41,7 @@ classiques :
 
 ## Rémunération par phases
 
-- [fait] **Aujourd'hui** : pub AdMob une partie sur deux, achat unique 3,99 € qui la retire, sur iOS et sur Android depuis le 20 octobre 2026
+- [fait] **Aujourd'hui** : pub AdMob une partie sur deux (diffusion limitée au 6 nov.), achat unique 3,99 € qui la retire, iOS et Android
 - [en cours] **Statut trader (DSA)** : obligatoire sur les deux boutiques ; inscription Apple en organisation envoyée le 5 novembre, en attente de vérification ; Google Play : à déclarer avant le 1er février 2027
 - **Premiers versements AdMob** : seuil de 70 €, puis code PIN postal et vérification d'identité
 - **Licence éducation** : seulement si un établissement se présente de lui-même
@@ -62,7 +62,7 @@ publicité fait elle-même la promotion de l'achat.
 
 | Pièce | Détail | Statut |
 |---|---|---|
-| Interstitielle AdMob | À la sortie de l'écran de fin, une partie sur deux, jamais dans le Défi du jour (`lib/core/pub.dart`) | ✅ en ligne sur iOS depuis la 1.0.2 (8 septembre 2026), sur Android depuis le 20 octobre 2026 |
+| Interstitielle AdMob | À la sortie de l'écran de fin, une partie sur deux, jamais dans le Défi du jour (`lib/core/pub.dart`) | ✅ en ligne sur iOS depuis la 1.0.2 (8 septembre 2026), sur Android depuis le 20 octobre 2026 ; diffusion d'annonces limitée : applis AdMob pas encore associées aux boutiques (vérifié le 6 novembre 2026) |
 | « Erea sans publicité » | Achat unique non consommable `com.teiki.erea.sanspub`, **3,99 €** — il ne débloque rien, le jeu est déjà complet | ✅ approuvé sur l'App Store le 8 septembre, actif sur Google Play |
 | Consentement | Formulaire UMP de Google + ATT sur iOS, révocable depuis les réglages ; message RGPD et message IDFA publiés dans AdMob | ✅ |
 | Android | Même modèle, sur Google Play depuis le 20 octobre 2026 (1.0.4) ; 1.0.7 en ligne (vérifié le 6 novembre 2026) | ✅ |
@@ -148,7 +148,7 @@ pas encore faite.
 - **Rétention J1 et J7** : à vérifier dans la console
 - **Participants au Défi du jour** : à vérifier dans la console (classement `erea.daily`)
 - **Ventes « Erea sans publicité »** : à vérifier dans la console
-- **Revenus publicitaires AdMob** : à vérifier dans la console
+- **Revenus publicitaires AdMob** : à vérifier dans la console ; diffusion limitée au 6 novembre 2026 (applis AdMob en « Examen requis »)
 - **Usage des modes dans l'app** : à instrumenter — aucun analytics propre, par choix
 
 Contrainte assumée : **pas d'analytics à nous dans l'app**. Seul le SDK
@@ -180,9 +180,9 @@ une collecte à la fiche de confidentialité.
 
 ## Les 3 priorités
 
-- **Booster par « Promouvoir » les pubs TikTok qui prennent le mieux** sur « erea.jeu » (36 publiées du 29 octobre au 5 novembre, 2 programmées le 6 novembre), vers `https://erea.toakeur.com/telecharger/?src=tiktok`, en ligne (vérifié le 6 novembre 2026) : aucune promotion payante n'a encore été lancée.
-- **Se déclarer trader (DSA)** sur l'App Store et Google Play : l'app rapporte maintenant sur les deux boutiques, et la déclaration « non-trader » ne tient plus ; chez Apple dès que le compte est converti en compte organisation (Apple a répondu le 5 novembre 2026 : la demande d'inscription en organisation est partie le même jour et attend la vérification d'Apple) ; sur Google Play, la déclaration est exigée avant le 1er février 2027 (e-mail de Google du 4 novembre 2026).
-- **Faire valider `app-ads.txt` dans AdMob** : le fichier est servi sur `https://erea.toakeur.com/app-ads.txt` (vérifié le 6 novembre 2026) ; dans AdMob → Applications → Erea, lancer « Rechercher les mises à jour » et vérifier que l'état passe à « Validé ».
+- **Associer les deux applis AdMob à leur boutique** (AdMob → Applications → Erea iOS et Erea Android → « Ajouter un magasin ») : elles sont en « Examen requis », avec une diffusion d'annonces limitée, et `app-ads.txt`, pourtant servi sur `https://erea.toakeur.com/app-ads.txt`, ne pourra être validé qu'ensuite (vérifié le 6 novembre 2026).
+- **Déclarer le statut de professionnel sur Google Play avant le 1er février 2027** (Play Console → Gérer le compte → Détails du compte, puis la déclaration de l'appli) : pas encore fait, bannière « Action requise » (vérifié le 6 novembre 2026) ; chez Apple, se déclarer trader dès que le compte est passé en organisation (demande envoyée le 5 novembre 2026, en attente de la vérification d'Apple).
+- **Booster par « Promouvoir » les pubs TikTok qui prennent le mieux** sur « erea.jeu » (36 publiées du 29 octobre au 5 novembre, 2 programmées le 6 novembre), vers `https://erea.toakeur.com/telecharger/?src=tiktok` : aucune promotion payante n'a encore été lancée.
 
 ## Déjà fait
 
