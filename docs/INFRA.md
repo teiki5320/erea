@@ -136,8 +136,8 @@ sauvegarder, rien à recopier sur une machine neuve.
 pour le compte individuel (banque : compte personnel ; fiscal : W-8BEN,
 convention France–USA art. 12 à 0 %) ; accepté de nouveau au nom de
 l'organisation le 9 novembre 2026, après le passage du compte en
-organisation (ALOHASH) ; banque et fiscalité de la nouvelle entité : à
-vérifier dans la console (App Store Connect → Business). L'achat intégré lui-même est décrit plus bas, section
+organisation (ALOHASH) ; banque et fiscalité de la nouvelle entité : terminées
+dans App Store Connect → Business (confirmé par Jean le 10 novembre 2026). L'achat intégré lui-même est décrit plus bas, section
 « StoreKit / Play Billing ».
 
 **État des versions :** la `1.0.0` (build 90) est sortie le 3 septembre

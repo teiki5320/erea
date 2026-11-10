@@ -98,9 +98,9 @@ Apple Developer est passée en **organisation**, au nom d'**ALOHASH**
 (équipe `K597U7X3FZ` inchangée) ; la fiche publique affiche désormais le
 vendeur **ALOHASH** (vérifié le 10 novembre 2026). Jusqu'au 9 novembre,
 le compte était individuel et la fiche affichait le nom civil de Jean ;
-« TOA CORP » reste le nom affiché dans la console. Les tâches ouvertes de
-la nouvelle entité dans App Store Connect → Business (banque, fiscalité)
-sont à vérifier dans la console ; le contrat « Applications payantes » a
+« TOA CORP » reste le nom affiché dans la console. Les tâches de la
+nouvelle entité dans App Store Connect → Business (banque, fiscalité)
+sont terminées (confirmé par Jean le 10 novembre 2026) ; le contrat « Applications payantes » a
 été accepté au nom de l'organisation le 9 novembre 2026 au soir.
 
 **Nom de l'app.** `Erea : Quiz d'histoire & frise` (30 caractères)
@@ -185,7 +185,7 @@ Google Play répond (vérifié le 10 novembre 2026).
 12. **app-ads.txt** : publié le 30 octobre 2026 à la racine du site (`erea.toakeur.com/app-ads.txt`), servi (vérifié le 10 novembre 2026) après la coupure du 4 novembre au matin ; d'abord associer Erea iOS et Erea Android à leur fiche App Store et Google Play dans AdMob (« Ajouter un magasin ») : les deux sont en « Examen requis », diffusion d'annonces limitée (vérifié le 9 novembre 2026) ; AdMob pourra ensuite valider le fichier.
 13. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.
 14. **Statut de professionnel sur Google Play** : à déclarer avant le 1er février 2027 (e-mail du 4 novembre 2026) ; pas encore fait, « Action requise » dans la Play Console (vérifié le 9 novembre 2026).
-15. **App Store Connect → Business** : vérifier qu'aucune tâche de la nouvelle entité ALOHASH (banque, fiscalité) n'attend, pour que le nom du développeur et les versements suivent.
+15. ✅ **App Store Connect → Business** : plus aucune tâche de la nouvelle entité ALOHASH (banque, fiscalité) n'attend (confirmé par Jean le 10 novembre 2026).
 
 ---
 
