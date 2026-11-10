@@ -1,0 +1,6 @@
+# Dernière version d'Erea APPROUVÉE par Apple ou Google (et son numéro de build).
+# Lue par scripts/garde-version.sh : tant que pubspec.yaml porte cette version
+# (ou une plus ancienne), tout commit la monte tout seul. À mettre à jour dans
+# le même commit que les fiches qui notent une approbation.
+version=1.0.7
+build=8

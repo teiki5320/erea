@@ -47,8 +47,8 @@ possible.
   (ITMS-90186 et ITMS-90062) : chaque poussée, même de documentation,
   finit en build Xcode Cloud échoué et en deux e-mails. Le build 187 du
   16 octobre 2026 l'a montré au lendemain de la 1.0.4, le build 196 le
-  soir même de la 1.0.5 : **la mise à jour des fiches qui note une
-  approbation monte la version dans le même commit**.
+  soir même de la 1.0.5. **Un garde-fou le fait maintenant tout seul**
+  (voir « Garde-fou de version » plus bas).
 - **Les mots-clés App Store se comptent en octets**, pas en caractères :
   chaque accent en vaut deux.
 - **`google_mobile_ads` ne compile pas sur iOS sans
@@ -72,6 +72,39 @@ possible.
   d'un « Add files via upload » fait depuis l'interface web de GitHub.
   La bonne lignée est celle de `main`. N'ajoute jamais de fichiers par
   l'interface web : ça repart d'un arbre vierge.
+
+## Garde-fou de version (depuis le 10 novembre 2026)
+
+Deux hooks git versionnés dans `.githooks/`, qui s'appuient sur
+`scripts/garde-version.sh` et sur le fichier
+[`erea_flutter/version-approuvee.txt`](erea_flutter/version-approuvee.txt)
+(dernière version approuvée par Apple ou Google, et son numéro de build).
+
+- **`pre-commit`** : si `pubspec.yaml` porte une version égale ou plus
+  ancienne que celle de `version-approuvee.txt`, ou un numéro de build qui
+  ne la dépasse pas, il la monte lui-même (patch +1, build +1) **dans le
+  même commit**. Rien à faire : la version suivante se lit dans le commit.
+- **`pre-push`** : filet de sécurité. Il refuse de pousser sur `main` un
+  commit dont la version est périmée (commit fait sans le hook, par
+  exemple) et indique la commande de correction :
+  `scripts/garde-version.sh --corriger`, puis commit et nouvelle poussée.
+
+**À faire une fois par clone** : `scripts/installer-hooks.sh` (règle
+`core.hooksPath` sur `.githooks`). Un clone neuf n'a pas les hooks tant que
+ce n'est pas fait.
+
+**Le déclencheur est `version-approuvee.txt`** : le hook ne sait pas qu'Apple
+a approuvé une version, il faut le lui dire. **La mise à jour des fiches qui
+note une approbation met aussi à jour ce fichier, dans le même commit** (le
+hook monte alors la version dans ce commit). Après une montée automatique,
+saisis la nouvelle version dans App Store Connect avant de soumettre : elle
+doit être identique à celle de `pubspec.yaml`.
+
+Limites : les hooks tournent sur la machine qui commit, pas sur Xcode Cloud ni
+sur l'interface web de GitHub (une modification faite là n'est pas gardée) ;
+`git commit --no-verify` contourne le `pre-commit`, mais pas le `pre-push`
+sauf avec `git push --no-verify`. Pendant un rebase, un merge ou un
+cherry-pick, le `pre-commit` ne touche à rien.
 
 ## Où trouver quoi
 
