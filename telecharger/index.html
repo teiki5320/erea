@@ -12,10 +12,7 @@
 
      ?src=tiktok (ou utm_source=…) est relayé aux deux boutiques : « ct »
      côté Apple, « referrer » côté Google, pour savoir d'où viennent les
-     installations dans App Store Connect et la Play Console.
-
-     PLAY_OUVERT : à false, un Android reste ici et se voit proposer le
-     jeu web (c'était le cas avant la production Google Play). -->
+     installations dans App Store Connect et la Play Console. -->
 <meta name="apple-itunes-app" content="app-id=6794918301">
 <title>Télécharger Erea — Devine l'année !</title>
 <meta name="description" content="Télécharge Erea, le jeu d'histoire pour toute la famille : place les grands événements sur la frise du temps, de 3000 av. J.-C. à aujourd'hui.">
@@ -38,7 +35,6 @@
 <script>
   var APP_STORE = 'https://apps.apple.com/fr/app/erea/id6794918301';
   var PLAY = 'https://play.google.com/store/apps/details?id=com.teiki.erea';
-  var PLAY_OUVERT = true; // en production sur Google Play depuis le 20 octobre 2026
 
   (function () {
     var p = new URLSearchParams(location.search);
@@ -56,7 +52,7 @@
       (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1));
     window.EREA_APPAREIL = ios ? 'ios' : (android ? 'android' : 'autre');
     if (ios) { location.replace(APP_STORE); }
-    else if (android && PLAY_OUVERT) { location.replace(PLAY); }
+    else if (android) { location.replace(PLAY); }
   })();
 </script>
 <style>
@@ -86,14 +82,6 @@
   /* Le badge officiel de Google porte une marge transparente : on la
      compense pour l'aligner sur celui d'Apple. */
   .badge-google{height:80px; width:auto; margin:-13px -10px}
-  .bientot{font-size:15px; color:var(--ink-soft); font-weight:700; margin:16px 0 0}
-  .android-attente{display:none; background:var(--white); border-radius:20px;
-    padding:18px 20px; margin:0 0 22px; box-shadow:0 6px 18px rgba(53,64,107,.10)}
-  .android .android-attente{display:block}
-  .android #bientot{display:none}
-  .btn{display:inline-block; text-decoration:none; font-family:'Baloo 2',sans-serif;
-    font-weight:800; font-size:18px; padding:13px 26px; border-radius:18px; margin-top:12px;
-    background:var(--coral); color:#fff; box-shadow:0 5px 0 var(--coral-dark)}
   .pied{margin-top:30px; font-size:14px}
   .pied a{color:var(--ink-soft)}
 </style>
@@ -107,33 +95,20 @@
   doigt : en quelle année ? Plus de 1800 événements, de 3000 av. J.-C. à
   aujourd'hui. Gratuit, sans compte, hors ligne.</p>
 
-  <div class="android-attente">
-    <strong>Erea arrive très bientôt sur Google Play.</strong><br>
-    En attendant, tu peux déjà jouer dans ton navigateur.<br>
-    <a class="btn" href="../jeu.html">▶︎ Jouer maintenant</a>
-  </div>
-
   <div class="badges">
     <a id="lien-apple" data-umami-event="Télécharger l'appli" data-umami-event-magasin="App Store" href="https://apps.apple.com/fr/app/erea/id6794918301">
       <img class="badge-apple" src="../badge-app-store.svg" alt="Télécharger Erea dans l'App Store" width="162" height="54">
     </a>
-    <a id="lien-google" data-umami-event="Télécharger l'appli" data-umami-event-magasin="Google Play" href="https://play.google.com/store/apps/details?id=com.teiki.erea" hidden>
+    <a id="lien-google" data-umami-event="Télécharger l'appli" data-umami-event-magasin="Google Play" href="https://play.google.com/store/apps/details?id=com.teiki.erea">
       <img class="badge-google" src="../badge-google-play.png" alt="Disponible sur Google Play" width="207" height="80">
     </a>
   </div>
-  <p class="bientot" id="bientot">Bientôt sur Google Play</p>
 
-  <p class="pied"><a href="../">Découvrir le jeu</a> · <a href="../support.html">Aide</a></p>
+  <p class="pied"><a href="../">Découvrir le jeu</a> · <a href="../support.html">Aide</a> · <a href="mailto:erea@toakeur.com">erea@toakeur.com</a></p>
 </main>
 <script>
   document.getElementById('lien-apple').href = APP_STORE;
   document.getElementById('lien-google').href = PLAY;
-  if (PLAY_OUVERT) {
-    document.getElementById('lien-google').hidden = false;
-    document.getElementById('bientot').hidden = true;
-  } else if (window.EREA_APPAREIL === 'android') {
-    document.body.classList.add('android');
-  }
 </script>
 </body>
 </html>
