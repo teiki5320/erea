@@ -19,7 +19,7 @@ dependencies:
   google_mobile_ads: ^9.1.0
   in_app_purchase: ^3.3.0
   in_app_review: ^2.0.9 # demande de note native, au bon moment
-  share_plus: ^10.1.4 # feuille de partage iOS pour la grille du défi
+  share_plus: ^13.3.1 # feuille de partage iOS pour la grille du défi
   shared_preferences: ^2.2.3 # persistance locale (XP, records, défi du jour)
   timezone: ^0.11.1
   url_launcher: ^6.3.2
