@@ -186,6 +186,7 @@ Google Play répond (vérifié le 12 novembre 2026).
 13. **Élucider les builds Xcode Cloud 141 et 142** : échoués le 4 septembre sur des commits de documentation.
 14. **Statut de professionnel sur Google Play** : à déclarer avant le 1er février 2027 (e-mail du 4 novembre 2026) ; pas encore fait, « Action requise » dans la Play Console (vérifié le 12 novembre 2026).
 15. ✅ **App Store Connect → Business** : plus aucune tâche de la nouvelle entité ALOHASH (banque, fiscalité) n'attend (confirmé par Jean le 10 novembre 2026).
+16. **Fiches Google Play personnalisées par pays** (Sénégal, Côte d'Ivoire, Mali) : textes rédigés le 12 novembre 2026 dans `docs/FICHE_PLAY_STORE.md` §8, **pas encore saisis** dans la Play Console (à faire par Jean).
 
 ---
 

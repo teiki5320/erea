@@ -1,6 +1,6 @@
 # Publier Erea sur le Play Store
 
-> Écrit le 9 août 2026, mis à jour le 30 octobre 2026. **La 1.0.6 est
+> Écrit le 9 août 2026, mis à jour le 12 novembre 2026 (§8 : fiches personnalisées par pays, préparées et non saisies). **La 1.0.6 est
 > en ligne sur Google Play depuis le 22 octobre 2026**, après la 1.0.5 le
 > 21 octobre et la 1.0.4, première version publique, le 20 octobre ;
 > l'accès à la production, demandé le 14 octobre, a été accordé le 17.
@@ -403,6 +403,225 @@ Les étapes, dans l'ordre :
 ⚠️ Décommenter les `meta-data` avec un identifiant vide ou faux **fait
 planter l'app au démarrage de Play Games**. C'est tout ou rien — d'où
 l'étape 3 en dernier.
+
+## 8. Fiches personnalisées par pays *(Sénégal, Côte d'Ivoire, Mali — préparées le 12 novembre 2026, à saisir par Jean)*
+
+Kaiser a validé trois fiches Google Play personnalisées, en français. **Rien n'a été saisi dans la Play Console** : cette section ne contient que les textes et la marche à suivre.
+
+### Ce qui est vrai dans le jeu (relevé dans `erea_flutter/assets/events.json`, 1 830 événements, le 12 novembre 2026)
+
+| Pays | Événements du pays dans la base | Dans la Roulette des drapeaux ? |
+|---|---|---|
+| Sénégal | 11 | oui (11, pour 10 manches par partie) |
+| Mali | 10 | oui (10, juste assez) |
+| Côte d'Ivoire | **3 seulement** | **non** (moins de 10 faits : le pays ne peut pas tenir une partie) |
+
+- **Sénégal** : le royaume du Tekrour (1035), Gorée prise par les Hollandais (1588), fondation de Saint-Louis (1659), les Français à Dakar (1857), Blaise Diagne (1914), indépendance du 4 avril 1960, Festival mondial des arts nègres (1966), rallye Paris-Dakar (1979), Senghor à l'Académie française (1983), première CAN (2022, Sadio Mané).
+- **Mali** : naissance de Tombouctou (1100), Soundiata à Kirina (1235), Mansa Moussa (1324), Askia Mohammed (1493), chute de l'empire songhaï (1591), Grande Mosquée de Djenné (1907), indépendance (1960), Hampâté Bâ à l'UNESCO (1960), Salif Keïta (1970). Le fait de 2012 (Tombouctou saccagée) est volontairement laissé hors de la fiche : sujet sensible, inutile pour présenter le jeu.
+- **Côte d'Ivoire** : Houphouët-Boigny et l'indépendance (1960), basilique de Yamoussoukro (1989), Drogba à Bouaké (2007). La fiche le dit franchement (« plusieurs événements ») et s'appuie sur l'Afrique de l'Ouest voisine (empire du Mali, Tombouctou, indépendances de 1960).
+- **« La moitié des questions »** : vrai seulement en **Classique, catégorie « Tout »**, quand le joueur est en Afrique (pays choisi à l'accueil, sinon réglage de l'appareil) : 5 questions sur 10 viennent du pack « Afrique & Moyen-Orient » (`lib/game/game_controller.dart`). Les fiches le disent ainsi ; ne pas écrire « la moitié de l'histoire du Sénégal ».
+
+⚠️ **Décision pour Jean (Côte d'Ivoire)** : trois faits, c'est mince. La fiche ne ment pas, mais un joueur ivoirien verra peu de contenu local. Ajouter des événements ivoiriens renforcerait la fiche ; cela se fait dans une version du jeu, pas ici.
+
+### Règles Google respectées dans ces textes
+Pas de « meilleur » ni de « n° 1 », pas de prix ni de « gratuit », pas d'appel à noter, pas de promesse de classement (Play Games n'est pas branché, voir §7), pas de public enfant (cible 13 ans et plus, §5), aucun fait inventé. Le paragraphe sur la publicité est conservé : il doit rester d'accord avec la déclaration « contient des annonces » et la fiche Sécurité des données. **À relire avant saisie si la 1.0.8 change la fréquence des publicités.**
+
+### Comment les saisir dans la Play Console
+Chemin confirmé par l'aide Google le 12 novembre 2026 (`https://support.google.com/googleplay/android-developer/answer/9867158?hl=fr`) : **Accroître le nombre d'utilisateurs → Présence sur le Play Store → Fiches Play Store personnalisées**. Le menu a aussi été appelé « Développer la présence » ou « Croissance » selon les versions de la console : suivre l'entrée qui mène aux fiches personnalisées, et demander une capture si le menu diffère.
+
+1. Ouvrir `https://play.google.com/console` et choisir Erea (`com.teiki.erea`).
+2. Aller dans **Fiches Play Store personnalisées** → **Créer une fiche**.
+3. Nom interne (invisible des joueurs) : « Sénégal », « Côte d'Ivoire » ou « Mali ».
+4. **Ciblage par pays** : cocher un seul pays par fiche. Google n'accepte qu'une fiche par pays à la fois.
+5. Coller le titre, la description courte et la description longue du pays ci-dessous ; le compteur de la console doit afficher les mêmes décomptes.
+6. Icône et bandeau : ceux de la fiche principale (`docs/play/icone-512.png`, `docs/play/bandeau-1024x500.png`). Captures : celles de la fiche principale (ou de nouvelles captures « Afrique » si Jean en fait). Contact, confidentialité et catégorie sont communs à toutes les fiches.
+7. **Enregistrer**, puis envoyer à l'examen. Une fois la fiche active, son adresse de test est `https://play.google.com/store/apps/details?id=com.teiki.erea&listing=<paramètre>` (le paramètre est celui saisi dans la console). Limite : 50 fiches par appli.
+8. Les pays sans fiche personnalisée gardent la fiche principale (§3).
+
+⚠️ **Le titre est un champ sensible** : Google rapproche titre, icône et description. Les titres ci-dessous restent proches du titre principal (« Erea — Devine l'année ! ») et ne promettent pas plus que ce que contient le jeu. Si la console refuse un titre différent, garder le titre principal et ne personnaliser que les descriptions.
+
+### Sénégal (SN)
+
+**Titre** — 25 caractères sur 30
+
+```
+Erea : Histoire & Sénégal
+```
+
+**Description courte** — 75 caractères sur 80
+
+```
+Placez sur la frise l'année de Gorée, de Senghor ou des Lions de la Teranga
+```
+
+**Description longue** — 2646 caractères sur 4 000
+
+```
+Un événement s'affiche. Une frise du temps défile sous votre doigt. En quelle année ?
+
+Erea, c'est le jeu de culture historique pour jouer entre amis ou en famille : pas de QCM, pas de réponses toutes faites — vous placez vous-même l'événement sur une grande frise qui va de 3000 av. J.-C. à aujourd'hui. Plus vous tombez juste, plus vous marquez de points.
+
+LE SÉNÉGAL SUR LA FRISE
+
+Le jeu contient des événements de l'histoire du Sénégal, chacun accompagné d'une anecdote « Le savais-tu ? » :
+• Le royaume du Tekrour sur les rives du fleuve Sénégal
+• Gorée et Saint-Louis, deux escales du commerce atlantique
+• Les Français prennent pied à Dakar
+• Blaise Diagne, premier député africain à Paris
+• L'indépendance du Sénégal, le 4 avril 1960
+• Le Festival mondial des arts nègres à Dakar, voulu par Léopold Sédar Senghor
+• Senghor, premier Africain à l'Académie française
+• L'arrivée du rallye Paris-Dakar
+• La première CAN des Lions de la Teranga, menés par Sadio Mané
+
+Saurez-vous dire en quelle année ? Et le reste du monde, de la construction des pyramides à la première photo d'un trou noir : plus de 1 800 événements au total.
+
+LES MODES DE JEU
+
+• Classique — 10 manches, trois difficultés. En Facile, uniquement des événements que tout le monde connaît ; en Difficile, de quoi occuper les passionnés.
+• Défi du jour — les 10 mêmes questions pour tous les joueurs, une seule tentative par jour. Enchaînez les jours pour faire grandir votre série.
+• Chrono — 10 secondes par question, pas une de plus.
+• Roulette des drapeaux — un pays tiré au sort, une partie entière consacrée à son histoire.
+• Packs à thèmes — Égypte et Orient ancien, Asie, Amériques, Afrique, Conquête de l'espace.
+
+UN JEU QUI PARLE DE VOUS
+
+Choisissez votre pays au premier lancement (le Sénégal figure dans la liste) : si vous jouez depuis l'Afrique, la moitié des questions du mode Classique (catégorie « Tout ») vient de l'univers « Afrique & Moyen-Orient ». Le jeu s'adapte, sans jamais vous enfermer : les autres questions couvrent le monde entier.
+
+PROGRESSION
+
+Gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
+
+SANS COMPTE, SANS INTERNET
+
+Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — dans le car, dans les transports, partout.
+
+UNE PUBLICITÉ, UNE PARTIE SUR DEUX
+
+Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Tous les modes et tous les événements sont accessibles à tous.
+
+Bonne partie !
+```
+
+### Côte d’Ivoire (CI)
+
+**Titre** — 30 caractères sur 30
+
+```
+Erea : Histoire, Côte d'Ivoire
+```
+
+**Description courte** — 79 caractères sur 80
+
+```
+Devinez l'année : Houphouët-Boigny, Yamoussoukro, Drogba et l'histoire du monde
+```
+
+**Description longue** — 2482 caractères sur 4 000
+
+```
+Un événement s'affiche. Une frise du temps défile sous votre doigt. En quelle année ?
+
+Erea, c'est le jeu de culture historique pour jouer entre amis ou en famille : pas de QCM, pas de réponses toutes faites — vous placez vous-même l'événement sur une grande frise qui va de 3000 av. J.-C. à aujourd'hui. Plus vous tombez juste, plus vous marquez de points.
+
+LA CÔTE D'IVOIRE SUR LA FRISE
+
+Le jeu contient plusieurs événements de l'histoire ivoirienne, chacun accompagné d'une anecdote « Le savais-tu ? » :
+• L'indépendance de 1960 et Félix Houphouët-Boigny, qui dirigera le pays trente-trois ans
+• La basilique de Yamoussoukro, plus vaste que Saint-Pierre de Rome
+• Didier Drogba et le match des Éléphants à Bouaké, en 2007
+
+Ils côtoient d'autres événements d'Afrique de l'Ouest (l'empire du Mali, Tombouctou, les indépendances de 1960) et du monde entier, de la construction des pyramides à la première photo d'un trou noir : plus de 1 800 événements au total.
+
+LES MODES DE JEU
+
+• Classique — 10 manches, trois difficultés. En Facile, uniquement des événements que tout le monde connaît ; en Difficile, de quoi occuper les passionnés.
+• Défi du jour — les 10 mêmes questions pour tous les joueurs, une seule tentative par jour. Enchaînez les jours pour faire grandir votre série.
+• Chrono — 10 secondes par question, pas une de plus.
+• Roulette des drapeaux — un pays tiré au sort, une partie entière consacrée à son histoire.
+• Packs à thèmes — Égypte et Orient ancien, Asie, Amériques, Afrique, Conquête de l'espace.
+
+UN JEU QUI PARLE DE VOUS
+
+Choisissez votre pays au premier lancement (la Côte d’Ivoire figure dans la liste) : si vous jouez depuis l'Afrique, la moitié des questions du mode Classique (catégorie « Tout ») vient de l'univers « Afrique & Moyen-Orient ». Le jeu s'adapte, sans jamais vous enfermer : les autres questions couvrent le monde entier.
+
+PROGRESSION
+
+Gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
+
+SANS COMPTE, SANS INTERNET
+
+Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — dans le car, dans les transports, partout.
+
+UNE PUBLICITÉ, UNE PARTIE SUR DEUX
+
+Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Tous les modes et tous les événements sont accessibles à tous.
+
+Bonne partie !
+```
+
+### Mali (ML)
+
+**Titre** — 22 caractères sur 30
+
+```
+Erea : Histoire & Mali
+```
+
+**Description courte** — 79 caractères sur 80
+
+```
+Soundiata, Mansa Moussa, Tombouctou : en quelle année ? Placez-les sur la frise
+```
+
+**Description longue** — 2612 caractères sur 4 000
+
+```
+Un événement s'affiche. Une frise du temps défile sous votre doigt. En quelle année ?
+
+Erea, c'est le jeu de culture historique pour jouer entre amis ou en famille : pas de QCM, pas de réponses toutes faites — vous placez vous-même l'événement sur une grande frise qui va de 3000 av. J.-C. à aujourd'hui. Plus vous tombez juste, plus vous marquez de points.
+
+LE MALI SUR LA FRISE
+
+Le jeu contient des événements de l'histoire du Mali, chacun accompagné d'une anecdote « Le savais-tu ? » :
+• La naissance de Tombouctou, près de la boucle du Niger
+• Soundiata Keïta fonde l'empire du Mali à la bataille de Kirina
+• Le pèlerinage de Mansa Moussa vers La Mecque
+• Askia Mohammed et l'apogée de l'empire songhaï
+• La chute de l'empire songhaï à Tondibi
+• La Grande Mosquée de Djenné
+• L'indépendance du Mali, en 1960
+• Amadou Hampâté Bâ : « Un vieillard qui meurt, c'est une bibliothèque qui brûle »
+• Salif Keïta, premier Ballon d'or africain
+
+Saurez-vous dire en quelle année ? Et le reste du monde, de la construction des pyramides à la première photo d'un trou noir : plus de 1 800 événements au total.
+
+LES MODES DE JEU
+
+• Classique — 10 manches, trois difficultés. En Facile, uniquement des événements que tout le monde connaît ; en Difficile, de quoi occuper les passionnés.
+• Défi du jour — les 10 mêmes questions pour tous les joueurs, une seule tentative par jour. Enchaînez les jours pour faire grandir votre série.
+• Chrono — 10 secondes par question, pas une de plus.
+• Roulette des drapeaux — un pays tiré au sort, une partie entière consacrée à son histoire.
+• Packs à thèmes — Égypte et Orient ancien, Asie, Amériques, Afrique, Conquête de l'espace.
+
+UN JEU QUI PARLE DE VOUS
+
+Choisissez votre pays au premier lancement (le Mali figure dans la liste) : si vous jouez depuis l'Afrique, la moitié des questions du mode Classique (catégorie « Tout ») vient de l'univers « Afrique & Moyen-Orient ». Le jeu s'adapte, sans jamais vous enfermer : les autres questions couvrent le monde entier.
+
+PROGRESSION
+
+Gagnez de l'XP, débloquez des succès et remplissez votre album de collection au fil des événements rencontrés.
+
+SANS COMPTE, SANS INTERNET
+
+Aucune inscription, aucun serveur : votre progression reste sur votre appareil, et le jeu fonctionne entièrement hors ligne — dans le car, dans les transports, partout.
+
+UNE PUBLICITÉ, UNE PARTIE SUR DEUX
+
+Une publicité s'affiche en quittant l'écran de fin, une partie sur deux — jamais pendant une manche, jamais avant que vous ayez vu votre score, et jamais dans le Défi du jour. Tous les modes et tous les événements sont accessibles à tous.
+
+Bonne partie !
+```
 
 ## Les pièges, résumés
 
