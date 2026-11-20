@@ -332,6 +332,24 @@ https://erea.toakeur.com/
 *(Version en ligne depuis le 31 octobre 2026. Le code est déjà en 1.0.8 ;
 à saisir ici à la place quand la 1.0.8 sera envoyée.)*
 
+## Nouveautés de la 1.0.8 ✅ — à saisir à l'envoi de la 1.0.8
+
+*(Rédigées le 20 novembre 2026 à partir des commits de la 1.0.8. À valider par Jean. Limites : App Store 4 000 caractères, Google Play 500 par langue. Pas de pub avec récompense dans le texte : elle n'est pas active dans la version publiée.)*
+
+**Français** (305 caractères)
+
+```
+Nouveau : les bonus ! En montant de niveau, tu découvres six coups de pouce : Remplacer, Époque, Repère, Zoom, Seconde chance et XP double. Un seul bonus par partie, et jamais dans le Défi du jour. Une partie aidée n'entre pas dans les records. La pastille de série est aussi mieux centrée. Bonne partie !
+```
+
+**English** (263 characters)
+
+```
+New: bonuses! As you level up, you unlock six helpers: Swap, Era, Landmark, Zoom, Second Chance and Double XP. One bonus per game, never in the Daily Challenge. A game played with help doesn't count for records. The streak badge is also better centered. Have fun!
+```
+
+Google Play : coller le même texte dans « Notes de version » (balises `<fr-FR>` et `<en-US>` si l'éditeur les demande).
+
 ## Informations générales sur l'app ✅ *(en bas de page)*
 
 **👉 C'est ici que se trouve « Droits d'auteur »**, et non sur la page
