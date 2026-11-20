@@ -1,20 +1,23 @@
 # Remplir la fiche App Store — Erea
 
-> **État au 30 octobre 2026.** La **1.0.5** (build **195**) est en
-> ligne depuis le 21 octobre 2026 à 17 h 44, sous le nom **« Erea : Quiz
-> d'histoire & frise »** ; la **1.0.7** (build **210**) a été
-> soumise le 30 octobre 2026 au soir. Avant elle, la 1.0.4 (build 182) a été en ligne à partir du
-> 15 octobre et la 1.0.2 (build 150) à partir du 8 septembre 2026, avec
-> l'achat intégré **« Erea sans publicité »**, approuvé le même jour.
+> **État au 20 novembre 2026.** La **1.0.7** (build **210**) est en
+> ligne depuis le 31 octobre 2026 à 15 h 05 (soumise le 30 octobre au soir,
+> arrêtée le 31 à 9 h 02 par l'examen automatique : case « Publicité » de la
+> classification par âge, renvoyée à 11 h 03, approuvée à 15 h 04), sous le
+> nom **« Erea : Quiz d'histoire & frise »**. Avant elle, la 1.0.5 (build 195)
+> avait été en ligne du 21 octobre 2026 à 17 h 44, la 1.0.4 (build 182) à
+> partir du 15 octobre et la 1.0.2 (build 150) à partir du 8 septembre 2026,
+> avec l'achat intégré **« Erea sans publicité »**, approuvé le même jour.
 >
 > Confidentialité de l'app refaite le 7 septembre (six types, la pub
 > oblige). Côté AdMob, consentement RGPD et message IDFA publiés le
 > 3 septembre. Cinquante identifiants SKAdNetwork dans `Info.plist`.
 >
-> Le compte s'affiche **TOA CORP** (nom d'affichage seulement, compte
-> individuel, DSA **non-trader**). Le passage du compte en compte
-> organisation a été demandé à Apple en octobre 2026 ; Apple a répondu le
-> 23 octobre, Jean le 29 octobre : c'est Apple qui a la main.
+> Depuis le 9 novembre 2026 (15 h 31), le compte Apple Developer est une
+> **organisation**, au nom d'**ALOHASH** (équipe `K597U7X3FZ` inchangée) ; la
+> fiche publique affiche le vendeur **ALOHASH** (vérifié le 20 novembre 2026).
+> Avant, le compte était individuel et affichait « TOA CORP » (nom d'affichage
+> seulement, DSA non-trader) : ce nom reste celui de la console.
 >
 > **L'état à jour des deux boutiques est dans `docs/PUBLICATION.md`** :
 > c'est lui qui fait foi. Ce document-ci décrit la fiche, champ par
@@ -326,6 +329,9 @@ https://erea.toakeur.com/
 1.0.7
 ```
 
+*(Version en ligne depuis le 31 octobre 2026. Le code est déjà en 1.0.8 ;
+à saisir ici à la place quand la 1.0.8 sera envoyée.)*
+
 ## Informations générales sur l'app ✅ *(en bas de page)*
 
 **👉 C'est ici que se trouve « Droits d'auteur »**, et non sur la page
@@ -341,7 +347,7 @@ App Store Connect l'ajoute lui-même à l'affichage.
 *(Si ton compte développeur est enregistré sous ton nom complet, mets
 plutôt celui-là : c'est ce qu'Apple affiche déjà comme vendeur.)*
 
-## Build ✅ *(version en ligne : 1.0.5, build 195)*
+## Build ✅ *(version en ligne : 1.0.7, build 210)*
 
 Sélectionne la version envoyée par Xcode Cloud, qui apparaît une
 quinzaine de minutes après la fin du build. Pour la 1.0.4, les builds
@@ -387,7 +393,7 @@ le recopier ici le ferait diverger.
 Deux choix : **Publier automatiquement**, et l'app sort dès qu'Apple l'a
 validée, ou **Publier manuellement**, et tu déclenches la sortie toi-même.
 
-La 1.0.2, la 1.0.4 et la 1.0.5 ont été publiées en **automatique** : l'app sort dès
+La 1.0.2, la 1.0.4, la 1.0.5 et la 1.0.7 ont été publiées en **automatique** : l'app sort dès
 l'approbation. La 1.0 avait été réglée sur manuelle, pour coïncider avec
 le Play Store.
 
@@ -569,8 +575,8 @@ La déclaration DSA, elle, est restée non-trader.
 # Où en est chaque champ *(tableau de la 1.0.4, 15 octobre 2026)*
 
 Depuis, la 1.0.5 (build 195) a été approuvée et mise en ligne le
-21 octobre 2026 avec les notes du §0 de `docs/APP_REVIEW.md` ; la 1.0.7
-(build 210) a été soumise le 30 octobre 2026. L'état à jour est
+21 octobre 2026 avec les notes du §0 de `docs/APP_REVIEW.md`, puis la 1.0.7
+(build 210) le 31 octobre 2026 à 15 h 05. L'état à jour est
 dans `docs/PUBLICATION.md`.
 
 | Élément | 1.0.2 (en ligne à partir du 8 septembre) | 1.0.4 (envoyée le 15 octobre) |
