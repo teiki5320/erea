@@ -146,7 +146,7 @@ chez Apple le 9 novembre 2026, pas encore sur Google Play.
 - **Note App Store** : aucune note au 23 novembre 2026
 - **Visites du site et clics « Télécharger l'appli »** : mesurés par Umami depuis le 5 novembre 2026, chiffres à vérifier dans la console
 - **Note Google Play** : à vérifier dans la console (en ligne depuis le 20 octobre 2026)
-- **Appareils actifs par mois (Google Play)** : 3 (accueil de la Play Console, vérifié le 16 novembre 2026 ; 2 le 14 novembre)
+- **Appareils actifs par mois (Google Play)** : 4 (accueil de la Play Console, vérifié le 23 novembre 2026 ; 3 le 16 novembre, 2 le 14 novembre)
 - **Rétention J1 et J7** : à vérifier dans la console
 - **Participants au Défi du jour** : à vérifier dans la console (classement `erea.daily`)
 - **Ventes « Erea sans publicité »** : à vérifier dans la console
